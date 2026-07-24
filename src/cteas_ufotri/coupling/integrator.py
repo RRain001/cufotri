@@ -49,6 +49,7 @@ class StepDiagnostics:
     harvest_loss_bq_m2_s: float
     edible_feed_hto_bq_m2_s: float
     edible_feed_obt_bq_m2_s: float
+    deep_drainage_hto_bq_m2_s: float
     soil_reemission_bq_m2_s: float
     plant_reemission_bq_m2_s: float
     total_reemission_bq_m2_s: float
@@ -422,6 +423,7 @@ def advance(
         edible_tfwt_out["harvest_loss"] + edible_obt_out["harvest_loss"],
         edible_tfwt_out["feed"],
         edible_obt_out["feed"],
+        soil_out["drainage"],
         soil_out["evaporation"],
         plant_out["transpiration"] + plant_out["leaf_release"],
         (

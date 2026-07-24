@@ -12,6 +12,7 @@ import sys
 import tempfile
 
 import numpy as np
+import pandas as pd
 
 from cteas_ufotri.analysis.uncertainty import run_uncertainty
 from cteas_ufotri.analysis.wet_sensitivity import wet_parameter_sensitivity
@@ -22,6 +23,8 @@ from cteas_ufotri.benchmarks.v2_cases import (
 from cteas_ufotri.benchmarks.independent import benchmark_category_counts
 from cteas_ufotri.case import run_short_case
 from cteas_ufotri.config import load_configuration
+from cteas_ufotri.coupling.integrator import advance
+from cteas_ufotri.coupling.state import State
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -217,6 +220,191 @@ def _uncertainty_check() -> dict:
     }
 
 
+def _expanded_rc1_checks(end_to_end_root: Path) -> dict:
+    required_activity_fields = {
+        "external_stack_input_bq",
+        "dry_plume_loss_bq",
+        "wet_plume_loss_bq",
+        "dry_surface_input_bq",
+        "wet_surface_input_bq",
+        "environmental_inventory_bq",
+        "harvested_activity_bq",
+        "milk_activity_bq",
+        "beef_activity_bq",
+        "excreted_activity_bq",
+        "deep_loss_bq",
+        "runoff_bypass_bq",
+        "decay_loss_bq",
+        "activity_residual_bq",
+    }
+    case_frames = {}
+    for case_name in (
+        "v2_era5_72h_wet_deposition",
+        "v2_accident_plant_obt_14d",
+        "v2_crop_ingestion_season",
+        "v2_pasture_milk_pathway",
+        "v2_full_adult_dose",
+        "v2_leaf_exchange_food_dose_72h",
+    ):
+        frame = pd.read_csv(end_to_end_root / case_name / "results.csv")
+        missing = required_activity_fields - set(frame)
+        if missing:
+            raise ValueError(
+                f"{case_name} lacks activity-protocol fields: {sorted(missing)}"
+            )
+        final = frame.iloc[-1]
+        if (
+            final["dry_plume_loss_bq"] != final["dry_surface_input_bq"]
+            or final["wet_plume_loss_bq"] != final["wet_surface_input_bq"]
+            or final["activity_relative_residual"] > 1.0e-12
+            or final["accounted_environmental_activity_bq"]
+            > final["external_stack_input_bq"] * (1.0 + 1.0e-12) + 1.0e-6
+        ):
+            raise ValueError(f"{case_name} activity propagation failed")
+        case_frames[case_name] = frame
+
+    dry_final = case_frames["v2_era5_72h_wet_deposition"].iloc[-1]
+    dry_ratio = dry_final["dry_surface_input_bq"] / dry_final["dry_plume_loss_bq"]
+    wet_ratio = wet_final = (
+        dry_final["wet_surface_input_bq"] / dry_final["wet_plume_loss_bq"]
+    )
+    if dry_ratio != 1.0 or wet_ratio != 1.0:
+        raise ValueError("Dry/wet 72 h interface ledger failed")
+
+    leaf_config = load_configuration(
+        ROOT / "configs/default_parameters.yaml",
+        ROOT / "configs/v2/v2_leaf_exchange_food_dose_72h.yaml",
+    )
+    timestep_results = {}
+    endpoints = (
+        "plant_tfwt_inventory",
+        "plant_obt_inventory",
+        "edible_tfwt_inventory_bq_m2",
+        "edible_obt_inventory_bq_m2",
+        "plant_ingestion_dose_sv",
+    )
+    for dt_s in (600, 300, 120, 60):
+        candidate = deepcopy(leaf_config)
+        candidate["time_step_seconds"] = dt_s
+        final = run_short_case(candidate).iloc[-1]
+        timestep_results[str(dt_s)] = {
+            name: float(final[name]) for name in endpoints
+        }
+    reference = timestep_results["60"]
+    maximum_timestep_change = max(
+        abs(values[name] - reference[name]) / max(abs(reference[name]), 1.0e-30)
+        for values in timestep_results.values()
+        for name in endpoints
+    )
+    if maximum_timestep_change >= 0.01:
+        raise ValueError("Leaf formal-case time-step convergence failed")
+
+    footprint_results = {}
+    for area in (1.0e5, 1.0e6, 1.0e7):
+        config = _base()
+        config["duration_hours"] = 1.0
+        config["deposition"]["dry_footprint"]["area_m2"] = area
+        final = run_short_case(config).iloc[-1]
+        footprint_results[str(area)] = {
+            "plume_loss_bq": float(final["dry_plume_loss_bq"]),
+            "plume_loss_bq_s": float(final["dry_depletion_bq_s"]),
+            "surface_flux_bq_m2_s": float(
+                final["dry_deposition_flux_bq_m2_s"]
+            ),
+        }
+    plume_losses = {
+        values["plume_loss_bq"] for values in footprint_results.values()
+    }
+    if len(plume_losses) != 1 or any(
+        abs(
+            values["surface_flux_bq_m2_s"] * float(area)
+            - values["plume_loss_bq_s"]
+        )
+        > 1.0e-6
+        for area, values in footprint_results.items()
+    ):
+        raise ValueError("Footprint scaling failed")
+
+    zero = _base()
+    zero["duration_hours"] = 2.0
+    zero["source"]["emission_rate_bq_s"] = 0.0
+    zero_final = run_short_case(zero).iloc[-1]
+    if (
+        zero_final["external_stack_input_bq"] != 0.0
+        or zero_final["accounted_environmental_activity_bq"] != 0.0
+    ):
+        raise ValueError("Zero-source activity protocol failed")
+
+    internal = _base()
+    internal["plant"]["leaf_exchange_mode"] = "off"
+    internal["physics"]["tritium_decay_constant_s"] = 0.0
+    initial = State(
+        soil_water_m=0.01,
+        plant_tfwt_bq_m2=100.0,
+        plant_obt_bq_m2=50.0,
+    )
+    internal_final, internal_diag = advance(
+        initial,
+        60.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        internal,
+        edible_allocation_rate_s=1.0e-5,
+    )
+    if (
+        internal_diag.surface_box_mass_closure.external_input_bq_m2 != 0.0
+        or internal_final.total_hto_bq_m2 != initial.total_hto_bq_m2
+        or internal_diag.surface_box_mass_closure.relative_error > 1.0e-12
+    ):
+        raise ValueError("Closed internal-transfer activity check failed")
+
+    pasture_config = load_configuration(
+        ROOT / "configs/default_parameters.yaml",
+        ROOT / "configs/v2/v2_pasture_multiyear_2y.yaml",
+    )
+    pasture = run_short_case(pasture_config)
+    pasture_final = pasture.iloc[-1]
+    if (
+        int(pasture["harvest_event"].sum()) != 6
+        or pasture["surface_box_relative_residual"].max() > 1.0e-12
+        or pasture_final["activity_relative_residual"] > 1.0e-12
+    ):
+        raise ValueError("Two-year pasture acceptance failed")
+
+    return {
+        "activity_protocol_case_count": len(case_frames) + 1,
+        "dry_72h": {
+            "pre_fix_plume_loss_bq": 3.246027849313e9,
+            "pre_fix_surface_input_bq": 2.901284607250e10,
+            "pre_fix_ratio": 8.937953529463,
+            "post_fix_plume_loss_bq": float(dry_final["dry_plume_loss_bq"]),
+            "post_fix_surface_input_bq": float(dry_final["dry_surface_input_bq"]),
+            "post_fix_ratio": float(dry_ratio),
+        },
+        "wet_72h_ratio": float(wet_final),
+        "maximum_activity_relative_residual": max(
+            float(frame["activity_relative_residual"].max())
+            for frame in case_frames.values()
+        ),
+        "maximum_timestep_endpoint_change": maximum_timestep_change,
+        "footprint_scaling": footprint_results,
+        "zero_source_status": "PASS",
+        "closed_internal_transfer_status": "PASS",
+        "pasture_two_year": {
+            "steps": len(pasture),
+            "cut_events": int(pasture["harvest_event"].sum()),
+            "final_harvested_activity_bq": float(
+                pasture_final["harvested_activity_bq"]
+            ),
+            "maximum_activity_relative_residual": float(
+                pasture["activity_relative_residual"].max()
+            ),
+        },
+    }
+
+
 def recompute() -> list[str]:
     started = datetime.now(timezone.utc)
     with tempfile.TemporaryDirectory(prefix="cteas_ufotri_v2_acceptance_") as tmp:
@@ -293,6 +481,7 @@ def recompute() -> list[str]:
             != full_model_uncertainty["expected_model_run_count"]
         ):
             raise ValueError("Full-model mode-aware LHS acceptance failed")
+        expanded_rc1 = _expanded_rc1_checks(end_to_end_root)
 
         config_paths = [
             ROOT / "configs/default_parameters.yaml",
@@ -329,6 +518,7 @@ def recompute() -> list[str]:
             "wet_parameter_sensitivity": wet_sensitivity,
             "uncertainty_algorithm": uncertainty,
             "full_model_uncertainty": full_model_uncertainty,
+            "expanded_rc1_checks": expanded_rc1,
             "benchmark_record_count": len(benchmarks),
             "benchmark_category_counts": benchmark_counts,
             "end_to_end_summary_sha256": sha256(
@@ -353,6 +543,10 @@ def recompute() -> list[str]:
                 "at n=64/128/256 with four seeds"
             ),
             "PASS: 12-case wet-scavenging parameter grid",
+            (
+                "PASS: expanded RC1 activity protocol, footprint, time-step, "
+                "zero-source, internal-transfer, and two-year pasture checks"
+            ),
             (
                 "PASS: categorized V2 evidence "
                 f"({benchmark_counts['analytic_benchmark']} analytic, "

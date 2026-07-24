@@ -97,12 +97,19 @@ CDS credentials may be supplied as the paired environment variables
 | `total_reemission_flux` | total secondary area flux, Bq m-2 s-1 |
 | `mass_balance_error` | signed step residual, Bq m-2 |
 | `mass_balance_relative_error` | absolute relative step residual |
+| `external_stack_input_bq` | integrated stack release, Bq |
+| `dry_plume_loss_bq`, `wet_plume_loss_bq` | integrated steady-plume removals, Bq |
+| `dry_surface_input_bq`, `wet_surface_input_bq` | allocated surface inputs, Bq |
+| `environmental_inventory_bq` | current soil/plant/animal/product activity over the accounting area, Bq |
+| `activity_residual_bq` | combined surface/ecological activity-ledger residual, Bq |
 
 Formal fields are `surface_box_absolute_residual_bq_m2` and
 `surface_box_relative_residual`; the two `mass_balance_*` fields are deprecated
 compatibility aliases. This ledger covers soil HTO + TFWT + OBT only. The
 steady Gaussian atmosphere has a separate source/sink budget, not a dynamic
 air inventory.
+The complete RC1 activity-field semantics are in
+`docs/v2/activity_propagation_protocol.md`.
 
 ## Implemented scope
 

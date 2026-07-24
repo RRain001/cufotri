@@ -18,6 +18,7 @@ RC1_STAGE_6 = PASS
 RC1_STAGE_7 = PASS
 RC1_STAGE_8 = PASS
 RC1_STAGE_9 = PASS
+RC1_STAGE_10 = PASS
 DRY_INTERFACE_CONSERVATION_STATUS = PASS
 WET_INTERFACE_CONSERVATION_STATUS = PASS
 DRY_WET_COMPETITION_STATUS = PASS
@@ -41,7 +42,7 @@ MULTIYEAR_PASTURE_STATUS = PASS
 MULTIBOX_SCOPE_STATUS = CLEAR_EXPERIMENTAL_STANDALONE
 BLOCKER_REMAINING = 0
 HIGH_REMAINING = 1_PARTIAL_H06_RANK_STABILITY
-RC1_TEST_STATUS = PASS_150_STAGE10_PROTOCOL_PENDING
+RC1_TEST_STATUS = PASS_158
 RC1_V1_RECOMPUTE_STATUS = PASS
 RC1_V2_RECOMPUTE_STATUS = PASS
 ```
@@ -93,6 +94,17 @@ two-year pasture test.
 Stage 8 freezes the three-box solver at
 `PASS_EXPERIMENTAL_STANDALONE` and documents the interfaces required before any
 future formal coupling claim.
+
+Stage 10 adds a common whole-pathway activity protocol to every formal result
+row and verifies all six end-to-end cases plus the two-year pasture case. The
+expanded driver covers the 72 h dry counterexample, analytic dry/wet
+competition, conservative beef, n=64/128/256 LHS, 600/300/120/60 s leaf
+convergence, footprint scaling, zero source, closed internal transfers, stack
+upper bounds, and combined activity residuals.
+The exact Stage 10 command set passed: 158 tests, frozen V1 recomputation, V2
+expanded recomputation, compileall over `src tests era5 scripts`, and
+`git diff --check`. The known NumPy/NetCDF binary-compatibility warning remains
+non-fatal.
 
 The historical V2 status below records the pre-remediation implementation and
 must not be interpreted as the current RC1 acceptance state.

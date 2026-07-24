@@ -164,6 +164,10 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
     cumulative_wet_surface_input_bq = 0.0
     cumulative_surface_boundary_output_bq_m2 = 0.0
     cumulative_surface_decay_bq_m2 = 0.0
+    cumulative_surface_input_bq_m2 = 0.0
+    cumulative_surface_feed_bq_m2 = 0.0
+    cumulative_deep_loss_bq_m2 = 0.0
+    cumulative_runoff_bypass_bq_m2 = 0.0
     cumulative_beef_produced_hto_bq_m2 = 0.0
     cumulative_beef_produced_obt_bq_m2 = 0.0
     cumulative_beef_consumed_hto_bq_m2 = 0.0
@@ -453,6 +457,19 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         cumulative_surface_decay_bq_m2 += (
             diag.surface_box_mass_closure.decay_bq_m2
         )
+        cumulative_surface_input_bq_m2 += (
+            diag.surface_box_mass_closure.external_input_bq_m2
+        )
+        cumulative_surface_feed_bq_m2 += dt * (
+            diag.edible_feed_hto_bq_m2_s
+            + diag.edible_feed_obt_bq_m2_s
+        )
+        cumulative_deep_loss_bq_m2 += (
+            dt * diag.deep_drainage_hto_bq_m2_s
+        )
+        cumulative_runoff_bypass_bq_m2 += (
+            dt * diag.rain_runoff_hto_bq_m2_s
+        )
         edible_fresh_mass = (
             crop.aboveground_biomass_kg_fresh_m2
             * crop.edible_fraction
@@ -591,6 +608,64 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         if feedback_delay_steps:
             feedback_history.popleft()
             feedback_history.append(diag.total_reemission_bq_m2_s)
+        activity_area_m2 = float(
+            config["deposition"]["dry_footprint"]["area_m2"]
+        )
+        ecological_inventory_bq_m2 = (
+            state.total_hto_bq_m2
+            + animal_state.total_bq
+            + beef_product_state.total_bq_m2
+        )
+        external_ecological_input_bq_m2 = (
+            cumulative_surface_input_bq_m2
+            + cumulative_animal_input_bq_m2
+            - cumulative_surface_feed_bq_m2
+        )
+        ecological_boundary_bq_m2 = (
+            cumulative_surface_boundary_output_bq_m2
+            - cumulative_surface_feed_bq_m2
+            + cumulative_animal_milk_output_bq_m2
+            + cumulative_animal_excretion_bq_m2
+            + cumulative_beef_consumed_hto_bq_m2
+            + cumulative_beef_consumed_obt_bq_m2
+        )
+        ecological_decay_bq_m2 = (
+            cumulative_surface_decay_bq_m2
+            + cumulative_animal_decay_bq_m2
+            + cumulative_beef_decay_bq_m2
+        )
+        activity_residual_bq = activity_area_m2 * (
+            external_ecological_input_bq_m2
+            - ecological_inventory_bq_m2
+            - ecological_boundary_bq_m2
+            - ecological_decay_bq_m2
+        )
+        harvested_activity_bq = activity_area_m2 * (
+            state.harvested_hto_bq_m2
+            + state.harvested_obt_bq_m2
+            + state.cut_plant_hto_bq_m2
+            + state.cut_plant_obt_bq_m2
+        )
+        milk_activity_bq = (
+            activity_area_m2 * cumulative_animal_milk_output_bq_m2
+        )
+        beef_activity_bq = activity_area_m2 * (
+            cumulative_beef_consumed_hto_bq_m2
+            + cumulative_beef_consumed_obt_bq_m2
+        )
+        excreted_activity_bq = (
+            activity_area_m2 * cumulative_animal_excretion_bq_m2
+        )
+        deep_loss_bq = activity_area_m2 * cumulative_deep_loss_bq_m2
+        decay_loss_bq = activity_area_m2 * ecological_decay_bq_m2
+        environmental_inventory_bq = (
+            activity_area_m2 * ecological_inventory_bq_m2
+        )
+        accounted_activity_bq = activity_area_m2 * (
+            ecological_inventory_bq_m2
+            + ecological_boundary_bq_m2
+            + ecological_decay_bq_m2
+        )
         rows.append({
             "time": start + timedelta(seconds=(index + 1) * dt),
             "air_hto_concentration": air,
@@ -629,10 +704,41 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 + wet_ledger.interface_residual_bq_s
             ),
             "stack_release_bq": cumulative_stack_release_bq,
+            "external_stack_input_bq": cumulative_stack_release_bq,
             "plume_dry_loss_bq": cumulative_dry_plume_loss_bq,
+            "dry_plume_loss_bq": cumulative_dry_plume_loss_bq,
             "plume_wet_loss_bq": cumulative_wet_plume_loss_bq,
+            "wet_plume_loss_bq": cumulative_wet_plume_loss_bq,
             "surface_dry_input_bq": cumulative_dry_surface_input_bq,
+            "dry_surface_input_bq": cumulative_dry_surface_input_bq,
             "surface_wet_input_bq": cumulative_wet_surface_input_bq,
+            "wet_surface_input_bq": cumulative_wet_surface_input_bq,
+            "activity_accounting_area_m2": activity_area_m2,
+            "environmental_input_bq": (
+                activity_area_m2 * external_ecological_input_bq_m2
+            ),
+            "environmental_inventory_bq": environmental_inventory_bq,
+            "harvested_activity_bq": harvested_activity_bq,
+            "milk_activity_bq": milk_activity_bq,
+            "beef_activity_bq": beef_activity_bq,
+            "excreted_activity_bq": excreted_activity_bq,
+            "deep_loss_bq": deep_loss_bq,
+            "runoff_bypass_bq": (
+                activity_area_m2 * cumulative_runoff_bypass_bq_m2
+            ),
+            "decay_loss_bq": decay_loss_bq,
+            "accounted_environmental_activity_bq": accounted_activity_bq,
+            "activity_residual_bq": activity_residual_bq,
+            "activity_relative_residual": (
+                abs(activity_residual_bq)
+                / max(
+                    activity_area_m2 * external_ecological_input_bq_m2,
+                    1.0e-30,
+                )
+            ),
+            "stack_activity_margin_bq": (
+                cumulative_stack_release_bq - accounted_activity_bq
+            ),
             "dry_interface_residual_bq": (
                 cumulative_dry_plume_loss_bq
                 - cumulative_dry_surface_input_bq
@@ -822,6 +928,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "beef_product_mass_residual_kg_m2",
             "ecological_box_relative_residual",
             "animal_product_activity_residual_bq_m2",
+            "activity_residual_bq",
+            "stack_activity_margin_bq",
         ]
     )
     if not np.isfinite(numeric.to_numpy()).all():
