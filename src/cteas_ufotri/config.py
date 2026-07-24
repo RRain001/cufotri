@@ -32,7 +32,7 @@ def load_configuration(
     required = (
         "atmosphere", "soil", "plant", "reemission", "physics",
         "numerics", "synthetic_forcing", "outputs", "site", "source",
-        "coupling", "evapotranspiration",
+        "coupling", "evapotranspiration", "crops",
     )
     missing = [name for name in required if name not in config]
     if missing:
@@ -88,6 +88,20 @@ def load_configuration(
     if leaf_mode not in {"off", "deposition_only", "bidirectional_resistance"}:
         raise ValueError("Unsupported leaf-exchange mode")
     config["plant"]["leaf_exchange_mode"] = leaf_mode
+    crops = config["crops"]
+    if crops["active_crop"] not in crops["parameters"]:
+        raise ValueError("Active crop is missing from crop parameters")
+    if crops["lai_mode"] not in {
+        "constant",
+        "piecewise_growth_stage",
+        "smooth_seasonal",
+        "external_timeseries",
+    }:
+        raise ValueError("Unsupported crop LAI mode")
+    from .crop.phenology import CropParameters
+
+    for crop_name, crop_values in crops["parameters"].items():
+        CropParameters.from_mapping(crop_name, crop_values)
     shading_mode = config["evapotranspiration"]["lai_shading_mode"]
     if shading_mode not in {"radiation_term_only", "full_penman"}:
         raise ValueError("Unsupported LAI shading mode")

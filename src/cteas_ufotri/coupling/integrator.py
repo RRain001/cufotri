@@ -61,6 +61,7 @@ def advance(
     atmospheric_wet_deposition_bq_m2_s: float = 0.0,
     air_temperature_k: float = 293.15,
     dewpoint_temperature_k: float = 288.15,
+    leaf_area_index: float | None = None,
 ) -> tuple[State, StepDiagnostics]:
     soil = config["soil"]
     plant = config["plant"]
@@ -88,6 +89,7 @@ def advance(
     cp = plant_concentration_bq_m3(
         state.plant_tfwt_bq_m2, plant["water_storage_m"]
     )
+    active_lai = plant["lai"] if leaf_area_index is None else max(leaf_area_index, 0.0)
     dry_deposition = (
         config["atmosphere"]["deposition_velocity_m_s"]
         * max(air_concentration_bq_m3, 0.0)
@@ -116,7 +118,7 @@ def advance(
             cp,
             air_temperature_k,
             dewpoint_temperature_k,
-            plant["lai"],
+            active_lai,
             is_day,
             aerodynamic_resistance_s_m=plant[
                 "leaf_aerodynamic_resistance_s_m"

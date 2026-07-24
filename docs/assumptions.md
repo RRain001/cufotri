@@ -45,3 +45,7 @@
   `MANUAL_DERIVED_PROVISIONAL`. They implement the manual's resistance
   structure and day/night order of magnitude, but are not a crop-specific
   calibration. V1 remains `off`.
+- V2 crop biomass, edible fraction, water content, seasonal dates, and
+  phenology curves are replaceable `PROJECT_EXTENSION` defaults. They are
+  deterministic test parameterizations rather than claims about the Hefei
+  receptor or a specific agricultural survey.

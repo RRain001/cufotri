@@ -12,7 +12,7 @@
 | Root uptake | Sec. 2.2.5; Eq. (57)-(60),(75)-(77) | `U_i C_si` | `soil/`, `plant/` | manual | internal transfer closure | extend S5/S8 |
 | TFWT | Eq. (3),(27)-(30) | `Mp/Wp` | `plant/tfwt.py` | manual-derived | inventory and equilibrium tests | extend S2/S5 |
 | OBT | Sec. 2.2.6; Eq. (65)-(66),(105) | `Mobt` | `plant/obt.py` | manual/manual-derived | formation-turnover closure | extend S5 |
-| Crop growth | manual limitation after Eq. (107) | LAI, biomass, edible fraction | `crop/` | project extension | phenology/harvest tests | planned S4/S5 |
+| Crop growth | manual limitation after Eq. (107) | LAI, biomass, edible fraction | `crop/` | project extension | phenology and shared-LAI tests | S4 pass; edible harvest extends in S5 |
 | Food chain | Eq. (45)-(105) | plant/animal/milk inventories | `foodchain/` | manual + literature YAML | ecological ledger | planned S6 |
 | Inhalation | Eq. (106) | inhaled activity | `dose/public.py` | manual + versioned YAML | analytic pathway tests | planned S7 |
 | Skin absorption | Eq. (106) | separate skin dose | `dose/public.py` | configurable ratio | decomposition sum | planned S7 |

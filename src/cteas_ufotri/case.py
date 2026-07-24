@@ -29,6 +29,7 @@ from .meteorology.fallback_fluxes import (
 )
 from .meteorology.derived_variables import wind_speed_at_height
 from .plant.obt import day_night_formation_rate_s
+from .crop.phenology import CropParameters, lai_at_time
 
 
 def _forcing(elapsed_s: float, config: dict) -> dict[str, float]:
@@ -125,6 +126,11 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
     delay_steps = delay_seconds // int(dt)
     root_history: deque[float] = deque([0.0] * delay_steps)
     rows: list[dict] = []
+    crop_config = config["crops"]
+    crop = CropParameters.from_mapping(
+        crop_config["active_crop"],
+        crop_config["parameters"][crop_config["active_crop"]],
+    )
     calm_wind_event_count = 0
     for index in range(steps):
         elapsed = index * dt
@@ -133,6 +139,14 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         else:
             forcing_index = int(elapsed // forcing_step)
             met = hourly_forcing.iloc[forcing_index].to_dict()
+        step_time = start + timedelta(seconds=index * dt)
+        external_lai = met.get(crop_config.get("external_lai_column", "lai"))
+        crop_lai = lai_at_time(
+            step_time,
+            crop,
+            crop_config["lai_mode"],
+            external_lai=external_lai,
+        )
         calm = resolve_calm_wind(
             met["wind_m_s"], config["atmosphere"]["calm_wind"]
         )
@@ -276,7 +290,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             config["physics"]["penman_aerodynamic_coefficient_w_m2_pa"],
         )
         water_fluxes = partition_evapotranspiration(
-            pet, config["plant"]["lai"], state.soil_water_m,
+            pet, crop_lai, state.soil_water_m,
             config["soil"]["maximum_water_m"], config["soil"]["wilting_water_m"],
             config["evapotranspiration"]["lai_shading_mode"],
             radiation_pet,
@@ -309,6 +323,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             ),
             air_temperature_k=met["temperature_k"],
             dewpoint_temperature_k=met["dewpoint_k"],
+            leaf_area_index=crop_lai,
         )
         if delay_steps:
             root_history.popleft()
@@ -372,6 +387,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "leaf_equilibrium_air_concentration": (
                 diag.leaf_equilibrium_air_bq_m3
             ),
+            "crop_lai": crop_lai,
+            "crop_present": crop_lai > 0.0,
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,
             "plant_tfwt_concentration": state.plant_tfwt_bq_m2 / config["plant"]["water_storage_m"],
