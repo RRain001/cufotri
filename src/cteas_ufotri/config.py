@@ -136,6 +136,14 @@ def load_configuration(
     foodchain = config["foodchain"]
     if foodchain["animal_mode"] not in {"off", "minimal_cow"}:
         raise ValueError("Unsupported animal food-chain mode")
+    beef = foodchain["animal_products"]["beef"]
+    if beef["mode"] not in {"off", "continuous_herd_turnover"}:
+        raise ValueError("Unsupported beef-production mode")
+    if min(
+        float(beef["turnover_rate_d-1"]),
+        float(beef["edible_meat_mass_kg_per_head"]),
+    ) < 0.0:
+        raise ValueError("Beef-production parameters must be non-negative")
     dose = config["dose"]
     if dose["active_age_group"] not in dose["age_groups"]:
         raise ValueError("Active dose age group is missing")

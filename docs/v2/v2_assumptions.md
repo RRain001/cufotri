@@ -11,7 +11,7 @@ This file extends, and does not rewrite, `docs/assumptions.md`.
 | V2-A05 | Eq. (32) is not used literally as printed | source ambiguity | its OCR dimensions are inconsistent; resistance equations govern |
 | V2-A06 | Basic `Es*Cs + Tp*Cp` remains the conservation reference | `MANUAL_DERIVED` | empirical Eq. (44) is a selectable comparison mode |
 | V2-A07 | Crop categories and edible-part growth are configurable | `PROJECT_EXTENSION` | manual explicitly lacks adequate grain/root compartments |
-| V2-A08 | Animal paths are minimal inventory models | `PROJECT_EXTENSION` | not all historical UFOTRI animal detail is claimed |
+| V2-A08 | Animal paths use minimal inventories; beef uses explicit continuous herd turnover and product storage | `PROJECT_EXTENSION` | turnover and edible mass are replaceable assumptions; dose consumes only available produced activity |
 | V2-A09 | Dose is research screening only | project scope | no regulatory or site-validation claim |
 | V2-A10 | Three-box soil uses manual layer depths/root fractions but a conservative box solver, not Richards Eq. (37) | `PROJECT_EXTENSION` | full PDE and soil-specific hydraulic inversion deferred |
 | V2-A11 | Uncertainty distributions and seeds are configuration | `PROJECT_EXTENSION` | deterministic core remains independently testable |

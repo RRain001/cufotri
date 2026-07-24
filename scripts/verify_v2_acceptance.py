@@ -113,6 +113,19 @@ def _case_checks() -> dict[str, dict]:
     dose_frame = run_short_case(dose)
     if dose_frame["total_effective_dose_sv"].iloc[-1] <= 0:
         raise ValueError("Dose acceptance failed")
+    beef = load_configuration(
+        ROOT / "configs/default_parameters.yaml",
+        ROOT / "configs/v2/v2_full_adult_dose.yaml",
+    )
+    beef_frame = run_short_case(beef)
+    if (
+        beef_frame["beef_produced_hto_bq_m2"].iloc[-1] <= 0.0
+        or beef_frame["beef_consumed_hto_bq_m2"].iloc[-1] <= 0.0
+        or beef_frame["meat_dose_sv"].iloc[-1] <= 0.0
+        or beef_frame["animal_product_activity_residual_bq_m2"].abs().max()
+        > 1.0e-12
+    ):
+        raise ValueError("Conservative beef-production acceptance failed")
 
     return {
         "wet_scavenging": {
@@ -144,6 +157,19 @@ def _case_checks() -> dict[str, dict]:
             "steps": len(dose_frame),
             "final_total_effective_dose_sv": float(
                 dose_frame["total_effective_dose_sv"].iloc[-1]
+            ),
+        },
+        "beef_boundary": {
+            "steps": len(beef_frame),
+            "produced_hto_bq_m2": float(
+                beef_frame["beef_produced_hto_bq_m2"].iloc[-1]
+            ),
+            "consumed_hto_bq_m2": float(
+                beef_frame["beef_consumed_hto_bq_m2"].iloc[-1]
+            ),
+            "final_meat_dose_sv": float(beef_frame["meat_dose_sv"].iloc[-1]),
+            "max_combined_residual_bq_m2": float(
+                beef_frame["animal_product_activity_residual_bq_m2"].abs().max()
             ),
         },
     }
@@ -268,6 +294,7 @@ def recompute() -> list[str]:
                 "wet_scavenging": "precipitation_power_law",
                 "leaf_exchange": "bidirectional_resistance",
                 "foodchain": "minimal_cow",
+                "beef_product": "continuous_herd_turnover",
                 "dose": "research screening dose",
             },
             "runtime_started_utc": started.isoformat(),

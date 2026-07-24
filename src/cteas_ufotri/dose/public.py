@@ -76,16 +76,20 @@ def calculate_public_dose_step(
         * float(age_parameters["milk_l_day"])
         * day_fraction
     )
-    meat_hto_bq = (
-        max(concentrations.get("beef_hto_bq_kg", 0.0), 0.0)
-        * float(age_parameters["beef_kg_day"])
-        * day_fraction
-    )
-    meat_obt_bq = (
-        max(concentrations.get("beef_obt_bq_kg", 0.0), 0.0)
-        * float(age_parameters["beef_kg_day"])
-        * day_fraction
-    )
+    if "beef_consumed_hto_bq_step" in concentrations:
+        meat_hto_bq = max(concentrations["beef_consumed_hto_bq_step"], 0.0)
+        meat_obt_bq = max(concentrations["beef_consumed_obt_bq_step"], 0.0)
+    else:
+        meat_hto_bq = (
+            max(concentrations.get("beef_hto_bq_kg", 0.0), 0.0)
+            * float(age_parameters["beef_kg_day"])
+            * day_fraction
+        )
+        meat_obt_bq = (
+            max(concentrations.get("beef_obt_bq_kg", 0.0), 0.0)
+            * float(age_parameters["beef_kg_day"])
+            * day_fraction
+        )
     plant = plant_hto_bq * hto_dc + plant_obt_bq * obt_dc
     milk = milk_hto_bq * hto_dc + milk_obt_bq * obt_dc
     meat = meat_hto_bq * hto_dc + meat_obt_bq * obt_dc
@@ -107,4 +111,3 @@ def calculate_public_dose_step(
         total_obt,
         total_hto + total_obt,
     )
-

@@ -16,7 +16,7 @@ All cases inherit the frozen stack at 117.141610855 E, 31.939774444 N,
 | `v2_accident_plant_obt_14d` | one-hour accident and 14 d plant OBT |
 | `v2_crop_ingestion_season` | 14 d leafy-crop ingestion |
 | `v2_pasture_milk_pathway` | 14 d pasture-cow-milk transfer |
-| `v2_full_adult_dose` | 14 d full adult screening dose |
+| `v2_full_adult_dose` | 14 d adult dose with conservative continuous-turnover beef product |
 | `v2_leaf_exchange_food_dose_72h` | isolated air-leaf to TFWT/OBT, edible plant, and ingestion dose |
 
 The repository contains only 48 h of matching ERA5. The 72 h case therefore

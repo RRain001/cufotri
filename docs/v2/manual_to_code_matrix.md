@@ -13,7 +13,7 @@
 | TFWT | Eq. (3),(27)-(30) | `Mp/Wp` | `plant/tfwt.py`, `plant/edible.py` | manual-derived/project extension | whole-edible inventory and equilibrium tests | S5 pass |
 | OBT | Sec. 2.2.6; Eq. (65)-(66),(105) | `Mobt` | `plant/obt.py`, `plant/edible.py` | manual/project extension | formation-turnover-allocation closure | S5 pass |
 | Crop growth | manual limitation after Eq. (107) | LAI, biomass, edible fraction | `crop/` | project extension | phenology, shared LAI, edible harvest | S5 pass project extension |
-| Food chain | Eq. (45)-(105) | plant/animal/milk inventories | `foodchain/` | manual + provisional YAML | ecological ledger, milk/beef paths | S6 pass minimal pathways |
+| Food chain | Eq. (45)-(105) | plant/animal/milk/beef-product inventories | `foodchain/` | manual + provisional YAML | ecological ledger, milk, continuous herd turnover, product-limited beef dose | RC1 S3 pass minimal conservative pathways |
 | Inhalation | Eq. (106) | inhaled activity | `dose/public.py` | HPA-CRCE-004 YAML | analytic pathway tests | S7 pass |
 | Skin absorption | Eq. (106) | separate skin dose | `dose/public.py` | manual factor/YAML | decomposition sum | S7 pass |
 | Ingestion | Eq. (107) | food activity intake | `dose/public.py` | HPA-CRCE-004 + habits YAML | food/pathway sums | S7 pass |

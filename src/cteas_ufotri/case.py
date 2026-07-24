@@ -31,7 +31,13 @@ from .meteorology.derived_variables import wind_speed_at_height
 from .plant.obt import day_night_formation_rate_s
 from .crop.phenology import CropParameters, growth_fraction_at_time, lai_at_time
 from .plant.edible import edible_concentrations
-from .foodchain.model import AnimalState, plant_food_outputs, step_animal
+from .foodchain.model import (
+    AnimalState,
+    BeefProductState,
+    plant_food_outputs,
+    step_animal,
+    step_beef_product,
+)
 from .dose.public import DoseIncrement, calculate_public_dose_step
 
 
@@ -140,6 +146,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         crop_config["parameters"][crop_config["active_crop"]],
     )
     animal_state = AnimalState()
+    beef_product_state = BeefProductState()
     dose_totals = {
         name: 0.0
         for name in DoseIncrement.__dataclass_fields__
@@ -152,6 +159,16 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
     cumulative_wet_surface_input_bq = 0.0
     cumulative_surface_boundary_output_bq_m2 = 0.0
     cumulative_surface_decay_bq_m2 = 0.0
+    cumulative_beef_produced_hto_bq_m2 = 0.0
+    cumulative_beef_produced_obt_bq_m2 = 0.0
+    cumulative_beef_consumed_hto_bq_m2 = 0.0
+    cumulative_beef_consumed_obt_bq_m2 = 0.0
+    cumulative_beef_decay_bq_m2 = 0.0
+    cumulative_animal_input_bq_m2 = 0.0
+    cumulative_animal_milk_output_bq_m2 = 0.0
+    cumulative_animal_excretion_bq_m2 = 0.0
+    cumulative_animal_decay_bq_m2 = 0.0
+    cumulative_animal_slaughter_bq_m2 = 0.0
     for index in range(steps):
         elapsed = index * dt
         release_duration_h = config["source"].get(
@@ -448,6 +465,12 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             config["physics"]["water_density_kg_m3"],
         )
         if animal_enabled:
+            beef_config = config["foodchain"]["animal_products"]["beef"]
+            slaughter_rate_s = (
+                float(beef_config["turnover_rate_d-1"]) / 86400.0
+                if beef_config["mode"] == "continuous_herd_turnover"
+                else 0.0
+            )
             animal_state, animal_diag = step_animal(
                 animal_state,
                 dt,
@@ -455,10 +478,13 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 pre_food["pasture_obt_bq_kg_fresh"],
                 config["foodchain"]["drinking_water_hto_bq_l"],
                 config["foodchain"],
+                slaughter_rate_s=slaughter_rate_s,
                 feed_hto_input_bq_m2_s=diag.edible_feed_hto_bq_m2_s,
                 feed_obt_input_bq_m2_s=diag.edible_feed_obt_bq_m2_s,
             )
         else:
+            beef_config = config["foodchain"]["animal_products"]["beef"]
+            slaughter_rate_s = 0.0
             _, animal_diag = step_animal(
                 AnimalState(),
                 dt,
@@ -467,12 +493,72 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 0.0,
                 config["foodchain"],
             )
+        beef_mass_production_kg_m2_s = (
+            slaughter_rate_s
+            * float(beef_config["edible_meat_mass_kg_per_head"])
+            / float(config["foodchain"]["animal_support_area_m2"])
+        )
+        requested_beef_consumption_kg_m2_s = (
+            float(
+                config["dose"]["age_groups"][
+                    config["dose"]["active_age_group"]
+                ]["beef_kg_day"]
+            )
+            / 86400.0
+            / float(config["foodchain"]["animal_support_area_m2"])
+            if config["dose"]["enabled"]
+            else 0.0
+        )
+        beef_product_state, beef_diag = step_beef_product(
+            beef_product_state,
+            dt,
+            animal_diag.slaughter_hto_output_bq_s,
+            animal_diag.slaughter_obt_output_bq_s,
+            beef_mass_production_kg_m2_s,
+            requested_beef_consumption_kg_m2_s,
+            float(config["foodchain"]["decay_rate_s"]),
+        )
+        cumulative_beef_produced_hto_bq_m2 += (
+            beef_diag.produced_hto_bq_m2_s * dt
+        )
+        cumulative_beef_produced_obt_bq_m2 += (
+            beef_diag.produced_obt_bq_m2_s * dt
+        )
+        cumulative_beef_consumed_hto_bq_m2 += (
+            beef_diag.consumed_hto_bq_m2_s * dt
+        )
+        cumulative_beef_consumed_obt_bq_m2 += (
+            beef_diag.consumed_obt_bq_m2_s * dt
+        )
+        cumulative_beef_decay_bq_m2 += beef_diag.decay_loss_bq_m2_s * dt
+        cumulative_animal_input_bq_m2 += animal_diag.closure.input_bq
+        cumulative_animal_milk_output_bq_m2 += (
+            animal_diag.milk_hto_output_bq_s
+            + animal_diag.milk_obt_output_bq_s
+        ) * dt
+        cumulative_animal_excretion_bq_m2 += (
+            animal_diag.excretion_output_bq_s * dt
+        )
+        cumulative_animal_decay_bq_m2 += animal_diag.closure.decay_bq
+        cumulative_animal_slaughter_bq_m2 += (
+            animal_diag.slaughter_output_bq_s * dt
+        )
         dose_concentrations = {
             **food_outputs,
             "milk_hto_bq_l": animal_diag.milk_hto_bq_l,
             "milk_obt_bq_l": animal_diag.milk_obt_bq_l,
-            "beef_hto_bq_kg": animal_diag.beef_hto_bq_kg,
-            "beef_obt_bq_kg": animal_diag.beef_obt_bq_kg,
+            "beef_hto_bq_kg": beef_diag.beef_hto_bq_kg,
+            "beef_obt_bq_kg": beef_diag.beef_obt_bq_kg,
+            "beef_consumed_hto_bq_step": (
+                beef_diag.consumed_hto_bq_m2_s
+                * dt
+                * float(config["foodchain"]["animal_support_area_m2"])
+            ),
+            "beef_consumed_obt_bq_step": (
+                beef_diag.consumed_obt_bq_m2_s
+                * dt
+                * float(config["foodchain"]["animal_support_area_m2"])
+            ),
             "drinking_water_hto_bq_l": config["dose"][
                 "drinking_water_hto_bq_l"
             ],
@@ -626,16 +712,51 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             **food_outputs,
             "milk_hto_bq_l": animal_diag.milk_hto_bq_l,
             "milk_obt_bq_l": animal_diag.milk_obt_bq_l,
-            "beef_hto_bq_kg": animal_diag.beef_hto_bq_kg,
-            "beef_obt_bq_kg": animal_diag.beef_obt_bq_kg,
+            "beef_hto_bq_kg": beef_diag.beef_hto_bq_kg,
+            "beef_obt_bq_kg": beef_diag.beef_obt_bq_kg,
+            "beef_product_hto_bq_m2": beef_product_state.hto_bq_m2,
+            "beef_product_obt_bq_m2": beef_product_state.obt_bq_m2,
+            "beef_product_mass_kg_m2": beef_product_state.edible_mass_kg_m2,
+            "beef_produced_hto_bq_m2": cumulative_beef_produced_hto_bq_m2,
+            "beef_produced_obt_bq_m2": cumulative_beef_produced_obt_bq_m2,
+            "beef_consumed_hto_bq_m2": cumulative_beef_consumed_hto_bq_m2,
+            "beef_consumed_obt_bq_m2": cumulative_beef_consumed_obt_bq_m2,
+            "beef_product_decay_bq_m2": cumulative_beef_decay_bq_m2,
+            "beef_produced_mass_kg_m2_s": beef_diag.produced_mass_kg_m2_s,
+            "beef_consumed_mass_kg_m2_s": beef_diag.consumed_mass_kg_m2_s,
+            "beef_product_activity_residual_bq_m2": (
+                beef_diag.activity_closure.residual_bq
+            ),
+            "beef_product_mass_residual_kg_m2": beef_diag.mass_residual_kg_m2,
             "animal_body_hto_bq_m2": animal_state.body_hto_bq,
             "animal_body_obt_bq_m2": animal_state.body_obt_bq,
+            "animal_input_bq_m2": cumulative_animal_input_bq_m2,
+            "animal_milk_output_bq_m2": (
+                cumulative_animal_milk_output_bq_m2
+            ),
+            "animal_excretion_bq_m2": cumulative_animal_excretion_bq_m2,
+            "animal_decay_bq_m2": cumulative_animal_decay_bq_m2,
+            "animal_slaughter_bq_m2": cumulative_animal_slaughter_bq_m2,
+            "animal_product_activity_residual_bq_m2": (
+                cumulative_animal_input_bq_m2
+                - cumulative_animal_milk_output_bq_m2
+                - cumulative_animal_excretion_bq_m2
+                - cumulative_animal_decay_bq_m2
+                - cumulative_beef_consumed_hto_bq_m2
+                - cumulative_beef_consumed_obt_bq_m2
+                - cumulative_beef_decay_bq_m2
+                - animal_state.total_bq
+                - beef_product_state.total_bq_m2
+            ),
             "ecological_box_relative_residual": (
                 diag.surface_box_mass_closure.residual_bq_m2
                 + animal_diag.closure.residual_bq
+                + beef_diag.activity_closure.residual_bq
             )
             / max(
-                state.total_hto_bq_m2 + animal_state.total_bq,
+                state.total_hto_bq_m2
+                + animal_state.total_bq
+                + beef_product_state.total_bq_m2,
                 1.0e-30,
             ),
             **dose_totals,
@@ -678,6 +799,10 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "combined_deposition_interface_residual_bq",
             "net_leaf_exchange_flux",
             "leaf_monin_obukhov_length_m",
+            "beef_product_activity_residual_bq_m2",
+            "beef_product_mass_residual_kg_m2",
+            "ecological_box_relative_residual",
+            "animal_product_activity_residual_bq_m2",
         ]
     )
     if not np.isfinite(numeric.to_numpy()).all():

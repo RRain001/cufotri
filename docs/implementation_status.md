@@ -11,6 +11,7 @@ V2_STATUS = PHYSICS_REMEDIATION_RC1_IN_PROGRESS
 FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
 RC1_STAGE_1 = PASS
 RC1_STAGE_2 = PASS
+RC1_STAGE_3 = PASS
 DRY_INTERFACE_CONSERVATION_STATUS = PASS
 WET_INTERFACE_CONSERVATION_STATUS = PASS
 DRY_WET_COMPETITION_STATUS = PASS
@@ -18,7 +19,9 @@ ACTIVITY_PROPAGATION_STATUS = PASS_STAGE_1_SCOPE
 LEAF_RESISTANCE_METEOROLOGY_STATUS = PASS
 LAI_APPLICATION_STATUS = PASS_NO_DOUBLE_COUNT
 LEAF_END_TO_END_STATUS = PASS
-RC1_TEST_STATUS = PASS_124
+BEEF_PRODUCTION_BOUNDARY_STATUS = PASS
+MEAT_DOSE_CONSERVATION_STATUS = PASS
+RC1_TEST_STATUS = PASS_134
 RC1_V1_RECOMPUTE_STATUS = PASS
 RC1_V2_RECOMPUTE_STATUS = PASS
 ```
@@ -40,6 +43,13 @@ formal case disables deposition and root uptake and independently propagates
 air-leaf exchange through TFWT, OBT, edible leafy crop, and ingestion dose.
 The mode-off control is zero, and the 600/300/120/60 s endpoints converge
 within 1%.
+
+Stage 3 adds a continuous representative-herd turnover boundary. Slaughter
+HTO/OBT is removed from the animal once, becomes produced beef activity,
+decays or remains in explicit product storage, and can be consumed only up to
+the available product mass. The dose module uses actual consumed activity.
+Mode `off`, zero turnover, product exhaustion, stopped production, product
+closure, and combined animal/product closure are independently tested.
 
 The historical V2 status below records the pre-remediation implementation and
 must not be interpreted as the current RC1 acceptance state.

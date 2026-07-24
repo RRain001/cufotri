@@ -51,6 +51,14 @@ ingestion dose are attributable to the air-leaf interface. A mode-off control
 must give zero for that isolated plant/food pathway. Results at 600, 300, 120,
 and 60 s must agree within 1% for the declared endpoint set.
 
+The formal full-dose case uses `continuous_herd_turnover`. Slaughter activity
+is removed from the animal HTO/OBT inventories and enters a beef-product
+inventory exactly once. Product mass and activity are stored, radioactive
+decay is explicit, consumption is limited by available mass, and the dose
+module receives the actual consumed HTO/OBT activity rather than an unlimited
+animal-body concentration surrogate. Mode `off` must produce zero beef
+inventory and zero meat dose.
+
 Acceptance thresholds belong beside each benchmark. A candidate may be
 `ACCEPT_WITH_REMAINING_LIMITATIONS` when all declared project invariants pass
 but an optional module remains honestly experimental or deferred.

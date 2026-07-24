@@ -155,8 +155,12 @@ foodchain:
   drinking_water_l_day: 50.0
   drinking_water_hto_bq_l: 0.0
   milk_production_l_day: 15.5
-  beef_edible_mass_kg: 200.0
   animal_support_area_m2: 4000.0
+  animal_products:
+    beef:
+      mode: continuous_herd_turnover
+      turnover_rate_d-1: 0.002
+      edible_meat_mass_kg_per_head: 200.0
   # Manual Eq. (82)-(105), converted from d-1 to s-1.
   hto_excretion_rate_s: 1.8518518519e-6
   obt_excretion_rate_s: 2.3148148148e-8

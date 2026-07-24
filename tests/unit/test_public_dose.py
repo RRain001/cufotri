@@ -81,3 +81,25 @@ def test_zero_exposure_gives_zero_dose():
     )
     assert result.total_effective_dose_sv == 0.0
 
+
+def test_direct_consumed_beef_activity_overrides_unbounded_concentration_path():
+    dose = _dose_config()
+    concentrations = {
+        "beef_hto_bq_kg": 1.0e12,
+        "beef_obt_bq_kg": 1.0e12,
+        "beef_consumed_hto_bq_step": 2.0,
+        "beef_consumed_obt_bq_step": 3.0,
+    }
+    result = calculate_public_dose_step(
+        600.0,
+        0.0,
+        concentrations,
+        dose["age_groups"]["adult"],
+        skin_to_inhalation_factor=0.5,
+    )
+    expected = (
+        2.0 * dose["age_groups"]["adult"]["hto_dose_coefficient_sv_bq"]
+        + 3.0 * dose["age_groups"]["adult"]["obt_ingestion_dose_coefficient_sv_bq"]
+    )
+    assert result.meat_dose_sv == pytest.approx(expected)
+    assert result.total_effective_dose_sv == pytest.approx(expected)

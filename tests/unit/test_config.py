@@ -36,3 +36,12 @@ def test_deposition_footprint_area_must_be_explicit_and_positive(
     parameters_path.write_text(yaml.safe_dump(parameters), encoding="utf-8")
     with pytest.raises(ValueError, match="footprint area"):
         load_configuration(parameters_path, "configs/test_case.yaml")
+
+
+def test_invalid_beef_production_mode_is_rejected(tmp_path):
+    parameters = load_yaml("configs/default_parameters.yaml")
+    parameters["foodchain"]["animal_products"]["beef"]["mode"] = "body_surrogate"
+    parameters_path = tmp_path / "parameters.yaml"
+    parameters_path.write_text(yaml.safe_dump(parameters), encoding="utf-8")
+    with pytest.raises(ValueError, match="beef-production mode"):
+        load_configuration(parameters_path, "configs/test_case.yaml")

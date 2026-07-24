@@ -328,6 +328,9 @@ def run(output_root: Path, era5_path: Path) -> dict:
                 "reemission": config["reemission"]["mode"],
                 "crop": config["crops"]["active_crop"],
                 "foodchain": config["foodchain"]["animal_mode"],
+                "beef_product": config["foodchain"]["animal_products"]["beef"][
+                    "mode"
+                ],
                 "dose_age_group": config["dose"]["active_age_group"],
             },
             "runtime_started_utc": started.isoformat(),
