@@ -51,8 +51,27 @@ def load_configuration(
     depletion = config["atmosphere"]["depletion"]
     if depletion["method"] != "segment_exponential":
         raise ValueError("Unsupported atmospheric depletion method")
-    if depletion["wet_scavenging_enabled"] and depletion["wet_scavenging_rate_s"] < 0:
-        raise ValueError("Wet scavenging rate must be non-negative")
+    wet_mode = depletion.get(
+        "wet_scavenging_mode",
+        (
+            "constant_scavenging_coefficient"
+            if depletion.get("wet_scavenging_enabled", False)
+            else "off"
+        ),
+    )
+    if wet_mode not in {
+        "off",
+        "constant_scavenging_coefficient",
+        "precipitation_power_law",
+    }:
+        raise ValueError("Unsupported wet-scavenging mode")
+    if min(
+        float(depletion.get("constant_scavenging_coefficient_s", 0.0)),
+        float(depletion.get("power_law_a_s", 0.0)),
+        float(depletion.get("power_law_b", 1.0)),
+    ) < 0:
+        raise ValueError("Wet-scavenging parameters must be non-negative")
+    depletion["wet_scavenging_mode"] = wet_mode
     if config["soil"]["layer_model"] != "single_top_5cm":
         raise ValueError("The formal minimal baseline supports one 5 cm soil layer")
     root_fraction = config["plant"]["root_uptake_fraction_from_modelled_layer"]
@@ -72,6 +91,10 @@ def load_configuration(
         raise ValueError("Legacy atmospheric feedback area conflicts with coupling rectangle")
     config["atmosphere"]["area_source_length_m"] = float(rectangle["length_m"])
     config["atmosphere"]["area_source_width_m"] = float(rectangle["width_m"])
+    wet_area = float(depletion.get("wet_deposition_footprint_area_m2", derived_area))
+    if wet_area <= 0:
+        raise ValueError("Wet-deposition footprint area must be positive")
+    depletion["wet_deposition_footprint_area_m2"] = wet_area
     delay = float(coupling["reemission_feedback_delay_s"])
     if delay < 0 or delay % float(config["time_step_seconds"]) != 0:
         raise ValueError("Re-emission delay must be a non-negative multiple of dt")

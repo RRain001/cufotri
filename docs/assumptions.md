@@ -35,4 +35,9 @@
   manual's roughly 20% share in a multi-layer root system.
 - Winds below 0.5 m s-1 use and record an effective 0.5 m s-1 by default.
 - Dry plume depletion is a segment-exponential engineering approximation.
-  Wet scavenging is disabled and not implemented.
+  V2 wet scavenging uses the same competing-rate exponential. Its default mode
+  remains `off` for V1 regression. Power-law coefficients are `PROVISIONAL`;
+  precipitation is expressed in mm h-1.
+- V2 distributes wet plume loss uniformly over a configured representative
+  footprint. This is a `PROJECT_EXTENSION`, not the manual's full polar
+  deposition field.

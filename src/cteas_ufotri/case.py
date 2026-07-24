@@ -17,6 +17,10 @@ from .atmosphere.plume_rise import effective_stack_height_m
 from .atmosphere.dispersion_parameters import classify_pasquill_gifford
 from .atmosphere.calm_wind import resolve_calm_wind
 from .atmosphere.depletion import segment_exponential_depletion
+from .atmosphere.wet_deposition import (
+    scavenging_coefficient_s,
+    wet_deposition_ledger,
+)
 from .coupling.integrator import advance
 from .coupling.state import State
 from .meteorology.fallback_fluxes import (
@@ -176,6 +180,24 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         else:
             raise ValueError("Unsupported atmospheric stability mode")
         depletion_config = config["atmosphere"]["depletion"]
+        wet_mode = depletion_config.get(
+            "wet_scavenging_mode",
+            (
+                "constant_scavenging_coefficient"
+                if depletion_config.get("wet_scavenging_enabled", False)
+                else "off"
+            ),
+        )
+        wet_rate = scavenging_coefficient_s(
+            met["precipitation_m_s"],
+            wet_mode,
+            constant_coefficient_s=depletion_config.get(
+                "constant_scavenging_coefficient_s",
+                depletion_config.get("wet_scavenging_rate_s", 0.0),
+            ),
+            power_law_a_s=depletion_config.get("power_law_a_s", 0.0),
+            power_law_b=depletion_config.get("power_law_b", 1.0),
+        )
         if depletion_config["enabled"]:
             depletion = segment_exponential_depletion(
                 config["source"]["emission_rate_bq_s"],
@@ -185,8 +207,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 depletion_config["mixing_height_m"],
                 depletion_config["segments"],
                 dry_enabled=depletion_config["dry_deposition_enabled"],
-                wet_enabled=depletion_config["wet_scavenging_enabled"],
-                wet_scavenging_rate_s=depletion_config["wet_scavenging_rate_s"],
+                wet_enabled=wet_mode != "off",
+                wet_scavenging_rate_s=wet_rate,
             )
         else:
             depletion = segment_exponential_depletion(
@@ -198,6 +220,14 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 depletion_config["segments"],
                 dry_enabled=False,
             )
+        wet_ledger = wet_deposition_ledger(
+            depletion.wet_depletion_bq_s,
+            wet_rate,
+            depletion_config.get(
+                "wet_deposition_footprint_area_m2",
+                config["coupling"]["feedback_area_m2"],
+            ),
+        )
         primary = point_source_ground_concentration(
             0.0 if calm.skip_gaussian else depletion.source_after_bq_s,
             downwind_m,
@@ -274,6 +304,9 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             obt_formation_rate_s=formation_rate,
             elapsed_since_release_s=elapsed,
             is_day=is_day,
+            atmospheric_wet_deposition_bq_m2_s=(
+                wet_ledger.surface_flux_bq_m2_s
+            ),
         )
         if delay_steps:
             root_history.popleft()
@@ -294,8 +327,12 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "stack_release_bq_s": config["source"]["emission_rate_bq_s"],
             "plume_source_before_depletion_bq_s": depletion.source_before_bq_s,
             "plume_source_after_depletion_bq_s": depletion.source_after_bq_s,
+            "remaining_source_bq_s": depletion.source_after_bq_s,
             "dry_depletion_bq_s": depletion.dry_depletion_bq_s,
             "wet_depletion_bq_s": depletion.wet_depletion_bq_s,
+            "wet_scavenging_coefficient_s": wet_rate,
+            "wet_deposition_flux_bq_m2_s": wet_ledger.surface_flux_bq_m2_s,
+            "wet_deposition_footprint_area_m2": wet_ledger.footprint_area_m2,
             "surface_deposition_bq_s": (
                 depletion.dry_depletion_bq_s + depletion.wet_depletion_bq_s
             ),
@@ -323,6 +360,9 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "runoff": diag.runoff_m_s,
             "rain_infiltration_hto_flux": diag.rain_infiltration_hto_bq_m2_s,
             "rain_runoff_hto_flux": diag.rain_runoff_hto_bq_m2_s,
+            "atmospheric_wet_deposition_hto_flux": (
+                diag.atmospheric_wet_deposition_bq_m2_s
+            ),
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,
             "plant_tfwt_concentration": state.plant_tfwt_bq_m2 / config["plant"]["water_storage_m"],
@@ -345,7 +385,11 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
     frame = pd.DataFrame(rows)
     numeric = frame.select_dtypes(include=[np.number])
     physical = numeric.drop(
-        columns=["mass_balance_error", "surface_box_absolute_residual_bq_m2"]
+        columns=[
+            "mass_balance_error",
+            "surface_box_absolute_residual_bq_m2",
+            "depletion_deposition_mismatch_bq_s",
+        ]
     )
     if not np.isfinite(numeric.to_numpy()).all() or (physical < -1.0e-12).any().any():
         raise RuntimeError("Short case produced invalid values")

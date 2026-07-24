@@ -9,10 +9,16 @@ atmosphere:
     enabled: true
     dry_deposition_enabled: true
     wet_scavenging_enabled: false
+    wet_scavenging_mode: "off"
     method: segment_exponential
     mixing_height_m: 1000.0
     segments: 20
     wet_scavenging_rate_s: 0.0
+    constant_scavenging_coefficient_s: 0.0
+    # PROVISIONAL project parameterization; P is in mm h-1.
+    power_law_a_s: 1.0e-5
+    power_law_b: 0.8
+    wet_deposition_footprint_area_m2: 1000000.0
   fixed_plume_rise_m: 15.0
   plume_rise_mode: fixed
   stability_mode: fixed

@@ -27,6 +27,7 @@ class StepDiagnostics:
     runoff_m_s: float
     rain_infiltration_hto_bq_m2_s: float
     rain_runoff_hto_bq_m2_s: float
+    atmospheric_wet_deposition_bq_m2_s: float
     soil_reemission_bq_m2_s: float
     plant_reemission_bq_m2_s: float
     total_reemission_bq_m2_s: float
@@ -51,6 +52,7 @@ def advance(
     obt_formation_rate_s: float | None = None,
     elapsed_since_release_s: float = 0.0,
     is_day: bool = True,
+    atmospheric_wet_deposition_bq_m2_s: float = 0.0,
 ) -> tuple[State, StepDiagnostics]:
     soil = config["soil"]
     plant = config["plant"]
@@ -83,7 +85,8 @@ def advance(
         * max(air_concentration_bq_m3, 0.0)
     )
     rain_runoff = water.runoff_m_s * rain_concentration
-    deposition = dry_deposition + rain_infiltration
+    wet_deposition = max(atmospheric_wet_deposition_bq_m2_s, 0.0)
+    deposition = dry_deposition + rain_infiltration + wet_deposition
     leaf = direct_leaf_flux_bq_m2_s(
         air_concentration_bq_m3,
         plant["direct_leaf_velocity_m_s"],
@@ -202,6 +205,7 @@ def advance(
         water.runoff_m_s,
         rain_infiltration,
         rain_runoff,
+        wet_deposition,
         soil_out["evaporation"],
         plant_out["transpiration"],
         soil_out["evaporation"] + plant_out["transpiration"],

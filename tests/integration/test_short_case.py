@@ -117,6 +117,38 @@ def test_depletion_enabled_reduces_primary_concentration():
     ].iloc[0]
 
 
+def test_wet_scavenging_surface_ledger_and_off_regression():
+    wet = load_configuration(
+        "configs/default_parameters.yaml", "configs/test_case.yaml"
+    )
+    wet["duration_hours"] = 1.0
+    wet["synthetic_forcing"]["rain_start_hour"] = 0.0
+    wet["synthetic_forcing"]["rain_end_hour"] = 1.0
+    wet["synthetic_forcing"]["rain_rate_m_s"] = 2.0e-6
+    wet["atmosphere"]["depletion"]["wet_scavenging_mode"] = (
+        "precipitation_power_law"
+    )
+    wet_frame = run_short_case(wet)
+    area = wet["atmosphere"]["depletion"]["wet_deposition_footprint_area_m2"]
+    assert (wet_frame["wet_scavenging_coefficient_s"] > 0.0).all()
+    assert (wet_frame["wet_depletion_bq_s"] > 0.0).all()
+    assert (
+        wet_frame["wet_deposition_flux_bq_m2_s"] * area
+    ).to_numpy() == pytest.approx(wet_frame["wet_depletion_bq_s"].to_numpy())
+    assert wet_frame["depletion_deposition_mismatch_bq_s"].abs().max() < 1.0e-6
+
+    off = load_configuration(
+        "configs/default_parameters.yaml", "configs/test_case.yaml"
+    )
+    off["duration_hours"] = 1.0
+    off["synthetic_forcing"]["rain_start_hour"] = 0.0
+    off["synthetic_forcing"]["rain_end_hour"] = 1.0
+    off["synthetic_forcing"]["rain_rate_m_s"] = 2.0e-6
+    off_frame = run_short_case(off)
+    assert (off_frame["wet_depletion_bq_s"] == 0.0).all()
+    assert (off_frame["wet_deposition_flux_bq_m2_s"] == 0.0).all()
+
+
 @pytest.mark.parametrize("dt_s", [600, 300])
 def test_reemission_feedback_uses_physical_one_hour_delay(dt_s):
     config = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")

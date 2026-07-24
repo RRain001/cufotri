@@ -32,4 +32,24 @@ Below 0.5 m s-1, the default records
 `error` are supported alternatives. Dry fallout depletion is a
 `PROJECT_SIMPLIFICATION`:
 \(Q_{j+1}=Q_j\exp[-(v_d/H_m)\Delta x/u_{\mathrm{eff}}]\).
-This is not exact manual Eq. (6). Wet scavenging is `NOT_IMPLEMENTED`.
+This is not exact manual Eq. (6).
+
+## V2 wet scavenging
+
+Wet removal competes with dry removal in the same segment exponential:
+
+\[
+Q_{j+1}=Q_j\exp[-(\Lambda_{d,j}+\Lambda_{w,j})\Delta t_j].
+\]
+
+The loss is partitioned in proportion to the two rates, so
+`source_before = source_after + dry_depletion + wet_depletion` and activity is
+not counted twice. Wet modes are `off`, `constant_scavenging_coefficient`, and
+`precipitation_power_law`, where
+\(\Lambda_w=aP^b\), with \(P\) converted from m s-1 to mm h-1. The power-law
+defaults are a `PROVISIONAL` project parameterization.
+
+Wet source loss is distributed over the configured footprint:
+\(F_{wet}=\Delta Q_{wet}/A_{wet}\). This representative spatial ledger enters
+the surface inventory once. Rainwater HTO concentration remains a separate
+external input and is not inferred from plume washout.
