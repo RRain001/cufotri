@@ -37,3 +37,23 @@ Next command:
 ```bash
 .venv/bin/python scripts/verify_acceptance.py --recompute
 ```
+
+## Environmental pathways V2
+
+Development branch: `codex/ufotri-environmental-pathways-v2`
+
+```text
+V2_SCOPE_STATUS = FROZEN
+MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
+V2_IMPLEMENTATION_STAGE = STAGE_0_COMPLETE
+```
+
+The frozen scope, manual inventory, code mapping, architecture, assumptions,
+and validation strategy are in `docs/v2/`. Planned V2 functions are not
+represented as V1 functionality.
+
+Next V2 command:
+
+```bash
+.venv/bin/python -m pytest -q
+```
