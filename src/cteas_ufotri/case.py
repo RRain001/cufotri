@@ -147,6 +147,14 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
     calm_wind_event_count = 0
     for index in range(steps):
         elapsed = index * dt
+        release_duration_h = config["source"].get(
+            "release_duration_hours", config["duration_hours"]
+        )
+        stack_release_bq_s = (
+            config["source"]["emission_rate_bq_s"]
+            if elapsed < float(release_duration_h) * 3600.0
+            else 0.0
+        )
         if hourly_forcing is None:
             met = _forcing(elapsed, config)
         else:
@@ -238,7 +246,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         )
         if depletion_config["enabled"]:
             depletion = segment_exponential_depletion(
-                config["source"]["emission_rate_bq_s"],
+                stack_release_bq_s,
                 max(downwind_m, 0.0),
                 plume_wind_speed,
                 config["atmosphere"]["deposition_velocity_m_s"],
@@ -250,7 +258,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             )
         else:
             depletion = segment_exponential_depletion(
-                config["source"]["emission_rate_bq_s"],
+                stack_release_bq_s,
                 max(downwind_m, 0.0),
                 plume_wind_speed,
                 0.0,
@@ -476,7 +484,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "calm_wind_applied": calm.applied,
             "calm_wind_event_count": calm_wind_event_count,
             "reemission_feedback_delay_s": feedback_delay_s,
-            "stack_release_bq_s": config["source"]["emission_rate_bq_s"],
+            "stack_release_bq_s": stack_release_bq_s,
             "plume_source_before_depletion_bq_s": depletion.source_before_bq_s,
             "plume_source_after_depletion_bq_s": depletion.source_after_bq_s,
             "remaining_source_bq_s": depletion.source_after_bq_s,
