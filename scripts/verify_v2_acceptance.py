@@ -278,6 +278,21 @@ def recompute() -> list[str]:
         missing = [str(path) for path in required if not path.is_file()]
         if missing:
             raise ValueError(f"Missing V2 recompute artifacts: {missing}")
+        full_model_uncertainty = json.loads(
+            (end_to_end_root / "uncertainty_summary.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        if (
+            full_model_uncertainty["status"] != "PASS"
+            or full_model_uncertainty["sample_sizes"] != [64, 128, 256]
+            or len(full_model_uncertainty["additional_seeds"]) < 3
+            or not full_model_uncertainty["inactive_parameters"]
+            or not full_model_uncertainty["same_seed_reproducible"]
+            or full_model_uncertainty["model_run_count"]
+            != full_model_uncertainty["expected_model_run_count"]
+        ):
+            raise ValueError("Full-model mode-aware LHS acceptance failed")
 
         config_paths = [
             ROOT / "configs/default_parameters.yaml",
@@ -312,7 +327,8 @@ def recompute() -> list[str]:
             "v1_acceptance_output": v1.stdout.splitlines(),
             "case_checks": case_checks,
             "wet_parameter_sensitivity": wet_sensitivity,
-            "uncertainty": uncertainty,
+            "uncertainty_algorithm": uncertainty,
+            "full_model_uncertainty": full_model_uncertainty,
             "benchmark_record_count": len(benchmarks),
             "benchmark_category_counts": benchmark_counts,
             "end_to_end_summary_sha256": sha256(
@@ -332,7 +348,10 @@ def recompute() -> list[str]:
                 "PASS: wet/leaf/food/dose cases: "
                 + ", ".join(f"{name}={values['steps']} steps" for name, values in case_checks.items())
             ),
-            "PASS: fixed-seed LHS uncertainty sample",
+            (
+                "PASS: analytic LHS algorithm and full-model convergence "
+                "at n=64/128/256 with four seeds"
+            ),
             "PASS: 12-case wet-scavenging parameter grid",
             (
                 "PASS: categorized V2 evidence "

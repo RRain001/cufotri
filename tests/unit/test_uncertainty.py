@@ -5,6 +5,7 @@ import pytest
 
 from cteas_ufotri.analysis.uncertainty import (
     one_at_a_time_sensitivity,
+    partition_parameters_by_mode,
     run_uncertainty,
     sample_parameters,
 )
@@ -74,3 +75,15 @@ def test_oat_sensitivity_recovers_linear_derivatives():
     assert sensitivity["x"] == pytest.approx(1.0)
     assert sensitivity["y"] == pytest.approx(2.0)
 
+
+def test_mode_partition_marks_disabled_parameters_inactive():
+    specifications = [
+        {**SPECS[0], "active_when": [{"path": "mode", "equals": "on"}]},
+        {**SPECS[1], "active_when": [{"path": "mode", "equals": "off"}]},
+    ]
+    active, inactive = partition_parameters_by_mode(
+        {"mode": "on", "parameters": {"x": 1.0, "y": 2.0}},
+        specifications,
+    )
+    assert [item["name"] for item in active] == ["x"]
+    assert inactive == {"y": "inactive_by_mode:mode=on"}

@@ -20,6 +20,45 @@ class UncertaintyResult:
     pathway_contributions: dict[str, float]
 
 
+def _get_path(config: dict, path: str):
+    value = config
+    for key in path.split("."):
+        value = value[key]
+    return value
+
+
+def partition_parameters_by_mode(
+    config: dict,
+    specifications: list[dict],
+) -> tuple[list[dict], dict[str, str]]:
+    """Separate sampled parameters from parameters disabled by case modes."""
+
+    active: list[dict] = []
+    inactive: dict[str, str] = {}
+    for specification in specifications:
+        failed_condition = None
+        for condition in specification.get("active_when", []):
+            actual = _get_path(config, condition["path"])
+            if "equals" in condition:
+                matched = actual == condition["equals"]
+            elif "in" in condition:
+                matched = actual in condition["in"]
+            else:
+                raise ValueError("active_when requires 'equals' or 'in'")
+            if not matched:
+                failed_condition = (
+                    f"inactive_by_mode:{condition['path']}={actual!s}"
+                )
+                break
+        if failed_condition is None:
+            active.append(specification)
+        else:
+            inactive[specification["name"]] = failed_condition
+    if not active:
+        raise ValueError("No uncertainty parameters are active for this case")
+    return active, inactive
+
+
 def _unit_samples(count: int, dimensions: int, method: str, seed: int) -> np.ndarray:
     if count <= 0 or dimensions <= 0:
         raise ValueError("Sample count and dimension must be positive")

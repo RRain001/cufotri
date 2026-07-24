@@ -245,16 +245,45 @@ uncertainty:
       distribution: uniform
       low: 0.0025
       high: 0.0075
+      active_when:
+        - path: atmosphere.depletion.dry_deposition_enabled
+          equals: true
     - name: wet_scavenging_a
       path: atmosphere.depletion.power_law_a_s
       distribution: uniform
       low: 5.0e-6
-      high: 2.0e-5
+      high: 1.0e-4
+      active_when:
+        - path: atmosphere.depletion.wet_scavenging_mode
+          equals: precipitation_power_law
+    - name: wet_scavenging_b
+      path: atmosphere.depletion.power_law_b
+      distribution: uniform
+      low: 0.6
+      high: 1.0
+      active_when:
+        - path: atmosphere.depletion.wet_scavenging_mode
+          equals: precipitation_power_law
     - name: lai
       path: crops.parameters.generic_crop.constant_lai
       distribution: uniform
       low: 0.5
       high: 4.0
+      active_when:
+        - path: crops.active_crop
+          equals: generic_crop
+        - path: crops.lai_mode
+          equals: constant
+    - name: pasture_max_lai
+      path: crops.parameters.pasture.max_lai
+      distribution: uniform
+      low: 2.0
+      high: 5.0
+      active_when:
+        - path: crops.active_crop
+          equals: pasture
+        - path: crops.lai_mode
+          in: [piecewise_growth_stage, smooth_seasonal]
     - name: initial_soil_water
       path: soil.initial_water_m
       distribution: uniform
@@ -270,6 +299,25 @@ uncertainty:
       distribution: uniform
       low: 0.05
       high: 0.15
+      active_when:
+        - path: reemission.mode
+          equals: ufotri_empirical
+    - name: leaf_stomatal_resistance_day
+      path: plant.leaf_stomatal_resistance_day_s_m
+      distribution: uniform
+      low: 200.0
+      high: 800.0
+      active_when:
+        - path: plant.leaf_exchange_mode
+          equals: bidirectional_resistance
+    - name: leaf_characteristic_length
+      path: plant.leaf_characteristic_length_m
+      distribution: uniform
+      low: 0.02
+      high: 0.10
+      active_when:
+        - path: plant.leaf_exchange_mode
+          equals: bidirectional_resistance
     - name: obt_formation_rate
       path: plant.obt_formation_rate_s
       distribution: uniform
@@ -280,11 +328,49 @@ uncertainty:
       distribution: uniform
       low: 0.05
       high: 0.20
+      active_when:
+        - path: dose.enabled
+          equals: true
+        - path: dose.active_age_group
+          equals: adult
+        - path: crops.active_crop
+          equals: leafy_vegetable
+    - name: feed_intake
+      path: foodchain.feed_intake_kg_fresh_day
+      distribution: uniform
+      low: 30.0
+      high: 70.0
+      active_when:
+        - path: foodchain.animal_mode
+          equals: minimal_cow
+    - name: beef_turnover
+      path: foodchain.animal_products.beef.turnover_rate_d-1
+      distribution: uniform
+      low: 0.001
+      high: 0.004
+      active_when:
+        - path: foodchain.animal_products.beef.mode
+          equals: continuous_herd_turnover
     - name: adult_hto_dose_coefficient
       path: dose.age_groups.adult.hto_dose_coefficient_sv_bq
       distribution: uniform
       low: 1.6e-11
       high: 2.0e-11
+      active_when:
+        - path: dose.enabled
+          equals: true
+        - path: dose.active_age_group
+          equals: adult
+    - name: adult_obt_dose_coefficient
+      path: dose.age_groups.adult.obt_ingestion_dose_coefficient_sv_bq
+      distribution: uniform
+      low: 3.5e-11
+      high: 5.0e-11
+      active_when:
+        - path: dose.enabled
+          equals: true
+        - path: dose.active_age_group
+          equals: adult
 evapotranspiration:
   lai_shading_mode: radiation_term_only
 reemission:

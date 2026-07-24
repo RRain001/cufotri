@@ -24,7 +24,10 @@ import pandas as pd
 
 from cteas_ufotri.analysis.uncertainty import (
     one_at_a_time_sensitivity,
-    run_uncertainty,
+    partition_parameters_by_mode,
+)
+from cteas_ufotri.analysis.full_model_uncertainty import (
+    run_full_model_lhs_convergence,
 )
 from cteas_ufotri.case import _forcing, run_short_case
 from cteas_ufotri.config import load_configuration, load_yaml
@@ -169,39 +172,14 @@ def write_figures(frame: pd.DataFrame, directory: Path) -> None:
 
 
 def uncertainty_artifacts(config: dict, output_root: Path) -> dict:
+    specifications = config["uncertainty"]["parameters"]
+    summary = run_full_model_lhs_convergence(config, specifications)
+    if summary["status"] != "PASS":
+        raise ValueError("Full-model LHS convergence failed")
     model_config = json.loads(json.dumps(config))
-    model_config["duration_hours"] = 24.0
+    model_config["duration_hours"] = summary["audit_duration_hours"]
     model_config["time_step_seconds"] = 3600
-    specifications = [
-        {
-            "name": "deposition_velocity",
-            "path": "atmosphere.deposition_velocity_m_s",
-            "distribution": "uniform",
-            "low": 0.0025,
-            "high": 0.0075,
-        },
-        {
-            "name": "pasture_lai",
-            "path": "crops.parameters.pasture.max_lai",
-            "distribution": "uniform",
-            "low": 2.0,
-            "high": 5.0,
-        },
-        {
-            "name": "feed_intake",
-            "path": "foodchain.feed_intake_kg_fresh_day",
-            "distribution": "uniform",
-            "low": 30.0,
-            "high": 70.0,
-        },
-        {
-            "name": "adult_hto_coefficient",
-            "path": "dose.age_groups.adult.hto_dose_coefficient_sv_bq",
-            "distribution": "uniform",
-            "low": 1.6e-11,
-            "high": 2.0e-11,
-        },
-    ]
+    active, _ = partition_parameters_by_mode(model_config, specifications)
 
     def model(sample_config: dict) -> dict[str, float]:
         final = run_short_case(sample_config).iloc[-1]
@@ -217,41 +195,20 @@ def uncertainty_artifacts(config: dict, output_root: Path) -> dict:
             )
         }
 
-    result = run_uncertainty(
-        model,
-        model_config,
-        specifications,
-        12,
-        "latin_hypercube",
-        20260724,
-        pathway_output_names=[
-            "inhalation_dose_sv",
-            "skin_absorption_dose_sv",
-            "plant_ingestion_dose_sv",
-            "milk_dose_sv",
-            "meat_dose_sv",
-        ],
-    )
     oat = one_at_a_time_sensitivity(
         model,
         model_config,
-        specifications,
+        active,
         "total_effective_dose_sv",
     )
-    summary = {
-        "seed": result.seed,
-        "method": result.method,
-        "sample_count": 12,
-        "statistics": result.statistics,
-        "rank_correlations": result.rank_correlations,
-        "pathway_contributions": result.pathway_contributions,
-        "oat_sensitivity": oat,
-    }
+    summary["method"] = "latin_hypercube"
+    summary["oat_sensitivity"] = oat
     (output_root / "uncertainty_summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    dose_stats = result.statistics["total_effective_dose_sv"]
+    final_run = summary["sample_size_runs"][str(summary["sample_count"])]
+    dose_stats = final_run["statistics"]["total_effective_dose_sv"]
     fig, axis = plt.subplots(figsize=(5, 4))
     axis.errorbar(
         ["total dose"],
@@ -263,7 +220,7 @@ def uncertainty_artifacts(config: dict, output_root: Path) -> dict:
         fmt="o",
     )
     axis.set_ylabel("Sv")
-    axis.set_title("LHS 5-95% interval")
+    axis.set_title(f"Full-model LHS n={summary['sample_count']} 5-95% interval")
     fig.tight_layout()
     fig.savefig(output_root / "uncertainty_interval.png", dpi=140)
     plt.close(fig)

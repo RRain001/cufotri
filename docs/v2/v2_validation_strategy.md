@@ -66,6 +66,15 @@ Wet-scavenging validation records the selected named parameter set and actual
 each combination through soil, TFWT, OBT, edible food, and plant ingestion
 dose. These are uncertainty comparisons, not site calibration.
 
+Full-model uncertainty acceptance starts from the adult full-dose case and uses
+a declared 24 h computational audit horizon. Parameters are filtered by active
+model modes; excluded values are recorded as `inactive_by_mode`. LHS n=64,
+128, and 256 is compared for median, P5/P95, mean, standard deviation, and
+absolute-Spearman ranking. The n=256 result is also repeated with three
+additional seeds. Acceptance requires exact same-seed reproducibility, actual
+model reruns and parameter writes, stable quantiles, and either stable rankings
+or an explicit `LIMITED_WITH_EVIDENCE` result.
+
 Acceptance thresholds belong beside each benchmark. A candidate may be
 `ACCEPT_WITH_REMAINING_LIMITATIONS` when all declared project invariants pass
 but an optional module remains honestly experimental or deferred.

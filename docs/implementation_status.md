@@ -179,11 +179,15 @@ deep leakage. It is explicitly experimental and standalone; selecting it in
 the formal short-case coupler returns a clear error rather than silently using
 the single-layer implementation.
 
-Stage 9 adds fixed-seed Monte Carlo and Latin Hypercube sampling, median,
+Stage 9 adds mode-aware Monte Carlo and Latin Hypercube sampling, median,
 5/95-percentile, mean and standard deviation summaries, parameter-output
 Spearman correlations, one-at-a-time finite-difference sensitivities, and
-normalized pathway contributions. Parameter distributions are centralized in
-YAML and are explicitly project-level uncertainty assumptions.
+normalized pathway contributions. Disabled parameters are recorded as
+`inactive_by_mode` instead of zero sensitivity. The real full-dose audit runs
+LHS n=64/128/256 with a primary seed and three additional seeds, establishes
+n=256 as the formal minimum, and records stable quantiles plus
+`LIMITED_WITH_EVIDENCE` for the weak-parameter rank ordering. Parameter
+distributions are centralized in YAML as project-level uncertainty assumptions.
 
 Stage 10 provides a recomputable benchmark suite with ten independent analytic
 checks, five UFOTRI-manual numeric anchors, two literature coefficient
