@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from cteas_ufotri.case import run_short_case
 from cteas_ufotri.config import load_configuration
 from cteas_ufotri.soil.multibox import (
     ThreeBoxSoilState,
@@ -73,3 +74,14 @@ def test_only_surface_layer_evaporates_and_diffusion_is_optional():
     assert diagnostics.surface_evaporation_hto_bq_m2_s > 0.0
     assert abs(diagnostics.hto_residual_bq_m2) < 1.0e-10
 
+
+def test_formal_short_case_rejects_experimental_three_box_selection():
+    config = load_configuration(
+        "configs/default_parameters.yaml", "configs/test_case.yaml"
+    )
+    config["soil"]["layer_model"] = "surface_root_deep_3box"
+    with pytest.raises(
+        ValueError,
+        match="experimental standalone soil API",
+    ):
+        run_short_case(config)

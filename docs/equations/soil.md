@@ -35,3 +35,6 @@ HTO outflows are proportionally limited.
 The layer depths and 20/40/40% nutrient-crop roots are manual anchors, but the
 box hydraulics are a `PROJECT_EXTENSION`, not a solution of Richards Eq. (37).
 The API is experimental and is not selected by the formal short-case coupler.
+Selecting it in `run_short_case` raises an error; RC1 makes no formal
+multi-layer performance claim. See
+`docs/v2/multibox_integration_roadmap.md` for the deferred coupling contract.

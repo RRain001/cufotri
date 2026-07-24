@@ -16,7 +16,8 @@ HTO atmosphere-soil-plant-food pathway-dose research prototype
 ```
 
 It includes HTO Gaussian transport, dry and wet plume depletion and deposition,
-surface and optional three-box soil, bidirectional leaf exchange, TFWT and OBT,
+formal single-layer surface soil plus a standalone experimental three-box API,
+bidirectional leaf exchange, TFWT and OBT,
 crop phenology and edible compartments, minimal plant/milk/beef pathways,
 research-screening public dose, uncertainty/sensitivity analysis, benchmarks,
 and recomputable acceptance.
@@ -55,5 +56,4 @@ atmospheric mass conservation, multi-nuclide use, and medical dosimetry.
 | Inhalation / skin / ingestion / dose | research-screening implementation |
 | Age groups | adult, child, infant configuration |
 | Probability / uncertainty | reproducible MC, LHS, and OAT |
-| Three-box soil | optional experimental project extension |
-
+| Three-box soil | experimental standalone project extension; not formal RC1 coupling |

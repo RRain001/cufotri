@@ -184,7 +184,9 @@ Stage 8 adds a tested conservative three-box soil API with layer water,
 advective HTO, optional diffusion, layer roots, surface-only evaporation, and
 deep leakage. It is explicitly experimental and standalone; selecting it in
 the formal short-case coupler returns a clear error rather than silently using
-the single-layer implementation.
+the single-layer implementation. RC1 does not promote it; the deferred coupling
+interfaces and required calibration/convergence evidence are recorded in
+`docs/v2/multibox_integration_roadmap.md`.
 
 Stage 9 adds mode-aware Monte Carlo and Latin Hypercube sampling, median,
 5/95-percentile, mean and standard deviation summaries, parameter-output

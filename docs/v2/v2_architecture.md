@@ -7,7 +7,7 @@ inventory/flux interfaces:
 forcing + configured source
   -> atmospheric plume/depletion ledger
   -> dry + wet surface inputs
-  -> soil mode (surface 5 cm | optional three box)
+  -> formal soil mode (surface 5 cm)
   <-> crop leaf/root exchange and TFWT/OBT inventories
   -> harvested food inventories
   -> optional animal/milk/beef inventories
@@ -39,10 +39,13 @@ forcing + configured source
    paths and do not alter an `off`-mode trajectory.
 6. Optional experimental soil code cannot change `ufotri_surface_5cm`.
 
+The three-box solver is a standalone experimental API, not an optional branch
+inside the formal coupler. Its future interface requirements are listed in
+`multibox_integration_roadmap.md`.
+
 ## Time scales
 
 Atmospheric and surface coupling retain the configured internal step and
 piecewise forcing. Crop, food, and dose integrations may aggregate to longer
 steps only through conservative integration of flux histories. No hourly or
 daily rate is used without explicit conversion to s-1.
-
