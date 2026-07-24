@@ -32,3 +32,7 @@ Because this product lacks both net shortwave and net longwave components, the
 test case uses the documented provisional radiation fallback: absorbed
 shortwave (`0.77 * ssrd/dt`) minus 50 W m-2 net longwave loss. Replacing that
 provider does not alter the water or HTO balance equations.
+
+`scripts/verify_acceptance.py --recompute` reads this ignored CSV without
+modifying it, records path and SHA256 in temporary provenance, and recomputes
+the 48 h ERA5 case without downloading ERA5.

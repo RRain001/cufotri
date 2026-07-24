@@ -21,11 +21,11 @@ def test_three_hour_root_lag_delays_tfwt_uptake():
     immediate = load_configuration(
         "configs/default_parameters.yaml", "configs/test_case.yaml"
     )
-    immediate["duration_hours"] = 2
+    immediate["duration_hours"] = 8
     delayed = load_configuration(
         "configs/default_parameters.yaml", "configs/test_case.yaml"
     )
-    delayed["duration_hours"] = 2
+    delayed["duration_hours"] = 8
     delayed["soil"]["root_uptake_delay_seconds"] = 10800
     immediate_result = run_short_case(immediate)
     delayed_result = run_short_case(delayed)
@@ -87,6 +87,62 @@ def test_dynamic_stability_and_boundary_layer_forcing_runs():
     frame = run_short_case(config, forcing)
     assert np.isfinite(frame.select_dtypes("number")).all().all()
     assert frame["air_hto_concentration"].gt(0).all()
+
+
+@pytest.mark.parametrize("wind", [0.0, 1e-12, 0.1, 0.5, 1.0])
+def test_calm_wind_short_case_is_finite_and_recorded(wind):
+    config = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
+    config["duration_hours"] = 1
+    config["synthetic_forcing"]["mean_wind_m_s"] = wind
+    config["synthetic_forcing"]["wind_amplitude_m_s"] = 0.0
+    frame = run_short_case(config)
+    assert np.isfinite(frame.select_dtypes("number")).all().all()
+    if wind < 0.5:
+        assert frame["calm_wind_applied"].all()
+        assert frame["effective_wind_speed_m_s"].eq(0.5).all()
+    else:
+        assert not frame["calm_wind_applied"].any()
+
+
+def test_depletion_enabled_reduces_primary_concentration():
+    enabled = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
+    enabled["duration_hours"] = 1
+    disabled = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
+    disabled["duration_hours"] = 1
+    disabled["atmosphere"]["depletion"]["enabled"] = False
+    with_depletion = run_short_case(enabled)
+    without_depletion = run_short_case(disabled)
+    assert with_depletion["air_hto_concentration"].iloc[0] < without_depletion[
+        "air_hto_concentration"
+    ].iloc[0]
+
+
+@pytest.mark.parametrize("dt_s", [600, 300])
+def test_reemission_feedback_uses_physical_one_hour_delay(dt_s):
+    config = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
+    config["duration_hours"] = 3
+    config["time_step_seconds"] = dt_s
+    frame = run_short_case(config)
+    before_delay = frame.loc[
+        (frame.index + 1) * dt_s <= 3600, "secondary_air_hto_concentration"
+    ]
+    assert before_delay.eq(0.0).all()
+    assert frame["secondary_air_hto_concentration"].iloc[-1] > 0.0
+
+
+def test_feedback_off_and_zero_stack_source_are_explicit():
+    off = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
+    off["duration_hours"] = 3
+    off["atmosphere"]["reemission_feedback_mode"] = "off"
+    off_frame = run_short_case(off)
+    assert off_frame["secondary_air_hto_concentration"].eq(0.0).all()
+
+    zero = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
+    zero["duration_hours"] = 1
+    zero["source"]["emission_rate_bq_s"] = 0.0
+    zero_frame = run_short_case(zero)
+    assert zero_frame["air_hto_concentration"].eq(0.0).all()
+    assert zero_frame["soil_hto_inventory"].eq(0.0).all()
 
 
 def test_short_or_time_mismatched_forcing_is_rejected():

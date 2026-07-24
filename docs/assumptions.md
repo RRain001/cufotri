@@ -26,3 +26,13 @@
   three-hour root lag are implemented optional modes.
 - Rainwater HTO defaults to zero. Multi-layer soil, dynamic LAI/phenology, HT,
   food chain, and dose remain outside the minimal environmental system.
+
+## Formal minimal baseline v1 contracts
+
+- Eq. (40) shades only the equilibrium-radiation term.
+- Feedback uses one 1000 m by 1000 m rectangle and a 3600 s delay.
+- The single 0–5 cm layer uses root uptake fraction 1.0; this is not the
+  manual's roughly 20% share in a multi-layer root system.
+- Winds below 0.5 m s-1 use and record an effective 0.5 m s-1 by default.
+- Dry plume depletion is a segment-exponential engineering approximation.
+  Wet scavenging is disabled and not implemented.

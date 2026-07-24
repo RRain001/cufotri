@@ -26,3 +26,15 @@ differences were:
 
 These are below the 2% engineering regression threshold while both step sizes
 retain machine-precision mass closure.
+
+## Formal minimal baseline v1 update
+
+The ledger is explicitly the soil + TFWT + OBT surface box. The steady Gaussian
+atmosphere has a separate source/sink budget and no dynamic air inventory.
+Re-emission uses a physical 3600 s FIFO delay at either internal step. Rain is
+partitioned into infiltration and runoff before rainwater HTO is routed.
+
+Recomputed 600/300 s differences are soil 0.02360%, TFWT 0.13859%, OBT
+0.12093%, and integrated re-emission 0.04974%. Maximum surface-box relative
+residuals are `4.320656e-16` (synthetic), `4.040362e-16` (ERA5), and
+`2.478100e-16` (advanced).

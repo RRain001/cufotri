@@ -9,6 +9,10 @@ __pycache__/
 
 # Local credentials
 era5_key.txt
+.cdsapirc
+*credential*.json
+*credentials*.yaml
+*token*.json
 .env
 .env.*
 

@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+import pytest
+
 from cteas_ufotri.config import load_configuration
 from cteas_ufotri.coupling.integrator import advance
 from cteas_ufotri.coupling.state import State
@@ -85,7 +87,50 @@ def test_infiltration_excess_becomes_optional_runoff():
         infiltration_capacity_m_s=1e-5,
     )
     assert balance.runoff_m_s == 9e-5
+    assert balance.precipitation_m_s == 1e-4
+    assert balance.infiltration_m_s == pytest.approx(1e-5)
     assert balance.drainage_m_s == 0.0
+
+
+def test_runoff_rain_hto_only_infiltrated_fraction_enters_soil():
+    cfg = config()
+    cfg["soil"]["runoff_enabled"] = True
+    cfg["soil"]["infiltration_capacity_m_s"] = 1e-5
+    final, diagnostics = advance(
+        State(0.01),
+        60.0,
+        0.0,
+        1e-4,
+        0.0,
+        0.0,
+        cfg,
+        rain_hto_concentration_bq_m3=1000.0,
+    )
+    assert final.soil_hto_bq_m2 == pytest.approx(0.6)
+    assert diagnostics.rain_infiltration_hto_bq_m2_s * 60.0 == pytest.approx(0.6)
+    assert diagnostics.rain_runoff_hto_bq_m2_s * 60.0 == pytest.approx(5.4)
+    assert (
+        diagnostics.rain_infiltration_hto_bq_m2_s
+        + diagnostics.rain_runoff_hto_bq_m2_s
+    ) * 60.0 == pytest.approx(6.0)
+    assert diagnostics.surface_box_mass_closure.relative_error < 1e-12
+
+
+def test_new_rain_hto_mixes_before_same_step_deep_drainage():
+    cfg = config()
+    final, diagnostics = advance(
+        State(0.019),
+        60.0,
+        0.0,
+        1e-4,
+        0.0,
+        0.0,
+        cfg,
+        rain_hto_concentration_bq_m3=1000.0,
+    )
+    assert diagnostics.drainage_m_s * 60.0 == pytest.approx(0.005)
+    assert final.soil_hto_bq_m2 == pytest.approx(4.8)
+    assert diagnostics.surface_box_mass_closure.relative_error < 1e-12
 
 
 def test_empirical_reemission_mode_preserves_system_balance():

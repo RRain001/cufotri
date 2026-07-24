@@ -19,3 +19,6 @@ HTO follows manual Eq. (2) in inventory form:
 Precipitation HTO enters through the optional rainwater concentration interface
 \(P C_{rain}\), whose default is zero. Each outgoing flux is limited
 proportionally if a step would exceed the available inventory.
+
+The formal baseline splits \(P=P_{inf}+R_o\). Only
+\(P_{inf}C_{rain}\) enters soil; \(R_oC_{rain}\) is a recorded bypass flux.

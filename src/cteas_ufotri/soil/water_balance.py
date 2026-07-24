@@ -6,6 +6,8 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class WaterBalance:
     water_m: float
+    precipitation_m_s: float
+    infiltration_m_s: float
     evaporation_m_s: float
     transpiration_m_s: float
     root_uptake_m_s: float
@@ -28,6 +30,7 @@ def update_water_bucket(
     if dt_s <= 0 or maximum_water_m <= minimum_water_m:
         raise ValueError("Invalid water bucket parameters")
     rain = max(precipitation_m_s, 0.0)
+    precipitation = rain
     runoff = 0.0
     if runoff_enabled and infiltration_capacity_m_s is not None:
         runoff = max(rain - infiltration_capacity_m_s, 0.0)
@@ -45,5 +48,13 @@ def update_water_bucket(
         water_m + (rain - evaporation - transpiration - drainage) * dt_s
     )
     return WaterBalance(
-        new_water, evaporation, transpiration, transpiration, drainage, runoff, residual
+        new_water,
+        precipitation,
+        rain,
+        evaporation,
+        transpiration,
+        transpiration,
+        drainage,
+        runoff,
+        residual,
     )

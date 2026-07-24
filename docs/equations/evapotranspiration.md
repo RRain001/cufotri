@@ -13,3 +13,7 @@ The soil-moisture factor follows Eq. (41),
 \(\alpha=1.26[1-\exp(-10.56W_s/W_{max})]\), capped at one. Eq. (42)-(43)
 then scale both fluxes. At or below wilting storage, transpiration and root
 uptake are zero. v0.1 uses \(U_s=T_p\) without the manual's three-hour lag.
+
+The formal Eq. (40) mode shades only the equilibrium-radiation contribution:
+\(\lambda E_{0s}=[\Delta R_n e^{-0.398L}+\gamma f(u)VPD]/(\Delta+\gamma)\).
+Whole-Penman shading remains an optional legacy project mode.

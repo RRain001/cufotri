@@ -1,33 +1,24 @@
-# Long-term plan completion audit
+# Formal minimal baseline completion audit
 
-Status values: `PASS` requires direct code/test/runtime evidence; `PARTIAL`
-means a stated requirement still lacks complete evidence.
+Updated: 2026-07-24
 
-| Plan stage | Status | Current evidence / remaining proof |
-|---|---|---|
-| Repository and safety inventory | PASS | ignored credential/raw/output paths; actual ERA5 audit |
-| Project structure and AGENTS.md | PASS | package/config/docs/tests/CLI and repository rules |
-| Manual normalization | PASS_SCOPE | `manual_scope_and_mapping.md` plus six equation contracts |
-| ERA5 and meteorological derivations | PASS_PROVISIONAL | CSV/NetCDF, UTC, accumulation/reset, RH/VPD/wind/radiation, PBL/stability routing |
-| UFOTRI PET and fallback hydrology | PASS_PROVISIONAL | Eq. 38-43 route and explicit radiation fallback; aerodynamic coefficient remains documented assumption |
-| Gaussian primary atmosphere | PASS | point/area sources, PG, ground/top reflection, fixed/simple Briggs, geographic receptors, stability modes |
-| Soil water and HTO | PASS | bucket/runoff/drainage/rain HTO/deposition/re-emission/root/decay and conservation tests |
-| Plant TFWT and OBT | PASS | direct-leaf interface, root/transpiration, day/night OBT and turnover tests |
-| Re-emission and coupling | PASS_PROVISIONAL | basic mode plus optional reconstructed REEM/DIFF/ZT, area-source feedback and lag |
-| Numerical integration | PASS | bounded explicit update, step refinement, SciPy continuous reference |
-| Required unit/integration tests | PASS | 43 tests cover all enumerated plan invariants and interface failures |
-| End-to-end case and artifacts | PASS | synthetic/ERA5 48 h plus advanced 24 h, required schema and nine artifacts each |
-| Final documentation/status | PASS | README, equations, assumptions, numerical scheme, status and reports refreshed |
+The previous unconditional `COMPLETE` claim is replaced by the bounded
+`FORMAL_MINIMAL_BASELINE_V1` assessment. The accepted conservation domain is
+the surface soil/TFWT/OBT box. The atmosphere has a separate steady-state
+source/sink ledger and is not claimed as a dynamic inventory.
 
-## Completion basis
+| Audit condition | Resolution |
+|---|---|
+| Ambiguous whole-system mass balance | resolved by explicit surface-box naming and diagnostics |
+| Rain HTO routed through runoff | resolved by precipitation/infiltration/runoff interfaces and tests |
+| Calm/near-zero Gaussian singularity | resolved by explicit configurable policy and diagnostics |
+| Deposition without plume depletion | dry segment-exponential project mode implemented and tested |
+| One-step feedback delay | replaced by configurable 3600 s physical delay |
+| Root fraction ambiguity | frozen as single-layer 1.0 project closure |
+| Eq. (40) shading ambiguity | radiation-term-only mode is formal default |
+| Feedback area duplication | rectangle-derived area validated against compatibility fields |
+| Saved-artifact-only acceptance | `--recompute` runs five cases in a temporary directory with provenance |
 
-Every row is now `PASS`, `PASS_SCOPE`, or `PASS_PROVISIONAL`. Provisional items
-are precisely the missing-coefficient/default-assumption cases explicitly
-permitted by the original plan. They are centralized and replaceable rather
-than hidden in core balance equations.
-
-The artifact-level completion check is reproducible with:
-
-```bash
-.venv/bin/python scripts/verify_acceptance.py
-```
+Wet scavenging and advanced REEM/DIFF/ZT remain explicit limitations. The
+formal recommendation is determined in
+`docs/formal_minimal_baseline_v1_assessment.md`.

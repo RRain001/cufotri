@@ -1,5 +1,18 @@
 atmosphere:
   deposition_velocity_m_s: 0.005
+  calm_wind:
+    mode: minimum_effective_wind
+    threshold_m_s: 0.5
+    effective_wind_m_s: 0.5
+    record_substitution: true
+  depletion:
+    enabled: true
+    dry_deposition_enabled: true
+    wet_scavenging_enabled: false
+    method: segment_exponential
+    mixing_height_m: 1000.0
+    segments: 20
+    wet_scavenging_rate_s: 0.0
   fixed_plume_rise_m: 15.0
   plume_rise_mode: fixed
   stability_mode: fixed
@@ -15,7 +28,14 @@ atmosphere:
   area_source_quadrature_y: 12
   mixing_height_m: null
   mixing_layer_image_terms: 4
+coupling:
+  reemission_feedback_delay_s: 3600
+  feedback_rectangle:
+    length_m: 1000.0
+    width_m: 1000.0
+  feedback_area_m2: 1000000.0
 soil:
+  layer_model: single_top_5cm
   depth_m: 0.05
   initial_water_m: 0.010
   wilting_water_m: 0.004
@@ -35,7 +55,9 @@ plant:
   obt_day_night_enabled: true
   obt_day_multiplier: 1.5
   obt_night_multiplier: 0.5
-  topsoil_root_fraction: 1.0
+  root_uptake_fraction_from_modelled_layer: 1.0
+evapotranspiration:
+  lai_shading_mode: radiation_term_only
 reemission:
   mode: basic_mass_flux
   empirical_reference_evaporation_m_s: 2.0e-8

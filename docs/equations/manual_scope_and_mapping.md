@@ -110,3 +110,12 @@ Multi-layer Richards/Darcy soil transport, HT chemistry, exchange resistance,
 dynamic vegetation/phenology, animals, food-chain transfer Eq. (45)-(105), and
 dose Eq. (106)-(107) are outside the requested minimal environmental system.
 Their absence must not be represented as full-formula UFOTRI equivalence.
+
+## Formal minimal baseline v1 contracts
+
+- Conservation is limited to the surface soil + TFWT + OBT box.
+- Atmosphere is a steady Gaussian source/sink ledger, not dynamic inventory.
+- Calm wind uses a recorded 0.5 m s-1 minimum-effective default.
+- Dry fallout is a project simplification; wet washout is absent.
+- The one-layer root fraction is 1.0; Eq. (40) shades radiation only.
+- Feedback uses an authoritative rectangle and a 3600 s delay.

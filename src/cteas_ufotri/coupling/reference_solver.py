@@ -153,7 +153,11 @@ def solve_coupled_step_reference(
             raise ValueError(
                 f"Unsupported re-emission mode: {config['reemission']['mode']}"
             )
-        soil_to_plant = root * soil_concentration * plant["topsoil_root_fraction"]
+        soil_to_plant = (
+            root
+            * soil_concentration
+            * plant["root_uptake_fraction_from_modelled_layer"]
+        )
         drainage = water_flux.drainage_m_s * soil_concentration
         plant_to_air = water_flux.transpiration_m_s * plant_concentration
         return np.array([

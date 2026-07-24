@@ -10,7 +10,7 @@ from ..reemission.fluxes import (
 )
 from ..soil.hto_balance import concentration_bq_m3, limit_inventory_outflows
 from ..soil.water_balance import update_water_bucket
-from .mass_balance import MassBalance
+from .mass_balance import SurfaceBoxMassClosure
 from .state import State
 
 
@@ -22,10 +22,20 @@ class StepDiagnostics:
     plant_transpiration_m_s: float
     root_uptake_m_s: float
     drainage_m_s: float
+    precipitation_m_s: float
+    infiltration_m_s: float
+    runoff_m_s: float
+    rain_infiltration_hto_bq_m2_s: float
+    rain_runoff_hto_bq_m2_s: float
     soil_reemission_bq_m2_s: float
     plant_reemission_bq_m2_s: float
     total_reemission_bq_m2_s: float
-    mass_balance: MassBalance
+    surface_box_mass_closure: SurfaceBoxMassClosure
+
+    @property
+    def mass_balance(self) -> SurfaceBoxMassClosure:
+        """Deprecated compatibility alias for pre-v1 callers."""
+        return self.surface_box_mass_closure
 
 
 def advance(
@@ -56,18 +66,24 @@ def advance(
         soil["runoff_enabled"],
         soil["infiltration_capacity_m_s"],
     )
+    rain_concentration = max(rain_hto_concentration_bq_m3, 0.0)
+    rain_infiltration = water.infiltration_m_s * rain_concentration
+    mixed_soil_inventory = state.soil_hto_bq_m2 + rain_infiltration * dt_s
+    mixed_soil_water = state.soil_water_m + water.infiltration_m_s * dt_s
     cs = concentration_bq_m3(
-        state.soil_hto_bq_m2, state.soil_water_m, config["numerics"]["concentration_epsilon_m"]
+        mixed_soil_inventory,
+        mixed_soil_water,
+        config["numerics"]["concentration_epsilon_m"],
     )
     cp = plant_concentration_bq_m3(
         state.plant_tfwt_bq_m2, plant["water_storage_m"]
     )
-    deposition = (
+    dry_deposition = (
         config["atmosphere"]["deposition_velocity_m_s"]
         * max(air_concentration_bq_m3, 0.0)
-        + max(precipitation_m_s, 0.0)
-        * max(rain_hto_concentration_bq_m3, 0.0)
     )
+    rain_runoff = water.runoff_m_s * rain_concentration
+    deposition = dry_deposition + rain_infiltration
     leaf = direct_leaf_flux_bq_m2_s(
         air_concentration_bq_m3,
         plant["direct_leaf_velocity_m_s"],
@@ -110,10 +126,14 @@ def advance(
         water.root_uptake_m_s if root_uptake_m_s is None else max(root_uptake_m_s, 0.0)
     )
     soil_out = limit_inventory_outflows(
-        state.soil_hto_bq_m2,
+        mixed_soil_inventory,
         dt_s,
         evaporation=soil_reem,
-        root=actual_root_uptake * cs * plant["topsoil_root_fraction"],
+        root=(
+            actual_root_uptake
+            * cs
+            * plant["root_uptake_fraction_from_modelled_layer"]
+        ),
         drainage=water.drainage_m_s * cs,
         decay=physics["tritium_decay_constant_s"] * state.soil_hto_bq_m2,
     )
@@ -163,7 +183,7 @@ def advance(
     decay = (
         soil_out["decay"] + plant_out["decay"] + obt_out["decay"]
     ) * dt_s
-    balance = MassBalance(
+    balance = SurfaceBoxMassClosure(
         state.total_hto_bq_m2,
         (deposition + leaf) * dt_s,
         boundary,
@@ -177,6 +197,11 @@ def advance(
         water.transpiration_m_s,
         actual_root_uptake,
         water.drainage_m_s,
+        water.precipitation_m_s,
+        water.infiltration_m_s,
+        water.runoff_m_s,
+        rain_infiltration,
+        rain_runoff,
         soil_out["evaporation"],
         plant_out["transpiration"],
         soil_out["evaporation"] + plant_out["transpiration"],

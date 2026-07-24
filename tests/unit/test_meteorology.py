@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from cteas_ufotri.meteorology.derived_variables import (
     accumulated_to_flux,
@@ -11,6 +12,7 @@ from cteas_ufotri.meteorology.derived_variables import (
 from cteas_ufotri.meteorology.fallback_fluxes import (
     partition_evapotranspiration,
     penman_ufotri_m_s,
+    penman_ufotri_components_m_s,
 )
 
 
@@ -43,3 +45,23 @@ def test_lai_and_dryness_reduce_flux():
     assert wet0.potential_soil_m_s == wet0.potential_total_m_s
     assert dry3.soil_evaporation_m_s < wet3.soil_evaporation_m_s
     assert dry3.plant_transpiration_m_s == dry3.root_uptake_m_s == 0
+
+
+def test_radiation_only_lai_shading_leaves_aerodynamic_term_unshaded():
+    total, radiation, aerodynamic = penman_ufotri_components_m_s(
+        293.15, 289.15, 3.0, 200.0, 2.45e6, 1000.0, 66.0, 0.001
+    )
+    bare = partition_evapotranspiration(
+        total, 0.0, 0.02, 0.02, 0.004,
+        "radiation_term_only", radiation, aerodynamic,
+    )
+    shaded = partition_evapotranspiration(
+        total, 3.0, 0.02, 0.02, 0.004,
+        "radiation_term_only", radiation, aerodynamic,
+    )
+    full = partition_evapotranspiration(
+        total, 3.0, 0.02, 0.02, 0.004, "full_penman"
+    )
+    assert bare.potential_soil_m_s == pytest.approx(total)
+    assert shaded.potential_soil_m_s > full.potential_soil_m_s
+    assert shaded.potential_soil_m_s <= total

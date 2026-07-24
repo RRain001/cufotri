@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class MassBalance:
+class SurfaceBoxMassClosure:
     initial_bq_m2: float
     external_input_bq_m2: float
     boundary_output_bq_m2: float
@@ -25,3 +25,8 @@ class MassBalance:
             abs(self.initial_bq_m2) + abs(self.external_input_bq_m2), 1.0e-30
         )
         return abs(self.residual_bq_m2) / scale
+
+
+# Deprecated compatibility alias. New code and outputs must use the explicit
+# surface-box name because this ledger does not contain an atmospheric inventory.
+MassBalance = SurfaceBoxMassClosure

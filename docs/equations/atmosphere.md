@@ -24,3 +24,12 @@ direction rotates the latter two into plume coordinates.
 Stability can be fixed A-F or diagnosed hourly by a simple rural Turner scheme
 using wind, net radiation, and optional cloud cover. ERA5 boundary-layer height
 overrides the configured mixing height when present.
+
+## Formal minimal baseline v1 additions
+
+Below 0.5 m s-1, the default records
+\(u_{\mathrm{eff}}=\max(u,0.5\,\mathrm{m\,s^{-1}})\). `skip_gaussian` and
+`error` are supported alternatives. Dry fallout depletion is a
+`PROJECT_SIMPLIFICATION`:
+\(Q_{j+1}=Q_j\exp[-(v_d/H_m)\Delta x/u_{\mathrm{eff}}]\).
+This is not exact manual Eq. (6). Wet scavenging is `NOT_IMPLEMENTED`.

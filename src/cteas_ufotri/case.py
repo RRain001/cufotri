@@ -15,9 +15,14 @@ from .atmosphere.gaussian import (
 )
 from .atmosphere.plume_rise import effective_stack_height_m
 from .atmosphere.dispersion_parameters import classify_pasquill_gifford
+from .atmosphere.calm_wind import resolve_calm_wind
+from .atmosphere.depletion import segment_exponential_depletion
 from .coupling.integrator import advance
 from .coupling.state import State
-from .meteorology.fallback_fluxes import penman_ufotri_m_s, partition_evapotranspiration
+from .meteorology.fallback_fluxes import (
+    penman_ufotri_components_m_s,
+    partition_evapotranspiration,
+)
 from .meteorology.derived_variables import wind_speed_at_height
 from .plant.obt import day_night_formation_rate_s
 
@@ -107,13 +112,16 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 timezone.utc
             ):
                 raise ValueError("Forcing start time does not match case start")
-    lagged_reemission = 0.0
+    feedback_delay_s = int(config["coupling"]["reemission_feedback_delay_s"])
+    feedback_delay_steps = feedback_delay_s // int(dt)
+    feedback_history: deque[float] = deque([0.0] * feedback_delay_steps)
     delay_seconds = int(config["soil"].get("root_uptake_delay_seconds", 0))
     if delay_seconds < 0 or delay_seconds % int(dt) != 0:
         raise ValueError("root_uptake_delay_seconds must be a non-negative multiple of dt")
     delay_steps = delay_seconds // int(dt)
     root_history: deque[float] = deque([0.0] * delay_steps)
     rows: list[dict] = []
+    calm_wind_event_count = 0
     for index in range(steps):
         elapsed = index * dt
         if hourly_forcing is None:
@@ -121,6 +129,13 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         else:
             forcing_index = int(elapsed // forcing_step)
             met = hourly_forcing.iloc[forcing_index].to_dict()
+        calm = resolve_calm_wind(
+            met["wind_m_s"], config["atmosphere"]["calm_wind"]
+        )
+        calm_wind_event_count += int(calm.applied)
+        lagged_reemission = (
+            feedback_history[0] if feedback_delay_steps else 0.0
+        )
         downwind_m, crosswind_m = _receptor_wind_coordinates(config, met)
         height = effective_stack_height_m(
             config["source"]["stack_height_m"],
@@ -130,12 +145,12 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             exit_velocity_m_s=config["source"]["exit_velocity_m_s"],
             stack_temperature_k=config["source"]["stack_temperature_k"],
             ambient_temperature_k=met["temperature_k"],
-            wind_speed_m_s=met["wind_m_s"],
+            wind_speed_m_s=calm.effective_wind_speed_m_s,
             downwind_distance_m=max(downwind_m, 0.0),
         )
         plume_wind_speed = float(
             wind_speed_at_height(
-                met["wind_m_s"],
+                calm.effective_wind_speed_m_s,
                 max(height, config["atmosphere"]["wind_reference_height_m"]),
                 config["atmosphere"]["wind_reference_height_m"],
                 config["atmosphere"]["rural_wind_profile_exponent"],
@@ -160,8 +175,31 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             )
         else:
             raise ValueError("Unsupported atmospheric stability mode")
+        depletion_config = config["atmosphere"]["depletion"]
+        if depletion_config["enabled"]:
+            depletion = segment_exponential_depletion(
+                config["source"]["emission_rate_bq_s"],
+                max(downwind_m, 0.0),
+                plume_wind_speed,
+                config["atmosphere"]["deposition_velocity_m_s"],
+                depletion_config["mixing_height_m"],
+                depletion_config["segments"],
+                dry_enabled=depletion_config["dry_deposition_enabled"],
+                wet_enabled=depletion_config["wet_scavenging_enabled"],
+                wet_scavenging_rate_s=depletion_config["wet_scavenging_rate_s"],
+            )
+        else:
+            depletion = segment_exponential_depletion(
+                config["source"]["emission_rate_bq_s"],
+                max(downwind_m, 0.0),
+                plume_wind_speed,
+                0.0,
+                depletion_config["mixing_height_m"],
+                depletion_config["segments"],
+                dry_enabled=False,
+            )
         primary = point_source_ground_concentration(
-            config["source"]["emission_rate_bq_s"],
+            0.0 if calm.skip_gaussian else depletion.source_after_bq_s,
             downwind_m,
             crosswind_m,
             plume_wind_speed,
@@ -170,12 +208,14 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             mixing_height,
             image_terms,
         )
-        if config["atmosphere"]["reemission_feedback_mode"] == "area_source":
+        if config["atmosphere"]["reemission_feedback_mode"] == "off":
+            secondary = 0.0
+        elif config["atmosphere"]["reemission_feedback_mode"] == "area_source":
             secondary = rectangular_area_source_concentration(
                 lagged_reemission,
                 downwind_m,
                 crosswind_m,
-                met["wind_m_s"],
+                calm.effective_wind_speed_m_s,
                 config["atmosphere"]["area_source_length_m"],
                 config["atmosphere"]["area_source_width_m"],
                 stability_class,
@@ -189,7 +229,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 lagged_reemission * config["atmosphere"]["reemission_feedback_area_m2"],
                 downwind_m,
                 crosswind_m,
-                met["wind_m_s"],
+                calm.effective_wind_speed_m_s,
                 0.0,
                 stability_class,
                 mixing_height,
@@ -198,7 +238,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         else:
             raise ValueError("Unsupported reemission feedback mode")
         air = primary + secondary
-        pet = penman_ufotri_m_s(
+        pet, radiation_pet, aerodynamic_pet = penman_ufotri_components_m_s(
             met["temperature_k"], met["dewpoint_k"], met["wind_m_s"],
             met["net_radiation_w_m2"], config["physics"]["latent_heat_j_kg"],
             config["physics"]["water_density_kg_m3"],
@@ -208,6 +248,9 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         water_fluxes = partition_evapotranspiration(
             pet, config["plant"]["lai"], state.soil_water_m,
             config["soil"]["maximum_water_m"], config["soil"]["wilting_water_m"],
+            config["evapotranspiration"]["lai_shading_mode"],
+            radiation_pet,
+            aerodynamic_pet,
         )
         is_day = met["net_radiation_w_m2"] > 0.0
         formation_rate = day_night_formation_rate_s(
@@ -235,16 +278,51 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         if delay_steps:
             root_history.popleft()
             root_history.append(diag.plant_transpiration_m_s)
-        lagged_reemission = diag.total_reemission_bq_m2_s
+        if feedback_delay_steps:
+            feedback_history.popleft()
+            feedback_history.append(diag.total_reemission_bq_m2_s)
         rows.append({
             "time": start + timedelta(seconds=(index + 1) * dt),
             "air_hto_concentration": air,
+            "primary_air_hto_concentration": primary,
+            "secondary_air_hto_concentration": secondary,
+            "raw_wind_speed_m_s": calm.raw_wind_speed_m_s,
+            "effective_wind_speed_m_s": calm.effective_wind_speed_m_s,
+            "calm_wind_applied": calm.applied,
+            "calm_wind_event_count": calm_wind_event_count,
+            "reemission_feedback_delay_s": feedback_delay_s,
+            "stack_release_bq_s": config["source"]["emission_rate_bq_s"],
+            "plume_source_before_depletion_bq_s": depletion.source_before_bq_s,
+            "plume_source_after_depletion_bq_s": depletion.source_after_bq_s,
+            "dry_depletion_bq_s": depletion.dry_depletion_bq_s,
+            "wet_depletion_bq_s": depletion.wet_depletion_bq_s,
+            "surface_deposition_bq_s": (
+                depletion.dry_depletion_bq_s + depletion.wet_depletion_bq_s
+            ),
+            "depletion_deposition_mismatch_bq_s": (
+                depletion.source_before_bq_s
+                - depletion.source_after_bq_s
+                - depletion.dry_depletion_bq_s
+                - depletion.wet_depletion_bq_s
+            ),
+            "surface_reemission_to_air_bq_s": (
+                diag.total_reemission_bq_m2_s
+                * config["coupling"]["feedback_area_m2"]
+            ),
+            "secondary_area_source_bq_s": (
+                lagged_reemission * config["coupling"]["feedback_area_m2"]
+            ),
             "soil_water_storage": state.soil_water_m,
             "soil_hto_inventory": state.soil_hto_bq_m2,
             "soil_hto_concentration": state.soil_hto_bq_m2 / state.soil_water_m,
             "soil_evaporation": diag.soil_evaporation_m_s,
             "plant_transpiration": diag.plant_transpiration_m_s,
             "root_water_uptake": diag.root_uptake_m_s,
+            "precipitation": diag.precipitation_m_s,
+            "infiltration": diag.infiltration_m_s,
+            "runoff": diag.runoff_m_s,
+            "rain_infiltration_hto_flux": diag.rain_infiltration_hto_bq_m2_s,
+            "rain_runoff_hto_flux": diag.rain_runoff_hto_bq_m2_s,
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,
             "plant_tfwt_concentration": state.plant_tfwt_bq_m2 / config["plant"]["water_storage_m"],
@@ -252,12 +330,23 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "soil_reemission_flux": diag.soil_reemission_bq_m2_s,
             "plant_reemission_flux": diag.plant_reemission_bq_m2_s,
             "total_reemission_flux": diag.total_reemission_bq_m2_s,
-            "mass_balance_error": diag.mass_balance.residual_bq_m2,
-            "mass_balance_relative_error": diag.mass_balance.relative_error,
+            "surface_box_absolute_residual_bq_m2": (
+                diag.surface_box_mass_closure.residual_bq_m2
+            ),
+            "surface_box_relative_residual": (
+                diag.surface_box_mass_closure.relative_error
+            ),
+            # Deprecated output aliases retained for one compatibility cycle.
+            "mass_balance_error": diag.surface_box_mass_closure.residual_bq_m2,
+            "mass_balance_relative_error": (
+                diag.surface_box_mass_closure.relative_error
+            ),
         })
     frame = pd.DataFrame(rows)
     numeric = frame.select_dtypes(include=[np.number])
-    physical = numeric.drop(columns=["mass_balance_error"])
+    physical = numeric.drop(
+        columns=["mass_balance_error", "surface_box_absolute_residual_bq_m2"]
+    )
     if not np.isfinite(numeric.to_numpy()).all() or (physical < -1.0e-12).any().any():
         raise RuntimeError("Short case produced invalid values")
     return frame

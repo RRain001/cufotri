@@ -17,3 +17,7 @@ on both sides of compartment balances, not as system boundaries.
 
 The forcing provider is rejected if it has insufficient rows or a start time
 different from the UTC case start; the final row is never silently repeated.
+
+Feedback is delayed exactly 3600 s, independent of internal step. Closure
+applies only to the soil + TFWT + OBT surface box. The steady Gaussian
+atmosphere reports a source/sink ledger, not a dynamic air inventory.

@@ -11,7 +11,7 @@ equation.
 python3 -m venv .venv
 .venv/bin/python -m pip install -e '.[test]'
 .venv/bin/python -m pytest -vv
-.venv/bin/python scripts/verify_acceptance.py
+.venv/bin/python scripts/verify_acceptance.py --recompute
 ```
 
 Run the 48 h case:
@@ -80,6 +80,12 @@ CDS credentials may be supplied as the paired environment variables
 | `mass_balance_error` | signed step residual, Bq m-2 |
 | `mass_balance_relative_error` | absolute relative step residual |
 
+Formal fields are `surface_box_absolute_residual_bq_m2` and
+`surface_box_relative_residual`; the two `mass_balance_*` fields are deprecated
+compatibility aliases. This ledger covers soil HTO + TFWT + OBT only. The
+steady Gaussian atmosphere has a separate source/sink budget, not a dynamic
+air inventory.
+
 ## Implemented scope
 
 - ERA5 CSV/NetCDF mapping, UTC/time validation, interval/cumulative-reset
@@ -111,3 +117,9 @@ Implemented replaceable modes include rectangular re-emission area sources,
 fixed or simplified Briggs plume rise, fixed or Turner stability, optional
 mixing-layer reflection, immediate or delayed root HTO uptake, basic or
 REEM/DIFF/ZT soil re-emission, and constant-average or day/night OBT formation.
+
+The formal minimal v1 baseline adds explicit precipitation/infiltration/runoff
+HTO routing, recorded calm-wind handling, project-level dry source depletion,
+3600 s re-emission feedback, radiation-term-only Eq. (40) shading, and strict
+feedback-area validation. Wet scavenging is explicitly not implemented and
+advanced REEM/DIFF/ZT remains provisional.
