@@ -36,6 +36,12 @@ class StepDiagnostics:
     leaf_release_bq_m2_s: float
     leaf_conductance_m_s: float
     leaf_equilibrium_air_bq_m3: float
+    leaf_aerodynamic_resistance_s_m: float
+    leaf_boundary_resistance_s_m: float
+    leaf_canopy_resistance_s_m: float
+    leaf_friction_velocity_m_s: float
+    leaf_wind_speed_m_s: float
+    leaf_monin_obukhov_length_m: float
     tfwt_to_edible_bq_m2_s: float
     obt_to_edible_bq_m2_s: float
     harvested_hto_bq_m2_s: float
@@ -71,6 +77,8 @@ def advance(
     atmospheric_wet_deposition_bq_m2_s: float = 0.0,
     air_temperature_k: float = 293.15,
     dewpoint_temperature_k: float = 288.15,
+    wind_speed_m_s: float = 1.0,
+    stability_class: str = "D",
     leaf_area_index: float | None = None,
     edible_allocation_rate_s: float = 0.0,
     harvest_event: bool = False,
@@ -119,6 +127,12 @@ def advance(
     )
     leaf_conductance = 0.0
     leaf_equilibrium_air = 0.0
+    leaf_aerodynamic_resistance = 0.0
+    leaf_boundary_resistance = 0.0
+    leaf_canopy_resistance = 0.0
+    leaf_friction_velocity = 0.0
+    leaf_wind_speed = 0.0
+    leaf_monin_obukhov_length = 0.0
     if leaf_mode == "off":
         leaf = 0.0
     elif leaf_mode == "deposition_only":
@@ -136,11 +150,21 @@ def advance(
             dewpoint_temperature_k,
             active_lai,
             is_day,
-            aerodynamic_resistance_s_m=plant[
-                "leaf_aerodynamic_resistance_s_m"
+            wind_speed_m_s=wind_speed_m_s,
+            stability_class=stability_class,
+            roughness_length_m=config["atmosphere"]["surface_roughness_m"],
+            canopy_height_m=plant["leaf_canopy_height_m"],
+            wind_measurement_height_m=config["atmosphere"][
+                "wind_reference_height_m"
             ],
-            boundary_resistance_s_m=plant[
-                "leaf_boundary_resistance_s_m"
+            leaf_characteristic_length_m=plant[
+                "leaf_characteristic_length_m"
+            ],
+            air_kinematic_viscosity_m2_s=plant[
+                "leaf_air_kinematic_viscosity_m2_s"
+            ],
+            water_vapour_diffusivity_m2_s=plant[
+                "leaf_water_vapour_diffusivity_m2_s"
             ],
             stomatal_resistance_day_s_m=plant[
                 "leaf_stomatal_resistance_day_s_m"
@@ -153,10 +177,19 @@ def advance(
                 "leaf_isotope_fractionation_liquid_to_vapour"
             ],
             water_density_kg_m3=physics["water_density_kg_m3"],
+            precipitation_m_s=precipitation_m_s,
+            von_karman_constant=plant["leaf_von_karman_constant"],
+            minimum_wind_speed_m_s=plant["leaf_minimum_wind_speed_m_s"],
         )
         leaf = exchange.net_to_plant_bq_m2_s
         leaf_conductance = exchange.conductance_m_s
         leaf_equilibrium_air = exchange.equilibrium_air_concentration_bq_m3
+        leaf_aerodynamic_resistance = exchange.aerodynamic_resistance_s_m
+        leaf_boundary_resistance = exchange.boundary_resistance_s_m
+        leaf_canopy_resistance = exchange.canopy_resistance_s_m
+        leaf_friction_velocity = exchange.friction_velocity_m_s
+        leaf_wind_speed = exchange.leaf_wind_speed_m_s
+        leaf_monin_obukhov_length = exchange.monin_obukhov_length_m
     else:
         raise ValueError(f"Unsupported leaf-exchange mode: {leaf_mode}")
     leaf_uptake = max(leaf, 0.0)
@@ -347,6 +380,12 @@ def advance(
         plant_out["leaf_release"],
         leaf_conductance,
         leaf_equilibrium_air,
+        leaf_aerodynamic_resistance,
+        leaf_boundary_resistance,
+        leaf_canopy_resistance,
+        leaf_friction_velocity,
+        leaf_wind_speed,
+        leaf_monin_obukhov_length,
         plant_out["edible_allocation"],
         obt_out["edible_allocation"],
         edible_tfwt_out["harvested"],

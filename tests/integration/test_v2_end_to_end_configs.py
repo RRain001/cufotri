@@ -13,6 +13,7 @@ def test_all_v2_end_to_end_configs_inherit_frozen_stack_and_validate():
         "v2_crop_ingestion_season",
         "v2_pasture_milk_pathway",
         "v2_full_adult_dose",
+        "v2_leaf_exchange_food_dose_72h",
     }
     loaded = []
     for path in sorted((ROOT / "configs/v2").glob("*.yaml")):

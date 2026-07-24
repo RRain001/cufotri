@@ -80,6 +80,20 @@ def _case_checks() -> dict[str, dict]:
     leaf_frame = run_short_case(leaf)
     if leaf_frame["leaf_uptake_flux"].max() <= 0:
         raise ValueError("Leaf-exchange acceptance failed")
+    formal_leaf = load_configuration(
+        ROOT / "configs/default_parameters.yaml",
+        ROOT / "configs/v2/v2_leaf_exchange_food_dose_72h.yaml",
+    )
+    formal_leaf_frame = run_short_case(formal_leaf)
+    formal_leaf_off = deepcopy(formal_leaf)
+    formal_leaf_off["plant"]["leaf_exchange_mode"] = "off"
+    formal_leaf_off_frame = run_short_case(formal_leaf_off)
+    if (
+        formal_leaf_frame["plant_ingestion_dose_sv"].iloc[-1] <= 0.0
+        or formal_leaf_frame["plant_obt_inventory"].iloc[-1] <= 0.0
+        or formal_leaf_off_frame["plant_ingestion_dose_sv"].iloc[-1] != 0.0
+    ):
+        raise ValueError("Formal leaf-to-food/dose acceptance failed")
 
     food = _base()
     food["duration_hours"] = 8.0
@@ -107,10 +121,16 @@ def _case_checks() -> dict[str, dict]:
             "max_ledger_mismatch_bq_s": wet_mismatch,
         },
         "leaf_exchange": {
-            "steps": len(leaf_frame),
+            "steps": len(formal_leaf_frame),
             "max_leaf_uptake_bq_m2_s": float(leaf_frame["leaf_uptake_flux"].max()),
             "max_surface_residual": float(
-                leaf_frame["surface_box_relative_residual"].max()
+                formal_leaf_frame["surface_box_relative_residual"].max()
+            ),
+            "final_plant_ingestion_dose_sv": float(
+                formal_leaf_frame["plant_ingestion_dose_sv"].iloc[-1]
+            ),
+            "off_control_plant_ingestion_dose_sv": float(
+                formal_leaf_off_frame["plant_ingestion_dose_sv"].iloc[-1]
             ),
         },
         "food_chain": {
@@ -211,6 +231,7 @@ def recompute() -> list[str]:
             "v2_crop_ingestion_season",
             "v2_pasture_milk_pathway",
             "v2_full_adult_dose",
+            "v2_leaf_exchange_food_dose_72h",
         ):
             required.extend(
                 [
@@ -275,7 +296,7 @@ def recompute() -> list[str]:
             ),
             "PASS: fixed-seed LHS uncertainty sample",
             f"PASS: {len(benchmarks)} V2 benchmark cases",
-            "PASS: five end-to-end cases and required artifacts recomputed",
+            "PASS: six end-to-end cases and required artifacts recomputed",
             "PASS: V2 provenance and hashes recorded in temporary output",
         ]
 

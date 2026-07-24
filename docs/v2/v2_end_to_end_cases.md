@@ -1,6 +1,6 @@
 # V2 end-to-end cases
 
-Run all five cases and the uncertainty/sensitivity sample in a chosen output
+Run all six cases and the uncertainty/sensitivity sample in a chosen output
 directory:
 
 ```bash
@@ -17,6 +17,7 @@ All cases inherit the frozen stack at 117.141610855 E, 31.939774444 N,
 | `v2_crop_ingestion_season` | 14 d leafy-crop ingestion |
 | `v2_pasture_milk_pathway` | 14 d pasture-cow-milk transfer |
 | `v2_full_adult_dose` | 14 d full adult screening dose |
+| `v2_leaf_exchange_food_dose_72h` | isolated air-leaf to TFWT/OBT, edible plant, and ingestion dose |
 
 The repository contains only 48 h of matching ERA5. The 72 h case therefore
 uses those 48 h followed by an explicit 24 h deterministic configured

@@ -3,12 +3,12 @@
 | Process | Manual anchor | Unified quantity | Code target | Parameter source | Verification | Stage-0 status |
 |---|---|---|---|---|---|---|
 | Atmospheric transport | Eq. (4),(6),(25) | `Ca`, `Q` | `atmosphere/` | manual + existing YAML | Gaussian and quadrature tests | V1 implemented |
-| Fallout | Sec. 2.1; Eq. (48) | `Lambda_d`, `F_dry` | `atmosphere/depletion.py` | project simplification | loss/deposition ledger | V1 implemented |
+| Fallout | Sec. 2.1; Eq. (48) | `Lambda_d`, `F_dry` | `atmosphere/depletion.py`, `atmosphere/deposition.py` | project simplification | loss/deposition ledger | RC1 S1 interface-conservative |
 | Washout | Sec. 2.1; Eq. (49)-(50) | `Lambda_w`, `F_wet` | `atmosphere/wet_deposition.py` | provisional YAML | zero-rain, monotonicity, conservation | S1 pass project parameterization |
-| HTO dry deposition | Eq. (1)-(3),(48) | `v_d Ca` | `coupling/integrator.py` | manual/YAML | surface closure | V1 implemented |
+| HTO dry deposition | Eq. (1)-(3),(48) | plume dry loss allocated to surface; `v_d Ca` diagnostic only | `coupling/integrator.py` | manual/YAML | cross-module interface closure | RC1 S1 pass |
 | Air-soil exchange | Eq. (1)-(2),(33)-(44) | `F_as`, `F_re,s` | `soil/`, `reemission/` | manual-derived/project extension | sign, limits, one/three-box closure | S8 single pass; three-box experimental |
 | Soil re-release | Eq. (38)-(44) | `Es Cs`, `REEMG` | `reemission/fluxes.py` | manual/provisional YAML | calibration and mode comparison | S3 basic pass; advanced provisional validated |
-| Air-leaf exchange | Eq. (7)-(32) | `F_ap`, `g_c` | `plant/leaf_exchange.py` | manual-derived/provisional | zero-gradient, sign, LAI/night, closure | S2 pass provisional |
+| Air-leaf exchange | Eq. (7)-(32) | `F_ap`, `r_a+r_b+r_c`, `g_c` | `plant/leaf_exchange.py` | manual + Golder/flat-plate literature parameterization | wind/stability/geometry/VPD/LAI, zero-gradient, sign, closure, formal E2E | RC1 S2 pass literature parameterization |
 | Root uptake | Sec. 2.2.5; Eq. (57)-(60),(75)-(77) | `U_i C_si` | `soil/`, `plant/` | manual | internal transfer closure | extend S5/S8 |
 | TFWT | Eq. (3),(27)-(30) | `Mp/Wp` | `plant/tfwt.py`, `plant/edible.py` | manual-derived/project extension | whole-edible inventory and equilibrium tests | S5 pass |
 | OBT | Sec. 2.2.6; Eq. (65)-(66),(105) | `Mobt` | `plant/obt.py`, `plant/edible.py` | manual/project extension | formation-turnover-allocation closure | S5 pass |

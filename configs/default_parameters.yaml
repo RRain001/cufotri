@@ -73,9 +73,15 @@ plant:
   leaf_exchange_mode: "off"
   direct_leaf_uptake_enabled: false
   direct_leaf_velocity_m_s: 0.0
-  # MANUAL_DERIVED_PROVISIONAL resistance parameterization.
-  leaf_aerodynamic_resistance_s_m: 50.0
-  leaf_boundary_resistance_s_m: 50.0
+  # LITERATURE_PARAMETERIZATION: UFOTRI resistance equations with Golder
+  # stability mapping and a laminar flat-plate Sherwood correlation.
+  leaf_resistance_parameterization: golder_monin_obukhov_flat_plate
+  leaf_canopy_height_m: 1.0
+  leaf_characteristic_length_m: 0.05
+  leaf_air_kinematic_viscosity_m2_s: 1.5e-5
+  leaf_water_vapour_diffusivity_m2_s: 2.5e-5
+  leaf_von_karman_constant: 0.4
+  leaf_minimum_wind_speed_m_s: 0.05
   leaf_stomatal_resistance_day_s_m: 400.0
   leaf_stomatal_resistance_night_s_m: 6000.0
   leaf_vpd_sensitivity_per_kpa: 0.5

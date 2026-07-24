@@ -407,6 +407,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             ),
             air_temperature_k=met["temperature_k"],
             dewpoint_temperature_k=met["dewpoint_k"],
+            wind_speed_m_s=calm.effective_wind_speed_m_s,
+            stability_class=stability_class,
             leaf_area_index=crop_lai,
             edible_allocation_rate_s=(
                 crop.edible_allocation_rate_s
@@ -591,6 +593,22 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "leaf_equilibrium_air_concentration": (
                 diag.leaf_equilibrium_air_bq_m3
             ),
+            "leaf_aerodynamic_resistance_s_m": (
+                diag.leaf_aerodynamic_resistance_s_m
+            ),
+            "leaf_boundary_resistance_s_m": (
+                diag.leaf_boundary_resistance_s_m
+            ),
+            "leaf_canopy_resistance_s_m": (
+                diag.leaf_canopy_resistance_s_m
+            ),
+            "leaf_friction_velocity_m_s": diag.leaf_friction_velocity_m_s,
+            "leaf_wind_speed_m_s": diag.leaf_wind_speed_m_s,
+            "leaf_monin_obukhov_length_m": (
+                diag.leaf_monin_obukhov_length_m
+                if math.isfinite(diag.leaf_monin_obukhov_length_m)
+                else 0.0
+            ),
             "crop_lai": crop_lai,
             "crop_present": crop_lai > 0.0,
             "crop_growth_fraction": growth_fraction,
@@ -658,8 +676,15 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "dry_interface_residual_bq",
             "wet_interface_residual_bq",
             "combined_deposition_interface_residual_bq",
+            "net_leaf_exchange_flux",
+            "leaf_monin_obukhov_length_m",
         ]
     )
-    if not np.isfinite(numeric.to_numpy()).all() or (physical < -1.0e-12).any().any():
-        raise RuntimeError("Short case produced invalid values")
+    if not np.isfinite(numeric.to_numpy()).all():
+        raise RuntimeError("Short case produced non-finite values")
+    negative_columns = physical.columns[(physical < -1.0e-12).any()].tolist()
+    if negative_columns:
+        raise RuntimeError(
+            f"Short case produced negative physical values: {negative_columns}"
+        )
     return frame

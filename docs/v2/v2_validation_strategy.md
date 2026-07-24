@@ -25,7 +25,10 @@ regulatory or field validation.
 Zero source produces zero activity and dose. Increasing washout lowers remaining
 plume source. Equal leaf/air equilibrium concentrations give zero net exchange.
 No vegetation gives zero leaf flux. Inventories and doses remain finite and
-non-negative under specified extremes. Grid/time refinement converges.
+non-negative under specified extremes. Leaf aerodynamic and boundary
+resistances respond to wind, stability, roughness, canopy height, leaf scale,
+and diffusivity; VPD and night increase canopy resistance. Grid/time
+refinement converges.
 
 ## Layer 4: manual and reference anchors
 
@@ -42,7 +45,12 @@ extreme limits. `scripts/verify_v2_acceptance.py --recompute` must create and
 run cases in a temporary directory and record HEAD/worktree, Python and
 dependency versions, hashes, seed, modes, and timestamps.
 
+The formal `v2_leaf_exchange_food_dose_72h` case disables root uptake and
+plume deposition, so its non-zero TFWT, OBT, edible inventory, and plant
+ingestion dose are attributable to the air-leaf interface. A mode-off control
+must give zero for that isolated plant/food pathway. Results at 600, 300, 120,
+and 60 s must agree within 1% for the declared endpoint set.
+
 Acceptance thresholds belong beside each benchmark. A candidate may be
 `ACCEPT_WITH_REMAINING_LIMITATIONS` when all declared project invariants pass
 but an optional module remains honestly experimental or deferred.
-

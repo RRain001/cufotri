@@ -41,6 +41,7 @@ CASE_FILES = (
     "v2_crop_ingestion_season.yaml",
     "v2_pasture_milk_pathway.yaml",
     "v2_full_adult_dose.yaml",
+    "v2_leaf_exchange_food_dose_72h.yaml",
 )
 
 

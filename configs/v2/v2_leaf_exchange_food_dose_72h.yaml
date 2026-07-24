@@ -1,0 +1,20 @@
+_base_case: ../test_case.yaml
+name: v2_leaf_exchange_food_dose_72h
+start: "2025-06-15T00:00:00Z"
+duration_hours: 72
+time_step_seconds: 600
+source:
+  release_duration_hours: 72
+atmosphere:
+  depletion:
+    dry_deposition_enabled: false
+    wet_scavenging_mode: "off"
+plant:
+  leaf_exchange_mode: bidirectional_resistance
+  root_uptake_fraction_from_modelled_layer: 0.0
+crops:
+  active_crop: leafy_vegetable
+  lai_mode: smooth_seasonal
+  edible_compartments_enabled: true
+dose:
+  enabled: true

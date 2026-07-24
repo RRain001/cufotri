@@ -7,7 +7,7 @@ This file extends, and does not rewrite, `docs/assumptions.md`.
 | V2-A01 | HTO-only chemistry | project scope | HT deposition, oxidation, and HT-specific C2 are excluded |
 | V2-A02 | Wet removal is allocated once between dry and wet loss by competing exponential rates | `PROJECT_EXTENSION` | prevents double counting; tested as a ledger |
 | V2-A03 | Power-law washout parameters are replaceable YAML values | `PROVISIONAL` until sourced | manual reports sparse data and two weakly rain-dependent classes |
-| V2-A04 | Leaf exchange uses one net bidirectional flux | `MANUAL_DERIVED` | avoids simultaneous deposition and reverse exchange |
+| V2-A04 | Leaf exchange uses one net bidirectional flux and meteorology-responsive resistances | `MANUAL_DERIVED` plus `LITERATURE_PARAMETERIZATION` | avoids simultaneous deposition/reverse exchange; Pasquill-to-Monin and flat-plate boundary closures are not site-calibrated UFOTRI parameters |
 | V2-A05 | Eq. (32) is not used literally as printed | source ambiguity | its OCR dimensions are inconsistent; resistance equations govern |
 | V2-A06 | Basic `Es*Cs + Tp*Cp` remains the conservation reference | `MANUAL_DERIVED` | empirical Eq. (44) is a selectable comparison mode |
 | V2-A07 | Crop categories and edible-part growth are configurable | `PROJECT_EXTENSION` | manual explicitly lacks adequate grain/root compartments |
@@ -20,3 +20,20 @@ This file extends, and does not rewrite, `docs/assumptions.md`.
 When a literature value is introduced, its citation, version/date, unit
 conversion, applicability, and classification must be added here or in a
 dedicated parameter provenance table before it is used as a default.
+
+## Leaf-resistance parameterization sources and limits
+
+The canopy resistance follows UFOTRI manual Eqs. (12)-(14), (18), and
+(22)-(27). Pasquill class is converted to Monin-Obukhov length with
+\(1/L=a+b\log_{10}(z_0)\) and the Golder coefficients reproduced by the
+[NSW EPA Approved Methods (2022), Section 4.3.4 and Table 5](https://www.epa.nsw.gov.au/sites/default/files/22p3963-approved-methods-for-modelling-and-assessment-of-air-pollutants.pdf).
+That mapping is labelled `LITERATURE_PARAMETERIZATION`, not an original
+UFOTRI parameter set.
+
+Leaf boundary resistance uses the average laminar flat-plate mass-transfer
+correlation \(Sh=0.664Re^{1/2}Sc^{1/3}\), as tabulated in
+[Perry's Chemical Engineers' Handbook, Section 5](https://schneider.cheme.cmu.edu/Files/Perry%27s%20Chemical%20Engineers%27%20Handbook%207th%20Edition/5.%20Heat%20and%20Mass%20Transfer.pdf).
+The implementation rejects \(Re>5\times10^5\). Default leaf length, air
+viscosity, and water-vapour diffusivity are replaceable research parameters;
+they are not crop- or site-calibrated. LAI is applied once through
+\(r_c=r_{ST}/LAI\), with no additional LAI multiplier on the resulting flux.

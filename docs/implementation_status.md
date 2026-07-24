@@ -10,10 +10,17 @@ Development branch: `codex/v2-physics-remediation-rc1`
 V2_STATUS = PHYSICS_REMEDIATION_RC1_IN_PROGRESS
 FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
 RC1_STAGE_1 = PASS
+RC1_STAGE_2 = PASS
 DRY_INTERFACE_CONSERVATION_STATUS = PASS
 WET_INTERFACE_CONSERVATION_STATUS = PASS
 DRY_WET_COMPETITION_STATUS = PASS
 ACTIVITY_PROPAGATION_STATUS = PASS_STAGE_1_SCOPE
+LEAF_RESISTANCE_METEOROLOGY_STATUS = PASS
+LAI_APPLICATION_STATUS = PASS_NO_DOUBLE_COUNT
+LEAF_END_TO_END_STATUS = PASS
+RC1_TEST_STATUS = PASS_124
+RC1_V1_RECOMPUTE_STATUS = PASS
+RC1_V2_RECOMPUTE_STATUS = PASS
 ```
 
 Stage 1 replaced the independent `v_d C_air` surface inventory input with
@@ -23,6 +30,16 @@ re-emission feedback area. The former `v_d C_air` value remains diagnostic
 only. Tests cover the audited 72 h case, all five V2 configurations, footprint
 scaling, dry/wet switches and zero limits, segment counts, the stack-input
 upper bound, and surface inventory plus boundary-output closure.
+
+Stage 2 replaced the fixed 50 s m-1 aerodynamic and boundary resistances with
+the manual wind-profile equations plus a documented Golder
+Pasquill-to-Monin-Obukhov mapping and a laminar flat-plate water-vapour
+boundary correlation. The implementation is explicitly labelled
+`LITERATURE_PARAMETERIZATION`, not validated UFOTRI equivalence. A new 72 h
+formal case disables deposition and root uptake and independently propagates
+air-leaf exchange through TFWT, OBT, edible leafy crop, and ingestion dose.
+The mode-off control is zero, and the 600/300/120/60 s endpoints converge
+within 1%.
 
 The historical V2 status below records the pre-remediation implementation and
 must not be interpreted as the current RC1 acceptance state.

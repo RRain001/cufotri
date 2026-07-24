@@ -1,3 +1,5 @@
+import pytest
+
 from cteas_ufotri.config import load_configuration
 from cteas_ufotri.coupling.integrator import advance
 from cteas_ufotri.coupling.state import State
@@ -51,16 +53,34 @@ def test_direct_leaf_interface_is_disabled_by_default_but_replaceable():
     assert direct_leaf_flux_bq_m2_s(100.0, 0.01, True) == 1.0
 
 
-def _leaf_exchange(air, plant, lai=2.0, is_day=True):
+def _leaf_exchange(
+    air,
+    plant,
+    lai=2.0,
+    is_day=True,
+    wind=2.0,
+    stability="D",
+    dewpoint=288.15,
+    roughness=0.1,
+    canopy_height=1.0,
+    leaf_length=0.05,
+    diffusivity=2.5e-5,
+):
     return bidirectional_leaf_exchange(
         air,
         plant,
         293.15,
-        288.15,
+        dewpoint,
         lai,
         is_day,
-        aerodynamic_resistance_s_m=50.0,
-        boundary_resistance_s_m=50.0,
+        wind_speed_m_s=wind,
+        stability_class=stability,
+        roughness_length_m=roughness,
+        canopy_height_m=canopy_height,
+        wind_measurement_height_m=10.0,
+        leaf_characteristic_length_m=leaf_length,
+        air_kinematic_viscosity_m2_s=1.5e-5,
+        water_vapour_diffusivity_m2_s=diffusivity,
         stomatal_resistance_day_s_m=400.0,
         stomatal_resistance_night_s_m=6000.0,
         vpd_sensitivity_per_kpa=0.5,
@@ -80,6 +100,71 @@ def test_bidirectional_leaf_exchange_sign_equilibrium_lai_and_night():
         _leaf_exchange(100.0, 0.0, is_day=False).conductance_m_s
         < _leaf_exchange(100.0, 0.0, is_day=True).conductance_m_s
     )
+
+
+def test_leaf_resistances_respond_to_wind_stability_geometry_and_diffusion():
+    slow, medium, fast = (
+        _leaf_exchange(100.0, 0.0, wind=wind)
+        for wind in (0.5, 2.0, 5.0)
+    )
+    assert slow.aerodynamic_resistance_s_m > medium.aerodynamic_resistance_s_m
+    assert medium.aerodynamic_resistance_s_m > fast.aerodynamic_resistance_s_m
+    assert slow.boundary_resistance_s_m > medium.boundary_resistance_s_m
+    assert medium.boundary_resistance_s_m > fast.boundary_resistance_s_m
+    assert slow.conductance_m_s < medium.conductance_m_s < fast.conductance_m_s
+
+    unstable = _leaf_exchange(100.0, 0.0, stability="B")
+    stable = _leaf_exchange(100.0, 0.0, stability="F")
+    assert unstable.aerodynamic_resistance_s_m < stable.aerodynamic_resistance_s_m
+
+    rough = _leaf_exchange(100.0, 0.0, roughness=0.2)
+    tall = _leaf_exchange(100.0, 0.0, canopy_height=2.0)
+    assert rough.aerodynamic_resistance_s_m != medium.aerodynamic_resistance_s_m
+    assert tall.aerodynamic_resistance_s_m != medium.aerodynamic_resistance_s_m
+
+    larger_leaf = _leaf_exchange(100.0, 0.0, leaf_length=0.10)
+    faster_diffusion = _leaf_exchange(100.0, 0.0, diffusivity=3.0e-5)
+    assert larger_leaf.boundary_resistance_s_m > medium.boundary_resistance_s_m
+    assert faster_diffusion.boundary_resistance_s_m < medium.boundary_resistance_s_m
+
+
+def test_vpd_and_lai_are_applied_once_to_canopy_resistance():
+    humid = _leaf_exchange(100.0, 0.0, lai=3.0, dewpoint=292.15)
+    dry = _leaf_exchange(100.0, 0.0, lai=3.0, dewpoint=278.15)
+    double_lai = _leaf_exchange(100.0, 0.0, lai=6.0, dewpoint=292.15)
+    assert dry.canopy_resistance_s_m > humid.canopy_resistance_s_m
+    assert dry.conductance_m_s < humid.conductance_m_s
+    assert double_lai.canopy_resistance_s_m == pytest.approx(
+        humid.canopy_resistance_s_m / 2.0
+    )
+
+
+def test_daytime_rain_opens_canopy_but_night_keeps_epidermal_resistance():
+    common = dict(
+        air_concentration_bq_m3=100.0,
+        plant_water_concentration_bq_m3=0.0,
+        temperature_k=293.15,
+        dewpoint_k=288.15,
+        lai=2.0,
+        wind_speed_m_s=2.0,
+        stability_class="D",
+        roughness_length_m=0.1,
+        canopy_height_m=1.0,
+        wind_measurement_height_m=10.0,
+        leaf_characteristic_length_m=0.05,
+        air_kinematic_viscosity_m2_s=1.5e-5,
+        water_vapour_diffusivity_m2_s=2.5e-5,
+        stomatal_resistance_day_s_m=400.0,
+        stomatal_resistance_night_s_m=6000.0,
+        vpd_sensitivity_per_kpa=0.5,
+        isotope_fractionation_liquid_to_vapour=1.1,
+        water_density_kg_m3=1000.0,
+        precipitation_m_s=1.0e-6,
+    )
+    day = bidirectional_leaf_exchange(is_day=True, **common)
+    night = bidirectional_leaf_exchange(is_day=False, **common)
+    assert day.canopy_resistance_s_m == 0.0
+    assert night.canopy_resistance_s_m > 0.0
 
 
 def test_bidirectional_leaf_release_preserves_surface_box_closure():
@@ -102,4 +187,35 @@ def test_bidirectional_leaf_release_preserves_surface_box_closure():
     assert diagnostics.net_leaf_exchange_bq_m2_s < 0.0
     assert diagnostics.leaf_release_bq_m2_s > 0.0
     assert final.plant_tfwt_bq_m2 < initial.plant_tfwt_bq_m2
+    assert initial.plant_tfwt_bq_m2 - final.plant_tfwt_bq_m2 == pytest.approx(
+        diagnostics.leaf_release_bq_m2_s * 600.0
+    )
+    assert diagnostics.surface_box_mass_closure.relative_error < 1.0e-12
+
+
+def test_leaf_uptake_enters_plant_once():
+    config = isolated_config()
+    config["plant"]["leaf_exchange_mode"] = "bidirectional_resistance"
+    config["plant"]["obt_formation_rate_s"] = 0.0
+    config["physics"]["tritium_decay_constant_s"] = 0.0
+    final, diagnostics = advance(
+        State(0.01),
+        60.0,
+        1000.0,
+        0.0,
+        0.0,
+        0.0,
+        config,
+        root_uptake_m_s=0.0,
+        is_day=True,
+        air_temperature_k=293.15,
+        dewpoint_temperature_k=288.15,
+        wind_speed_m_s=2.0,
+        stability_class="D",
+        leaf_area_index=2.0,
+    )
+    assert final.plant_tfwt_bq_m2 == pytest.approx(
+        diagnostics.leaf_uptake_bq_m2_s * 60.0
+    )
+    assert final.soil_hto_bq_m2 == 0.0
     assert diagnostics.surface_box_mass_closure.relative_error < 1.0e-12

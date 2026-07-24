@@ -101,6 +101,24 @@ def load_configuration(
     if leaf_mode not in {"off", "deposition_only", "bidirectional_resistance"}:
         raise ValueError("Unsupported leaf-exchange mode")
     config["plant"]["leaf_exchange_mode"] = leaf_mode
+    plant = config["plant"]
+    if plant.get("leaf_resistance_parameterization") != (
+        "golder_monin_obukhov_flat_plate"
+    ):
+        raise ValueError("Unsupported leaf-resistance parameterization")
+    leaf_positive = (
+        "leaf_canopy_height_m",
+        "leaf_characteristic_length_m",
+        "leaf_air_kinematic_viscosity_m2_s",
+        "leaf_water_vapour_diffusivity_m2_s",
+        "leaf_von_karman_constant",
+        "leaf_minimum_wind_speed_m_s",
+        "leaf_stomatal_resistance_day_s_m",
+        "leaf_stomatal_resistance_night_s_m",
+        "leaf_isotope_fractionation_liquid_to_vapour",
+    )
+    if any(float(plant[name]) <= 0.0 for name in leaf_positive):
+        raise ValueError("Leaf-resistance parameters must be positive")
     crops = config["crops"]
     if crops["active_crop"] not in crops["parameters"]:
         raise ValueError("Active crop is missing from crop parameters")
