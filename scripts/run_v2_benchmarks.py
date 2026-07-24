@@ -8,6 +8,7 @@ from cteas_ufotri.benchmarks.v2_cases import (
     benchmark_suite_passes,
     run_v2_benchmark_suite,
 )
+from cteas_ufotri.benchmarks.independent import benchmark_category_counts
 from cteas_ufotri.config import load_configuration
 
 
@@ -20,7 +21,11 @@ def main() -> int:
     )
     results = run_v2_benchmark_suite(config)
     text = json.dumps(
-        {"pass": benchmark_suite_passes(results), "cases": results},
+        {
+            "pass": benchmark_suite_passes(results),
+            "category_counts": benchmark_category_counts(results),
+            "cases": results,
+        },
         indent=2,
         sort_keys=True,
     )

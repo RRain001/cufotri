@@ -19,6 +19,7 @@ from cteas_ufotri.benchmarks.v2_cases import (
     benchmark_suite_passes,
     run_v2_benchmark_suite,
 )
+from cteas_ufotri.benchmarks.independent import benchmark_category_counts
 from cteas_ufotri.case import run_short_case
 from cteas_ufotri.config import load_configuration
 
@@ -236,6 +237,7 @@ def recompute() -> list[str]:
             raise ValueError("Wet-parameter uncertainty grid failed")
         uncertainty = _uncertainty_check()
         benchmarks = run_v2_benchmark_suite(_base())
+        benchmark_counts = benchmark_category_counts(benchmarks)
         if not benchmark_suite_passes(benchmarks):
             raise ValueError("V2 benchmark acceptance failed")
 
@@ -311,7 +313,8 @@ def recompute() -> list[str]:
             "case_checks": case_checks,
             "wet_parameter_sensitivity": wet_sensitivity,
             "uncertainty": uncertainty,
-            "benchmark_case_count": len(benchmarks),
+            "benchmark_record_count": len(benchmarks),
+            "benchmark_category_counts": benchmark_counts,
             "end_to_end_summary_sha256": sha256(
                 end_to_end_root / "suite_summary.json"
             ),
@@ -331,7 +334,12 @@ def recompute() -> list[str]:
             ),
             "PASS: fixed-seed LHS uncertainty sample",
             "PASS: 12-case wet-scavenging parameter grid",
-            f"PASS: {len(benchmarks)} V2 benchmark cases",
+            (
+                "PASS: categorized V2 evidence "
+                f"({benchmark_counts['analytic_benchmark']} analytic, "
+                f"{benchmark_counts['manual_anchor']} manual, "
+                f"{benchmark_counts['literature_comparison']} literature)"
+            ),
             "PASS: six end-to-end cases and required artifacts recomputed",
             "PASS: V2 provenance and hashes recorded in temporary output",
         ]

@@ -33,13 +33,13 @@ three-dimensional atmospheric mass conservation. The immutable
 | Multi-box soil | `PASS_EXPERIMENTAL_STANDALONE` | conservative three-box API; not integrated into the formal short-case coupler |
 | Uncertainty | `PASS_REPRODUCIBLE` | fixed-seed MC/LHS, percentiles, Spearman, and OAT |
 | Ecological mass balance | `PASS` | tested soil, plant, edible, harvested, animal, milk, excretion, and slaughter boundaries |
-| Benchmarks | `PASS_AVAILABLE_REFERENCE_CASES` | fifteen recomputable regression, pathway, zero, and extreme cases |
+| Benchmarks | `PASS_CATEGORIZED_EVIDENCE` | ten analytic benchmarks, five manual anchors, two literature comparisons, and fifteen executable scenarios/invariants |
 | V2 recompute | `PASS` | five end-to-end cases, benchmarks, invariants, artifacts, hashes, and provenance recomputed |
 
 ## Recomputed evidence
 
 The acceptance driver recomputes the frozen V1 cases, wet/leaf/food/dose
-pathways, fixed-seed LHS, all fifteen benchmarks, and all five end-to-end
+pathways, fixed-seed LHS, the categorized benchmark suite, and all five end-to-end
 configurations in a temporary directory. Each end-to-end case writes
 `results.csv`, eight pathway/diagnostic figures, and provenance containing
 configuration, input and output hashes, Git/worktree state, runtime versions,

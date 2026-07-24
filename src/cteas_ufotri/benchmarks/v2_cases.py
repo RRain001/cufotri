@@ -6,12 +6,17 @@ import numpy as np
 
 from ..case import run_short_case
 from ..soil.multibox import ThreeBoxSoilState, advance_three_box_soil
+from .independent import (
+    benchmark_category_counts,
+    independent_benchmarks_pass,
+    run_independent_benchmarks,
+)
 
 
 def _run(config: dict) -> dict[str, float | bool]:
     frame = run_short_case(config)
     numeric = frame.select_dtypes(include=[np.number])
-    return {
+    result = {
         "steps": int(len(frame)),
         "finite": bool(np.isfinite(numeric.to_numpy()).all()),
         "nonnegative": bool(
@@ -39,6 +44,12 @@ def _run(config: dict) -> dict[str, float | bool]:
         "final_milk_hto_bq_l": float(frame["milk_hto_bq_l"].iloc[-1]),
         "final_total_dose_sv": float(frame["total_effective_dose_sv"].iloc[-1]),
     }
+    result["pass"] = bool(
+        result["finite"]
+        and result["nonnegative"]
+        and result["max_surface_relative_residual"] < 1.0e-10
+    )
+    return result
 
 
 def run_v2_benchmark_suite(base_config: dict) -> dict[str, dict[str, float | bool]]:
@@ -128,6 +139,10 @@ def run_v2_benchmark_suite(base_config: dict) -> dict[str, dict[str, float | boo
     cases["saturated_rain"] = saturated
 
     results = {name: _run(config) for name, config in cases.items()}
+    for name, result in results.items():
+        result["category"] = (
+            "regression_case" if name == "v1_regression" else "integration_scenario"
+        )
 
     multi_config = deepcopy(base_config["soil"]["multibox"])
     multi_config["decay_rate_s"] = 0.0
@@ -144,6 +159,7 @@ def run_v2_benchmark_suite(base_config: dict) -> dict[str, dict[str, float | boo
         multi_config,
     )
     results["single_vs_three_box_soil"] = {
+        "category": "physical_invariant",
         "steps": 1,
         "finite": bool(
             np.isfinite(multi_final.water_m).all()
@@ -154,22 +170,56 @@ def run_v2_benchmark_suite(base_config: dict) -> dict[str, dict[str, float | boo
         / 100.0,
         "single_layer_formal_status": True,
         "three_box_total_hto_bq_m2": multi_final.total_hto_bq_m2,
+        "pass": bool(
+            np.isfinite(multi_final.water_m).all()
+            and np.isfinite(multi_final.hto_bq_m2).all()
+            and min(*multi_final.water_m, *multi_final.hto_bq_m2) >= 0.0
+            and abs(multi_diag.hto_residual_bq_m2) / 100.0 < 1.0e-10
+        ),
     }
+    for name in (
+        "zero_source",
+        "extremely_low_wind",
+        "extremely_dry_soil",
+        "saturated_rain",
+    ):
+        results[name]["category"] = "physical_invariant"
+    results.update(run_independent_benchmarks(base_config))
     return results
 
 
 def benchmark_suite_passes(
     results: dict[str, dict[str, float | bool]]
 ) -> bool:
-    expected = 15
+    scenario_names = {
+        "v1_regression",
+        "no_rain_dry_deposition",
+        "strong_rain_wet_scavenging",
+        "day_short_hto_release",
+        "night_short_hto_release",
+        "post_accident_reemission_72h",
+        "crop_growing_season_release",
+        "pre_harvest_release",
+        "pasture_milk_pathway",
+        "full_adult_dose",
+        "zero_source",
+        "extremely_low_wind",
+        "extremely_dry_soil",
+        "saturated_rain",
+        "single_vs_three_box_soil",
+    }
+    if not scenario_names <= results.keys():
+        return False
+    scenario_results = {name: results[name] for name in scenario_names}
     return (
-        len(results) == expected
-        and all(bool(result["finite"]) for result in results.values())
-        and all(bool(result["nonnegative"]) for result in results.values())
+        all(bool(result["finite"]) for result in scenario_results.values())
+        and all(bool(result["nonnegative"]) for result in scenario_results.values())
         and all(
             float(result["max_surface_relative_residual"]) < 1.0e-10
-            for result in results.values()
+            for result in scenario_results.values()
         )
+        and independent_benchmarks_pass(results)
+        and benchmark_category_counts(results)["analytic_benchmark"] >= 6
         and float(results["zero_source"]["final_air_bq_m3"]) == 0.0
         and float(results["strong_rain_wet_scavenging"]["final_air_bq_m3"])
         < float(results["no_rain_dry_deposition"]["final_air_bq_m3"])

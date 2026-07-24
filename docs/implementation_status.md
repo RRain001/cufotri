@@ -185,10 +185,15 @@ Spearman correlations, one-at-a-time finite-difference sensitivities, and
 normalized pathway contributions. Parameter distributions are centralized in
 YAML and are explicitly project-level uncertainty assumptions.
 
-Stage 10 provides a recomputable fifteen-case benchmark matrix covering V1,
-dry/wet deposition, day/night accidents, 72 h re-emission, crops, harvest,
-pasture-milk, adult dose, zero and extreme limits, and single/three-box soil.
-All cases pass finite/non-negative, closure, monotonicity, and pathway gates.
+Stage 10 provides a recomputable benchmark suite with ten independent analytic
+checks, five UFOTRI-manual numeric anchors, two literature coefficient
+comparisons, and the original fifteen executable scenarios/invariants. Evidence
+is explicitly classified as `analytic_benchmark`, `manual_anchor`,
+`literature_comparison`, `physical_invariant`, `integration_scenario`, or
+`regression_case`; execution cases are not represented as numeric references.
+The analytic set covers exponential wet removal, competing dry/wet allocation,
+leaf equilibrium, re-emission, animal production, dose arithmetic, and food
+mass/water conversion.
 
 Stage 11 provides five named end-to-end configurations, pathway figures,
 results, hashes, runtime provenance, and LHS/OAT artifacts. All were recomputed
@@ -197,9 +202,9 @@ available 48 h ERA5 input with a 24 h deterministic extension; this limitation
 is recorded in every relevant provenance file.
 
 Stage 12 provides one recomputable V2 acceptance command covering frozen V1
-regression, wet/leaf/food/dose pathways, fixed-seed LHS, all fifteen benchmark
-cases, all five end-to-end configurations, required figures, and provenance
-hashes.
+regression, wet/leaf/food/dose pathways, fixed-seed LHS, the full categorized
+benchmark suite, all end-to-end configurations, required figures, and
+provenance hashes.
 
 Stage 13 records the formal audit in
 `docs/v2/formal_ufotri_environmental_pathways_v2_assessment.md`. Its verdict is
