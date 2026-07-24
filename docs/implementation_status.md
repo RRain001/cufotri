@@ -45,7 +45,7 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_6_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_7_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
@@ -57,6 +57,8 @@ EDIBLE_PLANT_STATUS = PASS_PROJECT_EXTENSION
 PLANT_INTERNAL_MASS_BALANCE_STATUS = PASS
 FOOD_CHAIN_STATUS = PASS_MINIMAL_PATHWAYS
 ECOLOGICAL_BOX_CLOSURE_STATUS = PASS
+DOSE_MODULE_STATUS = PASS_RESEARCH_SCREENING
+PATHWAY_DECOMPOSITION_STATUS = PASS
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -90,6 +92,12 @@ a configurable minimal cow body-water/body-OBT model with feed, drinking water,
 formation/turnover, milk, excretion, beef, and slaughter boundaries. Feed
 activity is removed from the edible pasture inventory and enters the animal
 inventory once; the combined ecological residual is tested.
+
+Stage 7 adds adult, child, and infant HTO/OBT public dose calculations with
+separate inhalation, skin, water, plant, milk, and meat diagnostics. Dose
+coefficients, habits, source, and version are configuration data. Results are
+cumulative by time at the configured spatial receptor and remain explicitly
+research-screening outputs.
 
 Next V2 command:
 

@@ -32,6 +32,7 @@ from .plant.obt import day_night_formation_rate_s
 from .crop.phenology import CropParameters, growth_fraction_at_time, lai_at_time
 from .plant.edible import edible_concentrations
 from .foodchain.model import AnimalState, plant_food_outputs, step_animal
+from .dose.public import DoseIncrement, calculate_public_dose_step
 
 
 def _forcing(elapsed_s: float, config: dict) -> dict[str, float]:
@@ -134,6 +135,10 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         crop_config["parameters"][crop_config["active_crop"]],
     )
     animal_state = AnimalState()
+    dose_totals = {
+        name: 0.0
+        for name in DoseIncrement.__dataclass_fields__
+    }
     calm_wind_event_count = 0
     for index in range(steps):
         elapsed = index * dt
@@ -426,6 +431,30 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 0.0,
                 config["foodchain"],
             )
+        dose_concentrations = {
+            **food_outputs,
+            "milk_hto_bq_l": animal_diag.milk_hto_bq_l,
+            "milk_obt_bq_l": animal_diag.milk_obt_bq_l,
+            "beef_hto_bq_kg": animal_diag.beef_hto_bq_kg,
+            "beef_obt_bq_kg": animal_diag.beef_obt_bq_kg,
+            "drinking_water_hto_bq_l": config["dose"][
+                "drinking_water_hto_bq_l"
+            ],
+        }
+        if config["dose"]["enabled"]:
+            dose_increment = calculate_public_dose_step(
+                dt,
+                air,
+                dose_concentrations,
+                config["dose"]["age_groups"][
+                    config["dose"]["active_age_group"]
+                ],
+                skin_to_inhalation_factor=config["dose"][
+                    "skin_to_inhalation_factor"
+                ],
+            )
+            for name in dose_totals:
+                dose_totals[name] += getattr(dose_increment, name)
         if delay_steps:
             root_history.popleft()
             root_history.append(diag.plant_transpiration_m_s)
@@ -517,6 +546,10 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 state.total_hto_bq_m2 + animal_state.total_bq,
                 1.0e-30,
             ),
+            **dose_totals,
+            "dose_age_group": config["dose"]["active_age_group"],
+            "dose_receptor_downwind_m": downwind_m,
+            "dose_receptor_crosswind_m": crosswind_m,
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,
             "whole_plant_water_bq_m2": state.plant_tfwt_bq_m2,

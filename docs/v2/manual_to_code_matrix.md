@@ -14,11 +14,11 @@
 | OBT | Sec. 2.2.6; Eq. (65)-(66),(105) | `Mobt` | `plant/obt.py`, `plant/edible.py` | manual/project extension | formation-turnover-allocation closure | S5 pass |
 | Crop growth | manual limitation after Eq. (107) | LAI, biomass, edible fraction | `crop/` | project extension | phenology, shared LAI, edible harvest | S5 pass project extension |
 | Food chain | Eq. (45)-(105) | plant/animal/milk inventories | `foodchain/` | manual + provisional YAML | ecological ledger, milk/beef paths | S6 pass minimal pathways |
-| Inhalation | Eq. (106) | inhaled activity | `dose/public.py` | manual + versioned YAML | analytic pathway tests | planned S7 |
-| Skin absorption | Eq. (106) | separate skin dose | `dose/public.py` | configurable ratio | decomposition sum | planned S7 |
-| Ingestion | Eq. (107) | food activity intake | `dose/public.py` | manual + YAML | food/pathway sums | planned S7 |
-| Dose | Eq. (106)-(107) | Sv by HTO/OBT/pathway | `dose/` | versioned YAML | exact arithmetic and totals | planned S7 |
-| Age groups | Sec. 4.1-4.3 | adult/child/infant | `dose/parameters.py` | literature YAML | group-specific regression | planned S7 |
+| Inhalation | Eq. (106) | inhaled activity | `dose/public.py` | HPA-CRCE-004 YAML | analytic pathway tests | S7 pass |
+| Skin absorption | Eq. (106) | separate skin dose | `dose/public.py` | manual factor/YAML | decomposition sum | S7 pass |
+| Ingestion | Eq. (107) | food activity intake | `dose/public.py` | HPA-CRCE-004 + habits YAML | food/pathway sums | S7 pass |
+| Dose | Eq. (106)-(107) | Sv by HTO/OBT/pathway | `dose/` | versioned YAML | exact arithmetic and totals | S7 research screening pass |
+| Age groups | Sec. 4.1-4.3 | adult/child/infant | `dose/public.py` | HPA-CRCE-004 YAML | group-specific regression | S7 pass |
 | Probability/uncertainty | Sec. 1 probabilistic use | samples/statistics | `analysis/uncertainty.py` | project extension | fixed-seed reproducibility | planned S9 |
 
 No row marked planned is represented as implemented.

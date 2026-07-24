@@ -32,7 +32,7 @@ def load_configuration(
     required = (
         "atmosphere", "soil", "plant", "reemission", "physics",
         "numerics", "synthetic_forcing", "outputs", "site", "source",
-        "coupling", "evapotranspiration", "crops", "foodchain",
+        "coupling", "evapotranspiration", "crops", "foodchain", "dose",
     )
     missing = [name for name in required if name not in config]
     if missing:
@@ -105,6 +105,9 @@ def load_configuration(
     foodchain = config["foodchain"]
     if foodchain["animal_mode"] not in {"off", "minimal_cow"}:
         raise ValueError("Unsupported animal food-chain mode")
+    dose = config["dose"]
+    if dose["active_age_group"] not in dose["age_groups"]:
+        raise ValueError("Active dose age group is missing")
     shading_mode = config["evapotranspiration"]["lai_shading_mode"]
     if shading_mode not in {"radiation_term_only", "full_penman"}:
         raise ValueError("Unsupported LAI shading mode")

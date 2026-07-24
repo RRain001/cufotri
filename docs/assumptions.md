@@ -53,3 +53,7 @@
   use manual Eq. (82)-(105) anchors. The 50 kg fresh feed d-1 and 50 L water
   d-1 defaults are `PROVISIONAL` replaceable screening values. One animal is
   normalized to 4000 m2 from the manual's 250 cows km-2.
+- Public HTO and OBT coefficients use HPA-CRCE-004 Tables 1-2 age-dependent
+  values. Consumption and breathing rates are replaceable screening habits,
+  not local survey data. The dose module is always labelled
+  `research screening dose`.

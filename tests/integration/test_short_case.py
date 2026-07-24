@@ -165,6 +165,23 @@ def test_minimal_pasture_milk_foodchain_is_finite_and_closed():
     assert frame["ecological_box_relative_residual"].abs().max() < 1.0e-12
 
 
+def test_research_screening_dose_is_cumulative_and_decomposed():
+    config = load_configuration(
+        "configs/default_parameters.yaml", "configs/test_case.yaml"
+    )
+    config["duration_hours"] = 2.0
+    config["dose"]["enabled"] = True
+    frame = run_short_case(config)
+    assert frame["dose_age_group"].eq("adult").all()
+    assert frame["inhalation_dose_sv"].iloc[-1] > 0.0
+    assert frame["skin_absorption_dose_sv"].iloc[-1] > 0.0
+    assert frame["total_effective_dose_sv"].is_monotonic_increasing
+    assert frame["total_effective_dose_sv"].iloc[-1] == pytest.approx(
+        frame["total_hto_dose_sv"].iloc[-1]
+        + frame["total_obt_dose_sv"].iloc[-1]
+    )
+
+
 @pytest.mark.parametrize("dt_s", [600, 300])
 def test_reemission_feedback_uses_physical_one_hour_delay(dt_s):
     config = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")
