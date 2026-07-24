@@ -111,7 +111,10 @@ def run_uncertainty(
     for parameter, values in samples.items():
         correlations[parameter] = {}
         for output_name, output_values in outcomes.items():
-            coefficient = spearmanr(values, output_values).statistic
+            if np.all(values == values[0]) or np.all(output_values == output_values[0]):
+                coefficient = 0.0
+            else:
+                coefficient = spearmanr(values, output_values).statistic
             correlations[parameter][output_name] = (
                 float(coefficient) if np.isfinite(coefficient) else 0.0
             )
@@ -166,4 +169,3 @@ def one_at_a_time_sensitivity(
             else 0.0
         )
     return sensitivities
-

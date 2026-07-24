@@ -1,0 +1,15 @@
+_base_case: ../test_case.yaml
+name: v2_full_adult_dose
+start: "2025-06-15T00:00:00Z"
+duration_hours: 336
+time_step_seconds: 3600
+crops:
+  active_crop: pasture
+  lai_mode: smooth_seasonal
+  edible_compartments_enabled: true
+foodchain:
+  enabled: true
+  animal_mode: minimal_cow
+dose:
+  enabled: true
+  active_age_group: adult

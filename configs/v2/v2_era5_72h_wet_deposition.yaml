@@ -1,0 +1,9 @@
+_base_case: ../test_case.yaml
+name: v2_era5_72h_wet_deposition
+start: "2025-06-01T00:00:00Z"
+duration_hours: 72
+source:
+  release_duration_hours: 1.0
+atmosphere:
+  depletion:
+    wet_scavenging_mode: precipitation_power_law

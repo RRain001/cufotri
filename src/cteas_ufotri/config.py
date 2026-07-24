@@ -28,7 +28,16 @@ def load_yaml(path: str | Path) -> dict[str, Any]:
 def load_configuration(
     parameters_path: str | Path, case_path: str | Path
 ) -> dict[str, Any]:
-    config = _merge(load_yaml(parameters_path), load_yaml(case_path))
+    case_file = Path(case_path)
+    case_values = load_yaml(case_file)
+    base_case = case_values.pop("_base_case", None)
+    if base_case is None:
+        config = _merge(load_yaml(parameters_path), case_values)
+    else:
+        config = _merge(
+            load_configuration(parameters_path, case_file.parent / base_case),
+            case_values,
+        )
     required = (
         "atmosphere", "soil", "plant", "reemission", "physics",
         "numerics", "synthetic_forcing", "outputs", "site", "source",
