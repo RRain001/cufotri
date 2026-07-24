@@ -18,6 +18,7 @@ class CropParameters:
     root_fraction_by_layer: tuple[float, ...]
     obt_formation_rate_s: float
     biological_turnover_rate_s: float
+    edible_allocation_rate_s: float
     harvest_loss_fraction: float
     perennial: bool
 
@@ -44,6 +45,7 @@ class CropParameters:
             biological_turnover_rate_s=float(
                 values["biological_turnover_rate_s"]
             ),
+            edible_allocation_rate_s=float(values["edible_allocation_rate_s"]),
             harvest_loss_fraction=float(values["harvest_loss_fraction"]),
             perennial=bool(values["perennial"]),
         )
@@ -57,6 +59,7 @@ class CropParameters:
             result.aboveground_biomass_kg_fresh_m2,
             result.obt_formation_rate_s,
             result.biological_turnover_rate_s,
+            result.edible_allocation_rate_s,
         ) < 0:
             raise ValueError(f"Crop {name} parameters must be non-negative")
         if not all(
@@ -111,3 +114,15 @@ def lai_at_time(
         return crop.max_lai * max((1.0 - season_fraction) / 0.25, 0.0)
     raise ValueError(f"Unsupported LAI mode: {mode}")
 
+
+def growth_fraction_at_time(
+    timestamp: datetime,
+    crop: CropParameters,
+    mode: str,
+    *,
+    external_lai: float | None = None,
+) -> float:
+    if mode == "constant":
+        return 1.0
+    lai = lai_at_time(timestamp, crop, mode, external_lai=external_lai)
+    return min(lai / crop.max_lai, 1.0) if crop.max_lai > 0 else 0.0

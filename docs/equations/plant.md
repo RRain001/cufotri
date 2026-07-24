@@ -36,3 +36,13 @@ multipliers default to 1.5/0.5, preserving the configured average over equal
 12-hour day/night periods. Root HTO uptake may be immediate or delayed by an
 integral number of steps, including three hours. Dynamic phenology, edible
 compartments, animals, and dose are outside this environmental core.
+
+## V2 edible compartments
+
+The vegetative whole-plant source pools transfer activity once into separate
+edible TFWT and OBT inventories. This avoids treating total plant concentration
+as edible concentration and avoids counting an edible inventory both inside and
+outside the conserved system. Biomass growth changes the fresh, dry, and water
+denominators and therefore dilutes concentration without destroying activity.
+At harvest, edible activity is split into harvested product and harvest loss;
+remaining vegetative activity is an explicit crop-reset boundary.

@@ -34,6 +34,11 @@ class StepDiagnostics:
     leaf_release_bq_m2_s: float
     leaf_conductance_m_s: float
     leaf_equilibrium_air_bq_m3: float
+    tfwt_to_edible_bq_m2_s: float
+    obt_to_edible_bq_m2_s: float
+    harvested_hto_bq_m2_s: float
+    harvested_obt_bq_m2_s: float
+    harvest_loss_bq_m2_s: float
     soil_reemission_bq_m2_s: float
     plant_reemission_bq_m2_s: float
     total_reemission_bq_m2_s: float
@@ -62,6 +67,9 @@ def advance(
     air_temperature_k: float = 293.15,
     dewpoint_temperature_k: float = 288.15,
     leaf_area_index: float | None = None,
+    edible_allocation_rate_s: float = 0.0,
+    harvest_event: bool = False,
+    harvest_loss_fraction: float = 0.0,
 ) -> tuple[State, StepDiagnostics]:
     soil = config["soil"]
     plant = config["plant"]
@@ -145,6 +153,11 @@ def advance(
         raise ValueError(f"Unsupported leaf-exchange mode: {leaf_mode}")
     leaf_uptake = max(leaf, 0.0)
     requested_leaf_release = max(-leaf, 0.0)
+    if edible_allocation_rate_s < 0:
+        raise ValueError("Edible allocation rate must be non-negative")
+    if not 0.0 <= harvest_loss_fraction <= 1.0:
+        raise ValueError("Harvest loss fraction must be within [0, 1]")
+    allocation_rate = 0.0 if harvest_event else edible_allocation_rate_s
     basic_soil_reem, plant_reem, _ = basic_reemission_fluxes(
         water.evaporation_m_s, cs, water.transpiration_m_s, cp
     )
@@ -210,18 +223,52 @@ def advance(
         formation=formation,
         decay=physics["tritium_decay_constant_s"] * state.plant_tfwt_bq_m2,
         leaf_release=requested_leaf_release,
+        edible_allocation=allocation_rate * state.plant_tfwt_bq_m2,
+        crop_reset=state.plant_tfwt_bq_m2 / dt_s if harvest_event else 0.0,
     )
     obt_out = limit_inventory_outflows(
         state.plant_obt_bq_m2,
         dt_s,
         turnover=turnover,
         decay=physics["tritium_decay_constant_s"] * state.plant_obt_bq_m2,
+        edible_allocation=allocation_rate * state.plant_obt_bq_m2,
+        crop_reset=state.plant_obt_bq_m2 / dt_s if harvest_event else 0.0,
+    )
+    edible_tfwt_out = limit_inventory_outflows(
+        state.edible_tfwt_bq_m2,
+        dt_s,
+        decay=physics["tritium_decay_constant_s"] * state.edible_tfwt_bq_m2,
+        harvested=(
+            state.edible_tfwt_bq_m2 * (1.0 - harvest_loss_fraction) / dt_s
+            if harvest_event
+            else 0.0
+        ),
+        harvest_loss=(
+            state.edible_tfwt_bq_m2 * harvest_loss_fraction / dt_s
+            if harvest_event
+            else 0.0
+        ),
+    )
+    edible_obt_out = limit_inventory_outflows(
+        state.edible_obt_bq_m2,
+        dt_s,
+        decay=physics["tritium_decay_constant_s"] * state.edible_obt_bq_m2,
+        harvested=(
+            state.edible_obt_bq_m2 * (1.0 - harvest_loss_fraction) / dt_s
+            if harvest_event
+            else 0.0
+        ),
+        harvest_loss=(
+            state.edible_obt_bq_m2 * harvest_loss_fraction / dt_s
+            if harvest_event
+            else 0.0
+        ),
     )
     new_state = State(
-        water.water_m,
-        state.soil_hto_bq_m2
+        soil_water_m=water.water_m,
+        soil_hto_bq_m2=state.soil_hto_bq_m2
         + dt_s * (deposition - sum(soil_out.values())),
-        state.plant_tfwt_bq_m2
+        plant_tfwt_bq_m2=state.plant_tfwt_bq_m2
         + dt_s
         * (
             soil_out["root"]
@@ -229,17 +276,37 @@ def advance(
             + obt_out["turnover"]
             - sum(plant_out.values())
         ),
-        state.plant_obt_bq_m2
+        plant_obt_bq_m2=state.plant_obt_bq_m2
         + dt_s * (plant_out["formation"] - sum(obt_out.values())),
+        edible_tfwt_bq_m2=state.edible_tfwt_bq_m2
+        + dt_s * (plant_out["edible_allocation"] - sum(edible_tfwt_out.values())),
+        edible_obt_bq_m2=state.edible_obt_bq_m2
+        + dt_s * (obt_out["edible_allocation"] - sum(edible_obt_out.values())),
+        harvested_hto_bq_m2=(
+            state.harvested_hto_bq_m2 + edible_tfwt_out["harvested"] * dt_s
+        ),
+        harvested_obt_bq_m2=(
+            state.harvested_obt_bq_m2 + edible_obt_out["harvested"] * dt_s
+        ),
     )
     boundary = (
         soil_out["evaporation"]
         + soil_out["drainage"]
         + plant_out["transpiration"]
         + plant_out["leaf_release"]
+        + edible_tfwt_out["harvested"]
+        + edible_tfwt_out["harvest_loss"]
+        + edible_obt_out["harvested"]
+        + edible_obt_out["harvest_loss"]
+        + plant_out["crop_reset"]
+        + obt_out["crop_reset"]
     ) * dt_s
     decay = (
-        soil_out["decay"] + plant_out["decay"] + obt_out["decay"]
+        soil_out["decay"]
+        + plant_out["decay"]
+        + obt_out["decay"]
+        + edible_tfwt_out["decay"]
+        + edible_obt_out["decay"]
     ) * dt_s
     balance = SurfaceBoxMassClosure(
         state.total_hto_bq_m2,
@@ -266,6 +333,11 @@ def advance(
         plant_out["leaf_release"],
         leaf_conductance,
         leaf_equilibrium_air,
+        plant_out["edible_allocation"],
+        obt_out["edible_allocation"],
+        edible_tfwt_out["harvested"],
+        edible_obt_out["harvested"],
+        edible_tfwt_out["harvest_loss"] + edible_obt_out["harvest_loss"],
         soil_out["evaporation"],
         plant_out["transpiration"] + plant_out["leaf_release"],
         (

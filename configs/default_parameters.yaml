@@ -73,6 +73,7 @@ plant:
 crops:
   active_crop: generic_crop
   lai_mode: constant
+  edible_compartments_enabled: false
   external_lai_column: lai
   parameter_status: PROJECT_EXTENSION
   parameters:
@@ -87,6 +88,7 @@ crops:
       root_fraction_by_layer: [0.4, 0.6, 0.0]
       obt_formation_rate_s: 1.6666666667e-7
       biological_turnover_rate_s: 8.3333333333e-7
+      edible_allocation_rate_s: 1.1574074074e-7
       harvest_loss_fraction: 0.05
       perennial: true
     leafy_vegetable:

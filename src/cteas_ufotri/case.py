@@ -29,7 +29,8 @@ from .meteorology.fallback_fluxes import (
 )
 from .meteorology.derived_variables import wind_speed_at_height
 from .plant.obt import day_night_formation_rate_s
-from .crop.phenology import CropParameters, lai_at_time
+from .crop.phenology import CropParameters, growth_fraction_at_time, lai_at_time
+from .plant.edible import edible_concentrations
 
 
 def _forcing(elapsed_s: float, config: dict) -> dict[str, float]:
@@ -146,6 +147,17 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             crop,
             crop_config["lai_mode"],
             external_lai=external_lai,
+        )
+        growth_fraction = growth_fraction_at_time(
+            step_time,
+            crop,
+            crop_config["lai_mode"],
+            external_lai=external_lai,
+        )
+        next_step_time = step_time + timedelta(seconds=dt)
+        harvest_event = (
+            step_time.timetuple().tm_yday != next_step_time.timetuple().tm_yday
+            and next_step_time.timetuple().tm_yday == crop.harvest_doy
         )
         calm = resolve_calm_wind(
             met["wind_m_s"], config["atmosphere"]["calm_wind"]
@@ -324,6 +336,27 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             air_temperature_k=met["temperature_k"],
             dewpoint_temperature_k=met["dewpoint_k"],
             leaf_area_index=crop_lai,
+            edible_allocation_rate_s=(
+                crop.edible_allocation_rate_s
+                if crop_lai > 0 and crop_config["edible_compartments_enabled"]
+                else 0.0
+            ),
+            harvest_event=(
+                harvest_event and crop_config["edible_compartments_enabled"]
+            ),
+            harvest_loss_fraction=crop.harvest_loss_fraction,
+        )
+        edible_fresh_mass = (
+            crop.aboveground_biomass_kg_fresh_m2
+            * crop.edible_fraction
+            * growth_fraction
+        )
+        edible = edible_concentrations(
+            state.edible_tfwt_bq_m2,
+            state.edible_obt_bq_m2,
+            edible_fresh_mass,
+            crop.water_content_fraction_fresh,
+            config["physics"]["water_density_kg_m3"],
         )
         if delay_steps:
             root_history.popleft()
@@ -389,10 +422,24 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             ),
             "crop_lai": crop_lai,
             "crop_present": crop_lai > 0.0,
+            "crop_growth_fraction": growth_fraction,
+            "edible_fresh_mass_kg_m2": edible_fresh_mass,
+            "edible_tfwt_inventory_bq_m2": state.edible_tfwt_bq_m2,
+            "edible_obt_inventory_bq_m2": state.edible_obt_bq_m2,
+            "edible_tfwt_bq_m3_water": edible.tfwt_bq_m3_water,
+            "edible_obt_bq_kg_fresh": edible.obt_bq_kg_fresh,
+            "edible_obt_bq_kg_dry": edible.obt_bq_kg_dry,
+            "harvested_hto_bq_m2": state.harvested_hto_bq_m2,
+            "harvested_obt_bq_m2": state.harvested_obt_bq_m2,
+            "tfwt_to_edible_flux": diag.tfwt_to_edible_bq_m2_s,
+            "obt_to_edible_flux": diag.obt_to_edible_bq_m2_s,
+            "harvest_event": harvest_event,
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,
+            "whole_plant_water_bq_m2": state.plant_tfwt_bq_m2,
             "plant_tfwt_concentration": state.plant_tfwt_bq_m2 / config["plant"]["water_storage_m"],
             "plant_obt_inventory": state.plant_obt_bq_m2,
+            "whole_plant_obt_bq_m2": state.plant_obt_bq_m2,
             "soil_reemission_flux": diag.soil_reemission_bq_m2_s,
             "plant_reemission_flux": diag.plant_reemission_bq_m2_s,
             "total_reemission_flux": diag.total_reemission_bq_m2_s,

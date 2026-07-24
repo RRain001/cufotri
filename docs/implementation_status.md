@@ -45,7 +45,7 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_4_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_5_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
@@ -53,6 +53,8 @@ BASIC_REEMISSION_STATUS = PASS
 ADVANCED_REEMISSION_STATUS = PROVISIONAL_VALIDATED
 CROP_PARAMETERIZATION_STATUS = PASS_PROJECT_EXTENSION
 PHENOLOGY_STATUS = PASS
+EDIBLE_PLANT_STATUS = PASS_PROJECT_EXTENSION
+PLANT_INTERNAL_MASS_BALANCE_STATUS = PASS
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -74,6 +76,12 @@ pasture, and a generic crop. Constant, piecewise-stage, smooth-seasonal, and
 external LAI modes share one LAI value across Eq. (40) shading, transpiration,
 and leaf exchange. Outside the configured season LAI and associated exchange
 are zero. Crop values are `PROJECT_EXTENSION`, not site-specific claims.
+
+Stage 5 adds distinct vegetative/whole-plant source pools and edible TFWT/OBT
+inventories, internal allocation, growth dilution, decay, harvest, crop reset,
+and explicit water/fresh/dry concentration conversions. Harvested HTO and OBT
+are cumulative boundary outputs; internal allocation closes at machine
+precision.
 
 Next V2 command:
 
