@@ -6,7 +6,7 @@ This file extends, and does not rewrite, `docs/assumptions.md`.
 |---|---|---|---|
 | V2-A01 | HTO-only chemistry | project scope | HT deposition, oxidation, and HT-specific C2 are excluded |
 | V2-A02 | Wet removal is allocated once between dry and wet loss by competing exponential rates | `PROJECT_EXTENSION` | prevents double counting; tested as a ledger |
-| V2-A03 | Power-law washout parameters are replaceable YAML values | `PROVISIONAL` until sourced | manual reports sparse data and two weakly rain-dependent classes |
+| V2-A03 | Power-law washout uses named, replaceable YAML parameter sets | `LITERATURE_COMPARISON_NOT_UFOTRI` research default plus project uncertainty bounds | default Japanet comparison is not relabelled as UFOTRI; low/central/high and the declared 4 x 3 grid bracket uncertainty |
 | V2-A04 | Leaf exchange uses one net bidirectional flux and meteorology-responsive resistances | `MANUAL_DERIVED` plus `LITERATURE_PARAMETERIZATION` | avoids simultaneous deposition/reverse exchange; Pasquill-to-Monin and flat-plate boundary closures are not site-calibrated UFOTRI parameters |
 | V2-A05 | Eq. (32) is not used literally as printed | source ambiguity | its OCR dimensions are inconsistent; resistance equations govern |
 | V2-A06 | Basic `Es*Cs + Tp*Cp` remains the conservation reference | `MANUAL_DERIVED` | empirical Eq. (44) is a selectable comparison mode |
@@ -37,3 +37,18 @@ The implementation rejects \(Re>5\times10^5\). Default leaf length, air
 viscosity, and water-vapour diffusivity are replaceable research parameters;
 they are not crop- or site-calibrated. LAI is applied once through
 \(r_c=r_{ST}/LAI\), with no additional LAI multiplier on the resulting flux.
+
+## Wet-scavenging parameter source and uncertainty
+
+The research default `iaea_emras_japanet_comparison` uses
+\(a=5.0\times10^{-5}\), \(b=0.8\), and precipitation in mm h-1 from the
+[IAEA EMRAS Tritium Working Group final report, Japanet Eq. II.8.7](https://www-ns.iaea.org/downloads/rw/projects/emras/draft-final-reports/emras-tritium-wg.pdf).
+It is explicitly `LITERATURE_COMPARISON_NOT_UFOTRI`: the report's UFOTRI
+comparison used a different time-dependent resistance treatment.
+
+For \(\Lambda=aP^b\), \(\Lambda\) is s-1 and \(a\) has compound units
+\(\mathrm{s^{-1}(mm\,h^{-1})^{-b}}\). Project low/central/high bounds are
+configuration-level research assumptions, not calibrated site values. The
+formal sensitivity grid evaluates \(a=\{10^{-5},2\times10^{-5},
+5\times10^{-5},10^{-4}\}\) and \(b=\{0.6,0.8,1.0\}\) through wet plume loss,
+surface input, soil, TFWT, OBT, food concentration, and ingestion dose.

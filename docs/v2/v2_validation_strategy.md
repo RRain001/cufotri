@@ -59,6 +59,13 @@ module receives the actual consumed HTO/OBT activity rather than an unlimited
 animal-body concentration surrogate. Mode `off` must produce zero beef
 inventory and zero meat dose.
 
+Wet-scavenging validation records the selected named parameter set and actual
+\(a,b\) values in every result row. The formal 12-case grid spans
+\(a=\{10^{-5},2\times10^{-5},5\times10^{-5},10^{-4}\}\) and
+\(b=\{0.6,0.8,1.0\}\), checks exact wet loss/input equality, and propagates
+each combination through soil, TFWT, OBT, edible food, and plant ingestion
+dose. These are uncertainty comparisons, not site calibration.
+
 Acceptance thresholds belong beside each benchmark. A candidate may be
 `ACCEPT_WITH_REMAINING_LIMITATIONS` when all declared project invariants pass
 but an optional module remains honestly experimental or deferred.

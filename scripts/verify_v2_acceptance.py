@@ -14,6 +14,7 @@ import tempfile
 import numpy as np
 
 from cteas_ufotri.analysis.uncertainty import run_uncertainty
+from cteas_ufotri.analysis.wet_sensitivity import wet_parameter_sensitivity
 from cteas_ufotri.benchmarks.v2_cases import (
     benchmark_suite_passes,
     run_v2_benchmark_suite,
@@ -227,6 +228,12 @@ def recompute() -> list[str]:
             text=True,
         )
         case_checks = _case_checks()
+        wet_sensitivity = wet_parameter_sensitivity(_base())
+        if len(wet_sensitivity) != 12 or any(
+            record["wet_plume_loss_bq"] != record["wet_surface_input_bq"]
+            for record in wet_sensitivity
+        ):
+            raise ValueError("Wet-parameter uncertainty grid failed")
         uncertainty = _uncertainty_check()
         benchmarks = run_v2_benchmark_suite(_base())
         if not benchmark_suite_passes(benchmarks):
@@ -302,6 +309,7 @@ def recompute() -> list[str]:
             "temporary_output_directory": str(output_root),
             "v1_acceptance_output": v1.stdout.splitlines(),
             "case_checks": case_checks,
+            "wet_parameter_sensitivity": wet_sensitivity,
             "uncertainty": uncertainty,
             "benchmark_case_count": len(benchmarks),
             "end_to_end_summary_sha256": sha256(
@@ -322,6 +330,7 @@ def recompute() -> list[str]:
                 + ", ".join(f"{name}={values['steps']} steps" for name, values in case_checks.items())
             ),
             "PASS: fixed-seed LHS uncertainty sample",
+            "PASS: 12-case wet-scavenging parameter grid",
             f"PASS: {len(benchmarks)} V2 benchmark cases",
             "PASS: six end-to-end cases and required artifacts recomputed",
             "PASS: V2 provenance and hashes recorded in temporary output",

@@ -12,6 +12,7 @@ FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
 RC1_STAGE_1 = PASS
 RC1_STAGE_2 = PASS
 RC1_STAGE_3 = PASS
+RC1_STAGE_4 = PASS
 DRY_INTERFACE_CONSERVATION_STATUS = PASS
 WET_INTERFACE_CONSERVATION_STATUS = PASS
 DRY_WET_COMPETITION_STATUS = PASS
@@ -21,7 +22,9 @@ LAI_APPLICATION_STATUS = PASS_NO_DOUBLE_COUNT
 LEAF_END_TO_END_STATUS = PASS
 BEEF_PRODUCTION_BOUNDARY_STATUS = PASS
 MEAT_DOSE_CONSERVATION_STATUS = PASS
-RC1_TEST_STATUS = PASS_134
+WET_PARAMETER_SOURCE_STATUS = PASS_DOCUMENTED_LITERATURE_COMPARISON
+WET_PARAMETER_UNCERTAINTY_STATUS = PASS
+RC1_TEST_STATUS = PASS_136
 RC1_V1_RECOMPUTE_STATUS = PASS
 RC1_V2_RECOMPUTE_STATUS = PASS
 ```
@@ -50,6 +53,12 @@ decays or remains in explicit product storage, and can be consumed only up to
 the available product mass. The dose module uses actual consumed activity.
 Mode `off`, zero turnover, product exhaustion, stopped production, product
 closure, and combined animal/product closure are independently tested.
+
+Stage 4 replaces the unsourced wet coefficient default with a named Japanet
+literature-comparison parameter set while explicitly retaining the label
+`LITERATURE_COMPARISON_NOT_UFOTRI`. Separate project low/central/high bounds
+and a recomputable 4 x 3 \(a,b\) grid propagate wet uncertainty through
+deposition, soil, plant, food, and dose outputs.
 
 The historical V2 status below records the pre-remediation implementation and
 must not be interpreted as the current RC1 acceptance state.

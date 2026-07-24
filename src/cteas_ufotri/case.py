@@ -600,6 +600,11 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "dry_depletion_bq_s": depletion.dry_depletion_bq_s,
             "wet_depletion_bq_s": depletion.wet_depletion_bq_s,
             "wet_scavenging_coefficient_s": wet_rate,
+            "wet_scavenging_parameter_set": depletion_config[
+                "wet_scavenging_parameter_set"
+            ],
+            "wet_scavenging_power_law_a": depletion_config["power_law_a_s"],
+            "wet_scavenging_power_law_b": depletion_config["power_law_b"],
             "dry_deposition_flux_bq_m2_s": dry_ledger.surface_flux_bq_m2_s,
             "dry_deposition_footprint_area_m2": dry_ledger.footprint_area_m2,
             "wet_deposition_flux_bq_m2_s": wet_ledger.surface_flux_bq_m2_s,

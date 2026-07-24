@@ -15,8 +15,33 @@ atmosphere:
     segments: 20
     wet_scavenging_rate_s: 0.0
     constant_scavenging_coefficient_s: 0.0
-    # PROVISIONAL project parameterization; P is in mm h-1.
-    power_law_a_s: 1.0e-5
+    wet_scavenging_parameter_set: iaea_emras_japanet_comparison
+    wet_scavenging_parameter_sets:
+      iaea_emras_japanet_comparison:
+        a: 5.0e-5
+        b: 0.8
+        precipitation_unit: mm_h
+        status: LITERATURE_COMPARISON_NOT_UFOTRI
+        source: IAEA EMRAS Tritium WG final report, Japanet Eq. II.8.7
+      project_low:
+        a: 1.0e-5
+        b: 0.6
+        precipitation_unit: mm_h
+        status: PROJECT_UNCERTAINTY_BOUND
+        source: project bracket
+      project_central:
+        a: 5.0e-5
+        b: 0.8
+        precipitation_unit: mm_h
+        status: PROJECT_UNCERTAINTY_BOUND
+        source: project bracket centred on literature comparison
+      project_high:
+        a: 1.0e-4
+        b: 1.0
+        precipitation_unit: mm_h
+        status: PROJECT_UNCERTAINTY_BOUND
+        source: project bracket
+    power_law_a_s: 5.0e-5
     power_law_b: 0.8
   fixed_plume_rise_m: 15.0
   plume_rise_mode: fixed

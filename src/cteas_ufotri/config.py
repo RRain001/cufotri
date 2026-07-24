@@ -82,6 +82,22 @@ def load_configuration(
     ) < 0:
         raise ValueError("Wet-scavenging parameters must be non-negative")
     depletion["wet_scavenging_mode"] = wet_mode
+    wet_sets = depletion.get("wet_scavenging_parameter_sets", {})
+    selected_wet_set = depletion.get("wet_scavenging_parameter_set")
+    if selected_wet_set not in wet_sets:
+        raise ValueError("Selected wet-scavenging parameter set is missing")
+    wet_parameters = wet_sets[selected_wet_set]
+    if wet_parameters.get("precipitation_unit") != "mm_h":
+        raise ValueError("Wet-scavenging precipitation unit must be mm_h")
+    if min(
+        float(wet_parameters["a"]),
+        float(wet_parameters["b"]),
+    ) < 0.0:
+        raise ValueError("Wet-scavenging parameter-set values must be non-negative")
+    depletion["power_law_a_s"] = float(wet_parameters["a"])
+    depletion["power_law_b"] = float(wet_parameters["b"])
+    depletion["wet_scavenging_parameter_status"] = str(wet_parameters["status"])
+    depletion["wet_scavenging_parameter_source"] = str(wet_parameters["source"])
     if config["soil"]["layer_model"] not in {
         "single_top_5cm",
         "surface_root_deep_3box",
