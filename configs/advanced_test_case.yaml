@@ -1,0 +1,27 @@
+name: rural_stack_advanced_modes
+start: "2025-06-01T00:00:00Z"
+duration_hours: 24
+time_step_seconds: 600
+meteorology_step_seconds: 3600
+site:
+  longitude_deg: 117.141610855
+  latitude_deg: 31.939774444
+  receptor_mode: local_cartesian
+  receptor_east_m: 1000.0
+  receptor_north_m: 0.0
+source:
+  pollutant: HTO
+  emission_rate_bq_s: 1000000000.0
+  stack_height_m: 70.0
+  stack_temperature_k: 373.15
+  exit_velocity_m_s: 12.0
+  stack_diameter_m: 2.0
+atmosphere:
+  plume_rise_mode: briggs_simple
+  stability_mode: turner_simple
+  mixing_height_m: 800.0
+soil:
+  root_uptake_delay_seconds: 10800
+reemission:
+  mode: ufotri_empirical
+output_directory: outputs/rural_stack_advanced_modes
