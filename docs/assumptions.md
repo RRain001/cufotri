@@ -41,3 +41,7 @@
 - V2 distributes wet plume loss uniformly over a configured representative
   footprint. This is a `PROJECT_EXTENSION`, not the manual's full polar
   deposition field.
+- V2 leaf exchange resistance defaults are
+  `MANUAL_DERIVED_PROVISIONAL`. They implement the manual's resistance
+  structure and day/night order of magnitude, but are not a crop-specific
+  calibration. V1 remains `off`.

@@ -13,7 +13,23 @@ C_p=M_p/W_p
 \frac{dM_{OBT}}{dt}=k_{OBT}M_p-k_{turn}M_{OBT}-\lambda_TM_{OBT}.
 \]
 
-Direct leaf uptake is present but disabled, as requested. OBT formation defaults
+The V1 direct leaf uptake interface remains available and disabled by default.
+V2 adds `off`, `deposition_only`, and `bidirectional_resistance` modes. The
+bidirectional net flux is
+
+\[
+F_{ap}=g_c(C_a-C_{p,eq}),\qquad
+g_c=(r_a+r_b+r_c)^{-1}.
+\]
+
+Here \(C_{p,eq}\) converts TFWT activity to equilibrium air activity using
+actual water-vapour density, water density, and the configured liquid/vapour
+fractionation. Canopy resistance uses LAI, day/night stomatal resistance, and
+a VPD multiplier. LAI=0 gives zero exchange. Positive flux enters TFWT;
+negative flux is the same limited plant-to-air boundary flux and participates
+in re-emission feedback. This closure is `MANUAL_DERIVED_PROVISIONAL`.
+
+OBT formation defaults
 to the manual's daily-average 0.06% h-1; turnover defaults to 0.3% h-1. Turnover
 returns to TFWT so internal transfer conserves activity. Optional day/night
 multipliers default to 1.5/0.5, preserving the configured average over equal

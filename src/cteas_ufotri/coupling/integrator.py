@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from ..plant.obt import obt_fluxes_bq_m2_s
 from ..plant.tfwt import direct_leaf_flux_bq_m2_s, plant_concentration_bq_m3
+from ..plant.leaf_exchange import bidirectional_leaf_exchange
 from ..reemission.fluxes import (
     basic_reemission_fluxes,
     ufotri_empirical_soil_reemission_bq_m2_s,
@@ -28,6 +29,11 @@ class StepDiagnostics:
     rain_infiltration_hto_bq_m2_s: float
     rain_runoff_hto_bq_m2_s: float
     atmospheric_wet_deposition_bq_m2_s: float
+    net_leaf_exchange_bq_m2_s: float
+    leaf_uptake_bq_m2_s: float
+    leaf_release_bq_m2_s: float
+    leaf_conductance_m_s: float
+    leaf_equilibrium_air_bq_m3: float
     soil_reemission_bq_m2_s: float
     plant_reemission_bq_m2_s: float
     total_reemission_bq_m2_s: float
@@ -53,6 +59,8 @@ def advance(
     elapsed_since_release_s: float = 0.0,
     is_day: bool = True,
     atmospheric_wet_deposition_bq_m2_s: float = 0.0,
+    air_temperature_k: float = 293.15,
+    dewpoint_temperature_k: float = 288.15,
 ) -> tuple[State, StepDiagnostics]:
     soil = config["soil"]
     plant = config["plant"]
@@ -87,11 +95,54 @@ def advance(
     rain_runoff = water.runoff_m_s * rain_concentration
     wet_deposition = max(atmospheric_wet_deposition_bq_m2_s, 0.0)
     deposition = dry_deposition + rain_infiltration + wet_deposition
-    leaf = direct_leaf_flux_bq_m2_s(
-        air_concentration_bq_m3,
-        plant["direct_leaf_velocity_m_s"],
-        plant["direct_leaf_uptake_enabled"],
+    leaf_mode = plant.get(
+        "leaf_exchange_mode",
+        "deposition_only" if plant["direct_leaf_uptake_enabled"] else "off",
     )
+    leaf_conductance = 0.0
+    leaf_equilibrium_air = 0.0
+    if leaf_mode == "off":
+        leaf = 0.0
+    elif leaf_mode == "deposition_only":
+        leaf = direct_leaf_flux_bq_m2_s(
+            air_concentration_bq_m3,
+            plant["direct_leaf_velocity_m_s"],
+            True,
+        )
+        leaf_conductance = max(plant["direct_leaf_velocity_m_s"], 0.0)
+    elif leaf_mode == "bidirectional_resistance":
+        exchange = bidirectional_leaf_exchange(
+            air_concentration_bq_m3,
+            cp,
+            air_temperature_k,
+            dewpoint_temperature_k,
+            plant["lai"],
+            is_day,
+            aerodynamic_resistance_s_m=plant[
+                "leaf_aerodynamic_resistance_s_m"
+            ],
+            boundary_resistance_s_m=plant[
+                "leaf_boundary_resistance_s_m"
+            ],
+            stomatal_resistance_day_s_m=plant[
+                "leaf_stomatal_resistance_day_s_m"
+            ],
+            stomatal_resistance_night_s_m=plant[
+                "leaf_stomatal_resistance_night_s_m"
+            ],
+            vpd_sensitivity_per_kpa=plant["leaf_vpd_sensitivity_per_kpa"],
+            isotope_fractionation_liquid_to_vapour=plant[
+                "leaf_isotope_fractionation_liquid_to_vapour"
+            ],
+            water_density_kg_m3=physics["water_density_kg_m3"],
+        )
+        leaf = exchange.net_to_plant_bq_m2_s
+        leaf_conductance = exchange.conductance_m_s
+        leaf_equilibrium_air = exchange.equilibrium_air_concentration_bq_m3
+    else:
+        raise ValueError(f"Unsupported leaf-exchange mode: {leaf_mode}")
+    leaf_uptake = max(leaf, 0.0)
+    requested_leaf_release = max(-leaf, 0.0)
     basic_soil_reem, plant_reem, _ = basic_reemission_fluxes(
         water.evaporation_m_s, cs, water.transpiration_m_s, cp
     )
@@ -156,6 +207,7 @@ def advance(
         transpiration=plant_reem,
         formation=formation,
         decay=physics["tritium_decay_constant_s"] * state.plant_tfwt_bq_m2,
+        leaf_release=requested_leaf_release,
     )
     obt_out = limit_inventory_outflows(
         state.plant_obt_bq_m2,
@@ -171,7 +223,7 @@ def advance(
         + dt_s
         * (
             soil_out["root"]
-            + leaf
+            + leaf_uptake
             + obt_out["turnover"]
             - sum(plant_out.values())
         ),
@@ -182,13 +234,14 @@ def advance(
         soil_out["evaporation"]
         + soil_out["drainage"]
         + plant_out["transpiration"]
+        + plant_out["leaf_release"]
     ) * dt_s
     decay = (
         soil_out["decay"] + plant_out["decay"] + obt_out["decay"]
     ) * dt_s
     balance = SurfaceBoxMassClosure(
         state.total_hto_bq_m2,
-        (deposition + leaf) * dt_s,
+        (deposition + leaf_uptake) * dt_s,
         boundary,
         decay,
         new_state.total_hto_bq_m2,
@@ -206,9 +259,18 @@ def advance(
         rain_infiltration,
         rain_runoff,
         wet_deposition,
+        leaf_uptake - plant_out["leaf_release"],
+        leaf_uptake,
+        plant_out["leaf_release"],
+        leaf_conductance,
+        leaf_equilibrium_air,
         soil_out["evaporation"],
-        plant_out["transpiration"],
-        soil_out["evaporation"] + plant_out["transpiration"],
+        plant_out["transpiration"] + plant_out["leaf_release"],
+        (
+            soil_out["evaporation"]
+            + plant_out["transpiration"]
+            + plant_out["leaf_release"]
+        ),
         balance,
     )
     return new_state, diagnostics

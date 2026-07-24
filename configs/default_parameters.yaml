@@ -54,8 +54,16 @@ soil:
 plant:
   lai: 1.5
   water_storage_m: 0.0005
+  leaf_exchange_mode: "off"
   direct_leaf_uptake_enabled: false
   direct_leaf_velocity_m_s: 0.0
+  # MANUAL_DERIVED_PROVISIONAL resistance parameterization.
+  leaf_aerodynamic_resistance_s_m: 50.0
+  leaf_boundary_resistance_s_m: 50.0
+  leaf_stomatal_resistance_day_s_m: 400.0
+  leaf_stomatal_resistance_night_s_m: 6000.0
+  leaf_vpd_sensitivity_per_kpa: 0.5
+  leaf_isotope_fractionation_liquid_to_vapour: 1.1
   obt_formation_rate_s: 1.6666666667e-7
   obt_turnover_rate_s: 8.3333333333e-7
   obt_day_night_enabled: true

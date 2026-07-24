@@ -307,6 +307,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             atmospheric_wet_deposition_bq_m2_s=(
                 wet_ledger.surface_flux_bq_m2_s
             ),
+            air_temperature_k=met["temperature_k"],
+            dewpoint_temperature_k=met["dewpoint_k"],
         )
         if delay_steps:
             root_history.popleft()
@@ -362,6 +364,13 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "rain_runoff_hto_flux": diag.rain_runoff_hto_bq_m2_s,
             "atmospheric_wet_deposition_hto_flux": (
                 diag.atmospheric_wet_deposition_bq_m2_s
+            ),
+            "net_leaf_exchange_flux": diag.net_leaf_exchange_bq_m2_s,
+            "leaf_uptake_flux": diag.leaf_uptake_bq_m2_s,
+            "leaf_release_flux": diag.leaf_release_bq_m2_s,
+            "leaf_exchange_conductance_m_s": diag.leaf_conductance_m_s,
+            "leaf_equilibrium_air_concentration": (
+                diag.leaf_equilibrium_air_bq_m3
             ),
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,

@@ -77,6 +77,17 @@ def load_configuration(
     root_fraction = config["plant"]["root_uptake_fraction_from_modelled_layer"]
     if not 0 <= root_fraction <= 1:
         raise ValueError("Modelled-layer root uptake fraction must be within [0, 1]")
+    leaf_mode = config["plant"].get(
+        "leaf_exchange_mode",
+        (
+            "deposition_only"
+            if config["plant"].get("direct_leaf_uptake_enabled", False)
+            else "off"
+        ),
+    )
+    if leaf_mode not in {"off", "deposition_only", "bidirectional_resistance"}:
+        raise ValueError("Unsupported leaf-exchange mode")
+    config["plant"]["leaf_exchange_mode"] = leaf_mode
     shading_mode = config["evapotranspiration"]["lai_shading_mode"]
     if shading_mode not in {"radiation_term_only", "full_penman"}:
         raise ValueError("Unsupported LAI shading mode")
