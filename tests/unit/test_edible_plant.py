@@ -12,10 +12,10 @@ def _isolated():
     config = load_configuration(
         "configs/default_parameters.yaml", "configs/test_case.yaml"
     )
-    config["atmosphere"]["deposition_velocity_m_s"] = 0.0
-    config["physics"]["tritium_decay_constant_s"] = 0.0
     config["plant"]["obt_formation_rate_s"] = 0.0
     config["plant"]["obt_turnover_rate_s"] = 0.0
+    config["physics"]["tritium_decay_constant_s"] = 0.0
+    config["atmosphere"]["deposition_velocity_m_s"] = 0.0
     config["plant"]["leaf_exchange_mode"] = "off"
     return config
 
@@ -74,5 +74,33 @@ def test_harvest_resets_plant_and_records_edible_boundaries():
     assert final.harvested_hto_bq_m2 == pytest.approx(18.0)
     assert final.harvested_obt_bq_m2 == pytest.approx(9.0)
     assert diagnostics.harvest_loss_bq_m2_s * 100.0 == pytest.approx(3.0)
-    assert diagnostics.surface_box_mass_closure.relative_error < 1.0e-12
 
+
+def test_partial_cut_retains_perennial_plant_and_edible_inventory():
+    config = _isolated()
+    initial = State(
+        soil_water_m=0.01,
+        plant_tfwt_bq_m2=100.0,
+        plant_obt_bq_m2=50.0,
+        edible_tfwt_bq_m2=20.0,
+        edible_obt_bq_m2=10.0,
+    )
+    final, diagnostics = advance(
+        initial,
+        100.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        config,
+        harvest_event=True,
+        harvest_fraction=0.5,
+        harvest_loss_fraction=0.0,
+    )
+    assert final.plant_tfwt_bq_m2 == pytest.approx(50.0, rel=1.0e-5)
+    assert final.plant_obt_bq_m2 == pytest.approx(25.0, rel=1.0e-5)
+    assert final.edible_tfwt_bq_m2 == pytest.approx(10.0, rel=1.0e-5)
+    assert final.edible_obt_bq_m2 == pytest.approx(5.0, rel=1.0e-5)
+    assert final.cut_plant_hto_bq_m2 == pytest.approx(50.0)
+    assert final.cut_plant_obt_bq_m2 == pytest.approx(25.0)
+    assert diagnostics.surface_box_mass_closure.relative_error < 1.0e-12

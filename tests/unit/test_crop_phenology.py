@@ -5,7 +5,11 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from cteas_ufotri.config import load_configuration
-from cteas_ufotri.crop.phenology import CropParameters, lai_at_time
+from cteas_ufotri.crop.phenology import (
+    CropParameters,
+    harvest_fraction_at_transition,
+    lai_at_time,
+)
 
 
 def _crop(name="generic_crop"):
@@ -58,3 +62,22 @@ def test_constant_and_external_lai_modes():
     assert lai_at_time(_date(1), crop, "external_timeseries", external_lai=2.75) == 2.75
     with pytest.raises(ValueError, match="forcing"):
         lai_at_time(_date(1), crop, "external_timeseries")
+
+
+def test_perennial_pasture_has_dormant_lai_and_partial_cuttings():
+    crop = _crop("pasture")
+    assert crop.phenology_mode == "perennial_dormant_season"
+    assert lai_at_time(_date(1), crop, "smooth_seasonal") == pytest.approx(
+        crop.dormant_min_lai
+    )
+    cutting = _date(crop.cutting_doys[0])
+    assert harvest_fraction_at_transition(
+        cutting - timedelta(hours=1),
+        cutting,
+        crop,
+    ) == pytest.approx(crop.cutting_fraction)
+    assert harvest_fraction_at_transition(
+        cutting,
+        cutting + timedelta(hours=1),
+        crop,
+    ) == 0.0

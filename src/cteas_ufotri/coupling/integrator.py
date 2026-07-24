@@ -82,6 +82,7 @@ def advance(
     leaf_area_index: float | None = None,
     edible_allocation_rate_s: float = 0.0,
     harvest_event: bool = False,
+    harvest_fraction: float = 1.0,
     harvest_loss_fraction: float = 0.0,
     edible_tfwt_consumption_bq_m2_s: float = 0.0,
     edible_obt_consumption_bq_m2_s: float = 0.0,
@@ -198,6 +199,8 @@ def advance(
         raise ValueError("Edible allocation rate must be non-negative")
     if not 0.0 <= harvest_loss_fraction <= 1.0:
         raise ValueError("Harvest loss fraction must be within [0, 1]")
+    if not 0.0 <= harvest_fraction <= 1.0:
+        raise ValueError("Harvest fraction must be within [0, 1]")
     allocation_rate = 0.0 if harvest_event else edible_allocation_rate_s
     basic_soil_reem, plant_reem, _ = basic_reemission_fluxes(
         water.evaporation_m_s, cs, water.transpiration_m_s, cp
@@ -265,7 +268,11 @@ def advance(
         decay=physics["tritium_decay_constant_s"] * state.plant_tfwt_bq_m2,
         leaf_release=requested_leaf_release,
         edible_allocation=allocation_rate * state.plant_tfwt_bq_m2,
-        crop_reset=state.plant_tfwt_bq_m2 / dt_s if harvest_event else 0.0,
+        crop_reset=(
+            state.plant_tfwt_bq_m2 * harvest_fraction / dt_s
+            if harvest_event
+            else 0.0
+        ),
     )
     obt_out = limit_inventory_outflows(
         state.plant_obt_bq_m2,
@@ -273,19 +280,29 @@ def advance(
         turnover=turnover,
         decay=physics["tritium_decay_constant_s"] * state.plant_obt_bq_m2,
         edible_allocation=allocation_rate * state.plant_obt_bq_m2,
-        crop_reset=state.plant_obt_bq_m2 / dt_s if harvest_event else 0.0,
+        crop_reset=(
+            state.plant_obt_bq_m2 * harvest_fraction / dt_s
+            if harvest_event
+            else 0.0
+        ),
     )
     edible_tfwt_out = limit_inventory_outflows(
         state.edible_tfwt_bq_m2,
         dt_s,
         decay=physics["tritium_decay_constant_s"] * state.edible_tfwt_bq_m2,
         harvested=(
-            state.edible_tfwt_bq_m2 * (1.0 - harvest_loss_fraction) / dt_s
+            state.edible_tfwt_bq_m2
+            * harvest_fraction
+            * (1.0 - harvest_loss_fraction)
+            / dt_s
             if harvest_event
             else 0.0
         ),
         harvest_loss=(
-            state.edible_tfwt_bq_m2 * harvest_loss_fraction / dt_s
+            state.edible_tfwt_bq_m2
+            * harvest_fraction
+            * harvest_loss_fraction
+            / dt_s
             if harvest_event
             else 0.0
         ),
@@ -296,12 +313,18 @@ def advance(
         dt_s,
         decay=physics["tritium_decay_constant_s"] * state.edible_obt_bq_m2,
         harvested=(
-            state.edible_obt_bq_m2 * (1.0 - harvest_loss_fraction) / dt_s
+            state.edible_obt_bq_m2
+            * harvest_fraction
+            * (1.0 - harvest_loss_fraction)
+            / dt_s
             if harvest_event
             else 0.0
         ),
         harvest_loss=(
-            state.edible_obt_bq_m2 * harvest_loss_fraction / dt_s
+            state.edible_obt_bq_m2
+            * harvest_fraction
+            * harvest_loss_fraction
+            / dt_s
             if harvest_event
             else 0.0
         ),
@@ -330,6 +353,12 @@ def advance(
         ),
         harvested_obt_bq_m2=(
             state.harvested_obt_bq_m2 + edible_obt_out["harvested"] * dt_s
+        ),
+        cut_plant_hto_bq_m2=(
+            state.cut_plant_hto_bq_m2 + plant_out["crop_reset"] * dt_s
+        ),
+        cut_plant_obt_bq_m2=(
+            state.cut_plant_obt_bq_m2 + obt_out["crop_reset"] * dt_s
         ),
     )
     boundary = (

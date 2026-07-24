@@ -155,6 +155,13 @@ external LAI modes share one LAI value across Eq. (40) shading, transpiration,
 and leaf exchange. Outside the configured season LAI and associated exchange
 are zero. Crop values are `PROJECT_EXTENSION`, not site-specific claims.
 
+Perennial pasture now uses an explicit dormant-season mode rather than the
+legacy start-equals-harvest special case. It retains a configurable non-zero
+dormant LAI, supports multiple partial cuts, preserves remaining inventories
+across year boundaries, and records edible-harvest and removed whole-plant
+activity as separate boundaries. A formal two-year case passes six unique cut
+events, second-year regrowth, non-negativity, and closure checks.
+
 Stage 5 adds distinct vegetative/whole-plant source pools and edible TFWT/OBT
 inventories, internal allocation, growth dilution, decay, harvest, crop reset,
 and explicit water/fresh/dry concentration conversions. Harvested HTO and OBT

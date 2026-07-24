@@ -21,6 +21,10 @@ class CropParameters:
     edible_allocation_rate_s: float
     harvest_loss_fraction: float
     perennial: bool
+    phenology_mode: str
+    dormant_min_lai: float
+    cutting_doys: tuple[int, ...]
+    cutting_fraction: float
 
     @classmethod
     def from_mapping(cls, name: str, values: dict) -> "CropParameters":
@@ -48,6 +52,21 @@ class CropParameters:
             edible_allocation_rate_s=float(values["edible_allocation_rate_s"]),
             harvest_loss_fraction=float(values["harvest_loss_fraction"]),
             perennial=bool(values["perennial"]),
+            phenology_mode=str(
+                values.get(
+                    "phenology_mode",
+                    (
+                        "perennial_dormant_season"
+                        if values["perennial"]
+                        else "annual_single_harvest"
+                    ),
+                )
+            ),
+            dormant_min_lai=float(values.get("dormant_min_lai", 0.0)),
+            cutting_doys=tuple(
+                int(value) for value in values.get("cutting_doys", [])
+            ),
+            cutting_fraction=float(values.get("cutting_fraction", 1.0)),
         )
         if not 1 <= result.growth_start_doy <= 366:
             raise ValueError(f"Crop {name} has invalid growth start")
@@ -60,6 +79,7 @@ class CropParameters:
             result.obt_formation_rate_s,
             result.biological_turnover_rate_s,
             result.edible_allocation_rate_s,
+            result.dormant_min_lai,
         ) < 0:
             raise ValueError(f"Crop {name} parameters must be non-negative")
         if not all(
@@ -68,10 +88,48 @@ class CropParameters:
                 result.edible_fraction,
                 result.water_content_fraction_fresh,
                 result.harvest_loss_fraction,
+                result.cutting_fraction,
             )
         ):
             raise ValueError(f"Crop {name} fractions must be within [0, 1]")
+        supported_modes = {
+            "annual_single_harvest",
+            "annual_multiple_harvest",
+            "perennial_dormant_season",
+            "perennial_evergreen",
+        }
+        if result.phenology_mode not in supported_modes:
+            raise ValueError(f"Crop {name} has unsupported phenology mode")
+        if result.perennial != result.phenology_mode.startswith("perennial_"):
+            raise ValueError(f"Crop {name} perennial flag conflicts with mode")
+        if result.dormant_min_lai > result.max_lai:
+            raise ValueError(f"Crop {name} dormant LAI exceeds maximum LAI")
+        if any(not 1 <= day <= 366 for day in result.cutting_doys):
+            raise ValueError(f"Crop {name} has invalid cutting day")
+        if len(set(result.cutting_doys)) != len(result.cutting_doys):
+            raise ValueError(f"Crop {name} has duplicate cutting days")
+        if result.phenology_mode in {
+            "annual_multiple_harvest",
+            "perennial_dormant_season",
+            "perennial_evergreen",
+        } and not result.cutting_doys:
+            raise ValueError(f"Crop {name} mode requires cutting days")
         return result
+
+
+def _season_fraction(doy: int, crop: CropParameters) -> float | None:
+    start = crop.growth_start_doy
+    harvest = crop.harvest_doy
+    if start <= harvest:
+        if doy < start or doy > harvest:
+            return None
+        return (doy - start) / max(harvest - start, 1)
+    season_length = (366 - start) + harvest
+    if doy >= start:
+        return (doy - start) / season_length
+    if doy <= harvest:
+        return (366 - start + doy) / season_length
+    return None
 
 
 def lai_at_time(
@@ -88,31 +146,46 @@ def lai_at_time(
     if mode == "constant":
         return crop.constant_lai
     doy = timestamp.timetuple().tm_yday
-    start = crop.growth_start_doy
-    harvest = crop.harvest_doy
-    if crop.perennial and start == harvest:
-        season_fraction = (doy - 1) / 365.0
-    elif start <= harvest:
-        if doy < start or doy > harvest:
-            return 0.0
-        season_fraction = (doy - start) / max(harvest - start, 1)
-    else:
-        season_length = (366 - start) + harvest
-        if doy >= start:
-            season_fraction = (doy - start) / season_length
-        elif doy <= harvest:
-            season_fraction = (366 - start + doy) / season_length
-        else:
-            return 0.0
+    if crop.phenology_mode == "perennial_evergreen":
+        return crop.max_lai
+    season_fraction = _season_fraction(doy, crop)
+    if season_fraction is None:
+        return (
+            crop.dormant_min_lai
+            if crop.phenology_mode == "perennial_dormant_season"
+            else 0.0
+        )
     if mode == "smooth_seasonal":
-        return crop.max_lai * math.sin(math.pi * season_fraction) ** 2
+        seasonal = math.sin(math.pi * season_fraction) ** 2
+        return crop.dormant_min_lai + (
+            crop.max_lai - crop.dormant_min_lai
+        ) * seasonal
     if mode == "piecewise_growth_stage":
         if season_fraction < 0.2:
-            return crop.max_lai * season_fraction / 0.2
-        if season_fraction <= 0.75:
-            return crop.max_lai
-        return crop.max_lai * max((1.0 - season_fraction) / 0.25, 0.0)
+            seasonal = season_fraction / 0.2
+        elif season_fraction <= 0.75:
+            seasonal = 1.0
+        else:
+            seasonal = max((1.0 - season_fraction) / 0.25, 0.0)
+        return crop.dormant_min_lai + (
+            crop.max_lai - crop.dormant_min_lai
+        ) * seasonal
     raise ValueError(f"Unsupported LAI mode: {mode}")
+
+
+def harvest_fraction_at_transition(
+    timestamp: datetime,
+    next_timestamp: datetime,
+    crop: CropParameters,
+) -> float:
+    """Return the activity/biomass fraction removed at a date boundary."""
+
+    if timestamp.date() == next_timestamp.date():
+        return 0.0
+    next_doy = next_timestamp.timetuple().tm_yday
+    if crop.phenology_mode == "annual_single_harvest":
+        return 1.0 if next_doy == crop.harvest_doy else 0.0
+    return crop.cutting_fraction if next_doy in crop.cutting_doys else 0.0
 
 
 def growth_fraction_at_time(

@@ -11,6 +11,8 @@ class State:
     edible_obt_bq_m2: float = 0.0
     harvested_hto_bq_m2: float = 0.0
     harvested_obt_bq_m2: float = 0.0
+    cut_plant_hto_bq_m2: float = 0.0
+    cut_plant_obt_bq_m2: float = 0.0
 
     @property
     def total_hto_bq_m2(self) -> float:

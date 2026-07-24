@@ -29,7 +29,12 @@ from .meteorology.fallback_fluxes import (
 )
 from .meteorology.derived_variables import wind_speed_at_height
 from .plant.obt import day_night_formation_rate_s
-from .crop.phenology import CropParameters, growth_fraction_at_time, lai_at_time
+from .crop.phenology import (
+    CropParameters,
+    growth_fraction_at_time,
+    harvest_fraction_at_transition,
+    lai_at_time,
+)
 from .plant.edible import edible_concentrations
 from .foodchain.model import (
     AnimalState,
@@ -199,10 +204,12 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             external_lai=external_lai,
         )
         next_step_time = step_time + timedelta(seconds=dt)
-        harvest_event = (
-            step_time.timetuple().tm_yday != next_step_time.timetuple().tm_yday
-            and next_step_time.timetuple().tm_yday == crop.harvest_doy
+        harvest_fraction = harvest_fraction_at_transition(
+            step_time,
+            next_step_time,
+            crop,
         )
+        harvest_event = harvest_fraction > 0.0
         calm = resolve_calm_wind(
             met["wind_m_s"], config["atmosphere"]["calm_wind"]
         )
@@ -435,6 +442,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             harvest_event=(
                 harvest_event and crop_config["edible_compartments_enabled"]
             ),
+            harvest_fraction=harvest_fraction,
             harvest_loss_fraction=crop.harvest_loss_fraction,
             edible_tfwt_consumption_bq_m2_s=feed_hto_rate,
             edible_obt_consumption_bq_m2_s=feed_obt_rate,
@@ -711,9 +719,15 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "edible_obt_bq_kg_dry": edible.obt_bq_kg_dry,
             "harvested_hto_bq_m2": state.harvested_hto_bq_m2,
             "harvested_obt_bq_m2": state.harvested_obt_bq_m2,
+            "cut_plant_hto_bq_m2": state.cut_plant_hto_bq_m2,
+            "cut_plant_obt_bq_m2": state.cut_plant_obt_bq_m2,
             "tfwt_to_edible_flux": diag.tfwt_to_edible_bq_m2_s,
             "obt_to_edible_flux": diag.obt_to_edible_bq_m2_s,
             "harvest_event": harvest_event,
+            "harvest_fraction": harvest_fraction,
+            "harvest_effective_doy": (
+                next_step_time.timetuple().tm_yday if harvest_event else 0
+            ),
             **food_outputs,
             "milk_hto_bq_l": animal_diag.milk_hto_bq_l,
             "milk_obt_bq_l": animal_diag.milk_obt_bq_l,

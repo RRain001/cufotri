@@ -1,0 +1,18 @@
+_base_case: ../test_case.yaml
+name: v2_pasture_multiyear_2y
+start: "2025-01-01T00:00:00Z"
+duration_hours: 17520
+time_step_seconds: 21600
+coupling:
+  reemission_feedback_delay_s: 21600
+source:
+  release_duration_hours: 24
+crops:
+  active_crop: pasture
+  lai_mode: smooth_seasonal
+  edible_compartments_enabled: true
+foodchain:
+  enabled: false
+  animal_mode: "off"
+dose:
+  enabled: false
