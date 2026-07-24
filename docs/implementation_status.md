@@ -45,7 +45,7 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_9_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_14_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
@@ -63,6 +63,15 @@ SINGLE_LAYER_STATUS = PASS_UNCHANGED
 THREE_BOX_SOIL_STATUS = PASS_EXPERIMENTAL_STANDALONE
 UNCERTAINTY_STATUS = PASS_REPRODUCIBLE
 SENSITIVITY_STATUS = PASS
+BENCHMARK_STATUS = PASS_AVAILABLE_REFERENCE_CASES
+PHYSICAL_INVARIANTS_STATUS = PASS
+V2_END_TO_END_CASES_STATUS = PASS
+V2_ACCEPTANCE_RECOMPUTE_STATUS = PASS
+V2_AUDIT_STATUS = ACCEPT_WITH_REMAINING_LIMITATIONS
+V2_COMPLETE_RECOMMENDATION = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+V2_TEST_STATUS = PASS_95
+V2_COMPILE_STATUS = PASS
+V2_DIFF_CHECK_STATUS = PASS
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -115,8 +124,34 @@ Spearman correlations, one-at-a-time finite-difference sensitivities, and
 normalized pathway contributions. Parameter distributions are centralized in
 YAML and are explicitly project-level uncertainty assumptions.
 
-Next V2 command:
+Stage 10 provides a recomputable fifteen-case benchmark matrix covering V1,
+dry/wet deposition, day/night accidents, 72 h re-emission, crops, harvest,
+pasture-milk, adult dose, zero and extreme limits, and single/three-box soil.
+All cases pass finite/non-negative, closure, monotonicity, and pathway gates.
+
+Stage 11 provides five named end-to-end configurations, pathway figures,
+results, hashes, runtime provenance, and LHS/OAT artifacts. All were recomputed
+in a temporary directory. The 72 h weather record transparently combines the
+available 48 h ERA5 input with a 24 h deterministic extension; this limitation
+is recorded in every relevant provenance file.
+
+Stage 12 provides one recomputable V2 acceptance command covering frozen V1
+regression, wet/leaf/food/dose pathways, fixed-seed LHS, all fifteen benchmark
+cases, all five end-to-end configurations, required figures, and provenance
+hashes.
+
+Stage 13 records the formal audit in
+`docs/v2/formal_ufotri_environmental_pathways_v2_assessment.md`. Its verdict is
+`ACCEPT_WITH_REMAINING_LIMITATIONS`, and its recommendation is limited to
+`FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE`.
+
+Stage 14 passed 95 tests, frozen V1 recomputation, complete V2 recomputation,
+Python byte-compilation, and the Git whitespace-error check. One known
+NumPy/NetCDF binary-compatibility runtime warning remains in the ERA5 reader
+test.
+
+Final V2 acceptance command:
 
 ```bash
-.venv/bin/python -m pytest -q
+.venv/bin/python scripts/verify_v2_acceptance.py --recompute
 ```
