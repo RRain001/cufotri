@@ -67,6 +67,8 @@ def solve_coupled_step_reference(
     obt_formation_rate_s: float | None = None,
     elapsed_since_release_s: float = 0.0,
     is_day: bool = True,
+    atmospheric_dry_deposition_bq_m2_s: float = 0.0,
+    atmospheric_wet_deposition_bq_m2_s: float = 0.0,
 ) -> State:
     """Continuous four-state reference for one piecewise-constant forcing step."""
     soil = config["soil"]
@@ -96,9 +98,9 @@ def solve_coupled_step_reference(
     turnover = plant["obt_turnover_rate_s"]
     decay = physics["tritium_decay_constant_s"]
     deposition = (
-        config["atmosphere"]["deposition_velocity_m_s"]
-        * max(air_concentration_bq_m3, 0.0)
-        + max(precipitation_m_s, 0.0)
+        max(atmospheric_dry_deposition_bq_m2_s, 0.0)
+        + max(atmospheric_wet_deposition_bq_m2_s, 0.0)
+        + water_flux.infiltration_m_s
         * max(rain_hto_concentration_bq_m3, 0.0)
     )
     leaf = direct_leaf_flux_bq_m2_s(

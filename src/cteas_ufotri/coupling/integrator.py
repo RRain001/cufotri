@@ -28,7 +28,9 @@ class StepDiagnostics:
     runoff_m_s: float
     rain_infiltration_hto_bq_m2_s: float
     rain_runoff_hto_bq_m2_s: float
+    atmospheric_dry_deposition_bq_m2_s: float
     atmospheric_wet_deposition_bq_m2_s: float
+    dry_vd_cair_diagnostic_bq_m2_s: float
     net_leaf_exchange_bq_m2_s: float
     leaf_uptake_bq_m2_s: float
     leaf_release_bq_m2_s: float
@@ -65,6 +67,7 @@ def advance(
     obt_formation_rate_s: float | None = None,
     elapsed_since_release_s: float = 0.0,
     is_day: bool = True,
+    atmospheric_dry_deposition_bq_m2_s: float = 0.0,
     atmospheric_wet_deposition_bq_m2_s: float = 0.0,
     air_temperature_k: float = 293.15,
     dewpoint_temperature_k: float = 288.15,
@@ -102,10 +105,11 @@ def advance(
         state.plant_tfwt_bq_m2, plant["water_storage_m"]
     )
     active_lai = plant["lai"] if leaf_area_index is None else max(leaf_area_index, 0.0)
-    dry_deposition = (
+    dry_vd_cair_diagnostic = (
         config["atmosphere"]["deposition_velocity_m_s"]
         * max(air_concentration_bq_m3, 0.0)
     )
+    dry_deposition = max(atmospheric_dry_deposition_bq_m2_s, 0.0)
     rain_runoff = water.runoff_m_s * rain_concentration
     wet_deposition = max(atmospheric_wet_deposition_bq_m2_s, 0.0)
     deposition = dry_deposition + rain_infiltration + wet_deposition
@@ -335,7 +339,9 @@ def advance(
         water.runoff_m_s,
         rain_infiltration,
         rain_runoff,
+        dry_deposition,
         wet_deposition,
+        dry_vd_cair_diagnostic,
         leaf_uptake - plant_out["leaf_release"],
         leaf_uptake,
         plant_out["leaf_release"],

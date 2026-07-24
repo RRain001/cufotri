@@ -42,7 +42,7 @@ def load_configuration(
         "atmosphere", "soil", "plant", "reemission", "physics",
         "numerics", "synthetic_forcing", "outputs", "site", "source",
         "coupling", "evapotranspiration", "crops", "foodchain", "dose",
-        "uncertainty",
+        "uncertainty", "deposition",
     )
     missing = [name for name in required if name not in config]
     if missing:
@@ -140,10 +140,19 @@ def load_configuration(
         raise ValueError("Legacy atmospheric feedback area conflicts with coupling rectangle")
     config["atmosphere"]["area_source_length_m"] = float(rectangle["length_m"])
     config["atmosphere"]["area_source_width_m"] = float(rectangle["width_m"])
-    wet_area = float(depletion.get("wet_deposition_footprint_area_m2", derived_area))
-    if wet_area <= 0:
-        raise ValueError("Wet-deposition footprint area must be positive")
-    depletion["wet_deposition_footprint_area_m2"] = wet_area
+    deposition = config["deposition"]
+    for pathway in ("dry", "wet"):
+        footprint = deposition.get(f"{pathway}_footprint")
+        if not isinstance(footprint, dict):
+            raise ValueError(f"Missing {pathway}-deposition footprint")
+        if footprint.get("allocation") != "uniform":
+            raise ValueError(
+                f"Unsupported {pathway}-deposition footprint allocation"
+            )
+        if float(footprint.get("area_m2", 0.0)) <= 0:
+            raise ValueError(
+                f"{pathway.capitalize()}-deposition footprint area must be positive"
+            )
     delay = float(coupling["reemission_feedback_delay_s"])
     if delay < 0 or delay % float(config["time_step_seconds"]) != 0:
         raise ValueError("Re-emission delay must be a non-negative multiple of dt")

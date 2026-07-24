@@ -32,9 +32,27 @@ def test_rain_below_capacity_has_no_drainage():
 def test_deposition_and_internal_obt_transfer_conserve():
     cfg = config()
     initial = State(0.01, 100.0, 50.0, 20.0)
-    final, diag = advance(initial, 600, 10.0, 0, 0, 0, cfg)
+    final, diag = advance(
+        initial,
+        600,
+        10.0,
+        0,
+        0,
+        0,
+        cfg,
+        atmospheric_dry_deposition_bq_m2_s=0.05,
+    )
     assert final.soil_hto_bq_m2 > initial.soil_hto_bq_m2
     assert diag.mass_balance.relative_error < 1e-12
+
+
+def test_vd_cair_is_diagnostic_only_without_allocated_plume_loss():
+    cfg = config()
+    initial = State(0.01)
+    final, diag = advance(initial, 600.0, 10.0, 0.0, 0.0, 0.0, cfg)
+    assert final.soil_hto_bq_m2 == 0.0
+    assert diag.atmospheric_dry_deposition_bq_m2_s == 0.0
+    assert diag.dry_vd_cair_diagnostic_bq_m2_s > 0.0
 
 
 def test_no_input_or_output_preserves_hto_inventory():

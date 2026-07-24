@@ -129,13 +129,15 @@ def test_wet_scavenging_surface_ledger_and_off_regression():
         "precipitation_power_law"
     )
     wet_frame = run_short_case(wet)
-    area = wet["atmosphere"]["depletion"]["wet_deposition_footprint_area_m2"]
+    area = wet["deposition"]["wet_footprint"]["area_m2"]
     assert (wet_frame["wet_scavenging_coefficient_s"] > 0.0).all()
     assert (wet_frame["wet_depletion_bq_s"] > 0.0).all()
     assert (
         wet_frame["wet_deposition_flux_bq_m2_s"] * area
     ).to_numpy() == pytest.approx(wet_frame["wet_depletion_bq_s"].to_numpy())
     assert wet_frame["depletion_deposition_mismatch_bq_s"].abs().max() < 1.0e-6
+    assert wet_frame["wet_interface_residual_bq_s"].abs().max() < 1.0e-12
+    assert wet_frame["dry_interface_residual_bq_s"].abs().max() < 1.0e-12
 
     off = load_configuration(
         "configs/default_parameters.yaml", "configs/test_case.yaml"

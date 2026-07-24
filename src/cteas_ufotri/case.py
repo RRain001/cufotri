@@ -17,9 +17,9 @@ from .atmosphere.plume_rise import effective_stack_height_m
 from .atmosphere.dispersion_parameters import classify_pasquill_gifford
 from .atmosphere.calm_wind import resolve_calm_wind
 from .atmosphere.depletion import segment_exponential_depletion
+from .atmosphere.deposition import surface_deposition_ledger
 from .atmosphere.wet_deposition import (
     scavenging_coefficient_s,
-    wet_deposition_ledger,
 )
 from .coupling.integrator import advance
 from .coupling.state import State
@@ -145,6 +145,13 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         for name in DoseIncrement.__dataclass_fields__
     }
     calm_wind_event_count = 0
+    cumulative_stack_release_bq = 0.0
+    cumulative_dry_plume_loss_bq = 0.0
+    cumulative_wet_plume_loss_bq = 0.0
+    cumulative_dry_surface_input_bq = 0.0
+    cumulative_wet_surface_input_bq = 0.0
+    cumulative_surface_boundary_output_bq_m2 = 0.0
+    cumulative_surface_decay_bq_m2 = 0.0
     for index in range(steps):
         elapsed = index * dt
         release_duration_h = config["source"].get(
@@ -266,14 +273,19 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 depletion_config["segments"],
                 dry_enabled=False,
             )
-        wet_ledger = wet_deposition_ledger(
-            depletion.wet_depletion_bq_s,
-            wet_rate,
-            depletion_config.get(
-                "wet_deposition_footprint_area_m2",
-                config["coupling"]["feedback_area_m2"],
-            ),
+        dry_ledger = surface_deposition_ledger(
+            depletion.dry_depletion_bq_s,
+            config["deposition"]["dry_footprint"],
         )
+        wet_ledger = surface_deposition_ledger(
+            depletion.wet_depletion_bq_s,
+            config["deposition"]["wet_footprint"],
+        )
+        cumulative_stack_release_bq += stack_release_bq_s * dt
+        cumulative_dry_plume_loss_bq += depletion.dry_depletion_bq_s * dt
+        cumulative_wet_plume_loss_bq += depletion.wet_depletion_bq_s * dt
+        cumulative_dry_surface_input_bq += dry_ledger.surface_input_bq_s * dt
+        cumulative_wet_surface_input_bq += wet_ledger.surface_input_bq_s * dt
         primary = point_source_ground_concentration(
             0.0 if calm.skip_gaussian else depletion.source_after_bq_s,
             downwind_m,
@@ -387,6 +399,9 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             obt_formation_rate_s=formation_rate,
             elapsed_since_release_s=elapsed,
             is_day=is_day,
+            atmospheric_dry_deposition_bq_m2_s=(
+                dry_ledger.surface_flux_bq_m2_s
+            ),
             atmospheric_wet_deposition_bq_m2_s=(
                 wet_ledger.surface_flux_bq_m2_s
             ),
@@ -404,6 +419,12 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             harvest_loss_fraction=crop.harvest_loss_fraction,
             edible_tfwt_consumption_bq_m2_s=feed_hto_rate,
             edible_obt_consumption_bq_m2_s=feed_obt_rate,
+        )
+        cumulative_surface_boundary_output_bq_m2 += (
+            diag.surface_box_mass_closure.boundary_output_bq_m2
+        )
+        cumulative_surface_decay_bq_m2 += (
+            diag.surface_box_mass_closure.decay_bq_m2
         )
         edible_fresh_mass = (
             crop.aboveground_biomass_kg_fresh_m2
@@ -491,8 +512,45 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "dry_depletion_bq_s": depletion.dry_depletion_bq_s,
             "wet_depletion_bq_s": depletion.wet_depletion_bq_s,
             "wet_scavenging_coefficient_s": wet_rate,
+            "dry_deposition_flux_bq_m2_s": dry_ledger.surface_flux_bq_m2_s,
+            "dry_deposition_footprint_area_m2": dry_ledger.footprint_area_m2,
             "wet_deposition_flux_bq_m2_s": wet_ledger.surface_flux_bq_m2_s,
             "wet_deposition_footprint_area_m2": wet_ledger.footprint_area_m2,
+            "dry_vd_cair_diagnostic_bq_m2_s": (
+                diag.dry_vd_cair_diagnostic_bq_m2_s
+            ),
+            "surface_dry_input_bq_s": dry_ledger.surface_input_bq_s,
+            "surface_wet_input_bq_s": wet_ledger.surface_input_bq_s,
+            "dry_interface_residual_bq_s": dry_ledger.interface_residual_bq_s,
+            "wet_interface_residual_bq_s": wet_ledger.interface_residual_bq_s,
+            "combined_deposition_interface_residual_bq_s": (
+                dry_ledger.interface_residual_bq_s
+                + wet_ledger.interface_residual_bq_s
+            ),
+            "stack_release_bq": cumulative_stack_release_bq,
+            "plume_dry_loss_bq": cumulative_dry_plume_loss_bq,
+            "plume_wet_loss_bq": cumulative_wet_plume_loss_bq,
+            "surface_dry_input_bq": cumulative_dry_surface_input_bq,
+            "surface_wet_input_bq": cumulative_wet_surface_input_bq,
+            "dry_interface_residual_bq": (
+                cumulative_dry_plume_loss_bq
+                - cumulative_dry_surface_input_bq
+            ),
+            "wet_interface_residual_bq": (
+                cumulative_wet_plume_loss_bq
+                - cumulative_wet_surface_input_bq
+            ),
+            "combined_deposition_interface_residual_bq": (
+                cumulative_dry_plume_loss_bq
+                + cumulative_wet_plume_loss_bq
+                - cumulative_dry_surface_input_bq
+                - cumulative_wet_surface_input_bq
+            ),
+            "surface_environmental_inventory_bq_m2": state.total_hto_bq_m2,
+            "surface_boundary_output_bq_m2": (
+                cumulative_surface_boundary_output_bq_m2
+            ),
+            "surface_decay_loss_bq_m2": cumulative_surface_decay_bq_m2,
             "surface_deposition_bq_s": (
                 depletion.dry_depletion_bq_s + depletion.wet_depletion_bq_s
             ),
@@ -522,6 +580,9 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "rain_runoff_hto_flux": diag.rain_runoff_hto_bq_m2_s,
             "atmospheric_wet_deposition_hto_flux": (
                 diag.atmospheric_wet_deposition_bq_m2_s
+            ),
+            "atmospheric_dry_deposition_hto_flux": (
+                diag.atmospheric_dry_deposition_bq_m2_s
             ),
             "net_leaf_exchange_flux": diag.net_leaf_exchange_bq_m2_s,
             "leaf_uptake_flux": diag.leaf_uptake_bq_m2_s,
@@ -591,6 +652,12 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "mass_balance_error",
             "surface_box_absolute_residual_bq_m2",
             "depletion_deposition_mismatch_bq_s",
+            "dry_interface_residual_bq_s",
+            "wet_interface_residual_bq_s",
+            "combined_deposition_interface_residual_bq_s",
+            "dry_interface_residual_bq",
+            "wet_interface_residual_bq",
+            "combined_deposition_interface_residual_bq",
         ]
     )
     if not np.isfinite(numeric.to_numpy()).all() or (physical < -1.0e-12).any().any():

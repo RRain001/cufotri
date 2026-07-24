@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .deposition import SurfaceDepositionLedger
+
 
 @dataclass(frozen=True)
 class WetDepositionLedger:
@@ -49,9 +51,13 @@ def wet_deposition_ledger(
     scavenging_rate_s: float,
     footprint_area_m2: float,
 ) -> WetDepositionLedger:
+    """Compatibility wrapper; new coupling uses ``SurfaceDepositionLedger``."""
+    SurfaceDepositionLedger(
+        max(float(depleted_source_bq_s), 0.0),
+        float(footprint_area_m2),
+    )
     return WetDepositionLedger(
         max(float(scavenging_rate_s), 0.0),
         max(float(depleted_source_bq_s), 0.0),
         float(footprint_area_m2),
     )
-

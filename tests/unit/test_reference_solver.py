@@ -24,12 +24,26 @@ def test_refined_explicit_solution_converges_to_coupled_scipy_reference():
     )
     initial = State(0.01, 100.0, 20.0, 5.0)
     reference = solve_coupled_step_reference(
-        initial, 600.0, 10.0, 0.0, 1e-8, 2e-8, config
+        initial,
+        600.0,
+        10.0,
+        0.0,
+        1e-8,
+        2e-8,
+        config,
+        atmospheric_dry_deposition_bq_m2_s=0.05,
     )
     explicit = initial
     for _ in range(60):
         explicit, _ = advance(
-            explicit, 10.0, 10.0, 0.0, 1e-8, 2e-8, config
+            explicit,
+            10.0,
+            10.0,
+            0.0,
+            1e-8,
+            2e-8,
+            config,
+            atmospheric_dry_deposition_bq_m2_s=0.05,
         )
     assert np.allclose(
         [

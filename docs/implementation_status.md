@@ -2,6 +2,31 @@
 
 Updated: 2026-07-24
 
+## V2 physics remediation RC1 progress
+
+Development branch: `codex/v2-physics-remediation-rc1`
+
+```text
+V2_STATUS = PHYSICS_REMEDIATION_RC1_IN_PROGRESS
+FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
+RC1_STAGE_1 = PASS
+DRY_INTERFACE_CONSERVATION_STATUS = PASS
+WET_INTERFACE_CONSERVATION_STATUS = PASS
+DRY_WET_COMPETITION_STATUS = PASS
+ACTIVITY_PROPAGATION_STATUS = PASS_STAGE_1_SCOPE
+```
+
+Stage 1 replaced the independent `v_d C_air` surface inventory input with
+explicit dry and wet allocations of the plume-side loss. The two deposition
+footprints are independent configuration objects and are not inferred from the
+re-emission feedback area. The former `v_d C_air` value remains diagnostic
+only. Tests cover the audited 72 h case, all five V2 configurations, footprint
+scaling, dry/wet switches and zero limits, segment counts, the stack-input
+upper bound, and surface inventory plus boundary-output closure.
+
+The historical V2 status below records the pre-remediation implementation and
+must not be interpreted as the current RC1 acceptance state.
+
 Overall status: **FORMAL_MINIMAL_BASELINE_V1 complete**
 
 This `complete` status is strictly bounded to: HTO-only; steady Gaussian
