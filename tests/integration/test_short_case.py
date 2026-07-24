@@ -149,6 +149,22 @@ def test_wet_scavenging_surface_ledger_and_off_regression():
     assert (off_frame["wet_deposition_flux_bq_m2_s"] == 0.0).all()
 
 
+def test_minimal_pasture_milk_foodchain_is_finite_and_closed():
+    config = load_configuration(
+        "configs/default_parameters.yaml", "configs/test_case.yaml"
+    )
+    config["duration_hours"] = 8.0
+    config["crops"]["active_crop"] = "pasture"
+    config["crops"]["edible_compartments_enabled"] = True
+    config["foodchain"]["enabled"] = True
+    config["foodchain"]["animal_mode"] = "minimal_cow"
+    frame = run_short_case(config)
+    assert frame["pasture_tfwt_bq_kg_fresh"].iloc[-1] > 0.0
+    assert frame["animal_body_hto_bq_m2"].iloc[-1] > 0.0
+    assert frame["milk_hto_bq_l"].iloc[-1] > 0.0
+    assert frame["ecological_box_relative_residual"].abs().max() < 1.0e-12
+
+
 @pytest.mark.parametrize("dt_s", [600, 300])
 def test_reemission_feedback_uses_physical_one_hour_delay(dt_s):
     config = load_configuration("configs/default_parameters.yaml", "configs/test_case.yaml")

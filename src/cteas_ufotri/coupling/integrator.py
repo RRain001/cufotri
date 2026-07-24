@@ -39,6 +39,8 @@ class StepDiagnostics:
     harvested_hto_bq_m2_s: float
     harvested_obt_bq_m2_s: float
     harvest_loss_bq_m2_s: float
+    edible_feed_hto_bq_m2_s: float
+    edible_feed_obt_bq_m2_s: float
     soil_reemission_bq_m2_s: float
     plant_reemission_bq_m2_s: float
     total_reemission_bq_m2_s: float
@@ -70,6 +72,8 @@ def advance(
     edible_allocation_rate_s: float = 0.0,
     harvest_event: bool = False,
     harvest_loss_fraction: float = 0.0,
+    edible_tfwt_consumption_bq_m2_s: float = 0.0,
+    edible_obt_consumption_bq_m2_s: float = 0.0,
 ) -> tuple[State, StepDiagnostics]:
     soil = config["soil"]
     plant = config["plant"]
@@ -248,6 +252,7 @@ def advance(
             if harvest_event
             else 0.0
         ),
+        feed=max(edible_tfwt_consumption_bq_m2_s, 0.0),
     )
     edible_obt_out = limit_inventory_outflows(
         state.edible_obt_bq_m2,
@@ -263,6 +268,7 @@ def advance(
             if harvest_event
             else 0.0
         ),
+        feed=max(edible_obt_consumption_bq_m2_s, 0.0),
     )
     new_state = State(
         soil_water_m=water.water_m,
@@ -298,6 +304,8 @@ def advance(
         + edible_tfwt_out["harvest_loss"]
         + edible_obt_out["harvested"]
         + edible_obt_out["harvest_loss"]
+        + edible_tfwt_out["feed"]
+        + edible_obt_out["feed"]
         + plant_out["crop_reset"]
         + obt_out["crop_reset"]
     ) * dt_s
@@ -338,6 +346,8 @@ def advance(
         edible_tfwt_out["harvested"],
         edible_obt_out["harvested"],
         edible_tfwt_out["harvest_loss"] + edible_obt_out["harvest_loss"],
+        edible_tfwt_out["feed"],
+        edible_obt_out["feed"],
         soil_out["evaporation"],
         plant_out["transpiration"] + plant_out["leaf_release"],
         (

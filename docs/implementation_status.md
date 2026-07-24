@@ -45,7 +45,7 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_5_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_6_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
@@ -55,6 +55,8 @@ CROP_PARAMETERIZATION_STATUS = PASS_PROJECT_EXTENSION
 PHENOLOGY_STATUS = PASS
 EDIBLE_PLANT_STATUS = PASS_PROJECT_EXTENSION
 PLANT_INTERNAL_MASS_BALANCE_STATUS = PASS
+FOOD_CHAIN_STATUS = PASS_MINIMAL_PATHWAYS
+ECOLOGICAL_BOX_CLOSURE_STATUS = PASS
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -82,6 +84,12 @@ inventories, internal allocation, growth dilution, decay, harvest, crop reset,
 and explicit water/fresh/dry concentration conversions. Harvested HTO and OBT
 are cumulative boundary outputs; internal allocation closes at machine
 precision.
+
+Stage 6 adds explicit leafy, root, grain, and pasture food concentrations plus
+a configurable minimal cow body-water/body-OBT model with feed, drinking water,
+formation/turnover, milk, excretion, beef, and slaughter boundaries. Feed
+activity is removed from the edible pasture inventory and enters the animal
+inventory once; the combined ecological residual is tested.
 
 Next V2 command:
 

@@ -32,7 +32,7 @@ def load_configuration(
     required = (
         "atmosphere", "soil", "plant", "reemission", "physics",
         "numerics", "synthetic_forcing", "outputs", "site", "source",
-        "coupling", "evapotranspiration", "crops",
+        "coupling", "evapotranspiration", "crops", "foodchain",
     )
     missing = [name for name in required if name not in config]
     if missing:
@@ -102,6 +102,9 @@ def load_configuration(
 
     for crop_name, crop_values in crops["parameters"].items():
         CropParameters.from_mapping(crop_name, crop_values)
+    foodchain = config["foodchain"]
+    if foodchain["animal_mode"] not in {"off", "minimal_cow"}:
+        raise ValueError("Unsupported animal food-chain mode")
     shading_mode = config["evapotranspiration"]["lai_shading_mode"]
     if shading_mode not in {"radiation_term_only", "full_penman"}:
         raise ValueError("Unsupported LAI shading mode")

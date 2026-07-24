@@ -125,6 +125,24 @@ crops:
       max_lai: 3.0
       root_fraction_by_layer: [0.2, 0.4, 0.4]
       perennial: false
+foodchain:
+  enabled: false
+  animal_mode: "off"
+  parameter_status: MANUAL_DERIVED_PROVISIONAL
+  feed_intake_kg_fresh_day: 50.0
+  drinking_water_l_day: 50.0
+  drinking_water_hto_bq_l: 0.0
+  milk_production_l_day: 15.5
+  beef_edible_mass_kg: 200.0
+  animal_support_area_m2: 4000.0
+  # Manual Eq. (82)-(105), converted from d-1 to s-1.
+  hto_excretion_rate_s: 1.8518518519e-6
+  obt_excretion_rate_s: 2.3148148148e-8
+  milk_hto_transfer_rate_s: 4.5138888889e-7
+  milk_obt_transfer_rate_s: 2.4305555556e-8
+  obt_formation_rate_s: 1.2731481481e-8
+  obt_turnover_rate_s: 1.7361111111e-7
+  decay_rate_s: 1.7828335e-9
 evapotranspiration:
   lai_shading_mode: radiation_term_only
 reemission:

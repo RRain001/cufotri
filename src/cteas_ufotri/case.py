@@ -31,6 +31,7 @@ from .meteorology.derived_variables import wind_speed_at_height
 from .plant.obt import day_night_formation_rate_s
 from .crop.phenology import CropParameters, growth_fraction_at_time, lai_at_time
 from .plant.edible import edible_concentrations
+from .foodchain.model import AnimalState, plant_food_outputs, step_animal
 
 
 def _forcing(elapsed_s: float, config: dict) -> dict[str, float]:
@@ -132,6 +133,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         crop_config["active_crop"],
         crop_config["parameters"][crop_config["active_crop"]],
     )
+    animal_state = AnimalState()
     calm_wind_event_count = 0
     for index in range(steps):
         elapsed = index * dt
@@ -317,6 +319,43 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             config["plant"]["obt_night_multiplier"],
         )
         delayed_root_uptake = root_history[0] if delay_steps else None
+        pre_edible_fresh_mass = (
+            crop.aboveground_biomass_kg_fresh_m2
+            * crop.edible_fraction
+            * growth_fraction
+        )
+        pre_edible = edible_concentrations(
+            state.edible_tfwt_bq_m2,
+            state.edible_obt_bq_m2,
+            pre_edible_fresh_mass,
+            crop.water_content_fraction_fresh,
+            config["physics"]["water_density_kg_m3"],
+        )
+        pre_food = plant_food_outputs(
+            crop.name,
+            pre_edible.tfwt_bq_m3_water,
+            pre_edible.obt_bq_kg_fresh,
+            crop.water_content_fraction_fresh,
+            config["physics"]["water_density_kg_m3"],
+        )
+        animal_enabled = (
+            config["foodchain"]["enabled"]
+            and config["foodchain"]["animal_mode"] == "minimal_cow"
+            and crop.name in {"grass", "pasture"}
+        )
+        feed_rate_kg_m2_s = (
+            config["foodchain"]["feed_intake_kg_fresh_day"]
+            / 86400.0
+            / config["foodchain"]["animal_support_area_m2"]
+            if animal_enabled
+            else 0.0
+        )
+        feed_hto_rate = (
+            feed_rate_kg_m2_s * pre_food["pasture_tfwt_bq_kg_fresh"]
+        )
+        feed_obt_rate = (
+            feed_rate_kg_m2_s * pre_food["pasture_obt_bq_kg_fresh"]
+        )
         state, diag = advance(
             state, dt, air, met["precipitation_m_s"],
             water_fluxes.soil_evaporation_m_s,
@@ -345,6 +384,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
                 harvest_event and crop_config["edible_compartments_enabled"]
             ),
             harvest_loss_fraction=crop.harvest_loss_fraction,
+            edible_tfwt_consumption_bq_m2_s=feed_hto_rate,
+            edible_obt_consumption_bq_m2_s=feed_obt_rate,
         )
         edible_fresh_mass = (
             crop.aboveground_biomass_kg_fresh_m2
@@ -358,6 +399,33 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             crop.water_content_fraction_fresh,
             config["physics"]["water_density_kg_m3"],
         )
+        food_outputs = plant_food_outputs(
+            crop.name,
+            edible.tfwt_bq_m3_water,
+            edible.obt_bq_kg_fresh,
+            crop.water_content_fraction_fresh,
+            config["physics"]["water_density_kg_m3"],
+        )
+        if animal_enabled:
+            animal_state, animal_diag = step_animal(
+                animal_state,
+                dt,
+                pre_food["pasture_tfwt_bq_kg_fresh"],
+                pre_food["pasture_obt_bq_kg_fresh"],
+                config["foodchain"]["drinking_water_hto_bq_l"],
+                config["foodchain"],
+                feed_hto_input_bq_m2_s=diag.edible_feed_hto_bq_m2_s,
+                feed_obt_input_bq_m2_s=diag.edible_feed_obt_bq_m2_s,
+            )
+        else:
+            _, animal_diag = step_animal(
+                AnimalState(),
+                dt,
+                0.0,
+                0.0,
+                0.0,
+                config["foodchain"],
+            )
         if delay_steps:
             root_history.popleft()
             root_history.append(diag.plant_transpiration_m_s)
@@ -434,6 +502,21 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "tfwt_to_edible_flux": diag.tfwt_to_edible_bq_m2_s,
             "obt_to_edible_flux": diag.obt_to_edible_bq_m2_s,
             "harvest_event": harvest_event,
+            **food_outputs,
+            "milk_hto_bq_l": animal_diag.milk_hto_bq_l,
+            "milk_obt_bq_l": animal_diag.milk_obt_bq_l,
+            "beef_hto_bq_kg": animal_diag.beef_hto_bq_kg,
+            "beef_obt_bq_kg": animal_diag.beef_obt_bq_kg,
+            "animal_body_hto_bq_m2": animal_state.body_hto_bq,
+            "animal_body_obt_bq_m2": animal_state.body_obt_bq,
+            "ecological_box_relative_residual": (
+                diag.surface_box_mass_closure.residual_bq_m2
+                + animal_diag.closure.residual_bq
+            )
+            / max(
+                state.total_hto_bq_m2 + animal_state.total_bq,
+                1.0e-30,
+            ),
             "deep_drainage": diag.drainage_m_s,
             "plant_tfwt_inventory": state.plant_tfwt_bq_m2,
             "whole_plant_water_bq_m2": state.plant_tfwt_bq_m2,

@@ -49,3 +49,7 @@
   phenology curves are replaceable `PROJECT_EXTENSION` defaults. They are
   deterministic test parameterizations rather than claims about the Hefei
   receptor or a specific agricultural survey.
+- Minimal cow water/OBT loss, milk transfer, and 15.5 L d-1 milk production
+  use manual Eq. (82)-(105) anchors. The 50 kg fresh feed d-1 and 50 L water
+  d-1 defaults are `PROVISIONAL` replaceable screening values. One animal is
+  normalized to 4000 m2 from the manual's 250 cows km-2.
