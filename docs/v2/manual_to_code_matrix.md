@@ -7,7 +7,7 @@
 | Washout | Sec. 2.1; Eq. (49)-(50) | `Lambda_w`, `F_wet` | `atmosphere/wet_deposition.py` | provisional YAML | zero-rain, monotonicity, conservation | S1 pass project parameterization |
 | HTO dry deposition | Eq. (1)-(3),(48) | `v_d Ca` | `coupling/integrator.py` | manual/YAML | surface closure | V1 implemented |
 | Air-soil exchange | Eq. (1)-(2),(44) | `F_as`, `F_re,s` | `soil/`, `reemission/` | manual-derived | sign, limits, closure | extend S3/S8 |
-| Soil re-release | Eq. (38)-(44) | `Es Cs`, `REEMG` | `reemission/fluxes.py` | manual/provisional YAML | calibration and mode comparison | extend S3 |
+| Soil re-release | Eq. (38)-(44) | `Es Cs`, `REEMG` | `reemission/fluxes.py` | manual/provisional YAML | calibration and mode comparison | S3 basic pass; advanced provisional validated |
 | Air-leaf exchange | Eq. (7)-(32) | `F_ap`, `g_c` | `plant/leaf_exchange.py` | manual-derived/provisional | zero-gradient, sign, LAI/night, closure | S2 pass provisional |
 | Root uptake | Sec. 2.2.5; Eq. (57)-(60),(75)-(77) | `U_i C_si` | `soil/`, `plant/` | manual | internal transfer closure | extend S5/S8 |
 | TFWT | Eq. (3),(27)-(30) | `Mp/Wp` | `plant/tfwt.py` | manual-derived | inventory and equilibrium tests | extend S2/S5 |

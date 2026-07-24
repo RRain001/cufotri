@@ -45,10 +45,12 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_2_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_3_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
+BASIC_REEMISSION_STATUS = PASS
+ADVANCED_REEMISSION_STATUS = PROVISIONAL_VALIDATED
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -59,6 +61,11 @@ The power-law values are explicitly provisional. Stage 2 adds a single signed,
 conservative leaf-air exchange using aerodynamic, boundary, and LAI/VPD/day-
 night canopy resistance. Its default remains `off` for V1. Planned later
 functions are not represented as V1 functionality.
+
+Stage 3 centralizes Eq. (44) calibration at the manual's 20% reference
+condition and verifies 10% h-1 radiative plus 1% h-1 diffusive initial rates,
+day/night logic, ABFLR, HTO-only C2=1, and ZT decay. Missing manual calibration
+detail prevents promotion beyond `PROVISIONAL_VALIDATED`.
 
 Next V2 command:
 

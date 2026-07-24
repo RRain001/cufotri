@@ -1,6 +1,34 @@
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class EmpiricalReemissionCalibration:
+    c1_dimensionless: float
+    radiative_rate_s: float
+    diffusive_rate_s: float
+
+
+def calibrate_ufotri_empirical_reemission(
+    reference_evaporation_m_s: float,
+    reference_water_m: float,
+    radiative_reference_fraction_h: float = 0.10,
+    diffusive_fraction_h: float = 0.01,
+) -> EmpiricalReemissionCalibration:
+    """Calibrate Eq. (44) at the manual's reference soil-water condition."""
+    if min(reference_evaporation_m_s, reference_water_m) <= 0:
+        raise ValueError("Calibration evaporation and water must be positive")
+    if min(radiative_reference_fraction_h, diffusive_fraction_h) < 0:
+        raise ValueError("Calibration rates must be non-negative")
+    evaporation_fraction_s = reference_evaporation_m_s / reference_water_m
+    radiative_rate_s = radiative_reference_fraction_h / 3600.0
+    return EmpiricalReemissionCalibration(
+        radiative_rate_s / evaporation_fraction_s,
+        radiative_rate_s,
+        diffusive_fraction_h / 3600.0,
+    )
 
 
 def basic_reemission_fluxes(
@@ -46,18 +74,21 @@ def ufotri_empirical_soil_reemission_bq_m2_s(
         raise ValueError("Empirical re-emission factors must be non-negative")
     water = max(soil_water_m, 1.0e-15)
     evaporation_fraction_s = max(soil_evaporation_m_s, 0.0) / water
-    reference_fraction_s = reference_evaporation_m_s / reference_water_m
+    calibration = calibrate_ufotri_empirical_reemission(
+        reference_evaporation_m_s,
+        reference_water_m,
+        radiative_reference_fraction_h,
+        diffusive_fraction_h,
+    )
     radiative_rate_s = 0.0
     if is_day:
         radiative_rate_s = (
-            radiative_reference_fraction_h
-            / 3600.0
+            calibration.c1_dimensionless
             * evaporation_fraction_s
-            / reference_fraction_s
             * max(1.0 - drainage_fraction, 0.0)
             * ht_correction
         )
-    diffusive_rate_s = diffusive_fraction_h / 3600.0
+    diffusive_rate_s = calibration.diffusive_rate_s
     zt = math.exp(
         -math.log(2.0)
         * max(elapsed_since_release_s, 0.0)

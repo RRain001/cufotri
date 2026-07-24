@@ -1,4 +1,7 @@
+import pytest
+
 from cteas_ufotri.reemission.fluxes import (
+    calibrate_ufotri_empirical_reemission,
     ufotri_empirical_soil_reemission_bq_m2_s,
 )
 
@@ -39,3 +42,11 @@ def test_empirical_zero_inventory_or_evaporation_is_finite():
         zt_half_life_h=24,
     )
     assert zero == 0.0
+
+
+def test_empirical_calibration_matches_manual_reference_rates():
+    calibration = calibrate_ufotri_empirical_reemission(2e-8, 0.01)
+    assert calibration.c1_dimensionless * (2e-8 / 0.01) * 3600 == pytest.approx(0.10)
+    assert calibration.diffusive_rate_s * 3600 == pytest.approx(0.01)
+    assert empirical(is_day=True) == pytest.approx((0.10 + 0.01) / 3600 * 1000.0)
+    assert empirical(is_day=False) == pytest.approx(0.01 / 3600 * 1000.0)
