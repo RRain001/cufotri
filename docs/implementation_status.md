@@ -45,7 +45,7 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_8_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_9_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
@@ -61,6 +61,8 @@ DOSE_MODULE_STATUS = PASS_RESEARCH_SCREENING
 PATHWAY_DECOMPOSITION_STATUS = PASS
 SINGLE_LAYER_STATUS = PASS_UNCHANGED
 THREE_BOX_SOIL_STATUS = PASS_EXPERIMENTAL_STANDALONE
+UNCERTAINTY_STATUS = PASS_REPRODUCIBLE
+SENSITIVITY_STATUS = PASS
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -106,6 +108,12 @@ advective HTO, optional diffusion, layer roots, surface-only evaporation, and
 deep leakage. It is explicitly experimental and standalone; selecting it in
 the formal short-case coupler returns a clear error rather than silently using
 the single-layer implementation.
+
+Stage 9 adds fixed-seed Monte Carlo and Latin Hypercube sampling, median,
+5/95-percentile, mean and standard deviation summaries, parameter-output
+Spearman correlations, one-at-a-time finite-difference sensitivities, and
+normalized pathway contributions. Parameter distributions are centralized in
+YAML and are explicitly project-level uncertainty assumptions.
 
 Next V2 command:
 

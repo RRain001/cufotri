@@ -33,6 +33,7 @@ def load_configuration(
         "atmosphere", "soil", "plant", "reemission", "physics",
         "numerics", "synthetic_forcing", "outputs", "site", "source",
         "coupling", "evapotranspiration", "crops", "foodchain", "dose",
+        "uncertainty",
     )
     missing = [name for name in required if name not in config]
     if missing:
@@ -111,6 +112,11 @@ def load_configuration(
     dose = config["dose"]
     if dose["active_age_group"] not in dose["age_groups"]:
         raise ValueError("Active dose age group is missing")
+    if config["uncertainty"]["sampling_method"] not in {
+        "monte_carlo",
+        "latin_hypercube",
+    }:
+        raise ValueError("Unsupported uncertainty sampling method")
     shading_mode = config["evapotranspiration"]["lai_shading_mode"]
     if shading_mode not in {"radiation_term_only", "full_penman"}:
         raise ValueError("Unsupported LAI shading mode")

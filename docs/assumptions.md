@@ -60,3 +60,6 @@
 - The optional three-box soil uses manual depths and root fractions with
   conservative project-level drainage and diffusion coefficients. It is a
   standalone experimental API; the formal one-layer coupler remains unchanged.
+- Uncertainty bounds are project-level replaceable distributions. They do not
+  represent a fitted joint probability model or site posterior. The fixed seed
+  is part of acceptance provenance.

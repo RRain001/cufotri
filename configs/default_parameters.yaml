@@ -192,6 +192,58 @@ dose:
       grain_kg_day: 0.05
       milk_l_day: 0.60
       beef_kg_day: 0.01
+uncertainty:
+  enabled: false
+  sampling_method: latin_hypercube
+  sample_count: 64
+  random_seed: 20260724
+  oat_relative_delta: 0.10
+  parameters:
+    - name: deposition_velocity
+      path: atmosphere.deposition_velocity_m_s
+      distribution: uniform
+      low: 0.0025
+      high: 0.0075
+    - name: wet_scavenging_a
+      path: atmosphere.depletion.power_law_a_s
+      distribution: uniform
+      low: 5.0e-6
+      high: 2.0e-5
+    - name: lai
+      path: crops.parameters.generic_crop.constant_lai
+      distribution: uniform
+      low: 0.5
+      high: 4.0
+    - name: initial_soil_water
+      path: soil.initial_water_m
+      distribution: uniform
+      low: 0.005
+      high: 0.018
+    - name: maximum_soil_water
+      path: soil.maximum_water_m
+      distribution: uniform
+      low: 0.018
+      high: 0.030
+    - name: reemission_radiative_rate
+      path: reemission.empirical_radiative_reference_fraction_h
+      distribution: uniform
+      low: 0.05
+      high: 0.15
+    - name: obt_formation_rate
+      path: plant.obt_formation_rate_s
+      distribution: uniform
+      low: 8.3333333333e-8
+      high: 3.3333333333e-7
+    - name: adult_leafy_intake
+      path: dose.age_groups.adult.leafy_kg_day
+      distribution: uniform
+      low: 0.05
+      high: 0.20
+    - name: adult_hto_dose_coefficient
+      path: dose.age_groups.adult.hto_dose_coefficient_sv_bq
+      distribution: uniform
+      low: 1.6e-11
+      high: 2.0e-11
 evapotranspiration:
   lai_shading_mode: radiation_term_only
 reemission:

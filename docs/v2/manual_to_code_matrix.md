@@ -19,6 +19,6 @@
 | Ingestion | Eq. (107) | food activity intake | `dose/public.py` | HPA-CRCE-004 + habits YAML | food/pathway sums | S7 pass |
 | Dose | Eq. (106)-(107) | Sv by HTO/OBT/pathway | `dose/` | versioned YAML | exact arithmetic and totals | S7 research screening pass |
 | Age groups | Sec. 4.1-4.3 | adult/child/infant | `dose/public.py` | HPA-CRCE-004 YAML | group-specific regression | S7 pass |
-| Probability/uncertainty | Sec. 1 probabilistic use | samples/statistics | `analysis/uncertainty.py` | project extension | fixed-seed reproducibility | planned S9 |
+| Probability/uncertainty | Sec. 1 probabilistic use | samples/statistics | `analysis/uncertainty.py` | project extension | MC/LHS/OAT fixed-seed reproducibility | S9 pass |
 
 No row marked planned is represented as implemented.
