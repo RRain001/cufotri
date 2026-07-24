@@ -57,3 +57,6 @@
   values. Consumption and breathing rates are replaceable screening habits,
   not local survey data. The dose module is always labelled
   `research screening dose`.
+- The optional three-box soil uses manual depths and root fractions with
+  conservative project-level drainage and diffusion coefficients. It is a
+  standalone experimental API; the formal one-layer coupler remains unchanged.

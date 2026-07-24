@@ -22,3 +22,16 @@ proportionally if a step would exceed the available inventory.
 
 The formal baseline splits \(P=P_{inf}+R_o\). Only
 \(P_{inf}C_{rain}\) enters soil; \(R_oC_{rain}\) is a recorded bypass flux.
+
+## V2 experimental three-box extension
+
+`surface_root_deep_3box` provides a standalone conservative API for 0-5,
+5-15, and 15-30 cm. Precipitation and atmospheric deposition enter only the
+surface. Only the surface evaporates. Root uptake is distributed by configured
+fractions; water and advected HTO move downward; optional concentration-gradient
+diffusion is bidirectional; deep leakage is a boundary. Each donor's concurrent
+HTO outflows are proportionally limited.
+
+The layer depths and 20/40/40% nutrient-crop roots are manual anchors, but the
+box hydraulics are a `PROJECT_EXTENSION`, not a solution of Richards Eq. (37).
+The API is experimental and is not selected by the formal short-case coupler.

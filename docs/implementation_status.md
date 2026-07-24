@@ -45,7 +45,7 @@ Development branch: `codex/ufotri-environmental-pathways-v2`
 ```text
 V2_SCOPE_STATUS = FROZEN
 MANUAL_EQUATION_INVENTORY_STATUS = COMPLETE_FOR_AVAILABLE_MANUAL
-V2_IMPLEMENTATION_STAGE = STAGE_7_COMPLETE
+V2_IMPLEMENTATION_STAGE = STAGE_8_COMPLETE
 WET_SCAVENGING_STATUS = PASS_PROJECT_PARAMETERIZATION
 WET_DEPOSITION_LEDGER_STATUS = PASS
 LEAF_AIR_EXCHANGE_STATUS = PASS_MANUAL_DERIVED_PROVISIONAL
@@ -59,6 +59,8 @@ FOOD_CHAIN_STATUS = PASS_MINIMAL_PATHWAYS
 ECOLOGICAL_BOX_CLOSURE_STATUS = PASS
 DOSE_MODULE_STATUS = PASS_RESEARCH_SCREENING
 PATHWAY_DECOMPOSITION_STATUS = PASS
+SINGLE_LAYER_STATUS = PASS_UNCHANGED
+THREE_BOX_SOIL_STATUS = PASS_EXPERIMENTAL_STANDALONE
 ```
 
 The frozen scope, manual inventory, code mapping, architecture, assumptions,
@@ -98,6 +100,12 @@ separate inhalation, skin, water, plant, milk, and meat diagnostics. Dose
 coefficients, habits, source, and version are configuration data. Results are
 cumulative by time at the configured spatial receptor and remain explicitly
 research-screening outputs.
+
+Stage 8 adds a tested conservative three-box soil API with layer water,
+advective HTO, optional diffusion, layer roots, surface-only evaporation, and
+deep leakage. It is explicitly experimental and standalone; selecting it in
+the formal short-case coupler returns a clear error rather than silently using
+the single-layer implementation.
 
 Next V2 command:
 

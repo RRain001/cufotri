@@ -72,8 +72,11 @@ def load_configuration(
     ) < 0:
         raise ValueError("Wet-scavenging parameters must be non-negative")
     depletion["wet_scavenging_mode"] = wet_mode
-    if config["soil"]["layer_model"] != "single_top_5cm":
-        raise ValueError("The formal minimal baseline supports one 5 cm soil layer")
+    if config["soil"]["layer_model"] not in {
+        "single_top_5cm",
+        "surface_root_deep_3box",
+    }:
+        raise ValueError("Unsupported soil layer model")
     root_fraction = config["plant"]["root_uptake_fraction_from_modelled_layer"]
     if not 0 <= root_fraction <= 1:
         raise ValueError("Modelled-layer root uptake fraction must be within [0, 1]")

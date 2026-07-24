@@ -51,6 +51,16 @@ soil:
   runoff_enabled: false
   rain_hto_concentration_bq_m3: 0.0
   root_uptake_delay_seconds: 0
+  multibox:
+    status: PROJECT_EXTENSION_EXPERIMENTAL
+    layer_depth_m: [0.05, 0.10, 0.15]
+    initial_water_m: [0.010, 0.025, 0.0375]
+    maximum_water_m: [0.020, 0.040, 0.060]
+    root_fractions: [0.20, 0.40, 0.40]
+    interlayer_drainage_rate_s: [1.7361111111e-6, 5.7870370370e-7]
+    deep_leakage_rate_s: 9.4907407407e-8
+    diffusive_exchange_m_s: 1.0e-9
+    decay_rate_s: 1.7828335e-9
 plant:
   lai: 1.5
   water_storage_m: 0.0005

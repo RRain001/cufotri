@@ -97,6 +97,11 @@ def _receptor_wind_coordinates(config: dict, met: dict) -> tuple[float, float]:
 
 
 def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> pd.DataFrame:
+    if config["soil"]["layer_model"] == "surface_root_deep_3box":
+        raise ValueError(
+            "surface_root_deep_3box is an experimental standalone soil API; "
+            "use advance_three_box_soil"
+        )
     dt = float(config["time_step_seconds"])
     steps = int(config["duration_hours"] * 3600 / dt)
     forcing_step = float(config["meteorology_step_seconds"])
