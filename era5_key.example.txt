@@ -1,0 +1,3 @@
+# Copy to era5_key.txt (ignored) or set CDSAPI_URL and CDSAPI_KEY.
+url: https://cds.climate.copernicus.eu/api
+key: replace-with-your-personal-cds-key

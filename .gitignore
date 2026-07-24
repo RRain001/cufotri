@@ -13,8 +13,8 @@ era5_key.txt
 .env.*
 
 # Downloaded and derived data
-data/
-outputs/
+/data/
+/outputs/
 *.nc
 *.netcdf
 

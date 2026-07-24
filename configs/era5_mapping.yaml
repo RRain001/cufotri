@@ -1,0 +1,21 @@
+time: valid_time
+variables:
+  temperature_k: [t2m, 2m_temperature]
+  dewpoint_k: [d2m, 2m_dewpoint_temperature]
+  wind_u_10m_m_s: [u10, 10m_u_component_of_wind]
+  wind_v_10m_m_s: [v10, 10m_v_component_of_wind]
+  precipitation_m: [tp, total_precipitation]
+  solar_down_j_m2: [ssrd, surface_solar_radiation_downwards]
+  thermal_down_j_m2: [strd, surface_thermal_radiation_downwards]
+  net_solar_j_m2: [ssr, surface_net_solar_radiation]
+  net_thermal_j_m2: [str, surface_net_thermal_radiation]
+  boundary_layer_height_m: [blh, boundary_layer_height]
+  total_cloud_cover_fraction: [tcc, total_cloud_cover]
+  surface_pressure_pa: [sp, surface_pressure]
+  sea_level_pressure_pa: [msl, mean_sea_level_pressure]
+  wind_gust_10m_m_s: [fg10, 10m_wind_gust_since_previous_post_processing]
+  sensible_heat_j_m2: [sshf, surface_sensible_heat_flux]
+  latent_heat_j_m2: [slhf, surface_latent_heat_flux]
+accumulated_variables: [precipitation_m, solar_down_j_m2, thermal_down_j_m2, net_solar_j_m2, net_thermal_j_m2]
+accumulation_semantics: interval
+thermal_sign_convention: "ERA5 net thermal radiation is positive downward; use net_solar + net_thermal."
