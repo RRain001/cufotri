@@ -2,13 +2,17 @@
 
 Updated: 2026-07-24
 
-Overall status: **FORMAL_MINIMAL_BASELINE_V1 candidate**
+Overall status: **FORMAL_MINIMAL_BASELINE_V1 complete**
 
-Scope: HTO-only steady Gaussian atmosphere, 5 cm single-layer surface soil,
-plant TFWT/simplified OBT, soil/plant re-emission, delayed atmospheric feedback,
-short ERA5 forcing, and recomputable acceptance. This is not complete UFOTRI,
-whole-domain dynamic atmospheric conservation, food chain, dose, HT chemistry,
-multi-layer soil, or regulatory validation.
+This `complete` status is strictly bounded to: HTO-only; steady Gaussian
+atmosphere; 5 cm single-layer surface soil; plant TFWT and simplified OBT;
+soil/plant re-emission; 3600 s delayed atmospheric feedback; short ERA5 forcing;
+recomputable acceptance; and surface-box closure rather than whole-domain
+dynamic air conservation.
+
+Wet scavenging is not implemented, and advanced REEM remains provisional. This
+status does not mean complete UFOTRI, food chain, dose, HT chemistry, multi-layer
+soil, whole-domain dynamic atmospheric conservation, or regulatory validation.
 
 | Item | Status | Evidence / limitation |
 |---|---|---|
