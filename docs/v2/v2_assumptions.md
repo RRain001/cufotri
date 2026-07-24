@@ -16,6 +16,8 @@ This file extends, and does not rewrite, `docs/assumptions.md`.
 | V2-A10 | Three-box soil uses manual layer depths/root fractions but a conservative box solver, not Richards Eq. (37) | `PROJECT_EXTENSION` | full PDE and soil-specific hydraulic inversion deferred |
 | V2-A11 | Uncertainty distributions and seeds are configuration | `PROJECT_EXTENSION` | deterministic core remains independently testable |
 | V2-A12 | Dry and wet plume losses are the authoritative surface-input ledgers | `PHYSICAL_INVARIANT` | separate explicit uniform footprints rescale local flux only; `v_d C_a` is diagnostic |
+| V2-A13 | Pasture uses `perennial_dormant_season`, minimum LAI 0.25, DOY 150/220/290 cuts, and 50% removal | `PROJECT_EXTENSION` | two-year conservation is tested; dates, LAI, biomass, and cut fraction are not site calibrated |
+| V2-A14 | Full-model uncertainty samples only parameters active under the selected modes | `PROJECT_EXTENSION` | n=256 stabilizes quantiles; weak-parameter Spearman order remains `LIMITED_WITH_EVIDENCE` |
 
 When a literature value is introduced, its citation, version/date, unit
 conversion, applicability, and classification must be added here or in a

@@ -256,7 +256,7 @@ dose:
 uncertainty:
   enabled: false
   sampling_method: latin_hypercube
-  sample_count: 64
+  sample_count: 256
   random_seed: 20260724
   oat_relative_delta: 0.10
   parameters:

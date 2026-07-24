@@ -2,7 +2,20 @@
 
 Assessment date: 2026-07-24
 
-## Verdict
+## RC1 status notice
+
+This file records the pre-independent-audit V2 assessment. Its historical
+verdict is retained below, but it is not the current branch disposition. The
+independent audit rejected commit
+`0075708b35baeb6f8b3b5574d5b735316d959097`; the remediation branch has
+implemented bounded corrections and now awaits a new independent audit.
+
+```text
+V2_STATUS = PHYSICS_REMEDIATION_RC1_CANDIDATE
+FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
+```
+
+## Historical verdict
 
 `ACCEPT_WITH_REMAINING_LIMITATIONS`
 
@@ -16,7 +29,7 @@ regulatory acceptance, field validation, HT chemistry, or dynamic
 three-dimensional atmospheric mass conservation. The immutable
 `formal-minimal-baseline-v1` remains the compatibility baseline.
 
-## Subsystem assessment
+## Historical subsystem assessment
 
 | Subsystem | Assessment | Evidence / limitation |
 |---|---|---|
@@ -73,7 +86,7 @@ test. Source, tests, ERA5 utilities, and scripts also passed `compileall`, and
 - The atmosphere uses a steady Gaussian source/sink ledger, not a dynamic
   atmospheric inventory or three-dimensional conservation solver.
 
-## Final fields
+## Historical final fields
 
 ```text
 V2_VERDICT = ACCEPT_WITH_REMAINING_LIMITATIONS
@@ -90,8 +103,21 @@ SINGLE_LAYER_SOIL_STATUS = PASS_UNCHANGED
 MULTIBOX_SOIL_STATUS = PASS_EXPERIMENTAL_STANDALONE
 UNCERTAINTY_STATUS = PASS_REPRODUCIBLE
 ECOLOGICAL_MASS_BALANCE_STATUS = PASS
-BENCHMARK_STATUS = PASS_AVAILABLE_REFERENCE_CASES
+HISTORICAL_BENCHMARK_STATUS = PASS_AVAILABLE_REFERENCE_CASES
 V2_RECOMPUTE_STATUS = PASS
 TEST_STATUS = PASS_95
-V2_COMPLETE_RECOMMENDATION = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+HISTORICAL_V2_COMPLETE_RECOMMENDATION = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
 ```
+
+## RC1 remediation disposition
+
+The current branch uses one dry/wet activity ledger, meteorology-responsive
+leaf resistance, a formal leaf-to-food/dose case, a conservative beef product
+boundary, named/bracketed wet parameters, independent analytic/manual
+benchmarks, mode-aware n=64/128/256 full-model LHS, and two-year perennial
+pasture evidence. Advanced manual re-emission fidelity, site calibration,
+uniform footprint uncertainty, the deterministic 24 h weather extension, and
+formal three-box coupling remain limitations.
+
+This remediation is a self-assessed candidate for re-audit only. It does not
+reinstate the historical recommendation above.

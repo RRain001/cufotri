@@ -27,6 +27,24 @@ Run the 24 h optional-mode acceptance case:
   --case configs/advanced_test_case.yaml
 ```
 
+Run the V2 physics-remediation acceptance:
+
+```bash
+.venv/bin/python scripts/verify_v2_acceptance.py --recompute
+```
+
+Current branch disposition is:
+
+```text
+V2_STATUS = PHYSICS_REMEDIATION_RC1_CANDIDATE
+FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
+```
+
+This is not a formal V2 acceptance claim. See the independent audit and RC1
+status documents under `docs/v2/`, especially
+`independent_physics_parameter_audit.md` and
+`v2_uncertainty_convergence.md`.
+
 Outputs are written to `outputs/rural_stack_short_case/`: `results.csv`, an
 atmospheric grid CSV, six PNG diagnostics, and `validation_report.md`. Configuration is split between
 `configs/default_parameters.yaml` and `configs/test_case.yaml`; no case
@@ -99,15 +117,17 @@ air inventory.
 - Bounded explicit integration, continuous SciPy references, time-step
   regression, per-step mass balance, CSV/grid/plot/report outputs.
 
-## Deliberately unimplemented / UFOTRI differences
+## V2 extensions and deliberate UFOTRI differences
 
-The completed target is the requested minimal HTO environmental system, not all
-manual compartments. It excludes multi-layer Richards soil physics, HT
-oxidation, dynamic phenology/LAI, grazing animals, food chains, ingestion,
-inhalation, and dose Eq. (45)-(107). Simplified Briggs, Penman aerodynamic,
-ERA5 net-radiation fallback, and empirical REEM/DIFF/ZT coefficients remain
-replaceable documented engineering assumptions rather than claimed
-site-calibrated UFOTRI equivalence.
+V2 adds wet deposition, meteorology-responsive bidirectional leaf exchange,
+crop/edible inventories, minimal pasture-cow-milk-beef pathways,
+research-screening dose, perennial pasture, and mode-aware uncertainty. These
+are bounded project extensions, not complete UFOTRI or field validation. The
+model still excludes multi-layer Richards coupling, HT oxidation/chemistry,
+regulatory dosimetry, and dynamic three-dimensional atmospheric conservation.
+Simplified Briggs, Penman aerodynamic, uniform footprint, ERA5
+net-radiation/extension fallbacks, empirical REEM/DIFF/ZT detail, crop yields,
+habits, and hydrology remain replaceable assumptions.
 
 See `docs/implementation_status.md` for exact status and remaining differences
 from the manual, `docs/assumptions.md` for defaults, and

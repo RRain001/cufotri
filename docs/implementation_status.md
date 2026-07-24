@@ -7,12 +7,17 @@ Updated: 2026-07-24
 Development branch: `codex/v2-physics-remediation-rc1`
 
 ```text
-V2_STATUS = PHYSICS_REMEDIATION_RC1_IN_PROGRESS
+V2_STATUS = PHYSICS_REMEDIATION_RC1_CANDIDATE
 FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
 RC1_STAGE_1 = PASS
 RC1_STAGE_2 = PASS
 RC1_STAGE_3 = PASS
 RC1_STAGE_4 = PASS
+RC1_STAGE_5 = PASS
+RC1_STAGE_6 = PASS
+RC1_STAGE_7 = PASS
+RC1_STAGE_8 = PASS
+RC1_STAGE_9 = PASS
 DRY_INTERFACE_CONSERVATION_STATUS = PASS
 WET_INTERFACE_CONSERVATION_STATUS = PASS
 DRY_WET_COMPETITION_STATUS = PASS
@@ -24,7 +29,19 @@ BEEF_PRODUCTION_BOUNDARY_STATUS = PASS
 MEAT_DOSE_CONSERVATION_STATUS = PASS
 WET_PARAMETER_SOURCE_STATUS = PASS_DOCUMENTED_LITERATURE_COMPARISON
 WET_PARAMETER_UNCERTAINTY_STATUS = PASS
-RC1_TEST_STATUS = PASS_136
+ANALYTIC_BENCHMARK_COUNT = 10
+MANUAL_OR_LITERATURE_NUMERIC_COUNT = 7
+EXECUTION_ONLY_CASES_NOT_LABELLED_REFERENCE = PASS
+FULL_MODEL_LHS_STATUS = PASS
+SAMPLE_SIZE_CONVERGENCE_STATUS = PASS
+MODE_AWARE_PARAMETER_STATUS = PASS
+RANK_STABILITY_STATUS = LIMITED_WITH_EVIDENCE
+PERENNIAL_PHENOLOGY_STATUS = PASS
+MULTIYEAR_PASTURE_STATUS = PASS
+MULTIBOX_SCOPE_STATUS = CLEAR_EXPERIMENTAL_STANDALONE
+BLOCKER_REMAINING = 0
+HIGH_REMAINING = 1_PARTIAL_H06_RANK_STABILITY
+RC1_TEST_STATUS = PASS_150_STAGE10_PROTOCOL_PENDING
 RC1_V1_RECOMPUTE_STATUS = PASS
 RC1_V2_RECOMPUTE_STATUS = PASS
 ```
@@ -59,6 +76,23 @@ literature-comparison parameter set while explicitly retaining the label
 `LITERATURE_COMPARISON_NOT_UFOTRI`. Separate project low/central/high bounds
 and a recomputable 4 x 3 \(a,b\) grid propagate wet uncertainty through
 deposition, soil, plant, food, and dose outputs.
+
+Stage 5 adds ten independent analytic benchmarks, five manual numeric anchors,
+and two literature coefficient comparisons. All evidence is explicitly
+classified; integration and regression runs are not labelled reference cases.
+
+Stage 6 runs a mode-aware real full-dose LHS audit at n=64/128/256 with a
+primary seed and three additional seeds. Quantiles converge at n=256 and the
+dominant parameter is stable, while weak-parameter ranks remain explicitly
+`LIMITED_WITH_EVIDENCE`.
+
+Stage 7 adds explicit annual/perennial phenology modes, dormant pasture LAI,
+multiple partial cuts, cross-year inventory retention, and a conservative
+two-year pasture test.
+
+Stage 8 freezes the three-box solver at
+`PASS_EXPERIMENTAL_STANDALONE` and documents the interfaces required before any
+future formal coupling claim.
 
 The historical V2 status below records the pre-remediation implementation and
 must not be interpreted as the current RC1 acceptance state.
@@ -99,7 +133,7 @@ Next command:
 .venv/bin/python scripts/verify_acceptance.py --recompute
 ```
 
-## Environmental pathways V2
+## Historical environmental pathways V2 status
 
 Development branch: `codex/ufotri-environmental-pathways-v2`
 
@@ -124,12 +158,12 @@ SINGLE_LAYER_STATUS = PASS_UNCHANGED
 THREE_BOX_SOIL_STATUS = PASS_EXPERIMENTAL_STANDALONE
 UNCERTAINTY_STATUS = PASS_REPRODUCIBLE
 SENSITIVITY_STATUS = PASS
-BENCHMARK_STATUS = PASS_AVAILABLE_REFERENCE_CASES
+HISTORICAL_BENCHMARK_STATUS = PASS_AVAILABLE_REFERENCE_CASES
 PHYSICAL_INVARIANTS_STATUS = PASS
 V2_END_TO_END_CASES_STATUS = PASS
 V2_ACCEPTANCE_RECOMPUTE_STATUS = PASS
 V2_AUDIT_STATUS = ACCEPT_WITH_REMAINING_LIMITATIONS
-V2_COMPLETE_RECOMMENDATION = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+HISTORICAL_V2_COMPLETE_RECOMMENDATION = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
 V2_TEST_STATUS = PASS_95
 V2_COMPILE_STATUS = PASS
 V2_DIFF_CHECK_STATUS = PASS
@@ -219,7 +253,9 @@ regression, wet/leaf/food/dose pathways, fixed-seed LHS, the full categorized
 benchmark suite, all end-to-end configurations, required figures, and
 provenance hashes.
 
-Stage 13 records the formal audit in
+The historical Stage 13 assessment below is superseded for current-branch
+status by the independent audit and this RC1 remediation record. Stage 13
+records the earlier formal assessment in
 `docs/v2/formal_ufotri_environmental_pathways_v2_assessment.md`. Its verdict is
 `ACCEPT_WITH_REMAINING_LIMITATIONS`, and its recommendation is limited to
 `FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE`.
