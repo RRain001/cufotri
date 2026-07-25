@@ -1,29 +1,79 @@
-preregistration_version: 1.0.0
+preregistration_version: 2.0.0
 case_id: SOYBEAN_EMRAS_TEMPLATE
 status: DRAFT_NOT_PREREGISTERED
 dataset_manifest_hash: NOT_AVAILABLE_BLOCKED_EXTERNAL_DATA
+scientific_question: >-
+  Can the frozen HTO leaf/plant pathway reproduce time-resolved soybean
+  plant-water HTO uptake and post-exposure depuration without using holdout
+  data for parameter selection?
 primary_observable:
   name: plant_body_tfwt_bq_l
   unit: Bq L-1 plant water
+secondary_observables:
+  - {name: pod_tfwt_bq_l, unit: Bq L-1 plant water}
+  - {name: plant_body_obt_bq_l_combustion_water, unit: Bq L-1 combustion water}
+calibration_dataset:
+  sample_ids: []
+  selection_rule: REQUIRES_FROZEN_COMPLETE_DATA
+holdout_dataset:
+  sample_ids: []
+  selection_rule: INDEPENDENT_REPEAT_OR_CAUSAL_SPLIT_REQUIRED
 calibration_period: REQUIRES_USER_DECISION_AFTER_COMPLETE_DATA_INVENTORY
 holdout_period: REQUIRES_INDEPENDENT_REPEAT_OR_CAUSAL_SPLIT
-parameters:
-  calibratable: REQUIRES_PREDECLARATION
-  fixed: REQUIRES_PREDECLARATION
-  bounds: REQUIRES_PHYSICAL_SOURCE
-metrics:
-  primary: normalized_rmse
-  secondary: [peak_ratio, time_to_peak, depuration_half_time]
-thresholds: REQUIRES_PREDECLARATION_BEFORE_FIRST_RUN
-detection_limit_policy: REQUIRES_REPORTED_DETECTION_LIMIT
-uncertainty_policy: USE_REPORTED_VALUE_LEVEL_OR_METHOD_LEVEL_UNCERTAINTY
+fixed_parameters:
+  - source and chamber boundary values measured for the selected repeat
+  - measured temperature relative humidity and leaf area or LAI
+  - all soil food animal and dose parameters outside the bounded leaf question
+calibration_parameters:
+  candidates:
+    - canopy_resistance_scale
+    - boundary_layer_resistance_scale
+    - leaf_exchange_area_or_LAI_scale
+    - initial_plant_water_activity
+    - turnover_rate
+    - fractionation_factor_only_if_source_supported
+  final_subset: REQUIRES_IDENTIFIABILITY_AWARE_PREDECLARATION
+parameter_bounds: REQUIRES_PHYSICAL_SOURCE_AND_PREDECLARATION
+parameter_priors: REQUIRES_PHYSICAL_SOURCE_AND_PREDECLARATION
+primary_metrics:
+  - normalized_rmse
+secondary_metrics:
+  - peak_ratio
+  - time_to_peak
+  - depuration_half_time
+acceptance_thresholds: REQUIRES_PREDECLARATION_BEFORE_FIRST_RUN
 missing_data_policy: NO_SILENT_INTERPOLATION
+detection_limit_policy: >-
+  REQUIRES_REPORTED_DETECTION_LIMIT_AND_PREDECLARED_CENSORING_RULE
+uncertainty_policy: >-
+  USE_REPORTED_VALUE_LEVEL_OR_METHOD_LEVEL_UNCERTAINTY_WITHOUT_INVENTION
+exclusion_rules:
+  - no cross-experiment splicing
+  - no figure OCR or plot digitization as replacement for missing raw data
+  - exclude only by frozen quality flags or preregistered physical criteria
 failure_criteria:
-  - any primary metric exceeds preregistered threshold
-  - holdout data inspected before parameter freeze
+  - any primary metric exceeds its preregistered threshold
+  - holdout data inspected before parameter and threshold freeze
   - calibration and holdout identifiers overlap
-  - required parameter hits a bound without defensible interpretation
-  - parameter identifiability is not assessed
-  - activity or unit contract fails
+  - activity unit time or mixing-boundary contract fails
+  - required regression or acceptance check fails
+non_identifiability_criteria:
+  - profile likelihood is unbounded under the preregistered criterion
+  - scaled Jacobian or Fisher information is rank deficient
+  - parameter correlation exceeds the preregistered threshold
+  - posterior or profile width fails the preregistered contraction criterion
+  - estimates are unstable across independent repeats
+boundary_hit_criteria:
+  - optimum or accepted interval touches a lower or upper bound without a
+    prespecified physical interpretation
+benchmark_regression_requirements:
+  - independent reference case remains PASS but is not empirical evidence
+  - synthetic contract case remains excluded from external evidence counts
+V1_regression_requirements:
+  - scripts/verify_acceptance.py --recompute passes five frozen cases
+V2_acceptance_requirements:
+  - scripts/verify_v2_acceptance.py --recompute passes six end-to-end cases
+  - scripts/verify_v2_validation_readiness.py passes
+parameter_identifiability_status: NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
 calibration_permitted: false
 holdout_execution_permitted: false
