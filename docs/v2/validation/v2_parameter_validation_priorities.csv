@@ -1,0 +1,28 @@
+parameter,value,unit,source_grade,source,applicability,uncertainty,site_specific,validation_priority,active_cases
+wet_power_law_a,5.0e-5,s-1 per (mm h-1)^b,C,IAEA EMRAS Japanet Eq. II.8.7,wet scavenging,project bracket 1.0e-5 to 1.0e-4,false,HIGH,v2_era5_72h_wet_deposition
+wet_power_law_b,0.8,1,C,IAEA EMRAS Japanet Eq. II.8.7,wet scavenging,project bracket 0.6 to 1.0,false,HIGH,v2_era5_72h_wet_deposition
+dry_footprint_area,1000000,m2,D,project assumption,dry deposition spatial allocation,site geometry required,true,HIGH,all deposition and food cases
+wet_footprint_area,1000000,m2,D,project assumption,wet deposition spatial allocation,site event geometry required,true,HIGH,v2_era5_72h_wet_deposition
+ecological_reference_area,1000000,m2,D,project assumption,ecological inventory normalization,assessment-area definition required,true,HIGH,all coupled environmental cases
+deposition_velocity,0.005,m s-1,A,UFOTRI manual mean value,HTO dry deposition,land-cover and atmospheric variability,true,HIGH,all dry deposition cases
+fixed_plume_rise,15,m,D,project assumption,Gaussian plume effective release height,source and meteorology dependent,true,HIGH,all stack-release cases
+surface_roughness,0.1,m,D,rural land-use assumption,wind profile,land-cover range required,true,HIGH,all Gaussian cases
+dry_depletion_mixing_height,1000,m,D,project assumption,source depletion,boundary-layer variability,true,HIGH,all depleted Gaussian cases
+initial_soil_water,0.010,m water,D,project assumption,single-layer soil,site/time dependent,true,HIGH,all soil and plant cases
+wilting_soil_water,0.004,m water,D,project assumption,soil water stress,crop and soil dependent,true,HIGH,crop and pasture cases
+maximum_soil_water,0.020,m water,D,project assumption,single-layer storage,soil texture dependent,true,HIGH,all soil cases
+infiltration_capacity,1.0e-5,m s-1,D,project assumption,infiltration and runoff,soil texture and saturation dependent,true,HIGH,rain and runoff cases
+plant_water_storage,0.0005,m water,D,project assumption,plant TFWT inventory,crop and growth-stage dependent,true,HIGH,leaf crop and pasture cases
+leaf_characteristic_length,0.05,m,D,project assumption,leaf boundary resistance,0.02 to 0.10 m project range,true,MEDIUM,leaf exchange cases
+leaf_stomatal_resistance_day,400,s m-1,C,Golder/UFOTRI-structured literature parameterization,daytime leaf exchange,species water stress and VPD dependent,true,HIGH,leaf crop and pasture cases
+leaf_stomatal_resistance_night,6000,s m-1,C,Golder/UFOTRI-structured literature parameterization,nighttime leaf exchange,species and night condition dependent,true,MEDIUM,leaf exchange cases
+root_activity_fraction,0.0 to 0.30,1,D,project crop definitions,perennial root/shoot partition,crop-specific calibration required,true,HIGH,crop pasture and multiyear cases
+multibox_drainage_rates,1.7361e-6;5.7870e-7,s-1,E,placeholder project assumption,standalone three-box soil,no direct evidence,true,HIGH,multibox standalone only
+multibox_deep_leakage,9.4907e-8,s-1,E,placeholder project assumption,standalone three-box deep boundary,no hydrologic calibration,true,HIGH,multibox standalone only
+multibox_diffusion,1.0e-9,m s-1,E,placeholder project assumption,standalone three-box diffusion,no direct evidence,true,HIGH,multibox standalone only
+animal_water_half_time,3.5,d,A,UFOTRI manual anchor,minimal cow HTO turnover,animal and diet variability,false,MEDIUM,pasture milk and full adult dose
+animal_obt_half_time,about 40,d,A,UFOTRI manual anchor,minimal cow OBT turnover,animal and diet variability,false,MEDIUM,pasture milk and full adult dose
+food_intake_rates,age-group table,kg d-1,D,project screening assumptions,ingestion dose,receptor survey required,true,HIGH,crop pasture milk beef and full dose
+dose_coefficients,age-group table,Sv Bq-1,B-C,HPA numeric comparison and project table,public dose,age and chemical-form applicability,false,MEDIUM,all dose cases
+tritium_decay,1.7828335e-9,s-1,A,12.32 year physical half-life,all activity inventories,authoritative constant not site-specific,false,LOW,all cases
+time_step,600,s,D,project numerical choice,coupled integration,convergence tested with case-specific overrides,false,LOW,all cases
