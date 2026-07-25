@@ -395,3 +395,25 @@ provisional root activity fraction is configuration data; partial cuts remove
 shoot activity only. Wrap-around phenology uses the actual 365- or 366-day
 calendar. Root retention, year crossing, leap/non-leap progression, six
 two-year cuts, regrowth LAI, and conservation are tested.
+
+## V2 external validation phase 1 - complete forcing
+
+The validation-readiness infrastructure was fast-forwarded to `main` at
+`f0cad0ab4e76e83c7e830f82bbe9329828c521f9` and pushed to `origin/main`.
+The V2 candidate and V1 tags remain at
+`f097115cbfc052baa18f1e49a1207fa6b3523cff` and
+`6918440faa3455b848f43589784672f3bfabfe3d`, respectively.
+
+The formerly missing 24 ERA5 hours were retrieved from the same CDS time-series
+product and point. A read-only preparation workflow now yields 72 consecutive
+external reanalysis rows with zero interpolated, repeated, extended, or missing
+hours. The forcing comparison ran successfully. Wet and dry deposition were
+unchanged because the one-hour release is within the shared first 48 h; final
+soil HTO changed by -5.668%, TFWT by +0.105%, and OBT by +3.198%. This is a
+forcing sensitivity result, not site validation.
+
+```text
+VALIDATION_INFRASTRUCTURE_MERGED = PASS
+FORCING_72H_STATUS = PASS_72_OF_72_OBSERVED
+FORCING_EXTENSION_BIAS_STATUS = PASS_COMPARISON_EXECUTED_NOT_SITE_VALIDATION
+```

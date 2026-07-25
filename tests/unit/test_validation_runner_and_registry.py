@@ -3,9 +3,11 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pandas as pd
 import yaml
 
 from scripts.check_validation_forcing_completeness import check_forcing
+from scripts.prepare_observed_forcing import prepare_observed_forcing
 from scripts.run_v2_validation_case import run_case
 
 
@@ -99,3 +101,36 @@ def test_forcing_completeness_passes_only_full_observed_grid(tmp_path):
         status_column="status",
     )
     assert result["status"] == "PASS_FULLY_OBSERVED"
+
+
+def test_prepare_observed_forcing_combines_consecutive_raw_inputs(tmp_path):
+    first = tmp_path / "first.csv"
+    second = tmp_path / "second.csv"
+    first.write_text(
+        "valid_time,t2m,latitude,longitude\n"
+        "2025-01-01T00:00:00Z,290,32,117.25\n"
+        "2025-01-01T01:00:00Z,291,32,117.25\n",
+        encoding="utf-8",
+    )
+    second.write_text(
+        "valid_time,t2m,latitude,longitude\n"
+        "2025-01-01T02:00:00Z,292,32,117.25\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "combined.csv"
+    manifest = tmp_path / "manifest.json"
+    result = prepare_observed_forcing(
+        [first, second],
+        output,
+        manifest,
+        expected_hours=3,
+    )
+    combined = pd.read_csv(output)
+    assert list(combined["forcing_status"]) == ["observed"] * 3
+    assert result["missing_hours"] == 0
+    assert result["raw_inputs_modified"] is False
+
+
+def test_forcing_bias_case_dry_run_dispatches_without_external_output(tmp_path):
+    case = ROOT / "validation/cases/full_observed_72h.yaml"
+    assert run_case(case, tmp_path / "unused", dry_run=True) == "READY"

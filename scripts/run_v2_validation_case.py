@@ -223,6 +223,21 @@ def run_case(manifest_path: Path, output_directory: Path, dry_run: bool = False)
         case = yaml.safe_load(stream)
     if not isinstance(case, dict):
         raise ValueError("Validation case must be a YAML mapping")
+    if case.get("validation_mode") == "forcing_extension_bias":
+        if dry_run:
+            print(
+                "VALIDATION_CASE_DRY_RUN = READY; "
+                f"validation_id={case['validation_id']}"
+            )
+            return "READY"
+        from scripts.run_forcing_extension_bias import run_forcing_bias_case
+
+        result = run_forcing_bias_case(manifest_path, output_directory)
+        print(
+            f"VALIDATION_CASE_RESULT = {result}; "
+            f"validation_id={case['validation_id']}"
+        )
+        return result
     _validate_manifest(case)
 
     model_specification = case["model"]

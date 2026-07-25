@@ -1,0 +1,23 @@
+validation_id: VAL_FORCING_72H_OBS
+title: Complete observed ERA5 forcing versus deterministic extension
+validation_mode: forcing_extension_bias
+reference_type: INTERNAL_REGRESSION
+model:
+  default_config: configs/default_parameters.yaml
+  case_config: configs/v2/v2_era5_72h_wet_deposition.yaml
+  observed_forcing: data/era5/era5_surface_2025-06-01_2025-06-03_observed.csv
+  baseline_observed_forcing: data/era5/era5_surface_2025-06-01_2025-06-02.csv
+  mapping_config: configs/era5_mapping.yaml
+  checksums_sha256:
+    observed_forcing: f82f216dcf3550ddcbdf07cbc955850703732945d0b4f4ca86a857d71c41eddd
+    baseline_observed_forcing: 7100f02f3da570098cda4ff5e362d1ffb667fdf685dd29ee1c176d4339c6474c
+observables:
+  - {column: cumulative_wet_deposition_bq, unit: Bq}
+  - {column: cumulative_dry_deposition_bq, unit: Bq}
+  - {column: soil_hto_inventory, unit: Bq m-2}
+  - {column: plant_tfwt_inventory, unit: Bq m-2}
+  - {column: plant_obt_inventory, unit: Bq m-2}
+  - {column: total_effective_dose_sv, unit: Sv}
+notes: >-
+  The 48 h plus 24 h deterministic run is an internal forcing-sensitivity
+  reference, not an independent model and not an external site observation.
