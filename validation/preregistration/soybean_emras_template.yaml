@@ -1,0 +1,29 @@
+preregistration_version: 1.0.0
+case_id: SOYBEAN_EMRAS_TEMPLATE
+status: DRAFT_NOT_PREREGISTERED
+dataset_manifest_hash: NOT_AVAILABLE_BLOCKED_EXTERNAL_DATA
+primary_observable:
+  name: plant_body_tfwt_bq_l
+  unit: Bq L-1 plant water
+calibration_period: REQUIRES_USER_DECISION_AFTER_COMPLETE_DATA_INVENTORY
+holdout_period: REQUIRES_INDEPENDENT_REPEAT_OR_CAUSAL_SPLIT
+parameters:
+  calibratable: REQUIRES_PREDECLARATION
+  fixed: REQUIRES_PREDECLARATION
+  bounds: REQUIRES_PHYSICAL_SOURCE
+metrics:
+  primary: normalized_rmse
+  secondary: [peak_ratio, time_to_peak, depuration_half_time]
+thresholds: REQUIRES_PREDECLARATION_BEFORE_FIRST_RUN
+detection_limit_policy: REQUIRES_REPORTED_DETECTION_LIMIT
+uncertainty_policy: USE_REPORTED_VALUE_LEVEL_OR_METHOD_LEVEL_UNCERTAINTY
+missing_data_policy: NO_SILENT_INTERPOLATION
+failure_criteria:
+  - any primary metric exceeds preregistered threshold
+  - holdout data inspected before parameter freeze
+  - calibration and holdout identifiers overlap
+  - required parameter hits a bound without defensible interpretation
+  - parameter identifiability is not assessed
+  - activity or unit contract fails
+calibration_permitted: false
+holdout_execution_permitted: false

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/calibration_case.schema.json",
+  "title": "V3 external calibration case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "status",
+    "licence",
+    "raw_data_tracked",
+    "preregistration_commit",
+    "calibration_partition",
+    "holdout_partition",
+    "observables",
+    "parameters",
+    "identifiability"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "case_id": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+    "status": {
+      "enum": [
+        "BLOCKED_EXTERNAL_DATA",
+        "DRAFT_NOT_PREREGISTERED",
+        "PREREGISTERED_NOT_RUN",
+        "CALIBRATION_COMPLETE"
+      ]
+    },
+    "licence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["use_permitted", "redistribution_permitted", "citation"],
+      "properties": {
+        "use_permitted": {"type": "boolean"},
+        "redistribution_permitted": {"type": "boolean"},
+        "citation": {"type": "string", "minLength": 1}
+      }
+    },
+    "raw_data_tracked": {"const": false},
+    "preregistration_commit": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "calibration_partition": {"$ref": "#/$defs/partition"},
+    "holdout_partition": {"$ref": "#/$defs/partition"},
+    "observables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/observable"}
+    },
+    "parameters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/parameter"}
+    },
+    "identifiability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "boundary_hit_policy", "correlation_threshold"],
+      "properties": {
+        "status": {
+          "enum": ["NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE", "PENDING", "ASSESSED"]
+        },
+        "boundary_hit_policy": {"type": "string", "minLength": 1},
+        "correlation_threshold": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    }
+  },
+  "$defs": {
+    "partition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ids", "selection_rule"],
+      "properties": {
+        "ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "selection_rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "observable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "unit",
+        "uncertainty",
+        "detection_limit",
+        "detection_limit_policy",
+        "metric",
+        "threshold"
+      ],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "uncertainty": {"type": ["number", "null"], "minimum": 0},
+        "detection_limit": {"type": ["number", "null"], "minimum": 0},
+        "detection_limit_policy": {"type": "string", "minLength": 1},
+        "metric": {"type": "string", "minLength": 1},
+        "threshold": {"type": "number", "minimum": 0}
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "unit", "prior", "lower", "upper", "transform"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "prior": {"type": "string", "minLength": 1},
+        "lower": {"type": "number"},
+        "upper": {"type": "number"},
+        "transform": {"enum": ["identity", "log", "logit"]}
+      }
+    }
+  }
+}

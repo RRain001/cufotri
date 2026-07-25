@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/holdout_case.schema.json",
+  "title": "V3 external holdout execution",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "calibration_case_id",
+    "preregistration_commit",
+    "parameter_package_hash",
+    "holdout_ids",
+    "calibration_ids",
+    "holdout_inspected_before_freeze",
+    "metrics",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "case_id": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+    "calibration_case_id": {"type": "string", "pattern": "^[A-Z0-9_]+$"},
+    "preregistration_commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "parameter_package_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "holdout_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "calibration_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "holdout_inspected_before_freeze": {"const": false},
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observable", "metric", "threshold", "result", "pass"],
+        "properties": {
+          "observable": {"type": "string", "minLength": 1},
+          "metric": {"type": "string", "minLength": 1},
+          "threshold": {"type": "number", "minimum": 0},
+          "result": {"type": "number"},
+          "pass": {"type": "boolean"}
+        }
+      }
+    },
+    "status": {"enum": ["NOT_RUN", "PASS", "FAIL", "INCONCLUSIVE"]}
+  }
+}

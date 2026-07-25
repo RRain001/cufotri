@@ -1,0 +1,125 @@
+registry_version: 1.0.0
+architecture_status: ARCHITECTURE_ONLY
+allowed_statuses:
+  - FROZEN_V2
+  - ARCHITECTURE_ONLY
+  - EXPERIMENTAL
+  - VALIDATION_PENDING
+  - ACCEPTED
+  - REJECTED
+compatibility_anchor: f097115cbfc052baa18f1e49a1207fa6b3523cff
+modules:
+  - module_id: v2_environmental_pathways
+    module_version: 2.0.0
+    status: FROZEN_V2
+    default_enabled: true
+    compatibility: v2_frozen_only
+    evidence_gap_id: NONE_FROZEN_BASELINE
+    validation_case_id: V1_AND_V2_ACCEPTANCE
+    scientific_question: Can the immutable candidate be reproduced?
+    acceptance_gate: V2_ACCEPTANCE
+    required_evidence: [v1_recompute, v2_six_end_to_end]
+    required_validation_cases: [V1_FIVE_FROZEN, V2_SIX_END_TO_END]
+    state_inputs: [v2_native_contract]
+    state_outputs: [v2_native_contract]
+    ledger_contract: v2_frozen_activity_protocol
+  - module_id: long_observed_forcing_workflow
+    module_version: 0.0.0
+    status: ARCHITECTURE_ONLY
+    default_enabled: false
+    compatibility: opt_in_no_v2_override
+    evidence_gap_id: GAP_LONG_OBSERVED_FORCING
+    validation_case_id: VAL_FORCING_72H_OBS
+    scientific_question: Can long forcing remain provenance-complete without silent extension?
+    acceptance_gate: LONG_FORCING_EVIDENCE_GATE
+    required_evidence: [licensed_forcing_manifest, gap_policy, checksum_inventory]
+    required_validation_cases: [FORCING_72H, FORCING_14D, FORCING_30D, FORCING_SEASONAL]
+    state_inputs: [forcing_manifest]
+    state_outputs: [typed_hourly_forcing]
+    ledger_contract: not_numeric_forcing_contract
+  - module_id: external_evidence_calibration
+    module_version: 0.0.0
+    status: ARCHITECTURE_ONLY
+    default_enabled: false
+    compatibility: validation_layer_only
+    evidence_gap_id: GAP_EXTERNAL_EXPERIMENT_FIELD
+    validation_case_id: VAL_EXT_LEAF_EXPERIMENT
+    scientific_question: Are parameters identifiable on calibration data and predictive on holdout data?
+    acceptance_gate: EXTERNAL_HOLDOUT_GATE
+    required_evidence: [licensed_complete_case, preregistration, independent_holdout]
+    required_validation_cases: [SOYBEAN_EMRAS_OR_LICENSED_EQUIVALENT, FIELD_HOLDOUT]
+    state_inputs: [model_results, external_observations]
+    state_outputs: [metrics, identifiability_assessment]
+    ledger_contract: no_activity_mutation
+  - module_id: advanced_reemission
+    module_version: 0.0.0
+    status: ARCHITECTURE_ONLY
+    default_enabled: false
+    compatibility: v2_legacy_explicit_or_v3_opt_in
+    evidence_gap_id: GAP_REEMISSION_MANUAL_FIDELITY
+    validation_case_id: VAL_REEM_RAIN_START_3_PERCENT
+    scientific_question: Can advanced re-emission close event and feedback activity ledgers?
+    acceptance_gate: REEMISSION_MANUAL_AND_EXTERNAL_GATE
+    required_evidence: [reviewed_manual_mapping, event_reference, empirical_case]
+    required_validation_cases: [RAIN_START_EVENT, DIFF_GRID, FEEDBACK_LEDGER]
+    state_inputs: [surface_inventory, meteorology]
+    state_outputs: [surface_to_air_flux]
+    ledger_contract: docs/v3/contracts/v3_activity_ledger_contract.md
+  - module_id: formal_three_box_soil
+    module_version: 0.0.0
+    status: ARCHITECTURE_ONLY
+    default_enabled: false
+    compatibility: v2_one_box_default
+    evidence_gap_id: GAP_THREE_BOX_FORMAL_COUPLING
+    validation_case_id: VAL_MULTIBOX_COUPLING_READINESS
+    scientific_question: Does the coupled layered model conserve water and activity and degenerate to one box?
+    acceptance_gate: THREE_BOX_CONSERVATION_AND_EVIDENCE_GATE
+    required_evidence: [reviewed_interface_equations, layer_parameters, external_soil_case]
+    required_validation_cases: [ONE_BOX_DEGENERATION, LAYER_REFINEMENT, GLOBAL_LEDGER]
+    state_inputs: [surface_input, layer_water, layer_activity]
+    state_outputs: [root_uptake, deep_boundary, layer_activity]
+    ledger_contract: docs/v3/contracts/v3_activity_ledger_contract.md
+  - module_id: dynamic_air_inventory
+    module_version: 0.0.0
+    status: ARCHITECTURE_ONLY
+    default_enabled: false
+    compatibility: no_v2_replacement
+    evidence_gap_id: GAP_DYNAMIC_AIR_REFERENCE
+    validation_case_id: DYNAMIC_AIR_ANALYTIC_PULSE
+    scientific_question: Can stored air activity be solved without double counting Gaussian transport?
+    acceptance_gate: DYNAMIC_AIR_EXTERNAL_REFERENCE_GATE
+    required_evidence: [analytic_pulse_suite, external_transport_reference, empirical_boundary_data]
+    required_validation_cases: [CLOSED_BOX_PULSE, VENTILATED_BOX_PULSE, TRANSPORT_REFERENCE]
+    state_inputs: [source_activity, transport_boundaries, reemission_feedback]
+    state_outputs: [air_inventory, deposition_boundary, ventilation_output]
+    ledger_contract: docs/v3/contracts/v3_activity_ledger_contract.md
+  - module_id: ht_chemistry
+    module_version: 0.0.0
+    status: REJECTED
+    scope_disposition: OUT_OF_SCOPE
+    default_enabled: false
+    compatibility: none
+    evidence_gap_id: GAP_HT_CHEMISTRY_FULL_CHAIN
+    validation_case_id: NONE
+    scientific_question: Is a separately validated HT chemistry chain available?
+    acceptance_gate: SEPARATE_FUTURE_SCOPE_DECISION
+    required_evidence: [separate_approved_scope]
+    required_validation_cases: []
+    state_inputs: []
+    state_outputs: []
+    ledger_contract: not_applicable
+  - module_id: broad_food_animal_expansion
+    module_version: 0.0.0
+    status: REJECTED
+    scope_disposition: OUT_OF_SCOPE
+    default_enabled: false
+    compatibility: none
+    evidence_gap_id: GAP_BROAD_FOOD_ANIMAL_EVIDENCE
+    validation_case_id: NONE
+    scientific_question: Is an evidence-backed expansion scope approved?
+    acceptance_gate: SEPARATE_FUTURE_SCOPE_DECISION
+    required_evidence: [separate_approved_scope]
+    required_validation_cases: []
+    state_inputs: []
+    state_outputs: []
+    ledger_contract: not_applicable

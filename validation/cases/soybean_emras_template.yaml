@@ -1,0 +1,45 @@
+schema_version: 1.0.0
+case_id: SOYBEAN_EMRAS_TEMPLATE
+status: DRAFT_NOT_PREREGISTERED
+reference_type: EXPERIMENT
+dataset_id: IAEA_EMRAS_SOYBEAN_SB1_SB6
+raw_data_location: validation/external_local/soybean_emras
+raw_data_tracked: false
+licence:
+  use_permitted: false
+  redistribution_permitted: false
+  citation: IAEA EMRAS Theme 1 Working Group 2 soybean scenario
+execution:
+  permitted: false
+  reason: BLOCKED_EXTERNAL_DATA
+required_inputs:
+  - organizer_meteorology_excel
+  - complete_air_hto_time_series
+  - chamber_mixing_or_ventilation_boundary
+  - plant_tfwt_observations
+  - uncertainty_metadata
+  - detection_limits
+  - exact_timing
+calibration_partition:
+  ids: []
+  selection_rule: REQUIRES_COMPLETE_DATA_AND_PREREGISTRATION
+holdout_partition:
+  ids: []
+  selection_rule: INDEPENDENT_REPEAT_OR_CAUSAL_TIME_HOLDOUT_REQUIRED
+observables:
+  primary: plant_body_tfwt_bq_l
+  secondary:
+    - pod_tfwt_bq_l
+    - plant_body_obt_bq_l_combustion_water
+  uncertainty: REQUIRED
+  detection_limit: REQUIRED
+parameters:
+  names: REQUIRES_PREDECLARATION
+  bounds: REQUIRES_PHYSICAL_SOURCE_AND_PREDECLARATION
+metrics:
+  primary: normalized_rmse
+  secondary: [peak_ratio, time_to_peak, depuration_half_time]
+thresholds: REQUIRES_PREDECLARATION
+calibration_status: NOT_RUN_BLOCKED_EXTERNAL_DATA
+identifiability_status: NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
+notes: Publication figures and incomplete tables are not executable input.
