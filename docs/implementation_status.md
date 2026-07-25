@@ -15,19 +15,19 @@ CURRENT_MAIN_HEAD =
 f618515caef22a19867d75d59b1d4c78f1cb212f
 
 CURRENT_DEVELOPMENT_BRANCH =
-codex/v3-external-evidence-unblocking
+codex/v3-external-evidence-gate-remediation
 
 CURRENT_DEVELOPMENT_BASELINE_HEAD =
 f618515caef22a19867d75d59b1d4c78f1cb212f
 
 CURRENT_DEVELOPMENT_HEAD =
-RECORDED_IN_EXTERNAL_EVIDENCE_HANDOFF
+RECORDED_IN_REMEDIATION_HANDOFF
 
 CURRENT_DEVELOPMENT_STATUS =
-V3_EXTERNAL_EVIDENCE_UNBLOCKING
+V3_EXTERNAL_EVIDENCE_GATE_REMEDIATION_READY_FOR_INDEPENDENT_REVIEW
 
 CURRENT_TEST_STATUS =
-PASS_202_ONE_KNOWN_NUMPY_NETCDF_WARNING
+PASS_231_ONE_KNOWN_NUMPY_NETCDF_WARNING
 
 CURRENT_V1_RECOMPUTE_STATUS =
 PASS_5_FROZEN_CASES
@@ -47,6 +47,9 @@ BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 CURRENT_EXTERNAL_EVIDENCE_PACKAGE_STATUS =
 READY_FAIL_CLOSED_BLOCKED_EXTERNAL_DATA
 
+CURRENT_EXTERNAL_EVIDENCE_GATE_REMEDIATION_STATUS =
+READY_FOR_INDEPENDENT_ADVERSARIAL_REVIEW
+
 CURRENT_SOYBEAN_DATA_STATUS =
 BLOCKED_EXTERNAL_DATA
 
@@ -60,12 +63,43 @@ CURRENT_PARAMETER_IDENTIFIABILITY_STATUS =
 NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
 ```
 
-The current released model is the immutable V2 candidate. The current
-`main` publishes V3 architecture only. The current development work prepares a
-fail-closed external-evidence intake package; it is not a V3 physics release
-and contains no empirical data, calibration result, or accepted holdout.
-The final development-branch head is recorded in the external-evidence handoff
-to avoid a commit claiming its own hash.
+The current released model is the immutable V2 candidate. The current `main`
+publishes V3 architecture only. The remediation branch replaces declaration
+booleans with a runtime-validated artifact chain, strengthens numeric/checksum
+intake validation, and remains pending independent adversarial review. It is
+not a V3 physics release and contains no empirical data, calibration result,
+or accepted holdout. The final development-branch head is recorded in the
+remediation handoff to avoid a commit claiming its own hash.
+
+## V3 external-evidence gate directed remediation
+
+The two reproduced P1 issues were fixed without changing `src/` or `configs/`.
+The physics gate now opens and validates raw, intake, preregistration,
+calibration, identifiability, holdout, and regression artifacts; recomputes
+raw/result checksums; verifies cross-artifact identifiers and hashes; and uses
+Git object/history checks to prove that the frozen preregistration predates the
+tracked holdout result. Synthetic/internal evidence types are explicitly
+ineligible.
+
+The soybean intake now parses required numeric columns, rejects empty,
+non-numeric, NaN/Inf, invalid ranges, nonpositive chamber/mixing values,
+invalid detection-limit/uncertainty mappings, duplicate or discontinuous
+forcing timestamps, incomplete exposure coverage, split overlap, and checksum
+tampering. Generated intake manifests are validated at runtime with
+`jsonschema`.
+
+```text
+P1_01_STATUS = FIXED_PENDING_INDEPENDENT_REVIEW
+P1_02_STATUS = FIXED_PENDING_INDEPENDENT_REVIEW
+TEST_STATUS = PASS_231_ONE_KNOWN_NUMPY_NETCDF_WARNING
+V1_RECOMPUTE_STATUS = PASS_5_FROZEN_CASES
+V2_RECOMPUTE_STATUS = PASS_6_END_TO_END_AND_EXPANDED_ACCEPTANCE
+V3_COMPATIBILITY_STATUS = PASS_BITWISE_WHERE_DETERMINISTIC
+V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
+V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+REMEDIATION_STATUS = READY_FOR_INDEPENDENT_ADVERSARIAL_REVIEW
+MERGE_RECOMMENDATION = HOLD_PENDING_INDEPENDENT_REVIEW
+```
 
 ## V3 architecture-only baseline
 
