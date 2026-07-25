@@ -34,7 +34,10 @@ or field validation.
 ```text
 V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
 V3_BRANCH = codex/v3-architecture-only
-V3_HEAD = RESOLVE_BRANCH_HEAD_WITH_GIT_REV_PARSE_AT_HANDOFF
+ARCHITECTURE_BASELINE_HEAD =
+e22aa5e718404a6ba8ba31b61cb50aba53eb86b8
+CURRENT_V3_BRANCH_HEAD =
+RECORDED_IN_FINAL_PUBLICATION_HANDOFF
 V2_COMPATIBILITY_CONTRACT_STATUS = PASS
 STATE_CONTRACT_STATUS = PASS
 FLUX_CONTRACT_STATUS = PASS
@@ -142,8 +145,10 @@ f2cc41e Add V2 to V3 migration and compatibility harness
 d174bc1 Add V3 architecture and physics start gate verification
 ```
 
-This report and the implementation-status update are delivered in the final
-architecture-only handoff commit.
+The architecture implementation baseline above includes this report and the
+initial implementation-status update. Any metadata-only finalization commit is
+recorded separately in the publication handoff so this file does not make an
+impossible self-referential HEAD claim.
 
 ## Key executed commands
 
