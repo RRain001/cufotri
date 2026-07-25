@@ -1,6 +1,7 @@
 # Advanced re-emission architecture
 
-Status: `ARCHITECTURE_ONLY`  
+Status: `ARCHITECTURE_ONLY`
+
 Implementation status: `NOT_STARTED`
 
 Two explicit future modes are reserved:

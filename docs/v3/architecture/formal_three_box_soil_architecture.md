@@ -1,6 +1,7 @@
 # Formal three-box soil architecture
 
-Status: `ARCHITECTURE_ONLY`  
+Status: `ARCHITECTURE_ONLY`
+
 Implementation status: `NOT_STARTED`
 
 The reserved layers are surface, root, and deep. Each layer owns water storage

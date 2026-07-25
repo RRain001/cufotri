@@ -1,6 +1,7 @@
 # V3 architecture principles
 
-Status: `ARCHITECTURE_ONLY`  
+Status: `ARCHITECTURE_ONLY`
+
 Anchor: `ufotri-environmental-pathways-v2-candidate`
 
 ## Compatibility boundary
