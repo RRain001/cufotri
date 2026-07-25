@@ -10,7 +10,11 @@ import pytest
 import yaml
 
 import scripts.verify_v3_physics_start_gate as physics_gate
-from validation.evidence_validation import calculate_sha256
+from validation.evidence_validation import (
+    EvidenceValidationError,
+    calculate_sha256,
+    require_regular_file,
+)
 from validation.adapters.soybean_emras_adapter import (
     create_synthetic_package,
     validate_local_package,
@@ -39,6 +43,14 @@ def _write_source(package: Path, source: dict) -> None:
 def test_jsonschema_dependency_is_available() -> None:
     version = importlib.metadata.version("jsonschema")
     assert tuple(int(item) for item in version.split(".")[:2]) >= (4, 23)
+
+
+def test_require_regular_file_rejects_broken_symlink(tmp_path: Path) -> None:
+    broken = tmp_path / "broken.yaml"
+    broken.symlink_to(tmp_path / "missing-target.yaml")
+
+    with pytest.raises(EvidenceValidationError, match="does not exist"):
+        require_regular_file(broken, allowed_roots=[tmp_path])
 
 
 def _refresh_file_checksum(package: Path, role: str) -> None:
@@ -575,6 +587,26 @@ def test_intake_rejects_checksum_mismatch(tmp_path: Path) -> None:
     assert any("checksum mismatch" in reason for reason in result["blocking_reasons"])
 
 
+def test_source_checksum_unavailable_still_requires_local_checksum(
+    tmp_path: Path,
+) -> None:
+    create_synthetic_package(tmp_path)
+    source = _load_source(tmp_path)
+    entry = next(item for item in source["files"] if item["role"] == "air_hto")
+    entry["expected_sha256"] = "SOURCE_CHECKSUM_UNAVAILABLE"
+    _write_source(tmp_path, source)
+
+    accepted = validate_local_package(SYNTHETIC_CASE, tmp_path)
+    assert accepted["status"] == "PASS_SYNTHETIC_CONTRACT_ONLY"
+
+    source = _load_source(tmp_path)
+    entry = next(item for item in source["files"] if item["role"] == "air_hto")
+    entry["calculated_sha256"] = "0" * 64
+    _write_source(tmp_path, source)
+    rejected = validate_local_package(SYNTHETIC_CASE, tmp_path)
+    assert rejected["status"] == "BLOCKED_EXTERNAL_DATA"
+
+
 def test_complete_test_fixture_exercises_full_gate_logic(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -769,6 +801,26 @@ def test_manual_boolean_bypass_is_rejected(
     for name in physics_gate.REQUIRED_TRUE:
         config[name] = True
     config["evidence_bundle_path"] = "validation/missing-bundle.yaml"
+    _write_yaml(config_path, config)
+    monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
+
+    result = physics_gate.evaluate_gate(config_path)
+
+    assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+
+
+def test_physics_gate_rejects_path_escape(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config_path, _ = _build_gate_repository(tmp_path)
+    outside = tmp_path / "outside-bundle.yaml"
+    outside.write_text(
+        "schema_version: 1.0.0\ndataset_id: OUTSIDE\n",
+        encoding="utf-8",
+    )
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    config["evidence_bundle_path"] = outside.as_posix()
     _write_yaml(config_path, config)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 

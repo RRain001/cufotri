@@ -33,9 +33,12 @@ empty detection-limit row -> PASS_SYNTHETIC_CONTRACT_ONLY
 | Nonexistent manifest path | blocked | blocked |
 | Manifest path is a directory | blocked | blocked |
 | Empty manifest | blocked | blocked |
+| Broken symlink | blocked | blocked |
+| Artifact path escapes allowed roots | blocked | blocked |
 | Manifest violates JSON Schema | blocked | blocked |
 | Required raw file missing | blocked | blocked |
 | Expected or calculated checksum mismatch | blocked | blocked |
+| Source checksum unavailable but local checksum missing/wrong | blocked | blocked |
 | Air HTO is text | blocked | blocked |
 | Air HTO is NaN, +Inf, or -Inf | blocked | blocked |
 | Detection-limit value is empty | blocked | blocked |
@@ -92,7 +95,7 @@ checks independently:
 Result:
 
 ```text
-ADVERSARIAL_TEST_COUNT = 29
+ADVERSARIAL_TEST_COUNT = 32
 ADVERSARIAL_TEST_STATUS = PASS
 SCHEMA_RUNTIME_VALIDATION_STATUS = PASS_EXECUTED
 PRODUCTION_GATE_STATUS = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
