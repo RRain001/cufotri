@@ -1,0 +1,16 @@
+gate_version: 1.0.0
+complete_licensed_external_case: false
+preregistration_committed_before_holdout: false
+calibration_holdout_separated: false
+parameter_identifiability_assessed: false
+V1_regression_pass: true
+V2_acceptance_pass: true
+validation_readiness_pass: true
+external_holdout_executed: false
+no_new_blocker_high: true
+evidence:
+  external_case: BLOCKED_EXTERNAL_DATA
+  preregistration: DRAFT_NOT_PREREGISTERED
+  calibration: NOT_RUN_BLOCKED_EXTERNAL_DATA
+  identifiability: NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
+  holdout: NOT_RUN_BLOCKED_EXTERNAL_DATA
