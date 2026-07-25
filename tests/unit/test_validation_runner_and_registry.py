@@ -134,3 +134,43 @@ def test_prepare_observed_forcing_combines_consecutive_raw_inputs(tmp_path):
 def test_forcing_bias_case_dry_run_dispatches_without_external_output(tmp_path):
     case = ROOT / "validation/cases/full_observed_72h.yaml"
     assert run_case(case, tmp_path / "unused", dry_run=True) == "READY"
+
+
+def test_external_dataset_inventory_and_blocked_manifests_are_explicit():
+    inventory_path = (
+        ROOT / "docs/v2/validation/evidence/external_dataset_inventory.csv"
+    )
+    with inventory_path.open(newline="", encoding="utf-8") as stream:
+        records = list(csv.DictReader(stream))
+        assert stream.closed is False
+    assert records
+    assert set(records[0]) == {
+        "dataset_id",
+        "title",
+        "source",
+        "doi_or_url",
+        "license",
+        "redistribution_allowed",
+        "process",
+        "variables",
+        "time_resolution",
+        "units",
+        "uncertainty",
+        "detection_limit",
+        "completeness",
+        "applicability",
+        "selection_status",
+        "rejection_reason",
+    }
+    assert all(record["selection_status"] == "BLOCKED_EXTERNAL_DATA" for record in records)
+
+    for name in (
+        "leaf_uptake_depuration_external_001.yaml",
+        "air_soil_plant_field_external_001.yaml",
+    ):
+        payload = yaml.safe_load(
+            (ROOT / "validation/cases" / name).read_text(encoding="utf-8")
+        )
+        assert payload["case_status"] == "BLOCKED_EXTERNAL_DATA"
+        assert payload["execution"]["permitted"] is False
+        assert payload["blocking_reasons"]

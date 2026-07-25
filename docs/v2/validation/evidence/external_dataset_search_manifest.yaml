@@ -1,0 +1,32 @@
+schema_version: "1.0"
+search_date: "2026-07-25"
+purpose: V2 external validation phase 1 experiment and field evidence search
+claim_boundary: DOCUMENTED_SEARCH_NOT_EMPIRICAL_VALIDATION
+reviewed_sources:
+  - source_id: IAEA_EMRAS_THEME1_WG2
+    title: Modelling the Environmental Transfer of Tritium and Carbon-14 to Biota and Man
+    url: https://www-pub.iaea.org/MTCD/publications/PDF/TE_1678_CD/Reports/Theme_1_WorkingGroup2%28Tritium%26C-14%29/ModellingtheEnvironmentalTransferofTritiumandCarbon-14toBiotaandMan.pdf
+    local_review_copy: /tmp/cteas_ufotri_pdf_evidence/iaea_emras_tritium_c14.pdf
+    local_review_copy_sha256: 8112c5fb6c239222479585335e111bd71b81f5963c038ba52636963522b1ce2f
+    committed: false
+  - source_id: IAEA_EMRAS_SOYBEAN
+    title: EMRAS soybean final report
+    url: https://www-ns.iaea.org/downloads/rw/projects/emras/tritium/soybean-final.pdf
+    committed: false
+  - source_id: RICE_HTO_OBT_JER_2002
+    title: Atmosphere to rice tritium transfer study
+    doi: 10.1016/S0265-931X(01)00024-8
+    committed: false
+  - source_id: MAIZE_HTO_OBT_ARI_2019
+    title: Maize HTO and OBT dynamics study
+    doi: 10.1016/j.apradiso.2019.108905
+    committed: false
+licence_review:
+  iaea_terms_url: https://nucleus.iaea.org/Pages/Others/Terms-Of-Use.aspx
+  decision: cite metadata only; do not redistribute report tables or absent supporting workbooks
+  publisher_articles: cite DOI metadata only; no raw data redistribution
+selected_experiment_candidate: IAEA_EMRAS_SOYBEAN_SB1_SB6
+selected_field_candidate: NONE_COMPLETE
+experimental_status: BLOCKED_EXTERNAL_DATA
+field_status: BLOCKED_EXTERNAL_DATA
+external_cases_executed: 0

@@ -1,0 +1,41 @@
+validation_id: VAL_EXT_FIELD_PATHWAYS
+title: Co-located air-soil-plant HTO field case requirement manifest
+case_status: BLOCKED_EXTERNAL_DATA
+reference_type: FIELD_OBSERVATION
+source:
+  dataset_id: NONE_COMPLETE
+  citation: See docs/v2/validation/evidence/external_dataset_inventory.csv
+  redistribution_allowed: false
+  local_raw_data: NOT_ACQUIRED
+validation_question: >-
+  Can the frozen V2 atmospheric, deposition, soil, TFWT and OBT pathways
+  reproduce a time-matched co-located field observation package?
+minimum_required_inputs:
+  air_hto: MISSING_COMPLETE_MATCHED_SERIES
+  meteorology: MISSING_COMPLETE_MATCHED_SERIES
+  soil_water_or_soil_hto: MISSING_COMPLETE_MATCHED_SERIES
+  tfwt_or_obt: MISSING_COMPLETE_MATCHED_SERIES
+  same_location: NOT_DEMONSTRATED
+  time_match: NOT_DEMONSTRATED
+  uncertainty: MISSING_UNIFORM_METADATA
+  detection_limit: MISSING_UNIFORM_METADATA
+blocking_reasons:
+  - no complete co-located air-meteorology-soil-plant package was located
+  - candidate publications contain selected tables or plots rather than raw matched series
+  - datasets from different sites, crops or periods cannot be spliced
+execution:
+  runner: scripts/run_v2_validation_case.py
+  permitted: false
+  reason: Minimum reproducible input contract is not satisfied
+preregistration:
+  status: NOT_CREATED_CASE_NOT_EXECUTABLE
+  required_before_execution:
+    - primary and secondary observables
+    - fixed and calibratable parameters
+    - calibration-holdout split
+    - metrics and numerical thresholds
+    - exclusion, missing-data and detection-limit policies
+calibration_status: NOT_RUN_BLOCKED_EXTERNAL_DATA
+notes: >-
+  This is a requirements manifest, not a runnable case and not external
+  validation evidence.

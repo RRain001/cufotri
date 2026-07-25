@@ -431,3 +431,25 @@ The case is intentionally bounded and is not experimental or field evidence.
 ```text
 REFERENCE_MODEL_STATUS = PASS_INDEPENDENT_REFERENCE_CASE_001
 ```
+
+## V2 external validation phase 1 - experiment and field search
+
+The controlled-experiment and matched-field search is recorded in a
+machine-readable inventory, a licence review, and two blocked requirement
+manifests. The IAEA EMRAS soybean scenario is the closest leaf candidate, but
+the retrieved public material does not include the organizer meteorology and
+air workbooks, a chamber-mixing boundary condition, or a detection limit. No
+complete co-located air-meteorology-soil-plant field package was obtained.
+
+No publication table was repackaged, no different sites were spliced, and no
+external case, calibration, or holdout validation was run. The registry records
+the complete ERA5 reanalysis forcing and independent reference as `PASS`, while
+the experiment and field cases remain explicitly blocked.
+
+```text
+EXPERIMENTAL_DATA_STATUS = BLOCKED_EXTERNAL_DATA
+FIELD_DATA_STATUS = BLOCKED_EXTERNAL_DATA
+EXTERNAL_CASES_EXECUTED_COUNT = 0
+CALIBRATION_STATUS = NOT_RUN_BLOCKED_EXTERNAL_DATA
+PARAMETER_IDENTIFIABILITY_STATUS = NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
+```

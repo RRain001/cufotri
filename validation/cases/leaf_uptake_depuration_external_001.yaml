@@ -1,0 +1,47 @@
+validation_id: VAL_EXT_LEAF_EXPERIMENT
+title: IAEA EMRAS soybean leaf uptake and depuration candidate
+case_status: BLOCKED_EXTERNAL_DATA
+reference_type: EXPERIMENT
+source:
+  dataset_id: IAEA_EMRAS_SOYBEAN_SB1_SB6
+  citation: IAEA EMRAS Theme 1 Working Group 2 soybean scenario
+  url: https://www-ns.iaea.org/downloads/rw/projects/emras/tritium/soybean-final.pdf
+  redistribution_allowed: false
+  local_raw_data: NOT_ACQUIRED
+validation_question: >-
+  Can the frozen V2 leaf exchange and OBT pathway reproduce time-resolved
+  soybean TFWT uptake and post-exposure depuration without changing formal
+  physics?
+minimum_required_inputs:
+  air_hto_time_series: PARTIAL_SB1_TABLE_ONLY
+  exposure_start_stop: AVAILABLE
+  temperature: PARTIAL_EXPOSURE_ONLY
+  relative_humidity: PARTIAL_EXPOSURE_ONLY
+  wind_or_chamber_mixing_condition: MISSING
+  post_exposure_meteorology: MISSING_ORGANIZER_EXCEL_FILES
+  plant_water_hto_observations: AVAILABLE_IN_PUBLICATION_TABLES_NOT_INGESTED
+  sampling_times: AVAILABLE
+  uncertainty_or_error_bars: PARTIAL_APPROXIMATELY_10_PERCENT_MEASUREMENT
+  detection_limit: MISSING
+blocking_reasons:
+  - complete organizer air and meteorology workbooks not acquired
+  - chamber wind or mixing boundary condition not specified
+  - detection limit not reported
+  - raw numeric redistribution rights not established
+execution:
+  runner: scripts/run_v2_validation_case.py
+  permitted: false
+  reason: Minimum reproducible input contract is not satisfied
+preregistration:
+  status: NOT_CREATED_CASE_NOT_EXECUTABLE
+  required_before_execution:
+    - primary and secondary observables
+    - calibration parameters and fixed parameters
+    - bounds and calibration-holdout split
+    - metrics and numerical thresholds
+    - exclusion, missing-data and detection-limit policies
+calibration_status: NOT_RUN_BLOCKED_EXTERNAL_DATA
+notes: >-
+  Publication tables must not be digitized and combined with invented forcing.
+  Once complete licensed data are acquired, a separate preregistration must be
+  committed before the first calibration or validation run.

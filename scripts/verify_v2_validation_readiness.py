@@ -41,6 +41,9 @@ REFERENCE_TYPES = {
 STATUSES = {
     "READY",
     "PARTIAL",
+    "PASS",
+    "FAIL",
+    "INCONCLUSIVE",
     "BLOCKED_EXTERNAL_DATA",
     "NOT_STARTED",
     "OUT_OF_SCOPE",
