@@ -124,7 +124,9 @@ the missing evidence has been obtained.
 9dc08fa Add V2 validation registry and evidence taxonomy
 0d1adfd Add external validation schemas runners and metrics
 0a1493e Define V2 validation closure paths and parameter priorities
-<branch tip containing this report> Finalize V2 validation-readiness assessment
+01ed8c6 Finalize V2 validation-readiness assessment
+12e44ae Harden validation result and reemission evidence handling
+<branch tip containing this handoff update> Record final validation handoff
 ```
 
 The exact branch-tip SHA is intentionally obtained with `git rev-parse HEAD`
