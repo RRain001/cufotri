@@ -6,6 +6,13 @@ from typing import Iterable
 import numpy as np
 
 
+def _finite_scalar(value: float, name: str) -> float:
+    result = float(value)
+    if not math.isfinite(result):
+        raise ValueError(f"{name} must be finite")
+    return result
+
+
 def _paired(
     model: Iterable[float],
     reference: Iterable[float],
@@ -23,14 +30,17 @@ def _paired(
 def absolute_error(model: float, reference: float) -> float:
     """Absolute scalar error in the observable's native unit."""
 
-    return abs(float(model) - float(reference))
+    return abs(
+        _finite_scalar(model, "model")
+        - _finite_scalar(reference, "reference")
+    )
 
 
 def relative_error(model: float, reference: float) -> float:
     """Absolute relative scalar error; exact zero/zero is zero."""
 
-    model_value = float(model)
-    reference_value = float(reference)
+    model_value = _finite_scalar(model, "model")
+    reference_value = _finite_scalar(reference, "reference")
     if reference_value == 0.0:
         return 0.0 if model_value == 0.0 else math.inf
     return abs(model_value - reference_value) / abs(reference_value)
@@ -180,11 +190,11 @@ def mass_balance_residual(
     """Signed inventory residual in activity units."""
 
     return (
-        float(initial)
-        + float(inputs)
-        - float(outputs)
-        - float(decay)
-        - float(final)
+        _finite_scalar(initial, "initial")
+        + _finite_scalar(inputs, "inputs")
+        - _finite_scalar(outputs, "outputs")
+        - _finite_scalar(decay, "decay")
+        - _finite_scalar(final, "final")
     )
 
 

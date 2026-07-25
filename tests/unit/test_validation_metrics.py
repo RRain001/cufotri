@@ -62,3 +62,12 @@ def test_interval_coverage_and_detection_limit_policy():
     assert detection_limit_aware_error(0.5, 0.2, 1.0) == 0.0
     assert detection_limit_aware_error(2.5, 0.2, 1.0) == pytest.approx(1.5)
     assert detection_limit_aware_error(3.0, 2.0, 1.0) == pytest.approx(1.0)
+
+
+def test_scalar_metrics_reject_nonfinite_values():
+    with pytest.raises(ValueError, match="model must be finite"):
+        absolute_error(math.nan, 0.0)
+    with pytest.raises(ValueError, match="reference must be finite"):
+        relative_error(1.0, math.inf)
+    with pytest.raises(ValueError, match="inputs must be finite"):
+        mass_balance_residual(0.0, math.nan, 0.0, 0.0, 0.0)

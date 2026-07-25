@@ -50,6 +50,30 @@ concentration, soil-water content and elapsed time. It must establish:
 Independent expected values must be computed without calling the candidate
 reemission function.
 
+## Preliminary independent anchors and difference record
+
+For a deliberately simple \(I_0=10^6\ {\rm Bq\,m^{-2}}\) inventory:
+
+```text
+manual rain-start 3% anchor = 3.0e4 Bq m-2
+manual initial DIFF 1% h-1 anchor = 1.0e4 Bq m-2 in the first hour
+```
+
+The second value is only the initial constant-rate anchor; the manual says it
+decreases with elapsed time and varies with water/specific concentration, so
+it is not used as a complete multi-hour target.
+
+| Feature | Manual evidence | Released empirical mode | Difference |
+|---|---|---|---|
+| rain start | initial 3% rule in the manual input table | function has no rain/rain-start argument | structurally absent |
+| initial DIFF | 1% h-1 at reference water condition | configured 0.01 h-1 | numeric initial anchor represented |
+| later DIFF | decreases with time and changes with specific concentration/water | inventory-proportional rate multiplied by exponential `ZT`; water affects the radiative term, not DIFF | full manual mapping not demonstrated |
+| flux direction/equilibrium | requires complete reviewed relation | nonnegative outward loss only | concentration-gradient reversal not represented |
+
+This is the required candidate difference record. It is intentionally
+qualitative beyond the two frozen numeric anchors because inventing the missing
+manual modifiers would falsely close the limitation.
+
 ## Candidate comparison and implementation decision
 
 The current advanced candidate rate is compared against the frozen vectors,

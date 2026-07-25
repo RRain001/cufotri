@@ -305,7 +305,7 @@ def run_case(manifest_path: Path, output_directory: Path, dry_run: bool = False)
     )
 
     metric_records = []
-    results = []
+    results: list[str] = []
     for observable in case["observables"]:
         model_values = [float(model[observable["model_column"]].iloc[-1])]
         reference_values = [
@@ -314,8 +314,13 @@ def run_case(manifest_path: Path, output_directory: Path, dry_run: bool = False)
         value = _metric_value(
             observable["metric"], model_values, reference_values
         )
-        passed = math.isfinite(value) and value <= float(observable["threshold"])
-        results.append(passed)
+        if not math.isfinite(value):
+            metric_result = "INCONCLUSIVE"
+        elif value <= float(observable["threshold"]):
+            metric_result = "PASS"
+        else:
+            metric_result = "FAIL"
+        results.append(metric_result)
         metric_records.append(
             {
                 "model_column": observable["model_column"],
@@ -326,10 +331,15 @@ def run_case(manifest_path: Path, output_directory: Path, dry_run: bool = False)
                 "value": value,
                 "threshold": float(observable["threshold"]),
                 "comparison": "<=",
-                "result": "PASS" if passed else "FAIL",
+                "result": metric_result,
             }
         )
-    result = "PASS" if all(results) else "FAIL"
+    if "FAIL" in results:
+        result = "FAIL"
+    elif "INCONCLUSIVE" in results:
+        result = "INCONCLUSIVE"
+    else:
+        result = "PASS"
     metrics_payload = {
         "validation_id": case["validation_id"],
         "result": result,

@@ -48,6 +48,21 @@ def test_example_validation_case_dry_run_and_full_run(tmp_path):
     assert len(list((output / "plots").glob("*.png"))) == 3
 
 
+def test_missing_reference_is_blocked_not_passed(tmp_path):
+    case_path = ROOT / "validation/cases/example_zero_source.yaml"
+    case = yaml.safe_load(case_path.read_text(encoding="utf-8"))
+    case["reference"]["data_file"] = str(tmp_path / "missing.csv")
+    missing_case = tmp_path / "missing_reference.yaml"
+    missing_case.write_text(
+        yaml.safe_dump(case, sort_keys=False),
+        encoding="utf-8",
+    )
+    output = tmp_path / "blocked"
+    assert run_case(missing_case, output) == "BLOCKED_EXTERNAL_DATA"
+    metrics = yaml.safe_load((output / "metrics.json").read_text(encoding="utf-8"))
+    assert metrics["result"] == "BLOCKED_EXTERNAL_DATA"
+
+
 def test_forcing_completeness_distinguishes_observed_and_extended(tmp_path):
     forcing = tmp_path / "forcing.csv"
     forcing.write_text(
