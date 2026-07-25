@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/provenance.schema.json",
+  "title": "CTEAS UFOTRI V3 provenance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "v2_candidate_anchor",
+    "migration_tool_version",
+    "original_config_hash",
+    "resolved_config_hash",
+    "parameter_package_hash",
+    "forcing_manifest_hash",
+    "external_data_manifest_hash",
+    "feature_flags",
+    "module_versions"
+  ],
+  "properties": {
+    "v2_candidate_anchor": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "migration_tool_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "original_config_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "resolved_config_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "parameter_package_hash": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "forcing_manifest_hash": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "external_data_manifest_hash": {
+      "type": ["string", "null"],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "feature_flags": {
+      "type": "object",
+      "additionalProperties": {"type": "boolean"}
+    },
+    "module_versions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      }
+    }
+  }
+}

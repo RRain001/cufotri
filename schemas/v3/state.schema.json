@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/state.schema.json",
+  "title": "CTEAS UFOTRI V3 state definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "physical_medium",
+    "activity_form",
+    "unit",
+    "normalization_basis",
+    "area_basis",
+    "volume_basis",
+    "water_basis",
+    "time_basis",
+    "is_inventory",
+    "is_diagnostic",
+    "version"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "physical_medium": {
+      "enum": [
+        "air",
+        "surface",
+        "soil",
+        "plant",
+        "food",
+        "animal",
+        "water",
+        "human",
+        "boundary"
+      ]
+    },
+    "activity_form": {
+      "enum": ["HTO", "OBT", "HT", "total_tritium", "dose"]
+    },
+    "unit": {
+      "enum": [
+        "Bq",
+        "Bq m-2",
+        "Bq m-3 air",
+        "Bq m-3 water",
+        "Bq kg-1 fresh",
+        "Bq kg-1 dry",
+        "Bq L-1",
+        "Sv"
+      ]
+    },
+    "normalization_basis": {
+      "enum": [
+        "total",
+        "declared_area",
+        "air_volume",
+        "water_volume",
+        "fresh_mass",
+        "dry_mass",
+        "liquid_volume",
+        "person"
+      ]
+    },
+    "area_basis": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "volume_basis": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "water_basis": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "time_basis": {
+      "enum": ["instantaneous", "interval_end", "cumulative"]
+    },
+    "is_inventory": {
+      "type": "boolean"
+    },
+    "is_diagnostic": {
+      "type": "boolean"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  },
+  "allOf": [
+    {
+      "not": {
+        "properties": {
+          "is_inventory": {"const": true},
+          "is_diagnostic": {"const": true}
+        },
+        "required": ["is_inventory", "is_diagnostic"]
+      }
+    }
+  ]
+}

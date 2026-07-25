@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/result.schema.json",
+  "title": "CTEAS UFOTRI V3 result envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model_version",
+    "schema_version",
+    "module_versions",
+    "state_definitions",
+    "ledger",
+    "validation_status",
+    "candidate_anchor",
+    "git_commit",
+    "config_hash",
+    "input_checksums"
+  ],
+  "properties": {
+    "model_version": {"enum": ["v2", "v3"]},
+    "schema_version": {"const": "3.0.0"},
+    "module_versions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+      }
+    },
+    "state_definitions": {
+      "type": "array",
+      "items": {"$ref": "state.schema.json"},
+      "uniqueItems": true
+    },
+    "ledger": {"$ref": "#/$defs/activity_ledger"},
+    "validation_status": {
+      "enum": [
+        "NOT_SITE_CALIBRATED",
+        "INTERNAL_REGRESSION_ONLY",
+        "VALIDATION_PENDING",
+        "VALIDATED_BOUNDED_CASE"
+      ]
+    },
+    "candidate_anchor": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "config_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "input_checksums": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    }
+  },
+  "$defs": {
+    "activity_ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_input_bq",
+        "internal_input_bq",
+        "internal_output_bq",
+        "boundary_output_bq",
+        "decay_bq",
+        "final_inventory_bq",
+        "numerical_residual_bq",
+        "relative_residual"
+      ],
+      "properties": {
+        "external_input_bq": {"type": "number", "minimum": 0},
+        "internal_input_bq": {"type": "number", "minimum": 0},
+        "internal_output_bq": {"type": "number", "minimum": 0},
+        "boundary_output_bq": {"type": "number", "minimum": 0},
+        "decay_bq": {"type": "number", "minimum": 0},
+        "final_inventory_bq": {"type": "number", "minimum": 0},
+        "numerical_residual_bq": {"type": "number"},
+        "relative_residual": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

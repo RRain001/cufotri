@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/flux.schema.json",
+  "title": "CTEAS UFOTRI V3 activity-flux definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_state",
+    "destination_state",
+    "activity_rate_unit",
+    "normalization_area",
+    "positive_direction",
+    "integration_rule",
+    "boundary_or_internal",
+    "diagnostic_name"
+  ],
+  "properties": {
+    "source_state": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "destination_state": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "activity_rate_unit": {
+      "enum": ["Bq s-1", "Bq m-2 s-1"]
+    },
+    "normalization_area": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "unit"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "unit": {"const": "m2"}
+          }
+        }
+      ]
+    },
+    "positive_direction": {
+      "const": "source_to_destination"
+    },
+    "integration_rule": {
+      "enum": ["integral_activity_rate_dt", "integral_areal_flux_area_dt"]
+    },
+    "boundary_or_internal": {
+      "enum": ["boundary_input", "boundary_output", "internal"]
+    },
+    "diagnostic_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "integration_rule": {"const": "integral_areal_flux_area_dt"}
+        },
+        "required": ["integration_rule"]
+      },
+      "then": {
+        "properties": {
+          "activity_rate_unit": {"const": "Bq m-2 s-1"},
+          "normalization_area": {"type": "object"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "integration_rule": {"const": "integral_activity_rate_dt"}
+        },
+        "required": ["integration_rule"]
+      },
+      "then": {
+        "properties": {
+          "activity_rate_unit": {"const": "Bq s-1"},
+          "normalization_area": {"type": "null"}
+        }
+      }
+    }
+  ]
+}

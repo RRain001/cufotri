@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/config.schema.json",
+  "title": "CTEAS UFOTRI V3 configuration envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model_version",
+    "compatibility_mode",
+    "enabled_modules",
+    "parameter_package",
+    "forcing_manifest",
+    "source_scenario",
+    "validation_claim"
+  ],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "model_version": {"enum": ["v2", "v3"]},
+    "compatibility_mode": {"enum": ["v2_frozen", "v3"]},
+    "enabled_modules": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "parameter_package": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version", "sha256"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1},
+            "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          }
+        }
+      ]
+    },
+    "forcing_manifest": {
+      "type": ["string", "null"]
+    },
+    "source_scenario": {
+      "type": ["object", "null"]
+    },
+    "validation_claim": {
+      "enum": [
+        "NOT_SITE_CALIBRATED",
+        "INTERNAL_REGRESSION_ONLY",
+        "EXTERNAL_VALIDATION_PENDING"
+      ]
+    },
+    "v2_compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_anchor",
+        "migration_tool_version",
+        "original_config_sha256",
+        "resolved_config_sha256",
+        "original_config"
+      ],
+      "properties": {
+        "candidate_anchor": {
+          "const": "f097115cbfc052baa18f1e49a1207fa6b3523cff"
+        },
+        "migration_tool_version": {"const": "1.0.0"},
+        "original_config_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "resolved_config_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "original_config": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "compatibility_mode": {"const": "v2_frozen"}
+        },
+        "required": ["compatibility_mode"]
+      },
+      "then": {
+        "required": ["v2_compatibility"],
+        "properties": {
+          "enabled_modules": {"maxItems": 0}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "compatibility_mode": {"const": "v3"}
+        },
+        "required": ["compatibility_mode"]
+      },
+      "then": {
+        "properties": {
+          "model_version": {"const": "v3"}
+        }
+      }
+    }
+  ]
+}
