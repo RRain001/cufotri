@@ -3,7 +3,7 @@ case_id: SOYBEAN_EMRAS_TEMPLATE
 status: DRAFT_NOT_PREREGISTERED
 reference_type: EXPERIMENT
 dataset_id: IAEA_EMRAS_SOYBEAN_SB1_SB6
-evidence_type: EXTERNAL_EXPERIMENT
+evidence_type: CONTROLLED_EXPERIMENT
 raw_data_location: validation/external_local/soybean_emras
 raw_data_tracked: false
 licence:
