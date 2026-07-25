@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "release_scenario.schema.json",
+  "title": "V2 release scenario taxonomy",
+  "type": "object",
+  "required": [
+    "release_scenario_type",
+    "release_start",
+    "release_end",
+    "source_rate_basis",
+    "post_release_duration"
+  ],
+  "properties": {
+    "release_scenario_type": {
+      "enum": [
+        "CONTINUOUS_ROUTINE",
+        "FINITE_ROUTINE_WINDOW",
+        "ACCIDENT_PULSE",
+        "ACCIDENT_TIME_SERIES",
+        "POST_RELEASE_FOLLOWUP"
+      ]
+    },
+    "release_start": {"type": "string", "format": "date-time"},
+    "release_end": {"type": "string", "format": "date-time"},
+    "source_rate_basis": {"type": "string", "minLength": 1},
+    "post_release_duration": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

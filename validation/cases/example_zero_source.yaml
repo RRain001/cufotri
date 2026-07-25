@@ -1,0 +1,50 @@
+validation_id: VAL_PHYS_ZERO_SOURCE
+title: Zero-source end-to-end validation runner example
+reference_type: ANALYTIC
+release_scenario:
+  release_scenario_type: FINITE_ROUTINE_WINDOW
+  release_start: "2025-06-01T00:00:00Z"
+  release_end: "2025-06-01T02:00:00Z"
+  source_rate_basis: constant zero HTO activity rate in Bq s-1
+  post_release_duration: PT0H
+model:
+  default_config: configs/default_parameters.yaml
+  case_config: configs/test_case.yaml
+  overrides:
+    name: validation_zero_source
+    duration_hours: 2
+    time_step_seconds: 600
+    source:
+      emission_rate_bq_s: 0.0
+      release_duration_hours: 2
+    plant:
+      leaf_exchange_mode: "off"
+      direct_leaf_uptake_enabled: false
+reference:
+  name: Exact zero-source invariant
+  version: "1.0"
+  citation: Analytic consequence of zero initial activity and zero HTO source
+  data_file: validation/cases/example_zero_source_reference.csv
+  licence: CC0-1.0 project-authored numeric snippet
+  checksum_sha256: 4828ace4fa044cf769d579a37479e315f084b8882d3a266918024df400cefa3c
+observables:
+  - model_column: air_hto_concentration
+    reference_column: air_hto_concentration
+    unit: Bq m-3
+    metric: absolute_error
+    threshold: 0.0
+    unit_conversion: identity
+  - model_column: soil_hto_inventory
+    reference_column: soil_hto_inventory
+    unit: Bq m-2
+    metric: absolute_error
+    threshold: 0.0
+    unit_conversion: identity
+  - model_column: total_effective_dose_sv
+    reference_column: total_effective_dose_sv
+    unit: Sv
+    metric: absolute_error
+    threshold: 0.0
+    unit_conversion: identity
+missing_value_policy: Paired finite values only; missing reference blocks the case
+notes: The reference is independently specified and does not call model code.
