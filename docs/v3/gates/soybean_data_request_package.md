@@ -1,6 +1,7 @@
 # Soybean external-data request package
 
-Status: `READY_TO_SEND_MANUALLY`  
+Status: `READY_TO_SEND_MANUALLY`
+
 This repository does not send the request.
 
 ## Project and research purpose

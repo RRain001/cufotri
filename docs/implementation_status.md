@@ -12,22 +12,22 @@ CURRENT_MAIN_BASELINE_HEAD =
 f02636f10e900174226edc2659f20a2fdb15d3ce
 
 CURRENT_MAIN_HEAD =
-RECORDED_IN_FINAL_PUBLICATION_HANDOFF
+f618515caef22a19867d75d59b1d4c78f1cb212f
 
 CURRENT_DEVELOPMENT_BRANCH =
-codex/v3-architecture-only
+codex/v3-external-evidence-unblocking
 
 CURRENT_DEVELOPMENT_BASELINE_HEAD =
-e22aa5e718404a6ba8ba31b61cb50aba53eb86b8
+f618515caef22a19867d75d59b1d4c78f1cb212f
 
 CURRENT_DEVELOPMENT_HEAD =
-RECORDED_IN_FINAL_PUBLICATION_HANDOFF
+RECORDED_IN_EXTERNAL_EVIDENCE_HANDOFF
 
 CURRENT_DEVELOPMENT_STATUS =
-V3_ARCHITECTURE_ONLY
+V3_EXTERNAL_EVIDENCE_UNBLOCKING
 
 CURRENT_TEST_STATUS =
-PASS_191_ONE_KNOWN_NUMPY_NETCDF_WARNING
+PASS_202_ONE_KNOWN_NUMPY_NETCDF_WARNING
 
 CURRENT_V1_RECOMPUTE_STATUS =
 PASS_5_FROZEN_CASES
@@ -43,12 +43,29 @@ NOT_STARTED
 
 CURRENT_V3_PHYSICS_START_GATE =
 BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+CURRENT_EXTERNAL_EVIDENCE_PACKAGE_STATUS =
+READY_FAIL_CLOSED_BLOCKED_EXTERNAL_DATA
+
+CURRENT_SOYBEAN_DATA_STATUS =
+BLOCKED_EXTERNAL_DATA
+
+CURRENT_PREREGISTRATION_STATUS =
+DRAFT_NOT_PREREGISTERED
+
+CURRENT_CALIBRATION_STATUS =
+NOT_RUN_BLOCKED_EXTERNAL_DATA
+
+CURRENT_PARAMETER_IDENTIFIABILITY_STATUS =
+NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
 ```
 
 The current released model is the immutable V2 candidate. The current
-development work is V3 architecture only; it is not a V3 physics release.
-Exact post-finalization and post-merge heads are recorded in the publication
-handoff to avoid a commit claiming its own hash.
+`main` publishes V3 architecture only. The current development work prepares a
+fail-closed external-evidence intake package; it is not a V3 physics release
+and contains no empirical data, calibration result, or accepted holdout.
+The final development-branch head is recorded in the external-evidence handoff
+to avoid a commit claiming its own hash.
 
 ## V3 architecture-only baseline
 

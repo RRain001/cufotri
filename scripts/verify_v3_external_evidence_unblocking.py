@@ -33,6 +33,7 @@ REQUIRED_FILES = (
     "docs/v3/gates/external_data_freeze_protocol.md",
     "docs/v3/gates/soybean_calibration_parameter_contract.md",
     "docs/v3/gates/parameter_identifiability_protocol.md",
+    "docs/v3/v3_external_evidence_unblocking_report.md",
     "schemas/v3/external_evidence_intake.schema.json",
     "validation/external_local/README.md",
     "validation/external_local/.gitignore",
