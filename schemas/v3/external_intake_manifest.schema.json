@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/external_intake_manifest.schema.json",
+  "title": "Validated external intake manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_schema_version",
+    "dataset_id",
+    "evidence_type",
+    "raw_manifest_path",
+    "raw_manifest_sha256",
+    "adapter_version",
+    "field_mapping",
+    "unit_mapping",
+    "time_coverage",
+    "exposure_coverage",
+    "calibration_ids",
+    "holdout_ids",
+    "validation_summary",
+    "generated_files",
+    "calculated_checksums",
+    "intake_status",
+    "status",
+    "checksums_sha256",
+    "field_mappings",
+    "calibration_sample_ids",
+    "holdout_sample_ids",
+    "empirical_validation",
+    "calibration_permitted",
+    "holdout_execution_permitted",
+    "blocking_reasons",
+    "metric_pipeline"
+  ],
+  "properties": {
+    "manifest_schema_version": {"const": "2.0.0"},
+    "dataset_id": {"type": "string"},
+    "evidence_type": {"type": "string"},
+    "raw_manifest_path": {"type": "string"},
+    "raw_manifest_sha256": {
+      "oneOf": [
+        {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        {"const": "NOT_AVAILABLE"}
+      ]
+    },
+    "adapter_version": {"const": "2.0.0"},
+    "field_mapping": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"type": "string"}
+      }
+    },
+    "unit_mapping": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["declared_unit", "canonical_unit", "conversion"],
+          "properties": {
+            "declared_unit": {"type": "string"},
+            "canonical_unit": {"type": "string"},
+            "conversion": {"const": "identity"}
+          }
+        }
+      }
+    },
+    "time_coverage": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["start_utc", "end_utc", "continuous"],
+        "properties": {
+          "start_utc": {"type": "string"},
+          "end_utc": {"type": "string"},
+          "continuous": {"type": "boolean"}
+        }
+      }
+    },
+    "exposure_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_utc", "end_utc", "forcing_complete"],
+      "properties": {
+        "start_utc": {"type": "string"},
+        "end_utc": {"type": "string"},
+        "forcing_complete": {"type": "boolean"}
+      }
+    },
+    "calibration_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "holdout_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "validation_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_validated", "numeric_content_validated", "checksums_recomputed"],
+      "properties": {
+        "schema_validated": {"type": "boolean"},
+        "numeric_content_validated": {"type": "boolean"},
+        "checksums_recomputed": {"type": "boolean"}
+      }
+    },
+    "generated_files": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "calculated_checksums": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "intake_status": {
+      "enum": [
+        "BLOCKED_EXTERNAL_DATA",
+        "READY_FOR_PREREGISTRATION",
+        "PASS_SYNTHETIC_CONTRACT_ONLY"
+      ]
+    },
+    "status": {
+      "enum": [
+        "BLOCKED_EXTERNAL_DATA",
+        "READY_FOR_PREREGISTRATION",
+        "PASS_SYNTHETIC_CONTRACT_ONLY"
+      ]
+    },
+    "checksums_sha256": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "field_mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"type": "string"}
+      }
+    },
+    "calibration_sample_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "holdout_sample_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "empirical_validation": {"const": false},
+    "calibration_permitted": {"const": false},
+    "holdout_execution_permitted": {"const": false},
+    "blocking_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "metric_pipeline": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["status"],
+      "properties": {
+        "status": {"type": "string"}
+      }
+    }
+  }
+}

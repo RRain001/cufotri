@@ -27,8 +27,9 @@
     "dataset_id": {"type": "string", "minLength": 1},
     "evidence_type": {
       "enum": [
-        "EXTERNAL_EXPERIMENT",
-        "FIELD_OBSERVATION",
+        "CONTROLLED_EXPERIMENT",
+        "MATCHED_FIELD_OBSERVATION",
+        "LICENSED_EXTERNAL_HOLDOUT",
         "SYNTHETIC_CONTRACT_TEST"
       ]
     },

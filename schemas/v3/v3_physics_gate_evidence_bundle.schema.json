@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/v3_physics_gate_evidence_bundle.schema.json",
+  "title": "V3 physics-gate evidence bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "dataset_id",
+    "raw_manifest_path",
+    "intake_manifest_path",
+    "preregistration_record_path",
+    "calibration_result_path",
+    "identifiability_result_path",
+    "holdout_result_path"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "raw_manifest_path": {"type": "string", "minLength": 1},
+    "intake_manifest_path": {"type": "string", "minLength": 1},
+    "preregistration_record_path": {"type": "string", "minLength": 1},
+    "calibration_result_path": {"type": "string", "minLength": 1},
+    "identifiability_result_path": {"type": "string", "minLength": 1},
+    "holdout_result_path": {"type": "string", "minLength": 1}
+  }
+}

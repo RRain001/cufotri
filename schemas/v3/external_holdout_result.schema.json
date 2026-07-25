@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/external_holdout_result.schema.json",
+  "title": "External holdout result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "dataset_id",
+    "evidence_type",
+    "raw_manifest_sha256",
+    "intake_manifest_sha256",
+    "preregistration_sha256",
+    "preregistration_commit",
+    "model_commit",
+    "config_hash",
+    "parameter_result_hash",
+    "holdout_ids",
+    "result_file_checksums",
+    "metrics",
+    "verdict",
+    "generated_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "evidence_type": {
+      "enum": [
+        "CONTROLLED_EXPERIMENT",
+        "MATCHED_FIELD_OBSERVATION",
+        "LICENSED_EXTERNAL_HOLDOUT",
+        "SYNTHETIC_CONTRACT_TEST",
+        "INTERNAL_REFERENCE",
+        "ANALYTIC_BENCHMARK",
+        "INTEGRATION_SCENARIO",
+        "REGRESSION_CASE",
+        "ERA5_FORCING",
+        "LITERATURE_COMPARISON"
+      ]
+    },
+    "raw_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "intake_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "preregistration_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "preregistration_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "model_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "config_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "parameter_result_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "holdout_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "result_file_checksums": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "number"}
+    },
+    "verdict": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+    "generated_at": {"type": "string", "minLength": 1}
+  }
+}

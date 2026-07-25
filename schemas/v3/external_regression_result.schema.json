@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/external_regression_result.schema.json",
+  "title": "Regression result referenced by the V3 physics gate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "check", "status", "model_commit", "generated_at"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "check": {
+      "enum": ["V1_RECOMPUTE", "V2_ACCEPTANCE", "VALIDATION_READINESS"]
+    },
+    "status": {"const": "PASS"},
+    "model_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "generated_at": {"type": "string", "minLength": 1}
+  }
+}
