@@ -10,6 +10,15 @@ from ..meteorology.derived_variables import (
 )
 
 
+LEAF_EQUILIBRIUM_FORMULA_ID = (
+    "UFOTRI_EQ27_SATURATED_WATER_VAPOUR_DENSITY"
+)
+LEAF_EQUILIBRIUM_FORMULA_DESCRIPTION = (
+    "Ca_eq = Cplant * rho_v_sat / (alpha * rho_water)"
+)
+LEAF_EQUILIBRIUM_VAPOUR_DENSITY_BASIS = "SATURATED"
+
+
 @dataclass(frozen=True)
 class LeafExchange:
     net_to_plant_bq_m2_s: float

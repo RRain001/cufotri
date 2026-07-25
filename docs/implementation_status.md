@@ -1,8 +1,71 @@
 # Implementation status
 
-Updated: 2026-07-24
+Updated: 2026-07-25
 
-## V2 physics remediation RC1 progress
+## Current formal status
+
+```text
+CURRENT_FORMAL_STATUS =
+FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+
+CURRENT_RELEASE_BASIS =
+RC2_INDEPENDENT_REAUDIT_ACCEPTED_WITH_MINOR_CORRECTIONS
+
+CURRENT_BRANCH =
+codex/v2-physics-remediation-rc2
+
+CURRENT_SOURCE_HEAD =
+CANDIDATE_FINALIZATION_COMMIT_RECORDED_IN_RELEASE_REPORT_AND_TAG
+
+V1_BASELINE =
+6918440faa3455b848f43589784672f3bfabfe3d
+
+V1_TAG =
+formal-minimal-baseline-v1
+
+TEST_STATUS =
+PASS_167_ONE_KNOWN_WARNING
+
+FORMAL_SCOPE =
+HTO_ONLY_RESEARCH_CANDIDATE
+
+SITE_CALIBRATED =
+NO
+
+REGULATORY_VALIDATED =
+NO
+
+COMPLETE_UFOTRI_EQUIVALENCE =
+NO
+
+ANIMAL_STATE_NAMING_STATUS =
+DOCUMENTED_COMPATIBILITY_LIMITATION_WITH_BQ_M2_ALIASES
+```
+
+The current physics acceptance basis is
+`docs/v2/v2_rc2_independent_reaudit.md`, whose verdict is
+`ACCEPT_RC2_WITH_MINOR_CORRECTIONS`. Release finalization resolves the named
+provenance and current-status LOW findings without changing model results.
+The five retained MEDIUM research limitations are frozen in
+`docs/v2/v2_candidate_limitations.yaml`.
+
+## Historical milestones
+
+- V1 formal minimal baseline:
+  `formal-minimal-baseline-v1` at `6918440faa3455b848f43589784672f3bfabfe3d`.
+- Initial V2 self-assessment: historical candidate recommendation.
+- Initial V2 independent audit: rejected for cross-module conservation and
+  other evidence gaps.
+- RC1 self-assessment: ready for independent re-audit.
+- RC1 independent re-audit: `REJECT_RC1_REMEDIATION`.
+- RC2 remediation status: candidate ready, held for independent review.
+- RC2 independent re-audit:
+  `ACCEPT_RC2_WITH_MINOR_CORRECTIONS`, with no BLOCKER or HIGH.
+
+The complete immutable evidence chain is indexed in
+`docs/v2/v2_audit_history.md`.
+
+## Previous assessment: V2 physics remediation RC1 progress
 
 Development branch: `codex/v2-physics-remediation-rc1`
 

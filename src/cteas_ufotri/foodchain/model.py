@@ -7,12 +7,30 @@ from ..soil.hto_balance import limit_inventory_outflows
 
 @dataclass(frozen=True)
 class AnimalState:
+    """Normalized animal inventories on the ecological area in Bq m-2.
+
+    Historical ``*_bq`` names remain for compatibility. New callers may use
+    the explicit read-only ``*_bq_m2`` aliases.
+    """
+
     body_hto_bq: float = 0.0
     body_obt_bq: float = 0.0
 
     @property
+    def body_hto_bq_m2(self) -> float:
+        return self.body_hto_bq
+
+    @property
+    def body_obt_bq_m2(self) -> float:
+        return self.body_obt_bq
+
+    @property
     def total_bq(self) -> float:
         return self.body_hto_bq + self.body_obt_bq
+
+    @property
+    def total_bq_m2(self) -> float:
+        return self.total_bq
 
 
 @dataclass(frozen=True)

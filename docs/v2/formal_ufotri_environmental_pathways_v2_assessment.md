@@ -2,7 +2,26 @@
 
 Assessment date: 2026-07-24
 
-## RC1 status notice
+## Current RC2 candidate disposition
+
+```text
+V2_STATUS = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+CURRENT_RELEASE_BASIS = RC2_INDEPENDENT_REAUDIT_ACCEPTED_WITH_MINOR_CORRECTIONS
+BLOCKER_COUNT = 0
+HIGH_COUNT = 0
+SITE_CALIBRATED = NO
+REGULATORY_VALIDATED = NO
+COMPLETE_UFOTRI_EQUIVALENCE = NO
+```
+
+The RC2 independent re-audit confirmed unequal-footprint global conservation,
+UFOTRI Eq. (27) saturated-vapour equilibrium, ten independent analytic
+benchmarks, root-retaining cuts, and actual 365/366-day calendars. Release
+finalization adds explicit named provenance and current-status metadata without
+changing model physics. The authoritative audit sequence is
+`docs/v2/v2_audit_history.md`.
+
+## Previous RC1 status notice
 
 This file records the pre-independent-audit V2 assessment. Its historical
 verdict is retained below, but it is not the current branch disposition. The
@@ -70,6 +89,14 @@ test. Source, tests, ERA5 utilities, and scripts also passed `compileall`, and
 
 ## Remaining limitations
 
+- Advanced re-emission omits the manual rain-start 3% rule and
+  concentration-dependent DIFF detail.
+- The three-box soil solver is experimental standalone and is not formally
+  coupled.
+- The 72 h wet case is 48 h ERA5 plus a deterministic dry 24 h extension.
+- Continuous and accident release durations remain scenario assumptions.
+- Crop, hydrology, footprint, animal, and intake values remain replaceable
+  research-screening parameters.
 - The chemistry is HTO-only; HT oxidation and HT-specific soil processes are
   excluded.
 - This is not full UFOTRI, a regulatory model, or a field-validated site model.
@@ -121,3 +148,14 @@ formal three-box coupling remain limitations.
 
 This remediation is a self-assessed candidate for re-audit only. It does not
 reinstate the historical recommendation above.
+
+## Current candidate fields
+
+```text
+CURRENT_V2_STATUS = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+CURRENT_PHYSICS_ACCEPTANCE = ACCEPT_RC2_WITH_MINOR_CORRECTIONS
+PROVENANCE_STATUS = NAMED_FIELDS_AND_HASHED_EFFECTIVE_CONFIG
+ANIMAL_STATE_NAMING_STATUS = DOCUMENTED_COMPATIBILITY_LIMITATION
+MEDIUM_LIMITATION_COUNT = 5
+FORMAL_MODEL_CLAIM = RESEARCH_CANDIDATE_NOT_SITE_OR_REGULATORY_VALIDATED
+```

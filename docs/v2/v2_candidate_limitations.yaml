@@ -1,0 +1,48 @@
+release_status: FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+scope:
+  chemistry: HTO_ONLY
+  atmosphere: STEADY_GAUSSIAN_SOURCE_SINK_LEDGER
+  dynamic_air_inventory: false
+  site_calibrated: false
+  regulatory_validated: false
+  complete_ufotri_equivalence: false
+
+limitations:
+  - id: M_REEM_MANUAL_FIDELITY
+    severity: MEDIUM
+    status: DOCUMENTED
+    description: >-
+      Advanced re-emission omits the manual rain-start 3 percent rule and
+      concentration-dependent DIFF detail.
+  - id: M_MULTIBOX_STANDALONE
+    severity: MEDIUM
+    status: DOCUMENTED
+    description: >-
+      The conservative three-box soil solver remains experimental standalone
+      and is not coupled into the formal candidate.
+  - id: M_ERA5_EXTENSION
+    severity: MEDIUM
+    status: DOCUMENTED
+    description: >-
+      The 72 h wet case contains 48 h observed ERA5 plus a deterministic dry
+      24 h extension.
+  - id: M_RELEASE_DURATION
+    severity: MEDIUM
+    status: DOCUMENTED
+    description: >-
+      Continuous and accident release durations remain explicit scenario
+      assumptions rather than site events.
+  - id: M_PROJECT_PARAMETERS
+    severity: MEDIUM
+    status: DOCUMENTED
+    description: >-
+      Crop, hydrology, footprint, animal, and intake values remain replaceable
+      research-screening parameters.
+
+additional_research_limits:
+  wet_parameters: LITERATURE_COMPARISON_AND_PROJECT_BRACKETS_NOT_SITE_CALIBRATED
+  lhs_ranks: DOMINANT_STABLE_WEAK_RANKS_LIMITED_WITH_EVIDENCE
+  chemistry: HTO_ONLY
+  atmosphere: STEADY_GAUSSIAN_NO_DYNAMIC_AIR_INVENTORY
+  site_validation: NOT_SITE_CALIBRATED
+  regulatory_status: NOT_REGULATORY_VALIDATED

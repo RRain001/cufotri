@@ -35,6 +35,10 @@ from cteas_ufotri.meteorology.era5_reader import (
     prepare_hourly_forcing,
     read_era5,
 )
+from cteas_ufotri.provenance import (
+    merged_config_sha256,
+    v2_named_provenance,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -252,14 +256,13 @@ def run(output_root: Path, era5_path: Path) -> dict:
         results_path = case_directory / "results.csv"
         frame.to_csv(results_path, index=False)
         write_figures(frame, case_directory)
-        config_hash = hashlib.sha256(
-            json.dumps(config, sort_keys=True).encode("utf-8")
-        ).hexdigest()
+        config_hash = merged_config_sha256(config)
         files = sorted(
             path for path in case_directory.iterdir() if path.name != "provenance.json"
         )
         provenance = {
             "case": config["name"],
+            **v2_named_provenance(config),
             "git_head": git_value("rev-parse", "HEAD"),
             "worktree_status": git_value("status", "--short"),
             "python": platform.python_version(),

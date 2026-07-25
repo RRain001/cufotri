@@ -1,5 +1,11 @@
 # Manual-to-code matrix
 
+Current matrix disposition:
+`FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE`, accepted by the RC2
+independent re-audit with no BLOCKER/HIGH. Rows labelled provisional,
+experimental, project extension, or research screening remain limited exactly
+as stated and are also registered in `v2_candidate_limitations.yaml`.
+
 | Process | Manual anchor | Unified quantity | Code target | Parameter source | Verification | Stage-0 status |
 |---|---|---|---|---|---|---|
 | Atmospheric transport | Eq. (4),(6),(25) | `Ca`, `Q` | `atmosphere/` | manual + existing YAML | Gaussian and quadrature tests | V1 implemented |

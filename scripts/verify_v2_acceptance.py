@@ -24,7 +24,7 @@ from cteas_ufotri.benchmarks.v2_cases import (
 )
 from cteas_ufotri.benchmarks.independent import benchmark_category_counts
 from cteas_ufotri.case import run_short_case
-from cteas_ufotri.config import load_configuration
+from cteas_ufotri.config import load_configuration, load_yaml
 from cteas_ufotri.coupling.integrator import advance
 from cteas_ufotri.coupling.state import State
 from cteas_ufotri.crop.phenology import (
@@ -32,6 +32,7 @@ from cteas_ufotri.crop.phenology import (
     season_fraction_at_time,
 )
 from cteas_ufotri.plant.leaf_exchange import bidirectional_leaf_exchange
+from cteas_ufotri.provenance import validate_v2_named_provenance
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -607,6 +608,48 @@ def recompute() -> list[str]:
         missing = [str(path) for path in required if not path.is_file()]
         if missing:
             raise ValueError(f"Missing V2 recompute artifacts: {missing}")
+        for case_name in (
+            "v2_era5_72h_wet_deposition",
+            "v2_accident_plant_obt_14d",
+            "v2_crop_ingestion_season",
+            "v2_pasture_milk_pathway",
+            "v2_full_adult_dose",
+            "v2_leaf_exchange_food_dose_72h",
+        ):
+            case_config = load_configuration(
+                ROOT / "configs/default_parameters.yaml",
+                ROOT / "configs/v2" / f"{case_name}.yaml",
+            )
+            case_provenance = json.loads(
+                (
+                    end_to_end_root / case_name / "provenance.json"
+                ).read_text(encoding="utf-8")
+            )
+            validate_v2_named_provenance(case_provenance, case_config)
+        limitations = load_yaml(
+            ROOT / "docs/v2/v2_candidate_limitations.yaml"
+        )
+        required_limitations = {
+            "M_REEM_MANUAL_FIDELITY",
+            "M_MULTIBOX_STANDALONE",
+            "M_ERA5_EXTENSION",
+            "M_RELEASE_DURATION",
+            "M_PROJECT_PARAMETERS",
+        }
+        limitation_ids = {
+            item["id"] for item in limitations.get("limitations", [])
+        }
+        if (
+            limitations.get("release_status")
+            != "FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE"
+            or limitation_ids != required_limitations
+            or any(
+                item.get("severity") != "MEDIUM"
+                or item.get("status") != "DOCUMENTED"
+                for item in limitations.get("limitations", [])
+            )
+        ):
+            raise ValueError("V2 candidate limitation registry mismatch")
         full_model_uncertainty = json.loads(
             (end_to_end_root / "uncertainty_summary.json").read_text(
                 encoding="utf-8"
@@ -695,7 +738,10 @@ def recompute() -> list[str]:
                 f"{benchmark_counts['literature_comparison']} literature)"
             ),
             "PASS: six end-to-end cases and required artifacts recomputed",
-            "PASS: V2 provenance and hashes recorded in temporary output",
+            (
+                "PASS: V2 named provenance, configuration hashes, and "
+                "candidate limitations verified"
+            ),
         ]
 
 

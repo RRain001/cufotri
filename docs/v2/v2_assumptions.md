@@ -2,6 +2,12 @@
 
 This file extends, and does not rewrite, `docs/assumptions.md`.
 
+Current release status is
+`FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE`, based on the accepted RC2
+independent re-audit. This status is bounded by the machine-readable limits in
+`docs/v2/v2_candidate_limitations.yaml` and does not mean site calibration,
+regulatory validation, or complete UFOTRI equivalence.
+
 | ID | Decision | Classification | Limitation / resolution |
 |---|---|---|---|
 | V2-A01 | HTO-only chemistry | project scope | HT deposition, oxidation, and HT-specific C2 are excluded |

@@ -3,6 +3,13 @@
 V2 validation is evidence-layered; passing a lower layer does not imply
 regulatory or field validation.
 
+The formal candidate provenance must expose the effective ecological reference
+area, dry/wet footprint areas, wet parameter set, Eq. (27) identity and
+saturated-vapour basis, active-crop root fraction/representation, Gregorian
+calendar basis, model scope, and research-only validation status. The complete
+merged configuration remains hash-covered, and acceptance fails if named
+fields are missing or disagree with that effective configuration.
+
 ## Layer 1: compatibility and arithmetic
 
 - all 61 V1 tests remain passing;
@@ -88,3 +95,8 @@ or an explicit `LIMITED_WITH_EVIDENCE` result.
 Acceptance thresholds belong beside each benchmark. A candidate may be
 `ACCEPT_WITH_REMAINING_LIMITATIONS` when all declared project invariants pass
 but an optional module remains honestly experimental or deferred.
+
+The released candidate's five MEDIUM research limitations are registered in
+`docs/v2/v2_candidate_limitations.yaml`. Validation readiness is a separate
+post-candidate milestone and must not be represented as evidence that external,
+site, or regulatory validation has already occurred.

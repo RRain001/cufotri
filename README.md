@@ -33,17 +33,21 @@ Run the V2 physics-remediation acceptance:
 .venv/bin/python scripts/verify_v2_acceptance.py --recompute
 ```
 
-Current branch disposition is:
+Current formal disposition is:
 
 ```text
-V2_STATUS = PHYSICS_REMEDIATION_RC1_CANDIDATE
-FORMAL_ACCEPTANCE = PENDING_INDEPENDENT_REAUDIT
+V2_STATUS = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
+CURRENT_RELEASE_BASIS = RC2_INDEPENDENT_REAUDIT_ACCEPTED_WITH_MINOR_CORRECTIONS
+FORMAL_SCOPE = HTO_ONLY_RESEARCH_CANDIDATE
+SITE_CALIBRATED = NO
+REGULATORY_VALIDATED = NO
+COMPLETE_UFOTRI_EQUIVALENCE = NO
 ```
 
-This is not a formal V2 acceptance claim. See the independent audit and RC1
-status documents under `docs/v2/`, especially
-`independent_physics_parameter_audit.md` and
-`v2_uncertainty_convergence.md`.
+This is a formal research-candidate release claim, not a site, regulatory, or
+complete-UFOTRI validation claim. The evidence chain is indexed in
+`docs/v2/v2_audit_history.md`; machine-readable remaining limitations are in
+`docs/v2/v2_candidate_limitations.yaml`.
 
 Outputs are written to `outputs/rural_stack_short_case/`: `results.csv`, an
 atmospheric grid CSV, six PNG diagnostics, and `validation_report.md`. Configuration is split between
@@ -108,7 +112,7 @@ Formal fields are `surface_box_absolute_residual_bq_m2` and
 compatibility aliases. This ledger covers soil HTO + TFWT + OBT only. The
 steady Gaussian atmosphere has a separate source/sink budget, not a dynamic
 air inventory.
-The complete RC1 activity-field semantics are in
+The complete RC2 activity-field semantics are in
 `docs/v2/activity_propagation_protocol.md`.
 
 ## Implemented scope

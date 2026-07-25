@@ -153,3 +153,11 @@ def test_plant_food_paths_are_explicit(crop, hto_key, obt_key):
     assert values[hto_key] == pytest.approx(0.8)
     assert values[obt_key] == pytest.approx(20.0)
     assert sum(value > 0 for value in values.values()) == 2
+
+
+def test_animal_state_explicit_areal_aliases_preserve_compatibility():
+    state = AnimalState(body_hto_bq=12.0, body_obt_bq=3.0)
+
+    assert state.body_hto_bq_m2 == state.body_hto_bq
+    assert state.body_obt_bq_m2 == state.body_obt_bq
+    assert state.total_bq_m2 == state.total_bq
