@@ -1,23 +1,11 @@
-gate_version: 1.0.0
-complete_licensed_external_case: false
-raw_data_checksum_recorded: false
-data_schema_valid: false
-preregistration_committed_before_holdout: false
-calibration_holdout_separated: false
-calibration_executed: false
-parameter_identifiability_assessed: false
-V1_regression_pass: true
-V2_acceptance_pass: true
-validation_readiness_pass: true
-external_holdout_executed: false
-no_new_blocker_high: true
-external_case_manifest: null
-holdout_result_manifest: null
-evidence:
-  external_case: BLOCKED_EXTERNAL_DATA
-  external_case_evidence_type: NONE
-  preregistration: DRAFT_NOT_PREREGISTERED
-  calibration: NOT_RUN_BLOCKED_EXTERNAL_DATA
-  identifiability: NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
-  holdout: NOT_RUN_BLOCKED_EXTERNAL_DATA
-  holdout_evidence_type: NONE
+schema_version: 2.0.0
+evidence_bundle_path: null
+allowed_artifact_roots:
+  - validation
+  - docs/v3/gates
+allowed_raw_data_roots:
+  - validation/external_local
+required_regression_reports:
+  v1: null
+  v2: null
+  validation_readiness: null
