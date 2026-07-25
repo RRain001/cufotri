@@ -40,6 +40,18 @@ NO
 
 ANIMAL_STATE_NAMING_STATUS =
 DOCUMENTED_COMPATIBILITY_LIMITATION_WITH_BQ_M2_ALIASES
+
+VALIDATION_INFRASTRUCTURE_STATUS =
+FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_VALIDATION_READY
+
+VALIDATION_BRANCH =
+codex/v2-validation-readiness
+
+EMPIRICAL_VALIDATION_STATUS =
+BLOCKED_EXTERNAL_DATA
+
+VALIDATION_TEST_STATUS =
+PASS_176_ONE_KNOWN_NUMPY_NETCDF_WARNING
 ```
 
 The current physics acceptance basis is
@@ -48,6 +60,13 @@ The current physics acceptance basis is
 provenance and current-status LOW findings without changing model results.
 The five retained MEDIUM research limitations are frozen in
 `docs/v2/v2_candidate_limitations.yaml`.
+
+The post-candidate validation branch adds a 42-entry evidence registry,
+external-data schemas, general metrics, an isolated validation runner,
+forcing-completeness checks, parameter priorities, and closure plans for all
+five MEDIUM limitations. `VALIDATION_READY` describes infrastructure, not
+empirical validation: experiment, field, reference-model, complete observed
+forcing, and site-case evidence remain absent and correctly blocked.
 
 ## Historical milestones
 

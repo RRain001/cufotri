@@ -49,6 +49,21 @@ complete-UFOTRI validation claim. The evidence chain is indexed in
 `docs/v2/v2_audit_history.md`; machine-readable remaining limitations are in
 `docs/v2/v2_candidate_limitations.yaml`.
 
+The post-release validation infrastructure is documented in
+`docs/v2/validation/v2_validation_master_plan.md`. Run its executable
+zero-source example and infrastructure gate with:
+
+```bash
+.venv/bin/python scripts/run_v2_validation_case.py \
+  --case validation/cases/example_zero_source.yaml \
+  --output /tmp/ufotri-zero-source-validation
+.venv/bin/python scripts/verify_v2_validation_readiness.py
+```
+
+The readiness result means that independent datasets can be connected
+reproducibly. It does not mean that experimental, field, reference-model, site,
+or regulatory validation has been completed.
+
 Outputs are written to `outputs/rural_stack_short_case/`: `results.csv`, an
 atmospheric grid CSV, six PNG diagnostics, and `validation_report.md`. Configuration is split between
 `configs/default_parameters.yaml` and `configs/test_case.yaml`; no case
