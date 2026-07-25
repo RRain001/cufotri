@@ -1,0 +1,123 @@
+validation_id: VAL_EXT_REFERENCE_MODEL_001
+title: Independent Gaussian to soil plant and inhalation-dose reference
+reference_type: REFERENCE_MODEL
+release_scenario:
+  release_scenario_type: FINITE_ROUTINE_WINDOW
+  release_start: "2025-06-01T00:00:00Z"
+  release_end: "2025-06-01T02:00:00Z"
+  source_rate_basis: constant HTO activity rate in Bq s-1
+  post_release_duration: PT4H
+model:
+  default_config: configs/default_parameters.yaml
+  case_config: configs/test_case.yaml
+  overrides:
+    name: independent_reference_case_001
+    start: "2025-06-01T00:00:00Z"
+    duration_hours: 6
+    time_step_seconds: 60
+    meteorology_step_seconds: 3600
+    site:
+      receptor_mode: downwind_fixed
+      receptor_downwind_m: 1000.0
+      receptor_crosswind_m: 0.0
+    source:
+      emission_rate_bq_s: 1.0e+9
+      release_duration_hours: 2.0
+      stack_height_m: 10.0
+    atmosphere:
+      deposition_velocity_m_s: 0.005
+      fixed_plume_rise_m: 0.0
+      plume_rise_mode: fixed
+      stability_mode: fixed
+      stability_class: D
+      wind_reference_height_m: 10.0
+      rural_wind_profile_exponent: 0.20
+      mixing_height_m: null
+      reemission_feedback_mode: "off"
+      depletion:
+        enabled: true
+        dry_deposition_enabled: true
+        wet_scavenging_enabled: true
+        wet_scavenging_mode: constant_scavenging_coefficient
+        mixing_height_m: 1000.0
+        segments: 20
+        constant_scavenging_coefficient_s: 2.0e-5
+    deposition:
+      ecological_reference_area_m2: 1.0e+6
+      dry_footprint: {allocation: uniform, area_m2: 1.0e+6}
+      wet_footprint: {allocation: uniform, area_m2: 1.0e+6}
+    soil:
+      initial_water_m: 0.01
+      rain_hto_concentration_bq_m3: 0.0
+      runoff_enabled: false
+      root_uptake_delay_seconds: 0
+    plant:
+      water_storage_m: 0.0005
+      leaf_exchange_mode: deposition_only
+      direct_leaf_uptake_enabled: true
+      direct_leaf_velocity_m_s: 0.001
+      obt_formation_rate_s: 1.0e-5
+      obt_turnover_rate_s: 2.0e-6
+      obt_day_night_enabled: false
+      root_uptake_fraction_from_modelled_layer: 0.0
+    crops:
+      active_crop: generic_crop
+      lai_mode: constant
+      edible_compartments_enabled: false
+    foodchain:
+      enabled: false
+      animal_mode: "off"
+    dose:
+      enabled: true
+      active_age_group: adult
+      skin_to_inhalation_factor: 0.5
+      drinking_water_hto_bq_l: 0.0
+      age_groups:
+        adult:
+          hto_dose_coefficient_sv_bq: 1.8e-11
+          obt_ingestion_dose_coefficient_sv_bq: 4.2e-11
+          breathing_rate_m3_day: 20.0
+          drinking_water_l_day: 0.0
+          leafy_kg_day: 0.0
+          root_crop_kg_day: 0.0
+          grain_kg_day: 0.0
+          milk_l_day: 0.0
+          beef_kg_day: 0.0
+    physics:
+      tritium_decay_constant_s: 1.7828335e-9
+    synthetic_forcing:
+      diurnal_period_hours: 24.0
+      mean_temperature_k: 293.15
+      temperature_amplitude_k: 0.0
+      temperature_phase_hour: 0.0
+      dewpoint_depression_k: 0.0
+      mean_wind_m_s: 3.0
+      wind_amplitude_m_s: 0.0
+      wind_from_deg: 270.0
+      maximum_net_radiation_w_m2: 0.0
+      sunrise_hour: 6.0
+      daylight_hours: 12.0
+      rain_start_hour: 0.0
+      rain_end_hour: 6.0
+      rain_rate_m_s: 1.0e-7
+reference:
+  name: Project-independent pathway reference
+  version: 1.0.0
+  citation: Independently coded equations in validation/reference_models/independent_pathway_reference/reference_equations.md
+  data_file: validation/reference_models/independent_pathway_reference/reference_output.csv
+  licence: CC0-1.0 project-authored numeric reference
+  checksum_sha256: a9c1dd94a190ed5861d529d4c8328c3b9b33cdb84910d2598411ec75ae133c41
+observables:
+  - {model_column: air_hto_concentration, reference_column: air_hto_concentration, unit: Bq m-3, metric: normalized_rmse, threshold: 1.0e-6, unit_conversion: identity}
+  - {model_column: dry_depletion_bq_s, reference_column: dry_depletion_bq_s, unit: Bq s-1, metric: normalized_rmse, threshold: 1.0e-6, unit_conversion: identity}
+  - {model_column: wet_depletion_bq_s, reference_column: wet_depletion_bq_s, unit: Bq s-1, metric: normalized_rmse, threshold: 1.0e-6, unit_conversion: identity}
+  - {model_column: soil_hto_inventory, reference_column: soil_hto_inventory, unit: Bq m-2, metric: normalized_rmse, threshold: 0.01, unit_conversion: identity}
+  - {model_column: plant_tfwt_inventory, reference_column: plant_tfwt_inventory, unit: Bq m-2, metric: normalized_rmse, threshold: 0.01, unit_conversion: identity}
+  - {model_column: plant_obt_inventory, reference_column: plant_obt_inventory, unit: Bq m-2, metric: normalized_rmse, threshold: 0.01, unit_conversion: identity}
+  - {model_column: inhalation_dose_sv, reference_column: inhalation_dose_sv, unit: Sv, metric: relative_error, threshold: 0.05, unit_conversion: identity}
+  - {model_column: total_effective_dose_sv, reference_column: total_effective_dose_sv, unit: Sv, metric: relative_error, threshold: 0.05, unit_conversion: identity}
+missing_value_policy: Paired finite values only; missing reference blocks the case
+notes: >-
+  The independent implementation parses this manifest and imports no formal
+  model functions. Food ingestion is implemented and unit-tested but set to
+  zero here to isolate the bounded atmospheric-environmental pathway.

@@ -1,0 +1,14 @@
+{
+  "case": "validation/cases/independent_reference_case_001.yaml",
+  "case_sha256": "39555d8134401cec58e6568518c0b4031e69a3d16f6e6fafbc7742431a0d08de",
+  "formal_model_imported": false,
+  "generated_at_utc": "2026-07-25T13:24:07.430730+00:00",
+  "git_head_at_execution": "e01e06e22450d3dbcc92a4eeaee2510f1d4c30e6",
+  "implementation": "validation/reference_models/independent_pathway_reference/run_reference.py",
+  "implementation_sha256": "8420f8edccd492df8ed2c1db8a40afe3ec4f6470844c52771c2745d5ae52ec48",
+  "notes": "Independent equations and explicit Euler boxes; no cteas_ufotri module imported.",
+  "output": "validation/reference_models/independent_pathway_reference/reference_output.csv",
+  "output_sha256": "a9c1dd94a190ed5861d529d4c8328c3b9b33cdb84910d2598411ec75ae133c41",
+  "reference_model": "independent_pathway_reference",
+  "reference_version": "1.0.0"
+}

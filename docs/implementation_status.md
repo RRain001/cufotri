@@ -417,3 +417,17 @@ VALIDATION_INFRASTRUCTURE_MERGED = PASS
 FORCING_72H_STATUS = PASS_72_OF_72_OBSERVED
 FORCING_EXTENSION_BIAS_STATUS = PASS_COMPARISON_EXECUTED_NOT_SITE_VALIDATION
 ```
+
+## V2 external validation phase 1 - independent reference
+
+Independent reference case 001 parses the same frozen case manifest without
+importing formal model functions. It covers Gaussian concentration, competing
+dry/wet depletion, surface allocation, one-box soil, fixed-conductance TFWT,
+first-order OBT, and simple dose. All eight declared comparisons pass their
+preregistered thresholds; normalized errors are between `1.37e-15` and
+`2.49e-13`, and the independent activity residual is below `5.83e-10 Bq m-2`.
+The case is intentionally bounded and is not experimental or field evidence.
+
+```text
+REFERENCE_MODEL_STATUS = PASS_INDEPENDENT_REFERENCE_CASE_001
+```

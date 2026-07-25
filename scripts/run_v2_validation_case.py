@@ -208,8 +208,22 @@ def _write_plots(
             model[model_column],
             label="model",
         )
-        reference_value = float(reference[reference_column].iloc[-1])
-        axis.axhline(reference_value, color="black", linestyle="--", label="reference")
+        if len(reference) == len(model):
+            axis.plot(
+                range(len(reference)),
+                reference[reference_column],
+                color="black",
+                linestyle="--",
+                label="reference",
+            )
+        else:
+            reference_value = float(reference[reference_column].iloc[-1])
+            axis.axhline(
+                reference_value,
+                color="black",
+                linestyle="--",
+                label="reference",
+            )
         axis.set_xlabel("model step")
         axis.set_ylabel(f"{model_column} [{observable['unit']}]")
         axis.legend()
@@ -322,10 +336,20 @@ def run_case(manifest_path: Path, output_directory: Path, dry_run: bool = False)
     metric_records = []
     results: list[str] = []
     for observable in case["observables"]:
-        model_values = [float(model[observable["model_column"]].iloc[-1])]
-        reference_values = [
-            float(reference[observable["reference_column"]].iloc[-1])
-        ]
+        if len(reference) == len(model):
+            model_values = [
+                float(value) for value in model[observable["model_column"]]
+            ]
+            reference_values = [
+                float(value) for value in reference[
+                    observable["reference_column"]
+                ]
+            ]
+        else:
+            model_values = [float(model[observable["model_column"]].iloc[-1])]
+            reference_values = [
+                float(reference[observable["reference_column"]].iloc[-1])
+            ]
         value = _metric_value(
             observable["metric"], model_values, reference_values
         )
