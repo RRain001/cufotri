@@ -11,6 +11,7 @@ import tempfile
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +19,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.verify_v3_physics_start_gate import evaluate_gate
+from validation.evidence_validation import (
+    EvidenceValidationError,
+    validate_json_schema,
+)
 from validation.adapters.soybean_emras_adapter import (
     create_synthetic_package,
     inspect_local_package,
@@ -35,6 +40,16 @@ REQUIRED_FILES = (
     "docs/v3/gates/parameter_identifiability_protocol.md",
     "docs/v3/v3_external_evidence_unblocking_report.md",
     "schemas/v3/external_evidence_intake.schema.json",
+    "schemas/v3/external_raw_data_manifest.schema.json",
+    "schemas/v3/external_intake_manifest.schema.json",
+    "schemas/v3/external_preregistration_record.schema.json",
+    "schemas/v3/external_calibration_result.schema.json",
+    "schemas/v3/external_identifiability_result.schema.json",
+    "schemas/v3/external_holdout_result.schema.json",
+    "schemas/v3/v3_physics_gate_evidence_bundle.schema.json",
+    "schemas/v3/external_regression_result.schema.json",
+    "schemas/v3/v3_physics_gate_config.schema.json",
+    "validation/evidence_validation.py",
     "validation/external_local/README.md",
     "validation/external_local/.gitignore",
     "validation/adapters/soybean_emras_adapter.py",
@@ -154,7 +169,7 @@ def _check_synthetic_contract() -> None:
             result["status"] != "PASS_SYNTHETIC_CONTRACT_ONLY"
             or result["empirical_validation"] is not False
             or result["metric_pipeline"]["status"] != "PASS"
-            or len(result["checksums_sha256"]) != 6
+            or len(result["calculated_checksums"]) != 6
         ):
             raise ValueError("Synthetic intake contract failed")
         manifest = Path(temporary) / "intake_manifest.yaml"
@@ -162,8 +177,90 @@ def _check_synthetic_contract() -> None:
         write_intake_manifest(result, manifest)
         write_intake_report(result, report)
         payload = _load_yaml(manifest)
-        if payload.get("manifest_version") != "1.0.0" or not report.is_file():
+        if (
+            payload.get("manifest_schema_version") != "2.0.0"
+            or not report.is_file()
+        ):
             raise ValueError("Synthetic manifest/report generation failed")
+
+
+def _check_runtime_schema_validation() -> None:
+    schema_path = ROOT / "schemas/v3/external_intake_manifest.schema.json"
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    try:
+        validate_json_schema(
+            {"manifest_schema_version": "2.0.0"},
+            schema_path,
+        )
+    except EvidenceValidationError:
+        return
+    raise ValueError("Runtime schema validation accepted an incomplete intake")
+
+
+def _check_adversarial_intake() -> None:
+    case = ROOT / "validation/cases/soybean_external_contract_synthetic.yaml"
+    with tempfile.TemporaryDirectory(prefix="cteas_soybean_attacks_") as temporary:
+        package = Path(temporary) / "package"
+
+        create_synthetic_package(package)
+        (package / "air_hto.csv").write_text(
+            "time_utc,air_hto_bq_m3\n"
+            "2025-01-01T00:00:00Z,text\n"
+            "2025-01-01T01:00:00Z,text\n"
+            "2025-01-01T02:00:00Z,text\n",
+            encoding="utf-8",
+        )
+        nonnumeric = validate_local_package(case, package)
+        if nonnumeric["status"] != "BLOCKED_EXTERNAL_DATA":
+            raise ValueError("Non-numeric air HTO bypassed intake")
+
+        create_synthetic_package(package)
+        (package / "detection_limits.csv").write_text(
+            "observable,detection_limit,unit\n,,\n",
+            encoding="utf-8",
+        )
+        empty_detection = validate_local_package(case, package)
+        if empty_detection["status"] != "BLOCKED_EXTERNAL_DATA":
+            raise ValueError("Empty detection limit bypassed intake")
+
+        create_synthetic_package(package)
+        source_path = package / "source_manifest.yaml"
+        source = _load_yaml(source_path)
+        source["files"][0]["expected_sha256"] = "0" * 64
+        source_path.write_text(
+            yaml.safe_dump(source, sort_keys=False),
+            encoding="utf-8",
+        )
+        checksum = validate_local_package(case, package)
+        if checksum["status"] != "BLOCKED_EXTERNAL_DATA":
+            raise ValueError("Raw checksum mismatch bypassed intake")
+
+
+def _check_gate_attacks() -> None:
+    baseline = _load_yaml(ROOT / "validation/v3/physics_start_gate.yaml")
+    with tempfile.TemporaryDirectory(prefix="cteas_gate_attacks_") as temporary:
+        directory = Path(temporary)
+        nonexistent = dict(baseline)
+        nonexistent["evidence_bundle_path"] = "validation/does-not-exist.yaml"
+        path = directory / "nonexistent.yaml"
+        path.write_text(yaml.safe_dump(nonexistent), encoding="utf-8")
+        if evaluate_gate(path)["status"] == "READY_FOR_BOUNDED_V3_PHYSICS":
+            raise ValueError("Nonexistent manifest path bypassed physics gate")
+
+        boolean_bypass = dict(baseline)
+        for name in (
+            "complete_licensed_external_case",
+            "data_schema_valid",
+            "calibration_executed",
+            "external_holdout_executed",
+            "parameter_identifiability_assessed",
+        ):
+            boolean_bypass[name] = True
+        path = directory / "booleans.yaml"
+        path.write_text(yaml.safe_dump(boolean_bypass), encoding="utf-8")
+        if evaluate_gate(path)["status"] == "READY_FOR_BOUNDED_V3_PHYSICS":
+            raise ValueError("Diagnostic booleans bypassed physics gate")
 
 
 def main() -> int:
@@ -184,7 +281,10 @@ def main() -> int:
             raise ValueError("External-evidence intake schema is not fail-closed")
         _check_scope()
         _check_preregistration()
+        _check_runtime_schema_validation()
         _check_synthetic_contract()
+        _check_adversarial_intake()
+        _check_gate_attacks()
         real = inspect_local_package(
             ROOT / "validation/cases/soybean_emras_template.yaml",
             ROOT / "validation/external_local",
@@ -229,6 +329,12 @@ def main() -> int:
         "NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE"
     )
     print("SYNTHETIC_CONTRACT_TEST_STATUS = PASS_NOT_EMPIRICAL")
+    print("SCHEMA_RUNTIME_VALIDATION_STATUS = PASS_EXECUTED")
+    print("NONNUMERIC_AIR_HTO_ATTACK = BLOCKED")
+    print("EMPTY_DETECTION_LIMIT_ATTACK = BLOCKED")
+    print("CHECKSUM_TAMPER_ATTACK = BLOCKED")
+    print("NONEXISTENT_MANIFEST_ATTACK = BLOCKED")
+    print("BOOLEAN_BYPASS_ATTACK = BLOCKED")
     print(
         "V3_PHYSICS_START_GATE = "
         "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"

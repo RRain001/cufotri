@@ -102,11 +102,10 @@ def test_soybean_adapter_fails_closed_without_local_data(tmp_path):
 def test_v3_physics_gate_stays_blocked_without_external_holdout():
     result = evaluate_gate(ROOT / "validation/v3/physics_start_gate.yaml")
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
-    assert "complete_licensed_external_case" in result["unmet"]
-    assert "raw_data_checksum_recorded" in result["unmet"]
-    assert "data_schema_valid" in result["unmet"]
-    assert "calibration_executed" in result["unmet"]
-    assert "external_holdout_executed" in result["unmet"]
+    assert result["final_gate"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+    assert result["blocking_reasons"] == [
+        "EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+    ]
 
 
 def _synthetic_case() -> Path:
@@ -123,6 +122,12 @@ def _write_source(package: Path, source: dict) -> None:
     (package / "source_manifest.yaml").write_text(
         yaml.safe_dump(source, sort_keys=False),
         encoding="utf-8",
+    )
+
+
+def _file_for_role(source: dict, role: str) -> str:
+    return next(
+        item["path"] for item in source["files"] if item["role"] == role
     )
 
 
@@ -143,7 +148,7 @@ def test_soybean_synthetic_contract_exercises_pipeline_without_empirical_claim(
 def test_soybean_missing_required_input_fails_closed(tmp_path, role):
     create_synthetic_package(tmp_path)
     source = _load_source(tmp_path)
-    (tmp_path / source["files"][role]).unlink()
+    (tmp_path / _file_for_role(source, role)).unlink()
     result = validate_local_package(_synthetic_case(), tmp_path)
     assert result["status"] == "BLOCKED_EXTERNAL_DATA"
     assert any(role in reason for reason in result["blocking_reasons"])
@@ -226,11 +231,12 @@ def test_internal_reference_cannot_satisfy_external_holdout_gate(tmp_path):
         )
     )
     evidence["external_holdout_executed"] = True
-    evidence["evidence"]["holdout_evidence_type"] = "REFERENCE_MODEL"
+    evidence["evidence_type"] = "INTERNAL_REFERENCE"
     path = tmp_path / "gate.yaml"
     path.write_text(yaml.safe_dump(evidence), encoding="utf-8")
-    with pytest.raises(ValueError, match="cannot satisfy holdout gate"):
-        evaluate_gate(path)
+    result = evaluate_gate(path)
+    assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+    assert result["final_gate"].startswith("BLOCKED_")
 
 
 def test_preregistration_gate_cannot_finalize_without_frozen_data(tmp_path):
@@ -242,5 +248,6 @@ def test_preregistration_gate_cannot_finalize_without_frozen_data(tmp_path):
     evidence["preregistration_committed_before_holdout"] = True
     path = tmp_path / "gate.yaml"
     path.write_text(yaml.safe_dump(evidence), encoding="utf-8")
-    with pytest.raises(ValueError, match="contradicts tracked evidence"):
-        evaluate_gate(path)
+    result = evaluate_gate(path)
+    assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+    assert result["final_gate"].startswith("BLOCKED_")
