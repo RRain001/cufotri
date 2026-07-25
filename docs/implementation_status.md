@@ -453,3 +453,21 @@ EXTERNAL_CASES_EXECUTED_COUNT = 0
 CALIBRATION_STATUS = NOT_RUN_BLOCKED_EXTERNAL_DATA
 PARAMETER_IDENTIFIABILITY_STATUS = NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
 ```
+
+## V2 external evidence phase 1 - gate assessment
+
+All 185 collected tests, the five frozen V1 cases, the six V2 end-to-end cases,
+validation readiness, byte-compilation, and the Git whitespace check pass. The
+candidate and V1 tags remain unchanged. The only runtime warning is the known
+NumPy/NetCDF binary-compatibility warning in the ERA5 reader test.
+
+Because no true external experiment or field case was executable, Phase 1 is
+infrastructure-complete but externally blocked. V3 may proceed only to
+architecture, interfaces, migration planning, and data models; no V3 model
+code or formal physics was implemented.
+
+```text
+EXTERNAL_VALIDATION_PHASE1_STATUS = INFRASTRUCTURE_COMPLETE_EXTERNAL_EVIDENCE_BLOCKED
+V3_GATE_VERDICT = READY_FOR_V3_ARCHITECTURE_ONLY_EXTERNAL_VALIDATION_CONTINUES
+MERGE_EXTERNAL_VALIDATION_BRANCH_RECOMMENDATION = READY_FOR_MAINTAINER_REVIEW
+```
