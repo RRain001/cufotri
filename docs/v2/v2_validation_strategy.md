@@ -15,6 +15,8 @@ regulatory or field validation.
 
 - each new equation has a documented SI mapping;
 - atmospheric loss equals dry plus wet deposition ledgers;
+- unequal dry/wet footprints satisfy \(M_d=F_dA_d\),
+  \(M_w=F_wA_w\), and one global activity ledger;
 - soil/plant/food internal transfers cancel exactly;
 - harvest, deep drainage, excretion, milk, slaughter, decay, and atmospheric
   re-emission are explicit boundaries;
@@ -24,15 +26,23 @@ regulatory or field validation.
 
 Zero source produces zero activity and dose. Increasing washout lowers remaining
 plume source. Equal leaf/air equilibrium concentrations give zero net exchange.
+At fixed temperature, Eq. (27) equilibrium concentration is identical at RH
+30%, 60%, and 90% because it uses saturated vapour density.
 No vegetation gives zero leaf flux. Inventories and doses remain finite and
 non-negative under specified extremes. Leaf aerodynamic and boundary
 resistances respond to wind, stability, roughness, canopy height, leaf scale,
 and diffusivity; VPD and night increase canopy resistance. Grid/time
 refinement converges.
 
+Perennial checks require explicit positive root and shoot inventories,
+shoot-only cuts with retained roots, six unique cuts across the formal
+two-year case, and exact one-day phenology progression across both 365- and
+366-day year boundaries.
+
 ## Layer 4: manual and reference anchors
 
-Eq. (44) calibration targets, plant exchange half-times/equilibrium, soil layer
+Eq. (44) calibration targets, the independently handwritten Eq. (27)
+first-order leaf box, soil layer
 fractions, OBT turnover, animal transfer constants, and Eq. (106)-(107)
 arithmetic are compared independently. Disagreements are recorded rather than
 silently tuned.

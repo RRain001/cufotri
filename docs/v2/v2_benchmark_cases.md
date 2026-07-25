@@ -24,12 +24,13 @@ reference or validation cases.
 
 ## Independent analytic benchmarks
 
-There are ten analytic benchmarks, exceeding the acceptance minimum of six:
+There are ten analytic benchmarks, meeting the RC2 acceptance minimum of ten.
+Every analytic record carries `independent=true`:
 
 1. constant wet removal, \(Q=Q_0\exp(-\lambda t)\);
 2. dry allocation under competing constant dry/wet hazards;
 3. wet allocation under competing constant dry/wet hazards;
-4. a fixed-conductance leaf exchange box approaching its analytic equilibrium;
+4. a fixed-meteorology leaf exchange box approaching its analytic equilibrium;
 5. re-emission depletion, \(M=M_0\exp(-kt)\);
 6. a constant-input/first-order-output animal product box;
 7. one-day public dose by hand arithmetic;
@@ -40,6 +41,12 @@ There are ten analytic benchmarks, exceeding the acceptance minimum of six:
 The production functions are exercised to obtain the computed values. Targets
 are calculated independently in `benchmarks/independent.py`; tolerances are
 stored in each JSON record.
+
+For the leaf case, the expected conductance is reconstructed by hand from the
+neutral aerodynamic, flat-plate boundary, and canopy resistances. The Eq. (27)
+saturation factor and
+\(C(t)=C_{eq}+(C_0-C_{eq})\exp(-kt)\) target are also handwritten. No output
+from `bidirectional_leaf_exchange` is used to construct the expected value.
 
 ## Numeric manual and literature anchors
 

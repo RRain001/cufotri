@@ -17,7 +17,10 @@ from .atmosphere.plume_rise import effective_stack_height_m
 from .atmosphere.dispersion_parameters import classify_pasquill_gifford
 from .atmosphere.calm_wind import resolve_calm_wind
 from .atmosphere.depletion import segment_exponential_depletion
-from .atmosphere.deposition import surface_deposition_ledger
+from .atmosphere.deposition import (
+    deposition_activity_components,
+    surface_deposition_ledger,
+)
 from .atmosphere.wet_deposition import (
     scavenging_coefficient_s,
 )
@@ -309,6 +312,11 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             depletion.wet_depletion_bq_s,
             config["deposition"]["wet_footprint"],
         )
+        deposition_components = deposition_activity_components(
+            dry_ledger,
+            wet_ledger,
+            config["deposition"]["ecological_reference_area_m2"],
+        )
         cumulative_stack_release_bq += stack_release_bq_s * dt
         cumulative_dry_plume_loss_bq += depletion.dry_depletion_bq_s * dt
         cumulative_wet_plume_loss_bq += depletion.wet_depletion_bq_s * dt
@@ -428,10 +436,10 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             elapsed_since_release_s=elapsed,
             is_day=is_day,
             atmospheric_dry_deposition_bq_m2_s=(
-                dry_ledger.surface_flux_bq_m2_s
+                deposition_components.dry_ecological_flux_bq_m2_s
             ),
             atmospheric_wet_deposition_bq_m2_s=(
-                wet_ledger.surface_flux_bq_m2_s
+                deposition_components.wet_ecological_flux_bq_m2_s
             ),
             air_temperature_k=met["temperature_k"],
             dewpoint_temperature_k=met["dewpoint_k"],
@@ -448,6 +456,7 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             ),
             harvest_fraction=harvest_fraction,
             harvest_loss_fraction=crop.harvest_loss_fraction,
+            root_activity_fraction=crop.root_activity_fraction,
             edible_tfwt_consumption_bq_m2_s=feed_hto_rate,
             edible_obt_consumption_bq_m2_s=feed_obt_rate,
         )
@@ -608,8 +617,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
         if feedback_delay_steps:
             feedback_history.popleft()
             feedback_history.append(diag.total_reemission_bq_m2_s)
-        activity_area_m2 = float(
-            config["deposition"]["dry_footprint"]["area_m2"]
+        ecological_reference_area_m2 = float(
+            config["deposition"]["ecological_reference_area_m2"]
         )
         ecological_inventory_bq_m2 = (
             state.total_hto_bq_m2
@@ -634,34 +643,37 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             + cumulative_animal_decay_bq_m2
             + cumulative_beef_decay_bq_m2
         )
-        activity_residual_bq = activity_area_m2 * (
+        activity_residual_bq = ecological_reference_area_m2 * (
             external_ecological_input_bq_m2
             - ecological_inventory_bq_m2
             - ecological_boundary_bq_m2
             - ecological_decay_bq_m2
         )
-        harvested_activity_bq = activity_area_m2 * (
+        harvested_activity_bq = ecological_reference_area_m2 * (
             state.harvested_hto_bq_m2
             + state.harvested_obt_bq_m2
             + state.cut_plant_hto_bq_m2
             + state.cut_plant_obt_bq_m2
         )
         milk_activity_bq = (
-            activity_area_m2 * cumulative_animal_milk_output_bq_m2
+            ecological_reference_area_m2 * cumulative_animal_milk_output_bq_m2
         )
-        beef_activity_bq = activity_area_m2 * (
+        beef_activity_bq = ecological_reference_area_m2 * (
             cumulative_beef_consumed_hto_bq_m2
             + cumulative_beef_consumed_obt_bq_m2
         )
         excreted_activity_bq = (
-            activity_area_m2 * cumulative_animal_excretion_bq_m2
+            ecological_reference_area_m2 * cumulative_animal_excretion_bq_m2
         )
-        deep_loss_bq = activity_area_m2 * cumulative_deep_loss_bq_m2
-        decay_loss_bq = activity_area_m2 * ecological_decay_bq_m2
+        deep_loss_bq = ecological_reference_area_m2 * cumulative_deep_loss_bq_m2
+        decay_loss_bq = ecological_reference_area_m2 * ecological_decay_bq_m2
         environmental_inventory_bq = (
-            activity_area_m2 * ecological_inventory_bq_m2
+            ecological_reference_area_m2 * ecological_inventory_bq_m2
         )
-        accounted_activity_bq = activity_area_m2 * (
+        environmental_boundary_output_bq = (
+            ecological_reference_area_m2 * ecological_boundary_bq_m2
+        )
+        accounted_activity_bq = ecological_reference_area_m2 * (
             ecological_inventory_bq_m2
             + ecological_boundary_bq_m2
             + ecological_decay_bq_m2
@@ -713,18 +725,29 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "dry_surface_input_bq": cumulative_dry_surface_input_bq,
             "surface_wet_input_bq": cumulative_wet_surface_input_bq,
             "wet_surface_input_bq": cumulative_wet_surface_input_bq,
-            "activity_accounting_area_m2": activity_area_m2,
+            "dry_area_m2": dry_ledger.footprint_area_m2,
+            "wet_area_m2": wet_ledger.footprint_area_m2,
+            "dry_activity_bq": cumulative_dry_surface_input_bq,
+            "wet_activity_bq": cumulative_wet_surface_input_bq,
+            "total_deposition_activity_bq": (
+                cumulative_dry_surface_input_bq
+                + cumulative_wet_surface_input_bq
+            ),
+            "ecological_reference_area_m2": ecological_reference_area_m2,
             "environmental_input_bq": (
-                activity_area_m2 * external_ecological_input_bq_m2
+                ecological_reference_area_m2 * external_ecological_input_bq_m2
             ),
             "environmental_inventory_bq": environmental_inventory_bq,
+            "environmental_boundary_output_bq": (
+                environmental_boundary_output_bq
+            ),
             "harvested_activity_bq": harvested_activity_bq,
             "milk_activity_bq": milk_activity_bq,
             "beef_activity_bq": beef_activity_bq,
             "excreted_activity_bq": excreted_activity_bq,
             "deep_loss_bq": deep_loss_bq,
             "runoff_bypass_bq": (
-                activity_area_m2 * cumulative_runoff_bypass_bq_m2
+                ecological_reference_area_m2 * cumulative_runoff_bypass_bq_m2
             ),
             "decay_loss_bq": decay_loss_bq,
             "accounted_environmental_activity_bq": accounted_activity_bq,
@@ -732,7 +755,8 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "activity_relative_residual": (
                 abs(activity_residual_bq)
                 / max(
-                    activity_area_m2 * external_ecological_input_bq_m2,
+                    ecological_reference_area_m2
+                    * external_ecological_input_bq_m2,
                     1.0e-30,
                 )
             ),
@@ -827,6 +851,10 @@ def run_short_case(config: dict, hourly_forcing: pd.DataFrame | None = None) -> 
             "harvested_obt_bq_m2": state.harvested_obt_bq_m2,
             "cut_plant_hto_bq_m2": state.cut_plant_hto_bq_m2,
             "cut_plant_obt_bq_m2": state.cut_plant_obt_bq_m2,
+            "root_tfwt_bq_m2": state.root_tfwt_bq_m2,
+            "root_obt_bq_m2": state.root_obt_bq_m2,
+            "shoot_tfwt_bq_m2": state.shoot_tfwt_bq_m2,
+            "shoot_obt_bq_m2": state.shoot_obt_bq_m2,
             "tfwt_to_edible_flux": diag.tfwt_to_edible_bq_m2_s,
             "obt_to_edible_flux": diag.obt_to_edible_bq_m2_s,
             "harvest_event": harvest_event,

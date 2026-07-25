@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
+import calendar
 import math
 
 
@@ -25,6 +26,7 @@ class CropParameters:
     dormant_min_lai: float
     cutting_doys: tuple[int, ...]
     cutting_fraction: float
+    root_activity_fraction: float
 
     @classmethod
     def from_mapping(cls, name: str, values: dict) -> "CropParameters":
@@ -67,6 +69,9 @@ class CropParameters:
                 int(value) for value in values.get("cutting_doys", [])
             ),
             cutting_fraction=float(values.get("cutting_fraction", 1.0)),
+            root_activity_fraction=float(
+                values.get("root_activity_fraction", 0.0)
+            ),
         )
         if not 1 <= result.growth_start_doy <= 366:
             raise ValueError(f"Crop {name} has invalid growth start")
@@ -89,6 +94,7 @@ class CropParameters:
                 result.water_content_fraction_fresh,
                 result.harvest_loss_fraction,
                 result.cutting_fraction,
+                result.root_activity_fraction,
             )
         ):
             raise ValueError(f"Crop {name} fractions must be within [0, 1]")
@@ -117,18 +123,26 @@ class CropParameters:
         return result
 
 
-def _season_fraction(doy: int, crop: CropParameters) -> float | None:
+def season_fraction_at_time(
+    timestamp: datetime,
+    crop: CropParameters,
+) -> float | None:
+    doy = timestamp.timetuple().tm_yday
     start = crop.growth_start_doy
     harvest = crop.harvest_doy
     if start <= harvest:
         if doy < start or doy > harvest:
             return None
         return (doy - start) / max(harvest - start, 1)
-    season_length = (366 - start) + harvest
     if doy >= start:
+        days_in_year = 366 if calendar.isleap(timestamp.year) else 365
+        season_length = (days_in_year - start) + harvest
         return (doy - start) / season_length
     if doy <= harvest:
-        return (366 - start + doy) / season_length
+        previous_year = timestamp.year - 1
+        days_in_previous_year = 366 if calendar.isleap(previous_year) else 365
+        season_length = (days_in_previous_year - start) + harvest
+        return (days_in_previous_year - start + doy) / season_length
     return None
 
 
@@ -145,10 +159,9 @@ def lai_at_time(
         return max(float(external_lai), 0.0)
     if mode == "constant":
         return crop.constant_lai
-    doy = timestamp.timetuple().tm_yday
     if crop.phenology_mode == "perennial_evergreen":
         return crop.max_lai
-    season_fraction = _season_fraction(doy, crop)
+    season_fraction = season_fraction_at_time(timestamp, crop)
     if season_fraction is None:
         return (
             crop.dormant_min_lai

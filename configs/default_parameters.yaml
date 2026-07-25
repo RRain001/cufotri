@@ -65,6 +65,7 @@ coupling:
     width_m: 1000.0
   feedback_area_m2: 1000000.0
 deposition:
+  ecological_reference_area_m2: 1000000.0
   dry_footprint:
     allocation: uniform
     area_m2: 1000000.0
@@ -142,6 +143,7 @@ crops:
       dormant_min_lai: 0.25
       cutting_doys: [150, 220, 290]
       cutting_fraction: 0.50
+      root_activity_fraction: 0.30
     leafy_vegetable:
       <<: *grass
       max_lai: 3.0
@@ -152,6 +154,7 @@ crops:
       dormant_min_lai: 0.0
       cutting_doys: []
       cutting_fraction: 1.0
+      root_activity_fraction: 0.0
     root_vegetable:
       <<: *grass
       harvest_doy: 280
@@ -165,6 +168,7 @@ crops:
       dormant_min_lai: 0.0
       cutting_doys: []
       cutting_fraction: 1.0
+      root_activity_fraction: 0.0
     cereal:
       <<: *grass
       growth_start_doy: 110
@@ -179,6 +183,7 @@ crops:
       dormant_min_lai: 0.0
       cutting_doys: []
       cutting_fraction: 1.0
+      root_activity_fraction: 0.0
     pasture:
       <<: *grass
       max_lai: 4.0
@@ -192,6 +197,7 @@ crops:
       dormant_min_lai: 0.0
       cutting_doys: []
       cutting_fraction: 1.0
+      root_activity_fraction: 0.0
 foodchain:
   enabled: false
   animal_mode: "off"

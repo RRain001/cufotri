@@ -232,7 +232,7 @@ def benchmark_suite_passes(
             for result in scenario_results.values()
         )
         and independent_benchmarks_pass(results)
-        and benchmark_category_counts(results)["analytic_benchmark"] >= 6
+        and benchmark_category_counts(results)["analytic_benchmark"] >= 10
         and float(results["zero_source"]["final_air_bq_m3"]) == 0.0
         and float(results["strong_rain_wet_scavenging"]["final_air_bq_m3"])
         < float(results["no_rain_dry_deposition"]["final_air_bq_m3"])

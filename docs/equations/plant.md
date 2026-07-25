@@ -22,10 +22,20 @@ F_{ap}=g_c(C_a-C_{p,eq}),\qquad
 g_c=(r_a+r_b+r_c)^{-1}.
 \]
 
-Here \(C_{p,eq}\) converts TFWT activity to equilibrium air activity using
-actual water-vapour density, water density, and the configured liquid/vapour
-fractionation. Canopy resistance uses LAI, day/night stomatal resistance, and
-a VPD multiplier. LAI=0 gives zero exchange. Positive flux enters TFWT;
+UFOTRI Eq. (27) is implemented as
+
+\[
+C_{p,eq}=C_p\frac{\rho_{v,\mathrm{sat}}}
+{\alpha\rho_w},
+\qquad
+\rho_{v,\mathrm{sat}}=\frac{e_{\mathrm{sat}}(T)}{R_vT}.
+\]
+
+The equilibrium conversion therefore uses saturated water-vapour density, not
+ambient \(RH\,\rho_{v,\mathrm{sat}}\). Relative humidity remains active only
+through VPD in canopy resistance. Canopy resistance uses LAI, day/night
+stomatal resistance, and the VPD multiplier. LAI=0 gives zero exchange.
+Positive flux enters TFWT;
 negative flux is the same limited plant-to-air boundary flux and participates
 in re-emission feedback. This closure is `MANUAL_DERIVED_PROVISIONAL`.
 
@@ -46,3 +56,11 @@ outside the conserved system. Biomass growth changes the fresh, dry, and water
 denominators and therefore dilutes concentration without destroying activity.
 At harvest, edible activity is split into harvested product and harvest loss;
 remaining vegetative activity is an explicit crop-reset boundary.
+
+For perennial crops, aggregate plant TFWT/OBT is partitioned into explicit root
+and shoot inventories using the configured provisional root activity fraction.
+Partial cuts remove the requested fraction of shoot TFWT/OBT only; roots remain
+inside the conserved plant inventory. Positive inputs use the configured root
+fraction; non-cut losses follow the current root share, so no hidden
+root-to-shoot correction is introduced. Annual crops use a zero root activity
+fraction and retain the prior aggregate behaviour.

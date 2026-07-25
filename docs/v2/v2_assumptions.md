@@ -15,8 +15,8 @@ This file extends, and does not rewrite, `docs/assumptions.md`.
 | V2-A09 | Dose is research screening only | project scope | no regulatory or site-validation claim |
 | V2-A10 | Three-box soil uses manual layer depths/root fractions but a conservative box solver, not Richards Eq. (37) | `PROJECT_EXTENSION` | full PDE and soil-specific hydraulic inversion deferred |
 | V2-A11 | Uncertainty distributions and seeds are configuration | `PROJECT_EXTENSION` | deterministic core remains independently testable |
-| V2-A12 | Dry and wet plume losses are the authoritative surface-input ledgers | `PHYSICAL_INVARIANT` | separate explicit uniform footprints rescale local flux only; `v_d C_a` is diagnostic |
-| V2-A13 | Pasture uses `perennial_dormant_season`, minimum LAI 0.25, DOY 150/220/290 cuts, and 50% removal | `PROJECT_EXTENSION` | two-year conservation is tested; dates, LAI, biomass, and cut fraction are not site calibrated |
+| V2-A12 | Dry and wet plume losses are authoritative independent activity components; the ecological box uses a separate reference area | `PHYSICAL_INVARIANT` plus `PROJECT_EXTENSION` geometry | \(M_d=F_dA_d\), \(M_w=F_wA_w\), and downstream \(M_d+M_w\) close for unequal footprints; all three areas are replaceable and `v_d C_a` is diagnostic |
+| V2-A13 | Pasture uses `perennial_dormant_season`, minimum LAI 0.25, DOY 150/220/290 cuts, 50% shoot removal, and a provisional root activity fraction of 0.30 | `PROJECT_EXTENSION` | roots and shoots are explicit and root activity survives cuts; dates, LAI, biomass, cut fraction, and root fraction are not site calibrated |
 | V2-A14 | Full-model uncertainty samples only parameters active under the selected modes | `PROJECT_EXTENSION` | n=256 stabilizes quantiles; weak-parameter Spearman order remains `LIMITED_WITH_EVIDENCE` |
 
 When a literature value is introduced, its citation, version/date, unit
@@ -39,6 +39,8 @@ The implementation rejects \(Re>5\times10^5\). Default leaf length, air
 viscosity, and water-vapour diffusivity are replaceable research parameters;
 they are not crop- or site-calibrated. LAI is applied once through
 \(r_c=r_{ST}/LAI\), with no additional LAI multiplier on the resulting flux.
+UFOTRI Eq. (27) uses \(\rho_{v,\mathrm{sat}}\); RH affects VPD resistance but
+does not multiply the equilibrium concentration.
 
 ## Wet-scavenging parameter source and uncertainty
 

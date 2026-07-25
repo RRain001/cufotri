@@ -184,12 +184,14 @@ def bidirectional_leaf_exchange(
 ) -> LeafExchange:
     """Meteorology-responsive net HTO exchange through canopy resistance.
 
-    Plant-water activity is converted to equilibrium air activity using actual
-    atmospheric water-vapour density and the configured liquid/vapour isotope
-    fractionation. Aerodynamic resistance follows the manual resistance model
-    with a literature Pasquill-to-Monin mapping; boundary resistance uses a
-    laminar flat-plate mass-transfer correlation. Positive flux is air to
-    plant; negative flux is re-release.
+    Plant-water activity is converted to equilibrium air activity using the
+    saturated water-vapour density required by UFOTRI Eq. (27) and the
+    configured liquid/vapour isotope fractionation.  Relative humidity still
+    affects stomatal resistance through vapour-pressure deficit, but it does
+    not enter the Eq. (27) equilibrium concentration.  Aerodynamic resistance
+    follows the manual resistance model with a literature Pasquill-to-Monin
+    mapping; boundary resistance uses a laminar flat-plate mass-transfer
+    correlation. Positive flux is air to plant; negative flux is re-release.
     """
     if lai <= 0:
         return LeafExchange(0.0, 0.0, 0.0, 0.0, 0.0)
@@ -233,11 +235,12 @@ def bidirectional_leaf_exchange(
     )
     total_resistance = aerodynamic + boundary + canopy
     conductance = 1.0 / total_resistance
-    actual_vapour_pressure = rh * float(saturation_vapour_pressure_pa(temperature_k))
-    vapour_density = actual_vapour_pressure / (461.5 * temperature_k)
+    rho_v_sat = float(saturation_vapour_pressure_pa(temperature_k)) / (
+        461.5 * temperature_k
+    )
     equilibrium_air = (
         max(plant_water_concentration_bq_m3, 0.0)
-        * vapour_density
+        * rho_v_sat
         / (
             isotope_fractionation_liquid_to_vapour
             * water_density_kg_m3

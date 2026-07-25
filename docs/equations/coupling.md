@@ -39,6 +39,22 @@ inferred from the re-emission feedback rectangle. Changing a footprint
 therefore changes only the local surface flux, not the total activity
 transferred across the interface.
 
+Before the single ecological box is advanced, the two pathway activities are
+kept as explicit components:
+
+\[
+\dot M_d=F_dA_d,\qquad
+\dot M_w=F_wA_w,\qquad
+\dot M_{\rm total}=\dot M_d+\dot M_w.
+\]
+
+The ecological box has a separate, configured reference area \(A_e\). Its
+component source densities are \(\dot M_d/A_e\) and \(\dot M_w/A_e\).
+Consequently, converting the box inventories and boundaries back to Bq with
+\(A_e\) recovers \(\dot M_d+\dot M_w\), even when \(A_d\ne A_w\). The local
+footprint fluxes \(F_d\) and \(F_w\) remain available and are not replaced by
+the reference-area source densities.
+
 Dry and wet losses compete for the same source within each plume segment:
 
 \[

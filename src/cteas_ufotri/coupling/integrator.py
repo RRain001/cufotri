@@ -61,6 +61,39 @@ class StepDiagnostics:
         return self.surface_box_mass_closure
 
 
+def _advance_root_component(
+    total_before_bq_m2: float,
+    root_before_bq_m2: float,
+    total_before_cut_bq_m2: float,
+    total_after_cut_bq_m2: float,
+    root_input_fraction: float,
+) -> float:
+    """Advance a conserved root subinventory while cuts act on shoots only.
+
+    Positive plant inputs are partitioned by the configured provisional root
+    fraction. Non-cut losses follow the current root share. This retains the
+    root state after a cut without an unreported root-to-shoot correction.
+    """
+
+    non_cut_change = total_before_cut_bq_m2 - total_before_bq_m2
+    if non_cut_change >= 0.0:
+        root_before_cut = (
+            root_before_bq_m2 + root_input_fraction * non_cut_change
+        )
+    elif total_before_bq_m2 > 0.0:
+        root_before_cut = root_before_bq_m2 + (
+            root_before_bq_m2
+            / total_before_bq_m2
+            * non_cut_change
+        )
+    else:
+        root_before_cut = 0.0
+    return min(
+        max(root_before_cut, 0.0),
+        max(total_after_cut_bq_m2, 0.0),
+    )
+
+
 def advance(
     state: State,
     dt_s: float,
@@ -85,6 +118,7 @@ def advance(
     harvest_event: bool = False,
     harvest_fraction: float = 1.0,
     harvest_loss_fraction: float = 0.0,
+    root_activity_fraction: float = 0.0,
     edible_tfwt_consumption_bq_m2_s: float = 0.0,
     edible_obt_consumption_bq_m2_s: float = 0.0,
 ) -> tuple[State, StepDiagnostics]:
@@ -202,6 +236,8 @@ def advance(
         raise ValueError("Harvest loss fraction must be within [0, 1]")
     if not 0.0 <= harvest_fraction <= 1.0:
         raise ValueError("Harvest fraction must be within [0, 1]")
+    if not 0.0 <= root_activity_fraction <= 1.0:
+        raise ValueError("Root activity fraction must be within [0, 1]")
     allocation_rate = 0.0 if harvest_event else edible_allocation_rate_s
     basic_soil_reem, plant_reem, _ = basic_reemission_fluxes(
         water.evaporation_m_s, cs, water.transpiration_m_s, cp
@@ -270,7 +306,7 @@ def advance(
         leaf_release=requested_leaf_release,
         edible_allocation=allocation_rate * state.plant_tfwt_bq_m2,
         crop_reset=(
-            state.plant_tfwt_bq_m2 * harvest_fraction / dt_s
+            state.shoot_tfwt_bq_m2 * harvest_fraction / dt_s
             if harvest_event
             else 0.0
         ),
@@ -282,7 +318,7 @@ def advance(
         decay=physics["tritium_decay_constant_s"] * state.plant_obt_bq_m2,
         edible_allocation=allocation_rate * state.plant_obt_bq_m2,
         crop_reset=(
-            state.plant_obt_bq_m2 * harvest_fraction / dt_s
+            state.shoot_obt_bq_m2 * harvest_fraction / dt_s
             if harvest_event
             else 0.0
         ),
@@ -331,20 +367,50 @@ def advance(
         ),
         feed=max(edible_obt_consumption_bq_m2_s, 0.0),
     )
+    plant_tfwt_without_cut = state.plant_tfwt_bq_m2 + dt_s * (
+        soil_out["root"]
+        + leaf_uptake
+        + obt_out["turnover"]
+        - sum(
+            value
+            for name, value in plant_out.items()
+            if name != "crop_reset"
+        )
+    )
+    plant_obt_without_cut = state.plant_obt_bq_m2 + dt_s * (
+        plant_out["formation"]
+        - sum(
+            value
+            for name, value in obt_out.items()
+            if name != "crop_reset"
+        )
+    )
+    plant_tfwt_after_cut = (
+        plant_tfwt_without_cut - plant_out["crop_reset"] * dt_s
+    )
+    plant_obt_after_cut = (
+        plant_obt_without_cut - obt_out["crop_reset"] * dt_s
+    )
+    root_tfwt_after = _advance_root_component(
+        state.plant_tfwt_bq_m2,
+        state.root_tfwt_bq_m2,
+        plant_tfwt_without_cut,
+        plant_tfwt_after_cut,
+        root_activity_fraction,
+    )
+    root_obt_after = _advance_root_component(
+        state.plant_obt_bq_m2,
+        state.root_obt_bq_m2,
+        plant_obt_without_cut,
+        plant_obt_after_cut,
+        root_activity_fraction,
+    )
     new_state = State(
         soil_water_m=water.water_m,
         soil_hto_bq_m2=state.soil_hto_bq_m2
         + dt_s * (deposition - sum(soil_out.values())),
-        plant_tfwt_bq_m2=state.plant_tfwt_bq_m2
-        + dt_s
-        * (
-            soil_out["root"]
-            + leaf_uptake
-            + obt_out["turnover"]
-            - sum(plant_out.values())
-        ),
-        plant_obt_bq_m2=state.plant_obt_bq_m2
-        + dt_s * (plant_out["formation"] - sum(obt_out.values())),
+        plant_tfwt_bq_m2=plant_tfwt_after_cut,
+        plant_obt_bq_m2=plant_obt_after_cut,
         edible_tfwt_bq_m2=state.edible_tfwt_bq_m2
         + dt_s * (plant_out["edible_allocation"] - sum(edible_tfwt_out.values())),
         edible_obt_bq_m2=state.edible_obt_bq_m2
@@ -361,6 +427,8 @@ def advance(
         cut_plant_obt_bq_m2=(
             state.cut_plant_obt_bq_m2 + obt_out["crop_reset"] * dt_s
         ),
+        root_tfwt_bq_m2=root_tfwt_after,
+        root_obt_bq_m2=root_obt_after,
     )
     boundary = (
         soil_out["evaporation"]

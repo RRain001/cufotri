@@ -286,3 +286,30 @@ Final V2 acceptance command:
 ```bash
 .venv/bin/python scripts/verify_v2_acceptance.py --recompute
 ```
+
+## RC2 directed physics remediation
+
+RC2 removes the unequal dry/wet footprint accounting assumption. Dry and wet
+local fluxes retain independent `area_m2` values; their authoritative
+activities are combined explicitly only after \(M_d=F_dA_d\) and
+\(M_w=F_wA_w\) are recorded. The ecological box uses a separate configured
+reference area. Combined cases with \(A_w/A_d=0.1,1,10\) close the global Bq
+inventory/boundary/decay ledger below \(10^{-12}\), while local flux retains
+inverse-area scaling.
+
+UFOTRI Eq. (27) now uses saturated water-vapour density
+`rho_v_sat`. Relative humidity remains in VPD-dependent canopy resistance but
+does not scale the equilibrium air concentration. Direct tests at 293.15 K and
+RH 30/60/90% give the same equilibrium value, and the formal leaf path reaches
+HTO flux, TFWT, OBT, food, and dose with surface closure below \(10^{-12}\).
+
+The leaf fixed-meteorology benchmark now obtains its expected conductance,
+Eq. (27) factor, and first-order solution from handwritten equations without
+using the exchange module. The suite requires at least ten analytic records
+and `independent=true` for every analytic benchmark.
+
+Perennial plant output now exposes root/shoot TFWT and OBT inventories. The
+provisional root activity fraction is configuration data; partial cuts remove
+shoot activity only. Wrap-around phenology uses the actual 365- or 366-day
+calendar. Root retention, year crossing, leap/non-leap progression, six
+two-year cuts, regrowth LAI, and conservation are tested.

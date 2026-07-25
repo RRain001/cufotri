@@ -1,4 +1,4 @@
-# RC1 activity propagation protocol
+# RC2 activity propagation protocol
 
 Every formal V2 result row reports:
 
@@ -8,7 +8,14 @@ dry_plume_loss_bq
 wet_plume_loss_bq
 dry_surface_input_bq
 wet_surface_input_bq
+dry_area_m2
+wet_area_m2
+dry_activity_bq
+wet_activity_bq
+total_deposition_activity_bq
+ecological_reference_area_m2
 environmental_inventory_bq
+environmental_boundary_output_bq
 harvested_activity_bq
 milk_activity_bq
 beef_activity_bq
@@ -25,8 +32,23 @@ The Gaussian plume is steady and has no stored air inventory.
 corresponding surface inputs must match exactly. The remaining plume source is
 not treated as a dynamic inventory.
 
-`environmental_inventory_bq` is the current surface soil, whole/edible plant,
-animal, and stored beef activity over `activity_accounting_area_m2`.
+`dry_area_m2` and `wet_area_m2` are independent local allocation footprints.
+Their local fluxes obey
+\(M_d=F_dA_d\) and \(M_w=F_wA_w\). `dry_activity_bq` and
+`wet_activity_bq` retain those two components explicitly.
+
+The ecological box uses the independent configured
+`ecological_reference_area_m2`. The component Bq inputs are divided by this
+reference area before the areal box is advanced, then the box inventory,
+boundary, and decay terms are multiplied by the same reference area. Thus:
+
+\[
+M_d+M_w=M_{\rm inventory}+M_{\rm boundary}+M_{\rm decay}
+\]
+
+without assuming \(A_d=A_w\). `environmental_inventory_bq` is the current
+surface soil, whole/edible plant, animal, and stored beef activity on this
+reference basis.
 Harvested/cut plant, milk, consumed beef, excretion, deep loss, runoff bypass,
 and decay are explicit diagnostics. `accounted_environmental_activity_bq`
 also includes other surface boundaries such as re-emission, transpiration,
@@ -40,18 +62,23 @@ R=I_{\rm surface}+I_{\rm animal,external}
  -B_{\rm external}-D.
 \]
 
-The accounting area is the dry-deposition footprint. All formal RC1 cases use
-equal dry and wet footprints (1,000,000 m2), so plume loss, local flux, and
-reported domain activity are directly comparable. A case with unequal
-footprints remains a local representative-box calculation and must not
-interpret this scaled total as a whole-domain integral.
+The configured dry and wet footprints and the ecological reference area all
+default to 1,000,000 m2, preserving RC1 results for equal areas. Unequal-area
+cases now preserve both pathway activities and close the global Bq ledger.
+The spatially uniform footprint and ecological reference area remain
+replaceable project assumptions, not site-calibrated geometry.
 
-## Recomputed RC1 evidence
+## Recomputed RC2 evidence
 
 The six end-to-end cases and the two-year pasture case have dry and wet
 loss/input ratios exactly 1.0. Their maximum absolute relative activity
-residual is `2.30e-15`, and every
+residual remains below `1e-12`, and every
 `accounted_environmental_activity_bq` is below the integrated stack release.
+
+Combined dry/wet cases with \(A_w/A_d=0.1,1,10\) independently recompute
+\(M_d+M_w\) and the ecological inventory/boundary/decay sum; each relative
+residual is below `1e-12`. The local wet flux changes inversely with \(A_w\),
+while total wet Bq is unchanged.
 
 For the actual 48 h ERA5 plus 24 h deterministic-extension wet case:
 

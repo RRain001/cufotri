@@ -183,6 +183,8 @@ def load_configuration(
     config["atmosphere"]["area_source_length_m"] = float(rectangle["length_m"])
     config["atmosphere"]["area_source_width_m"] = float(rectangle["width_m"])
     deposition = config["deposition"]
+    if float(deposition.get("ecological_reference_area_m2", 0.0)) <= 0:
+        raise ValueError("Ecological reference area must be positive")
     for pathway in ("dry", "wet"):
         footprint = deposition.get(f"{pathway}_footprint")
         if not isinstance(footprint, dict):

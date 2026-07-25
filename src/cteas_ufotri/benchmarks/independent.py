@@ -39,6 +39,7 @@ def _numeric_record(
     relative_error = absolute_error / scale
     return {
         "category": category,
+        "independent": True,
         "computed": float(computed),
         "target": float(target),
         "absolute_error": float(absolute_error),
@@ -54,30 +55,71 @@ def _leaf_box_benchmark() -> dict[str, float | str | bool]:
     initial_bq_m3 = 200.0
     water_storage_m = 4.0e-4
     duration_s = 3600.0
-    dt_s = 1.0
-    exchange = bidirectional_leaf_exchange(
-        air_bq_m3,
-        initial_bq_m3,
-        298.15,
-        288.15,
-        3.0,
-        True,
-        wind_speed_m_s=2.0,
-        stability_class="D",
-        roughness_length_m=0.1,
-        canopy_height_m=0.5,
-        wind_measurement_height_m=10.0,
-        leaf_characteristic_length_m=0.05,
-        air_kinematic_viscosity_m2_s=1.5e-5,
-        water_vapour_diffusivity_m2_s=2.5e-5,
-        stomatal_resistance_day_s_m=400.0,
-        stomatal_resistance_night_s_m=6000.0,
-        vpd_sensitivity_per_kpa=0.5,
-        isotope_fractionation_liquid_to_vapour=1.1,
-        water_density_kg_m3=1000.0,
+    dt_s = 0.1
+    temperature_k = 298.15
+    dewpoint_k = 288.15
+    lai = 3.0
+    wind_m_s = 2.0
+    roughness_m = 0.1
+    canopy_height_m = 0.5
+    measurement_height_m = 10.0
+    leaf_length_m = 0.05
+    kinematic_viscosity_m2_s = 1.5e-5
+    vapour_diffusivity_m2_s = 2.5e-5
+    isotope_fractionation = 1.1
+    water_density_kg_m3 = 1000.0
+
+    # Independent hand implementation for the fixed neutral-resistance case.
+    # No value from the exchange module enters the analytic target.
+    temperature_c = temperature_k - 273.15
+    dewpoint_c = dewpoint_k - 273.15
+    saturation_pa = 610.78 * math.exp(
+        17.2694 * temperature_c / (temperature_c + 237.29)
     )
-    equilibrium_factor = exchange.equilibrium_air_concentration_bq_m3 / initial_bq_m3
-    rate_s = exchange.conductance_m_s * equilibrium_factor / water_storage_m
+    dewpoint_saturation_pa = 610.78 * math.exp(
+        17.2694 * dewpoint_c / (dewpoint_c + 237.29)
+    )
+    vpd_pa = saturation_pa - dewpoint_saturation_pa
+    displacement_m = 0.6 * canopy_height_m
+    profile_term = math.log(
+        (measurement_height_m - displacement_m) / roughness_m
+    )
+    friction_velocity_m_s = 0.4 * wind_m_s / profile_term
+    aerodynamic_resistance_s_m = (
+        wind_m_s / friction_velocity_m_s**2
+    )
+    leaf_height_m = max(
+        canopy_height_m + roughness_m,
+        displacement_m + 1.01 * roughness_m,
+    )
+    leaf_wind_m_s = (
+        friction_velocity_m_s
+        / 0.4
+        * math.log(
+            (leaf_height_m - displacement_m) / roughness_m
+        )
+    )
+    reynolds = (
+        leaf_wind_m_s * leaf_length_m / kinematic_viscosity_m2_s
+    )
+    schmidt = kinematic_viscosity_m2_s / vapour_diffusivity_m2_s
+    sherwood = 0.664 * math.sqrt(reynolds) * schmidt ** (1.0 / 3.0)
+    boundary_resistance_s_m = 1.0 / (
+        sherwood * vapour_diffusivity_m2_s / leaf_length_m
+    )
+    canopy_resistance_s_m = (
+        400.0 * (1.0 + 0.5 * vpd_pa / 1000.0) / lai
+    )
+    conductance_m_s = 1.0 / (
+        aerodynamic_resistance_s_m
+        + boundary_resistance_s_m
+        + canopy_resistance_s_m
+    )
+    rho_v_sat = saturation_pa / (461.5 * temperature_k)
+    equilibrium_factor = rho_v_sat / (
+        isotope_fractionation * water_density_kg_m3
+    )
+    rate_s = conductance_m_s * equilibrium_factor / water_storage_m
     equilibrium_plant_bq_m3 = air_bq_m3 / equilibrium_factor
     target = equilibrium_plant_bq_m3 + (
         initial_bq_m3 - equilibrium_plant_bq_m3
@@ -85,17 +127,39 @@ def _leaf_box_benchmark() -> dict[str, float | str | bool]:
     inventory = initial_bq_m3 * water_storage_m
     for _ in range(round(duration_s / dt_s)):
         concentration = inventory / water_storage_m
-        inventory += dt_s * exchange.conductance_m_s * (
-            air_bq_m3 - equilibrium_factor * concentration
+        exchange = bidirectional_leaf_exchange(
+            air_bq_m3,
+            concentration,
+            temperature_k,
+            dewpoint_k,
+            lai,
+            True,
+            wind_speed_m_s=wind_m_s,
+            stability_class="D",
+            roughness_length_m=roughness_m,
+            canopy_height_m=canopy_height_m,
+            wind_measurement_height_m=measurement_height_m,
+            leaf_characteristic_length_m=leaf_length_m,
+            air_kinematic_viscosity_m2_s=kinematic_viscosity_m2_s,
+            water_vapour_diffusivity_m2_s=vapour_diffusivity_m2_s,
+            stomatal_resistance_day_s_m=400.0,
+            stomatal_resistance_night_s_m=6000.0,
+            vpd_sensitivity_per_kpa=0.5,
+            isotope_fractionation_liquid_to_vapour=isotope_fractionation,
+            water_density_kg_m3=water_density_kg_m3,
         )
+        inventory += dt_s * exchange.net_to_plant_bq_m2_s
     record = _numeric_record(
         "analytic_benchmark",
         inventory / water_storage_m,
         target,
         5.0e-5,
-        source="independent first-order box solution with fixed leaf conductance",
+        source=(
+            "hand-derived Eq. (27) saturation factor and neutral fixed "
+            "resistances; C=Ceq+(C0-Ceq) exp(-kt)"
+        ),
     )
-    record["conductance_m_s"] = exchange.conductance_m_s
+    record["conductance_m_s"] = conductance_m_s
     record["first_order_rate_s"] = rate_s
     return record
 
@@ -408,8 +472,13 @@ def independent_benchmarks_pass(
 ) -> bool:
     counts = benchmark_category_counts(results)
     return (
-        counts["analytic_benchmark"] >= 6
+        counts["analytic_benchmark"] >= 10
         and counts["manual_anchor"] + counts["literature_comparison"] >= 4
+        and all(
+            bool(result.get("independent", False))
+            for result in results.values()
+            if result.get("category") == "analytic_benchmark"
+        )
         and all(
             result.get("category") in BENCHMARK_CATEGORIES
             for result in results.values()

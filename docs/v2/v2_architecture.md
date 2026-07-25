@@ -6,7 +6,8 @@ inventory/flux interfaces:
 ```text
 forcing + configured source
   -> atmospheric plume/depletion ledger
-  -> dry + wet surface inputs
+  -> independent dry/wet footprint fluxes and activity components
+  -> explicit ecological reference-area source
   -> formal soil mode (surface 5 cm)
   <-> crop leaf/root exchange and TFWT/OBT inventories
   -> harvested food inventories
@@ -20,7 +21,8 @@ forcing + configured source
 - `atmosphere/`: concentration, dry/wet source depletion, deposited-activity
   ledger. It owns no dynamic air inventory.
 - `soil/`: water and HTO inventories and inter-layer transfers.
-- `plant/` and `crop/`: leaf exchange, phenology, whole/edible TFWT and OBT.
+- `plant/` and `crop/`: Eq. (27) leaf exchange, actual-calendar phenology,
+  root/shoot and edible TFWT/OBT inventories.
 - `foodchain/`: food and animal inventory transfers and boundary products.
 - `dose/`: pure calculations from exposure/concentration inputs and configured
   coefficients; no transport state mutation.
@@ -38,6 +40,9 @@ forcing + configured source
 5. V1 states remain readable. V2-only states have zero/default construction
    paths and do not alter an `off`-mode trajectory.
 6. Optional experimental soil code cannot change `ufotri_surface_5cm`.
+7. Dry and wet footprint areas never define each other or the ecological
+   reference area; Bq components are combined explicitly before ecological
+   accounting.
 
 The three-box solver is a standalone experimental API, not an optional branch
 inside the formal coupler. Its future interface requirements are listed in

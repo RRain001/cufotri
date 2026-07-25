@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 from datetime import datetime, timezone
 import hashlib
 import importlib.metadata
 import json
+import math
 from pathlib import Path
 import platform
 import subprocess
@@ -25,6 +27,11 @@ from cteas_ufotri.case import run_short_case
 from cteas_ufotri.config import load_configuration
 from cteas_ufotri.coupling.integrator import advance
 from cteas_ufotri.coupling.state import State
+from cteas_ufotri.crop.phenology import (
+    CropParameters,
+    season_fraction_at_time,
+)
+from cteas_ufotri.plant.leaf_exchange import bidirectional_leaf_exchange
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -220,7 +227,7 @@ def _uncertainty_check() -> dict:
     }
 
 
-def _expanded_rc1_checks(end_to_end_root: Path) -> dict:
+def _expanded_rc2_checks(end_to_end_root: Path) -> dict:
     required_activity_fields = {
         "external_stack_input_bq",
         "dry_plume_loss_bq",
@@ -325,6 +332,98 @@ def _expanded_rc1_checks(end_to_end_root: Path) -> dict:
     ):
         raise ValueError("Footprint scaling failed")
 
+    combined_footprint_results = {}
+    for wet_to_dry_ratio in (0.1, 1.0, 10.0):
+        config = _base()
+        config["duration_hours"] = 2.0
+        config["plant"]["leaf_exchange_mode"] = "off"
+        config["atmosphere"]["reemission_feedback_mode"] = "off"
+        config["atmosphere"]["depletion"]["dry_deposition_enabled"] = True
+        config["atmosphere"]["depletion"]["wet_scavenging_mode"] = (
+            "precipitation_power_law"
+        )
+        config["synthetic_forcing"].update(
+            rain_start_hour=0.0,
+            rain_end_hour=2.0,
+            rain_rate_m_s=2.0e-6,
+        )
+        dry_area_m2 = config["deposition"]["dry_footprint"]["area_m2"]
+        config["deposition"]["wet_footprint"]["area_m2"] = (
+            wet_to_dry_ratio * dry_area_m2
+        )
+        final = run_short_case(config).iloc[-1]
+        deposited_bq = (
+            final["dry_activity_bq"] + final["wet_activity_bq"]
+        )
+        accounted_bq = (
+            final["environmental_inventory_bq"]
+            + final["environmental_boundary_output_bq"]
+            + final["decay_loss_bq"]
+        )
+        relative_residual = abs(deposited_bq - accounted_bq) / deposited_bq
+        if relative_residual >= 1.0e-12:
+            raise ValueError(
+                "Combined unequal-footprint activity contract failed"
+            )
+        combined_footprint_results[str(wet_to_dry_ratio)] = {
+            "dry_area_m2": float(final["dry_area_m2"]),
+            "wet_area_m2": float(final["wet_area_m2"]),
+            "dry_activity_bq": float(final["dry_activity_bq"]),
+            "wet_activity_bq": float(final["wet_activity_bq"]),
+            "accounted_activity_bq": float(accounted_bq),
+            "relative_residual": float(relative_residual),
+        }
+
+    temperature_k = 293.15
+    plant_water_bq_m3 = 5.0e10
+    temperature_c = temperature_k - 273.15
+    saturated_pressure_pa = 610.78 * math.exp(
+        17.2694 * temperature_c / (temperature_c + 237.29)
+    )
+    expected_leaf_equilibrium_bq_m3 = (
+        plant_water_bq_m3
+        * saturated_pressure_pa
+        / (461.5 * temperature_k)
+        / (1.1 * 1000.0)
+    )
+    leaf_equilibria = {}
+    for relative_humidity in (0.3, 0.6, 0.9):
+        log_ratio = math.log(
+            relative_humidity * saturated_pressure_pa / 610.78
+        )
+        dewpoint_k = (
+            237.29 * log_ratio / (17.2694 - log_ratio) + 273.15
+        )
+        exchange = bidirectional_leaf_exchange(
+            1.0e6,
+            plant_water_bq_m3,
+            temperature_k,
+            dewpoint_k,
+            3.0,
+            True,
+            wind_speed_m_s=2.0,
+            stability_class="D",
+            roughness_length_m=0.1,
+            canopy_height_m=0.5,
+            wind_measurement_height_m=10.0,
+            leaf_characteristic_length_m=0.05,
+            air_kinematic_viscosity_m2_s=1.5e-5,
+            water_vapour_diffusivity_m2_s=2.5e-5,
+            stomatal_resistance_day_s_m=400.0,
+            stomatal_resistance_night_s_m=6000.0,
+            vpd_sensitivity_per_kpa=0.5,
+            isotope_fractionation_liquid_to_vapour=1.1,
+            water_density_kg_m3=1000.0,
+        )
+        equilibrium = exchange.equilibrium_air_concentration_bq_m3
+        if not math.isclose(
+            equilibrium,
+            expected_leaf_equilibrium_bq_m3,
+            rel_tol=1.0e-14,
+        ):
+            raise ValueError("UFOTRI Eq. (27) RH invariance failed")
+        leaf_equilibria[str(relative_humidity)] = float(equilibrium)
+
     zero = _base()
     zero["duration_hours"] = 2.0
     zero["source"]["emission_rate_bq_s"] = 0.0
@@ -370,8 +469,41 @@ def _expanded_rc1_checks(end_to_end_root: Path) -> dict:
         int(pasture["harvest_event"].sum()) != 6
         or pasture["surface_box_relative_residual"].max() > 1.0e-12
         or pasture_final["activity_relative_residual"] > 1.0e-12
+        or pasture["root_tfwt_bq_m2"].max() <= 0.0
+        or pasture["shoot_tfwt_bq_m2"].max() <= 0.0
     ):
         raise ValueError("Two-year pasture acceptance failed")
+
+    pasture_parameters = CropParameters.from_mapping(
+        "pasture",
+        pasture_config["crops"]["parameters"]["pasture"],
+    )
+    wrap_crop = replace(
+        pasture_parameters,
+        growth_start_doy=300,
+        harvest_doy=60,
+    )
+    calendar_steps = {}
+    for year, days_in_year in ((2025, 365), (2024, 366)):
+        december_fraction = season_fraction_at_time(
+            datetime(year, 12, 31, tzinfo=timezone.utc),
+            wrap_crop,
+        )
+        january_fraction = season_fraction_at_time(
+            datetime(year + 1, 1, 1, tzinfo=timezone.utc),
+            wrap_crop,
+        )
+        season_length = (days_in_year - 300) + 60
+        expected_step = 1.0 / season_length
+        if not math.isclose(
+            january_fraction - december_fraction,
+            expected_step,
+            rel_tol=1.0e-14,
+        ):
+            raise ValueError("Perennial actual-year calendar check failed")
+        calendar_steps[str(year)] = float(
+            january_fraction - december_fraction
+        )
 
     return {
         "activity_protocol_case_count": len(case_frames) + 1,
@@ -390,6 +522,8 @@ def _expanded_rc1_checks(end_to_end_root: Path) -> dict:
         ),
         "maximum_timestep_endpoint_change": maximum_timestep_change,
         "footprint_scaling": footprint_results,
+        "combined_footprint_contract": combined_footprint_results,
+        "leaf_eq27_equilibrium_bq_m3_by_rh": leaf_equilibria,
         "zero_source_status": "PASS",
         "closed_internal_transfer_status": "PASS",
         "pasture_two_year": {
@@ -401,6 +535,13 @@ def _expanded_rc1_checks(end_to_end_root: Path) -> dict:
             "maximum_activity_relative_residual": float(
                 pasture["activity_relative_residual"].max()
             ),
+            "maximum_root_tfwt_bq_m2": float(
+                pasture["root_tfwt_bq_m2"].max()
+            ),
+            "maximum_shoot_tfwt_bq_m2": float(
+                pasture["shoot_tfwt_bq_m2"].max()
+            ),
+            "calendar_year_crossing_steps": calendar_steps,
         },
     }
 
@@ -481,7 +622,7 @@ def recompute() -> list[str]:
             != full_model_uncertainty["expected_model_run_count"]
         ):
             raise ValueError("Full-model mode-aware LHS acceptance failed")
-        expanded_rc1 = _expanded_rc1_checks(end_to_end_root)
+        expanded_rc2 = _expanded_rc2_checks(end_to_end_root)
 
         config_paths = [
             ROOT / "configs/default_parameters.yaml",
@@ -518,7 +659,7 @@ def recompute() -> list[str]:
             "wet_parameter_sensitivity": wet_sensitivity,
             "uncertainty_algorithm": uncertainty,
             "full_model_uncertainty": full_model_uncertainty,
-            "expanded_rc1_checks": expanded_rc1,
+            "expanded_rc2_checks": expanded_rc2,
             "benchmark_record_count": len(benchmarks),
             "benchmark_category_counts": benchmark_counts,
             "end_to_end_summary_sha256": sha256(
@@ -544,8 +685,8 @@ def recompute() -> list[str]:
             ),
             "PASS: 12-case wet-scavenging parameter grid",
             (
-                "PASS: expanded RC1 activity protocol, footprint, time-step, "
-                "zero-source, internal-transfer, and two-year pasture checks"
+                "PASS: RC2 unequal-footprint, Eq. (27), time-step, "
+                "root/shoot, actual-calendar, and activity protocol checks"
             ),
             (
                 "PASS: categorized V2 evidence "
