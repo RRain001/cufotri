@@ -3,6 +3,7 @@ case_id: SOYBEAN_EMRAS_TEMPLATE
 status: DRAFT_NOT_PREREGISTERED
 reference_type: EXPERIMENT
 dataset_id: IAEA_EMRAS_SOYBEAN_SB1_SB6
+evidence_type: EXTERNAL_EXPERIMENT
 raw_data_location: validation/external_local/soybean_emras
 raw_data_tracked: false
 licence:
@@ -12,14 +13,43 @@ licence:
 execution:
   permitted: false
   reason: BLOCKED_EXTERNAL_DATA
-required_inputs:
-  - organizer_meteorology_excel
-  - complete_air_hto_time_series
-  - chamber_mixing_or_ventilation_boundary
-  - plant_tfwt_observations
-  - uncertainty_metadata
+required_file_roles:
+  - meteorology
+  - air_hto
+  - plant_observations
+  - mixing_boundary
+  - uncertainty
   - detection_limits
-  - exact_timing
+continuous_series_roles: [meteorology, air_hto]
+time_columns:
+  meteorology: time_utc
+  air_hto: time_utc
+expected_fields:
+  meteorology:
+    time_utc: UTC ISO-8601
+    temperature_k: K
+    relative_humidity_percent: percent
+  air_hto:
+    time_utc: UTC ISO-8601
+    air_hto_bq_m3: Bq m-3 air
+  plant_observations:
+    sample_id: identifier
+    time_utc: UTC ISO-8601
+    replicate_id: identifier
+    observed_plant_water_hto_bq_l: Bq L-1 plant water
+    plant_obt_bq_l_combustion_water: Bq L-1 combustion water
+  mixing_boundary:
+    chamber_volume_m3: m3
+    ventilation_or_mixing_rate_s: s-1
+    air_replacement_boundary: text
+  uncertainty:
+    observable: identifier
+    standard_uncertainty: declared observable unit
+    unit: unit string
+  detection_limits:
+    observable: identifier
+    detection_limit: declared observable unit
+    unit: unit string
 calibration_partition:
   ids: []
   selection_rule: REQUIRES_COMPLETE_DATA_AND_PREREGISTRATION
@@ -42,4 +72,6 @@ metrics:
 thresholds: REQUIRES_PREDECLARATION
 calibration_status: NOT_RUN_BLOCKED_EXTERNAL_DATA
 identifiability_status: NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
-notes: Publication figures and incomplete tables are not executable input.
+notes: >-
+  Publication figures and incomplete tables are not executable input. The
+  adapter must not OCR figures, digitize plots, or splice different sources.

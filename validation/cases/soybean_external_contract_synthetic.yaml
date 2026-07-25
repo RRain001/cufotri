@@ -1,0 +1,56 @@
+schema_version: 1.0.0
+case_id: SOYBEAN_EXTERNAL_CONTRACT_SYNTHETIC
+status: SYNTHETIC_CONTRACT_TEST
+reference_type: INTERNAL_REGRESSION
+dataset_id: SOYBEAN_SYNTHETIC_CONTRACT
+evidence_type: SYNTHETIC_CONTRACT_TEST
+empirical_validation: false
+raw_data_tracked: false
+required_file_roles:
+  - meteorology
+  - air_hto
+  - plant_observations
+  - mixing_boundary
+  - uncertainty
+  - detection_limits
+continuous_series_roles: [meteorology, air_hto]
+time_columns:
+  meteorology: time_utc
+  air_hto: time_utc
+expected_fields:
+  meteorology:
+    time_utc: UTC ISO-8601
+    temperature_k: K
+    relative_humidity_percent: percent
+  air_hto:
+    time_utc: UTC ISO-8601
+    air_hto_bq_m3: Bq m-3 air
+  plant_observations:
+    sample_id: identifier
+    time_utc: UTC ISO-8601
+    replicate_id: identifier
+    observed_plant_water_hto_bq_l: Bq L-1 plant water
+    model_plant_water_hto_bq_l: Bq L-1 plant water
+    plant_obt_bq_l_combustion_water: Bq L-1 combustion water
+  mixing_boundary:
+    chamber_volume_m3: m3
+    ventilation_or_mixing_rate_s: s-1
+    air_replacement_boundary: text
+  uncertainty:
+    observable: identifier
+    standard_uncertainty: declared observable unit
+    unit: unit string
+  detection_limits:
+    observable: identifier
+    detection_limit: declared observable unit
+    unit: unit string
+synthetic_metric_pipeline:
+  observed_column: observed_plant_water_hto_bq_l
+  model_column: model_plant_water_hto_bq_l
+  metric: normalized_rmse
+  threshold: 0.05
+external_case_count_contribution: 0
+notes: >-
+  Project-authored disposable values exercise schema, adapter, checksum,
+  split, metric, fail-closed and report paths only. They are not empirical
+  evidence and cannot satisfy the V3 physics gate.

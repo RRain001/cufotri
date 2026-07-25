@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/external_evidence_intake.schema.json",
+  "title": "V3 external-evidence intake manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "status",
+    "empirical_validation",
+    "checksums_sha256",
+    "field_mappings",
+    "metric_pipeline",
+    "calibration_permitted",
+    "holdout_execution_permitted",
+    "blocking_reasons"
+  ],
+  "properties": {
+    "manifest_version": {"const": "1.0.0"},
+    "status": {
+      "enum": [
+        "BLOCKED_EXTERNAL_DATA",
+        "READY_FOR_PREREGISTRATION",
+        "PASS_SYNTHETIC_CONTRACT_ONLY"
+      ]
+    },
+    "dataset_id": {"type": "string", "minLength": 1},
+    "evidence_type": {
+      "enum": [
+        "EXTERNAL_EXPERIMENT",
+        "FIELD_OBSERVATION",
+        "SYNTHETIC_CONTRACT_TEST"
+      ]
+    },
+    "empirical_validation": {"const": false},
+    "licence_use_permitted": {"type": "boolean"},
+    "redistribution_permitted": {"type": "boolean"},
+    "checksums_sha256": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "field_mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"type": "string"}
+      }
+    },
+    "calibration_sample_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "holdout_sample_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "metric_pipeline": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": [
+            "NOT_RUN_BLOCKED_EXTERNAL_DATA",
+            "NOT_RUN_NO_MODEL_OUTPUT",
+            "PASS",
+            "FAIL"
+          ]
+        },
+        "metric": {"type": "string"},
+        "value": {"type": "number"},
+        "threshold": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "calibration_permitted": {"const": false},
+    "holdout_execution_permitted": {"const": false},
+    "blocking_reasons": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "READY_FOR_PREREGISTRATION",
+              "PASS_SYNTHETIC_CONTRACT_ONLY"
+            ]
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": [
+          "dataset_id",
+          "evidence_type",
+          "licence_use_permitted",
+          "redistribution_permitted",
+          "calibration_sample_ids",
+          "holdout_sample_ids"
+        ]
+      }
+    }
+  ]
+}
