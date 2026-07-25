@@ -14,8 +14,11 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_TRUE = (
     "complete_licensed_external_case",
+    "raw_data_checksum_recorded",
+    "data_schema_valid",
     "preregistration_committed_before_holdout",
     "calibration_holdout_separated",
+    "calibration_executed",
     "parameter_identifiability_assessed",
     "V1_regression_pass",
     "V2_acceptance_pass",
@@ -48,12 +51,41 @@ def evaluate_gate(path: Path) -> dict[str, Any]:
         evidence["complete_licensed_external_case"]
         and soybean.get("status") == "DRAFT_NOT_PREREGISTERED"
     ):
-        raise ValueError("Internal/template evidence cannot satisfy external-case gate")
+        raise ValueError("Template evidence cannot satisfy external-case gate")
     if (
         evidence["preregistration_committed_before_holdout"]
         and preregistration.get("status") != "PREREGISTERED"
     ):
         raise ValueError("Preregistration gate contradicts tracked evidence")
+    evidence_labels = evidence.get("evidence", {})
+    if not isinstance(evidence_labels, dict):
+        raise ValueError("Physics gate evidence must be a mapping")
+    internal_types = {
+        "REFERENCE_MODEL",
+        "INTERNAL_REGRESSION",
+        "SYNTHETIC_CONTRACT_TEST",
+    }
+    if (
+        evidence["complete_licensed_external_case"]
+        and evidence_labels.get("external_case_evidence_type") in internal_types
+    ):
+        raise ValueError("Internal or synthetic evidence cannot satisfy external-case gate")
+    if (
+        evidence["external_holdout_executed"]
+        and evidence_labels.get("holdout_evidence_type") in internal_types
+    ):
+        raise ValueError("Internal or synthetic evidence cannot satisfy holdout gate")
+    if evidence["raw_data_checksum_recorded"] and not evidence.get(
+        "external_case_manifest"
+    ):
+        raise ValueError("Checksum gate requires an external_case_manifest")
+    if evidence["data_schema_valid"] and not evidence.get("external_case_manifest"):
+        raise ValueError("Schema gate requires an external_case_manifest")
+    if (
+        evidence["calibration_executed"]
+        and evidence_labels.get("calibration") != "CALIBRATION_COMPLETE"
+    ):
+        raise ValueError("Calibration execution gate contradicts tracked evidence")
     unmet = [name for name in REQUIRED_TRUE if evidence[name] is not True]
     return {
         "status": (

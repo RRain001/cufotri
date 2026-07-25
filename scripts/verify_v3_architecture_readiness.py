@@ -42,12 +42,18 @@ REQUIRED_FILES = (
     "docs/v3/contracts/v3_module_registry.yaml",
     "docs/v3/migration/v2_to_v3_field_matrix.csv",
     "docs/v3/gates/soybean_unblocking_manifest.md",
+    "docs/v3/gates/soybean_data_request_package.md",
+    "docs/v3/gates/external_data_freeze_protocol.md",
+    "docs/v3/gates/soybean_calibration_parameter_contract.md",
+    "docs/v3/gates/parameter_identifiability_protocol.md",
     "docs/v3/v3_architecture_only_report.md",
     "docs/implementation_status.md",
     "scripts/migrate_v2_config_to_v3.py",
     "scripts/verify_v3_compatibility.py",
     "scripts/verify_v3_physics_start_gate.py",
+    "scripts/verify_v3_external_evidence_unblocking.py",
     "validation/cases/soybean_emras_template.yaml",
+    "validation/cases/soybean_external_contract_synthetic.yaml",
     "validation/preregistration/soybean_emras_template.yaml",
 )
 ADR_NAMES = (
