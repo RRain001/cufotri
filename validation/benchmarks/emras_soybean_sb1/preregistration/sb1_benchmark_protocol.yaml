@@ -1,0 +1,80 @@
+protocol_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_PROTOCOL_V1
+protocol_class: RESEARCH_BENCHMARK_NOT_PRODUCTION_GATE
+status: FROZEN_BEFORE_MODEL_RESULT_GENERATION
+case_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1
+benchmark_class: HYBRID_LITERATURE_REANALYSIS
+empirical_validation_claim: false
+independent_external_holdout: false
+holdout_class: PSEUDO_HOLDOUT_FROM_PUBLISHED_REPORT
+calibration:
+  observable: plant_body_tfwt_bq_l_water
+  hours_after_exposure: [0.2, 1, 24, 120, 336]
+pseudo_holdout_a:
+  observable: plant_body_tfwt_bq_l_water
+  hours_after_exposure: [936, 1608, 2280]
+pseudo_holdout_b:
+  observable: pods_tfwt_bq_l_water
+  hours_after_exposure: [936, 1608, 2280]
+structural_check:
+  observable: harvest_obt_bq_l_combustion_water
+  compartments: [stem, leaves, shell, seeds]
+  calibration_use: false
+primary_metrics:
+  - LOG10_RMSE
+  - LOG10_MEAN_BIAS
+  - MEDIAN_PREDICTED_TO_OBSERVED_RATIO
+  - FACTOR_2_COVERAGE
+  - FACTOR_10_COVERAGE
+log_policy:
+  require_observed_greater_than_zero: true
+  require_predicted_greater_than_zero: true
+  epsilon_allowed: false
+uncertainty:
+  primary_analytical_relative_uncertainty: 0.10
+  total_cv_sensitivity: [0.10, 0.20, 0.30]
+  cv_0p20_and_0p30_status: ASSUMPTION_SENSITIVITY_NOT_REPORTED_MEASUREMENT
+calibration_parameters:
+  - name: leaf_stomatal_resistance_day_s_m
+    path: plant.leaf_stomatal_resistance_day_s_m
+    unit: s m-1
+    lower: 200.0
+    upper: 800.0
+    initial: 400.0
+    bounds_source: configs/default_parameters.yaml uncertainty specification
+    physical_role: daytime stomatal resistance for bidirectional leaf exchange
+  - name: leaf_characteristic_length_m
+    path: plant.leaf_characteristic_length_m
+    unit: m
+    lower: 0.02
+    upper: 0.10
+    initial: 0.05
+    bounds_source: configs/default_parameters.yaml uncertainty specification
+    physical_role: boundary-layer resistance length scale
+fixed_inputs:
+  leaf_exchange_mode: bidirectional_resistance
+  plant_water_storage_m: 0.0007882
+  plant_water_storage_basis: >-
+    SB1 exposure fresh biomass minus dry biomass equals 788.2 g water m-2
+  chamber_wind_boundary: >-
+    pass zero and retain the formal model minimum-wind clamp of 0.05 m s-1;
+    fan rate is not reported and this is a stated provisional limitation
+  lai_boundary: >-
+    deterministic midpoint curve from the report's generic unmeasured soybean
+    LAI description; not a measured SB1 series
+  soil_root_uptake: zero because the target process is air-to-plant TFWT
+calibration_method:
+  screening: ONE_AT_A_TIME_THEN_TWO_PARAMETER_GRID
+  maximum_simultaneously_calibrated_parameters: 2
+  holdout_may_change_bounds: false
+identifiability:
+  finite_difference_relative_step: 0.01
+  correlation_warning_absolute: 0.95
+  rank_tolerance: 1.0e-8
+failure_rules:
+  - calibration and pseudo-holdout points overlap
+  - any log-metric input is nonpositive
+  - any prediction is NaN Inf or negative
+  - observation or forcing is changed after result inspection
+  - formal src or formal V1/V2 config semantics are changed
+production_gate_eligible: false
+trusted_registry_eligible: false
