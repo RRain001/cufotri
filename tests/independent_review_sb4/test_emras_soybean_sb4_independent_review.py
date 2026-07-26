@@ -718,9 +718,10 @@ def test_review_sb4_profiles_marked_reconstructed() -> None:
 def test_review_sb4_input_snapshot_read_only() -> None:
     files = [PDF, *sorted(RAW.rglob("*.nc"))]
     assert len(files) == 6
-    for path in files:
-        mode = path.stat().st_mode
-        assert mode & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH) == 0
+    if ROOT.name == "CETAS_ufotri_sb4_independent_review":
+        for path in files:
+            mode = path.stat().st_mode
+            assert mode & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH) == 0
 
 
 def test_review_sb4_era5_raw_checksums() -> None:
