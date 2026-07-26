@@ -1,0 +1,40 @@
+case_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1
+case_version: 1.0.0
+benchmark_class: HYBRID_LITERATURE_REANALYSIS
+production_gate_eligible: false
+trusted_registry_eligible: false
+site:
+  latitude: 36.425000
+  longitude: 127.373611
+  coordinate_status: PROVISIONAL_INSTITUTIONAL_LOCATION
+  timezone: Asia/Seoul
+  utc_offset_on_2001_07_02_hours: 9
+download:
+  start_local: 2001-05-21T00:00:00+09:00
+  end_local: 2001-10-06T23:00:00+09:00
+  start_utc: 2001-05-20T15:00:00Z
+  end_utc: 2001-10-06T14:00:00Z
+simulation:
+  start_local: 2001-07-02T09:30:00+09:00
+  end_local: 2001-10-05T23:00:00+09:00
+  time_step_seconds: 300
+chamber_profile: PUBLISHED_RAW_PROFILE
+chamber_start_boundary:
+  air_moisture_hto_bq_ml_water: 0.0
+  status: ASSUMED_ZERO_AT_EVAPORATION_START
+era5_scenario: CENTRE
+post_exposure_hto:
+  mode: EXCESS_ABOVE_BACKGROUND
+  outdoor_air_hto_bq_m3: 0.0
+background:
+  july_bq_m3: [0.016, 0.069]
+  august_bq_m3: [0.013, 0.049]
+  september_bq_m3: [0.040, 0.060]
+  october_1_to_5: EXTEND_SEPTEMBER_RANGE_ASSUMPTION
+model_adapter:
+  status: RESEARCH_VALIDATION_ADAPTER_ONLY
+  chamber_wind_m_s: 0.0
+  chamber_wind_handling: FORMAL_MODEL_MINIMUM_WIND_CLAMP_0P05_M_S
+  plant_water_storage_m: 0.0007882
+  plant_water_storage_source: SB1_EXPOSURE_FRESH_MINUS_DRY_BIOMASS
+  lai_source: PUBLISHED_GENERIC_SOYBEAN_DESCRIPTION_NOT_MEASURED

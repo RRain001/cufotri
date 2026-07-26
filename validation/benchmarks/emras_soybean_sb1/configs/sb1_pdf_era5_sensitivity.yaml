@@ -1,0 +1,25 @@
+case_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1_SENSITIVITY
+case_version: 1.0.0
+inherits_research_contract: sb1_pdf_era5_primary.yaml
+production_gate_eligible: false
+chamber_profiles:
+  - PUBLISHED_RAW_PROFILE
+  - MEAN_CONSTRAINED_PROFILE
+era5_scenarios:
+  - CENTRE
+  - NORTH_0P25
+  - SOUTH_0P25
+  - EAST_0P25
+  - WEST_0P25
+post_exposure_hto_modes:
+  - EXCESS_ABOVE_BACKGROUND
+  - BACKGROUND_LOW
+  - BACKGROUND_MID
+  - BACKGROUND_HIGH
+background_midpoint_method: ARITHMETIC_MIDPOINT_OF_REPORTED_MONTHLY_RANGE
+october_1_to_5_rule: EXTEND_SEPTEMBER_RANGE_ASSUMPTION
+total_tfwt_cv_sensitivity: [0.10, 0.20, 0.30]
+uncertainty_status:
+  cv_0p10: REPORTED_ANALYTICAL_COUNTING_UNCERTAINTY
+  cv_0p20: ASSUMPTION_SENSITIVITY_ONLY
+  cv_0p30: ASSUMPTION_SENSITIVITY_ONLY
