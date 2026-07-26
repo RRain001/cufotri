@@ -80,6 +80,8 @@ observables:
 
 controlled_conditions:
   status: SYNTHETIC_CONTROLLED_CONDITIONS
+  simulation_start_local: 2001-01-01T09:30:00+09:00
+  timezone: Asia/Seoul
   temperature_c: 25.0
   relative_humidity_percent: 70.0
   wind_speed_m_s: 0.5
@@ -92,6 +94,12 @@ controlled_conditions:
   lai: 4.0
   leaf_stomatal_resistance_day_s_m: 800.0
   leaf_characteristic_length_m: 0.10
+  plant_body_water_storage_m: 0.0009826
+  exposure_body_dry_g_m2: 477.8
+  harvest_body_dry_g_m2: 946.3
+  harvest_pod_fresh_g_m2: 1069.9
+  harvest_pod_dry_g_m2: 340.6
+  pod_process_used_for_classification: false
   exchange_state: CONSTANT_DAYTIME
   time_step_minutes: 5
   high_exposure_concentration_bq_ml_water: 52700.0
