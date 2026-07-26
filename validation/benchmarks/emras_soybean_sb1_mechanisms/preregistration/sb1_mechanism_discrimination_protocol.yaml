@@ -1,0 +1,168 @@
+protocol_id: SB1_PLANT_WATER_MECHANISM_DISCRIMINATION_V1
+status: FROZEN_BEFORE_ANY_CANDIDATE_EXECUTION
+protocol_class: VALIDATION_ONLY_NOT_FORMAL_PHYSICS
+merged_sb1_baseline_head: 2a56c56d6de3ee79c1069b799a5dab90e10a0097
+source_case_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1
+empirical_validation_claim: false
+production_gate_eligible: false
+trusted_registry_eligible: false
+formal_model_change: false
+
+observations:
+  selection_observable: plant_body_tfwt_bq_l_water
+  calibration_hours: [0.2, 1, 24, 120, 336]
+  late_check_hours: [936, 1608, 2280]
+  pods_status: STRUCTURAL_DIAGNOSTIC_ONLY_NOT_USED_FOR_SELECTION
+  obt_status: CONSISTENCY_CHECK_ONLY_NOT_USED_FOR_SELECTION
+
+frozen_existing_leaf_parameters:
+  leaf_stomatal_resistance_day_s_m: 800.0
+  leaf_characteristic_length_m: 0.10
+  refit_allowed: false
+  source_parameter_hash: >-
+    51609eadd468b64d6aff9953b9c316f9ebbad53121ae6e8f50bda76b8ab57687
+
+forcing_scenarios:
+  - RUN_01_PRIMARY
+  - RUN_02_MEAN_CONSTRAINED
+  - RUN_03_MET_LOW
+  - RUN_04_MET_HIGH
+  - RUN_05_BACKGROUND_LOW
+  - RUN_06_BACKGROUND_MID
+  - RUN_07_BACKGROUND_HIGH
+
+candidates:
+  H0_CURRENT_SINGLE_POOL:
+    new_fitted_parameter_count: 0
+    definition: >-
+      Exact merged SB1 validation adapter and frozen leaf parameter set.
+  H1_DYNAMIC_WATER_STORAGE:
+    new_fitted_parameter_count: 0
+    definition: >-
+      Preserve the H0 TFWT inventory exactly and change only concentration
+      mapping from fixed exposure water storage to time-varying plant water.
+    primary_storage_shape: LINEAR_EXPOSURE_TO_HARVEST
+    shape_sensitivity: SQRT_TIME_EXPOSURE_TO_HARVEST
+    exposure_water_storage_m: 0.0007882
+    harvest_water_storage_m: 0.0026568
+    source: SB1_fresh_minus_dry_biomass
+  H2_PARALLEL_FAST_SLOW_RESIDUAL:
+    new_fitted_parameter_count: 2
+    observed_tfwt_mapping: FAST_PLUS_SLOW
+    initial_slow_inventory_bq_m2: 0.0
+    parameters:
+      slow_capture_fraction:
+        transform: LINEAR
+        values: [0.001, 0.003, 0.01, 0.03, 0.10, 0.30, 0.50]
+        unit: fraction_of_positive_leaf_uptake
+        bounds_source: >-
+          broad validation screen fixed before candidate execution
+      slow_release_rate_s:
+        transform: LOG10
+        values: [3.17e-9, 1.0e-8, 3.17e-8, 1.0e-7, 3.17e-7, 1.0e-6, 1.157e-5]
+        unit: s-1
+        bounds_source: >-
+          generic one-day to ten-year numerical timescale screen fixed before
+          candidate execution and not inferred from late SB1 observations
+    conservation_contract: >-
+      Capture is removed from the fast inventory and added to the slow
+      inventory; first-order release is removed from slow and added to fast.
+  H3_REVERSIBLE_FAST_SLOW_EXCHANGE:
+    new_fitted_parameter_count: 2
+    observed_tfwt_mapping: FAST_PLUS_SLOW
+    initial_slow_inventory_bq_m2: 0.0
+    common_rate_values_s:
+      [3.17e-9, 1.0e-8, 3.17e-8, 1.0e-7, 3.17e-7, 1.0e-6, 1.157e-5]
+    parameters:
+      fast_to_slow_rate_s:
+        transform: LOG10
+        unit: s-1
+      slow_to_fast_rate_s:
+        transform: LOG10
+        unit: s-1
+    bounds_source: >-
+      generic one-day to ten-year numerical timescale screen fixed before
+      candidate execution and not inferred from late SB1 observations
+    conservation_contract: >-
+      Bidirectional internal transfer changes no total TFWT activity.
+  H4_OBT_MEDIATED_RECYCLE:
+    new_fitted_parameter_count: 2
+    new_state_count: 0
+    parameters:
+      formation_multiplier:
+        transform: LOG10
+        values: [0.50, 0.63, 0.80, 1.00, 1.25, 1.60, 2.00]
+        unit: dimensionless
+        bounds_source: >-
+          0.5-to-2 multiplier implied by the formal OBT formation uncertainty
+          range around the default
+      turnover_multiplier:
+        transform: LOG10
+        values: [0.25, 0.397, 0.63, 1.00, 1.587, 2.52, 4.00]
+        unit: dimensionless
+        bounds_source: >-
+          symmetric validation-only factor-four screen around the formal
+          default fixed before candidate execution
+    obt_consistency_rule: >-
+      Primary harvest plant-body OBT absolute log10 error may not exceed the
+      H0 absolute log10 error.
+
+parameter_search:
+  method: EXHAUSTIVE_FIXED_GRID
+  random_seed: null
+  hidden_early_stopping_allowed: false
+  maximum_new_parameters_per_candidate: 2
+  selection_metric: calibration_log10_rmse
+  tie_break_order:
+    - smaller_maximum_absolute_boundary_fraction
+    - smaller_parameter_1
+    - smaller_parameter_2
+  late_observations_available_to_search: false
+
+success_criteria:
+  late_log10_rmse_improvement_minimum_dex: 0.75
+  late_median_ratio_closeness_improvement_minimum_dex: 1.0
+  calibration_log10_rmse_worsening_maximum_dex: 0.25
+  early_prediction_factor_limit: 3.0
+  require_finite_nonnegative: true
+  mass_closure_absolute_tolerance_bq_m2: 1.0e-6
+  internal_transfer_absolute_tolerance_bq_m2: 1.0e-9
+  parameter_may_equal_bound: false
+  parameter_correlation_absolute_maximum: 0.95
+  bounded_profile_likelihood_alternative: true
+  forcing_scenarios_required_to_persist: 5
+  forcing_persistence_rule: >-
+    Both frozen late-improvement thresholds must pass relative to H0 under
+    the same forcing scenario.
+
+identifiability:
+  local_sensitivity_observable: log10_calibration_predictions
+  correlation_warning_absolute: 0.95
+  full_rank_required: true
+  bounded_profile_rule: >-
+    If local correlation fails, the calibration objective must worsen on both
+    sides of the optimum within the preregistered grid.
+
+descriptive_timescale_analysis:
+  data: all_8_plant_body_tfwt_points
+  models:
+    - SINGLE_EXPONENTIAL
+    - DOUBLE_EXPONENTIAL
+    - PIECEWISE_LOG_LINEAR
+  descriptive_only: true
+  used_for_candidate_calibration: false
+  used_for_model_selection: false
+
+failure_rules:
+  - any late observation enters candidate parameter selection
+  - either frozen leaf parameter is refitted
+  - more than two new fitted parameters are used
+  - an observation is injected into a state update
+  - a formal src or configs file is changed
+  - any inventory or concentration is negative or nonfinite
+  - internal fast-slow transfer is not conservative
+  - candidate parameters are changed after the frozen parameter commit
+
+required_final_state:
+  v3_physics_implementation_status: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
