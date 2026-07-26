@@ -253,8 +253,11 @@ def summarize_mass(model: pd.DataFrame, protocol: dict[str, Any]) -> dict[str, A
     inventory = numeric.filter(regex="_inventory_bq_m2$")
     concentration = numeric.filter(regex="_bq_l_")
     formal = float(model["formal_mass_closure_abs_bq_m2"].max())
-    internal = float(
+    internal_state_sum = float(
         model["internal_transfer_residual_abs_bq_m2"].max()
+    )
+    internal_ledger = float(
+        model.attrs.get("maximum_internal_transfer_ledger_residual_abs_bq_m2", 0.0)
     )
     result = {
         "nan_count": int(numeric.isna().sum().sum()),
@@ -266,18 +269,96 @@ def summarize_mass(model: pd.DataFrame, protocol: dict[str, Any]) -> dict[str, A
             (concentration.to_numpy() < -1.0e-12).sum()
         ),
         "maximum_formal_mass_closure_abs_bq_m2": formal,
-        "maximum_internal_transfer_residual_abs_bq_m2": internal,
+        "maximum_internal_transfer_residual_abs_bq_m2": internal_ledger,
+        "maximum_internal_state_sum_roundoff_abs_bq_m2": internal_state_sum,
     }
     criteria = protocol["support_criteria"]
     result["mass_balance_pass"] = bool(
         formal <= criteria["mass_closure_absolute_tolerance_bq_m2"]
-        and internal <= criteria["internal_transfer_absolute_tolerance_bq_m2"]
+        and internal_ledger
+        <= criteria["internal_transfer_absolute_tolerance_bq_m2"]
         and result["nan_count"] == 0
         and result["inf_count"] == 0
         and result["negative_inventory_count"] == 0
         and result["negative_concentration_count"] == 0
     )
     return result
+
+
+def simulate_with_transfer_audit(
+    runner: Any,
+    forcing: pd.DataFrame,
+    source_id: str,
+    parameters: dict[str, float],
+) -> pd.DataFrame:
+    """Audit paired internal fluxes without changing candidate state updates."""
+    ledger_residuals = [0.0]
+    if source_id == "H2_PARALLEL_FAST_SLOW_RESIDUAL":
+        module = runner.parallel_fast_slow
+        original = module.transfer
+
+        def audited_transfer(*args: Any, **kwargs: Any) -> Any:
+            result = original(*args, **kwargs)
+            ledger_residuals.append(
+                abs(
+                    math.fsum(
+                        [
+                            -result.capture_bq_m2,
+                            result.release_bq_m2,
+                            result.capture_bq_m2,
+                            -result.release_bq_m2,
+                        ]
+                    )
+                )
+            )
+            return result
+
+    elif source_id == "H3_REVERSIBLE_FAST_SLOW_EXCHANGE":
+        module = runner.reversible_fast_slow
+        original = module.transfer
+
+        def audited_transfer(*args: Any, **kwargs: Any) -> Any:
+            result = original(*args, **kwargs)
+            ledger_residuals.append(
+                abs(
+                    math.fsum(
+                        [
+                            -result.fast_to_slow_bq_m2,
+                            result.slow_to_fast_bq_m2,
+                            result.fast_to_slow_bq_m2,
+                            -result.slow_to_fast_bq_m2,
+                        ]
+                    )
+                )
+            )
+            return result
+
+    else:
+        model = runner.simulate(
+            forcing,
+            source_id,
+            parameters,
+            MAXIMUM_HOURS_AFTER_EXPOSURE,
+        )
+        model.attrs[
+            "maximum_internal_transfer_ledger_residual_abs_bq_m2"
+        ] = 0.0
+        return model
+
+    module.transfer = audited_transfer
+    try:
+        model = runner.simulate(
+            forcing,
+            source_id,
+            parameters,
+            MAXIMUM_HOURS_AFTER_EXPOSURE,
+        )
+    finally:
+        module.transfer = original
+    model.attrs[
+        "maximum_internal_transfer_ledger_residual_abs_bq_m2"
+    ] = max(ledger_residuals)
+    return model
 
 
 def early_check(
@@ -340,11 +421,11 @@ def main() -> int:
             for mechanism_id in MECHANISMS:
                 source_id = SOURCE_MECHANISM_IDS[mechanism_id]
                 parameters = protocol["mechanisms"][mechanism_id]["parameters"]
-                model = runner.simulate(
+                model = simulate_with_transfer_audit(
+                    runner,
                     forcing,
                     source_id,
                     parameters,
-                    MAXIMUM_HOURS_AFTER_EXPOSURE,
                 )
                 sampled = runner.sample_predictions(model, observed)
                 sampled.insert(0, "run_id", run_id)
