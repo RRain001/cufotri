@@ -1,0 +1,130 @@
+protocol_id: SB1_TO_SB4_FROZEN_MECHANISM_TRANSFER_V1
+status: FROZEN_BEFORE_ANY_SB4_PREDICTION
+protocol_class: VALIDATION_ONLY_CROSS_EXPERIMENT_TRANSFER
+merged_main_baseline: d08d9d81f3ef10b11c2431e7bebe2f802c56cd18
+case_id: EMRAS_SOYBEAN_SB4_PDF_ERA5_V1
+no_sb4_parameter_refit: true
+sb4_parameter_refit_count: 0
+sb4_parameter_optimization_allowed: false
+sb4_bound_expansion_allowed: false
+sb4_specific_slow_pool_fitting_allowed: false
+empirical_validation_claim: false
+production_gate_eligible: false
+trusted_registry_eligible: false
+formal_model_change: false
+
+sb1_parameter_source:
+  frozen_parameter_commit: 4b79f62741db4d4b51f4d608df33d2e13c499636
+  frozen_parameter_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/reports/frozen_mechanism_parameters.yaml
+  frozen_parameter_file_sha256: 9224d4019d1e71f28f653699125c09328ae95af8bfc39a71442dc9dc355dc2d9
+  mechanism_parameter_result_hash: f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9
+  frozen_leaf_parameters:
+    leaf_stomatal_resistance_day_s_m: 800.0
+    leaf_characteristic_length_m: 0.10
+
+mechanisms:
+  H0_CURRENT_SINGLE_POOL:
+    parameters: {}
+    parameter_count: 0
+    definition: Exact merged SB1 single-pool validation adapter.
+  H2_SB1_FROZEN:
+    source_mechanism_id: H2_PARALLEL_FAST_SLOW_RESIDUAL
+    parameters:
+      slow_capture_fraction: 0.001
+      slow_release_rate_s: 1.0e-6
+    parameter_count: 2
+    selected_from_sb4: false
+  H3_SB1_FROZEN:
+    source_mechanism_id: H3_REVERSIBLE_FAST_SLOW_EXCHANGE
+    parameters:
+      fast_to_slow_rate_s: 1.0e-7
+      slow_to_fast_rate_s: 1.0e-6
+    parameter_count: 2
+    selected_from_sb4: false
+
+chamber_profiles:
+  CONSTANT_REPORTED_MEAN:
+    config: >-
+      validation/benchmarks/emras_soybean_sb4/configs/sb4_constant_mean.yaml
+    config_sha256: 31c495bf419733e8e59390da07f415989c93fba03b9a0206f79b40b1af22399b
+    profile_evidence_class: RECONSTRUCTED
+  SCALED_SB1_OBSERVED_SHAPE:
+    config: >-
+      validation/benchmarks/emras_soybean_sb4/configs/sb4_scaled_sb1_profile.yaml
+    config_sha256: 70e5d45446ccaa7e070dee7a2e6a0b10cf9058c9e7b72c80312a367d0b3fed42
+    profile_evidence_class: RECONSTRUCTED
+
+forcing_scenarios:
+  - RUN_01_PRIMARY
+  - RUN_02_SB1_CHAMBER_MET_SHAPE_SENSITIVITY
+  - RUN_03_MET_LOW
+  - RUN_04_MET_HIGH
+  - RUN_05_BACKGROUND_LOW
+  - RUN_06_BACKGROUND_MID
+  - RUN_07_BACKGROUND_HIGH
+
+run_matrix:
+  mechanism_count: 3
+  chamber_profile_count: 2
+  forcing_scenarios_per_profile: 7
+  required_total_runs: 42
+
+observations:
+  plant_body:
+    role: PRIMARY_ENDPOINT
+    table_sha256: af51427038da81530d77586a0c5d0275757bcc7b8e10c697b07f148b28f933cc
+    overall_hours: [0.2, 1, 24, 120, 336, 768, 1368]
+    early_hours: [0.2, 1]
+    mid_hours: [24, 120, 336]
+    late_hours: [768, 1368]
+  pods:
+    role: STRUCTURAL_TRANSFER_DIAGNOSTIC
+    provisional_mapping: true
+    used_for_parameter_selection: false
+    positive_selection_evidence: false
+  obt:
+    role: CONSISTENCY_CHECK_ONLY
+    table_sha256: 032c1a6a8e57b63d9a13d381da049252de1e5671d9f67be9a61ad548aa462a5e
+    used_for_parameter_selection: false
+    positive_selection_evidence: false
+
+metrics:
+  - log10_rmse
+  - log10_mean_bias
+  - median_predicted_to_observed_ratio
+  - factor_2_coverage
+  - factor_10_coverage
+
+support_criteria:
+  overall_log10_rmse_improvement_minimum_dex: 0.50
+  late_log10_rmse_improvement_minimum_dex: 0.50
+  early_prediction_factor_limit: 3.0
+  early_log10_error_worsening_maximum_dex: 0.25
+  both_chamber_profiles_required: true
+  forcing_scenarios_required_per_profile: 5
+  require_finite_nonnegative: true
+  mass_closure_absolute_tolerance_bq_m2: 1.0e-6
+  internal_transfer_absolute_tolerance_bq_m2: 1.0e-9
+  pods_log10_rmse_worsening_maximum_dex: 0.50
+  obt_absolute_log10_error_worsening_maximum_dex: 0.50
+
+decision_rules:
+  both_fail: H2_H3_NOT_TRANSFERABLE
+  only_h2: H2_PARALLEL_RESIDUAL_TRANSFER_SUPPORTED
+  only_h3: H3_REVERSIBLE_EXCHANGE_TRANSFER_SUPPORTED
+  both_pass: MULTIPLE_SLOW_MECHANISMS_TRANSFER_SUPPORTED
+
+failure_rules:
+  - any SB4 observation is used to fit or select mechanism parameters
+  - an H2 or H3 parameter differs from the bound SB1 frozen contract
+  - either reconstructed chamber profile is represented as observed
+  - fewer or more than 42 declared transfer runs are executed
+  - a formal src or configs file is changed
+  - the trusted external evidence registry is changed
+  - a state or concentration is negative or nonfinite
+  - an internal H2 or H3 transfer violates activity conservation
+
+required_final_state:
+  formal_v3_physics: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
