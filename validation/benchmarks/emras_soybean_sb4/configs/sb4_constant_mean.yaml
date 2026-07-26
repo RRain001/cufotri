@@ -1,0 +1,12 @@
+case_id: EMRAS_SOYBEAN_SB4_PDF_ERA5_V1
+profile_id: CONSTANT_REPORTED_MEAN
+profile_evidence_class: RECONSTRUCTED
+reported_mean_air_moisture_hto_bq_ml: 52700.0
+time_start_local: 2001-08-09T09:30:00+09:00
+time_end_local: 2001-08-09T10:30:00+09:00
+time_step_min: 5
+shape: CONSTANT
+start_boundary_assumption: CONSTANT_EQUALS_REPORTED_MEAN_AT_09_30
+sb4_observed_curve_claim: false
+empirical_validation_claim: false
+production_gate_eligible: false

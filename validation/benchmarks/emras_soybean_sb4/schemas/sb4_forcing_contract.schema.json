@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SB4 reconstructed forcing contract",
+  "type": "object",
+  "required": [
+    "case_id",
+    "profile_id",
+    "profile_evidence_class",
+    "reported_mean_air_moisture_hto_bq_ml",
+    "sb4_observed_curve_claim",
+    "empirical_validation_claim",
+    "production_gate_eligible"
+  ],
+  "properties": {
+    "case_id": {
+      "const": "EMRAS_SOYBEAN_SB4_PDF_ERA5_V1"
+    },
+    "profile_id": {
+      "enum": [
+        "CONSTANT_REPORTED_MEAN",
+        "SCALED_SB1_OBSERVED_SHAPE"
+      ]
+    },
+    "profile_evidence_class": {
+      "const": "RECONSTRUCTED"
+    },
+    "reported_mean_air_moisture_hto_bq_ml": {
+      "const": 52700.0
+    },
+    "sb4_observed_curve_claim": {
+      "const": false
+    },
+    "empirical_validation_claim": {
+      "const": false
+    },
+    "production_gate_eligible": {
+      "const": false
+    }
+  },
+  "additionalProperties": true
+}

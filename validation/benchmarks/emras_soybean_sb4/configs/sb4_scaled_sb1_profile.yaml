@@ -1,0 +1,14 @@
+case_id: EMRAS_SOYBEAN_SB4_PDF_ERA5_V1
+profile_id: SCALED_SB1_OBSERVED_SHAPE
+profile_evidence_class: RECONSTRUCTED
+reported_mean_air_moisture_hto_bq_ml: 52700.0
+time_start_local: 2001-08-09T09:30:00+09:00
+time_end_local: 2001-08-09T10:30:00+09:00
+time_step_min: 5
+shape_source: SB1_TABLE_I_4_6_PUBLISHED_SHAPE
+shape_source_pdf_page: 289
+shape_source_start_boundary_status: SB1_09_30_NOT_REPORTED_ASSUMED_ZERO
+scaling_rule: PRESERVE_RELATIVE_SHAPE_AND_MATCH_SB4_TRAPEZOID_MEAN
+sb4_observed_curve_claim: false
+empirical_validation_claim: false
+production_gate_eligible: false
