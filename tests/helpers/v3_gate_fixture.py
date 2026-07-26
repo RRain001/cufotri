@@ -16,6 +16,12 @@ from scripts.verify_v3_physics_start_gate import (
     trusted_registry_projection_hash,
 )
 from validation.evidence_validation import calculate_sha256
+from validation.parameter_contract import (
+    canonicalize_parameter_contract,
+    parameter_contract_hash,
+    parameter_result_hash,
+    validate_calibrated_parameters,
+)
 
 
 def git(repository: Path, *arguments: str) -> str:
@@ -244,6 +250,28 @@ def build_gate_repository(
         "prediction_id_column": "sample_id",
         "prediction_value_column": "prediction",
     }
+    parameter_contract = [
+        {
+            "name": "turnover_rate",
+            "unit": "s-1",
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "lower_inclusive": True,
+            "upper_inclusive": True,
+            "transform": "IDENTITY",
+        },
+        {
+            "name": "exchange_rate",
+            "unit": "s-1",
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "lower_inclusive": True,
+            "upper_inclusive": True,
+            "transform": "IDENTITY",
+        },
+    ]
+    canonical_contract = canonicalize_parameter_contract(parameter_contract)
+    contract_hash = parameter_contract_hash(canonical_contract)
     write_yaml(
         preregistration_file,
         {
@@ -263,7 +291,7 @@ def build_gate_repository(
                     "calculation": metric_calculation,
                 }
             ],
-            "parameter_set": ["turnover_rate"],
+            "parameter_contract": parameter_contract,
         },
     )
     git(root, "add", preregistration_file.relative_to(root).as_posix())
@@ -297,13 +325,30 @@ def build_gate_repository(
                     "calculation": metric_calculation,
                 }
             ],
-            "parameter_set": ["turnover_rate"],
+            "parameter_contract": list(reversed(parameter_contract)),
+            "parameter_contract_hash": contract_hash,
             "status": "FROZEN_BEFORE_HOLDOUT_INSPECTION",
         },
     )
 
-    parameters = {"turnover_rate": 0.1}
-    parameter_hash = canonical_hash(parameters)
+    parameters = {
+        "exchange_rate": {
+            "value": 0.2,
+            "unit": "s-1",
+            "transform": "IDENTITY",
+        },
+        "turnover_rate": {
+            "value": 0.1,
+            "unit": "s-1",
+            "transform": "IDENTITY",
+        },
+    }
+    canonical_parameters = validate_calibrated_parameters(
+        canonical_contract,
+        parameters,
+        artifact_label="fixture",
+    )
+    parameter_hash = parameter_result_hash(canonical_parameters)
     config_hash = "1" * 64
     calibration_path = root / "validation/results/calibration.yaml"
     write_yaml(
@@ -316,6 +361,7 @@ def build_gate_repository(
             "preregistration_sha256": preregistration_sha256,
             "preregistration_commit": preregistration_commit,
             "calibration_ids": ["CAL_001"],
+            "parameter_contract_hash": contract_hash,
             "parameter_result_hash": parameter_hash,
             "config_hash": config_hash,
             "model_commit": preregistration_commit,
@@ -332,7 +378,22 @@ def build_gate_repository(
             "schema_version": "1.0.0",
             "dataset_id": dataset_id,
             "preregistration_sha256": preregistration_sha256,
+            "parameter_contract_hash": contract_hash,
             "parameter_result_hash": parameter_hash,
+            "parameter_results": {
+                "exchange_rate": {
+                    "status": "IDENTIFIABLE",
+                    "lower_interval": 0.1,
+                    "upper_interval": 0.3,
+                    "boundary_hit": False,
+                },
+                "turnover_rate": {
+                    "status": "IDENTIFIABLE",
+                    "lower_interval": 0.05,
+                    "upper_interval": 0.15,
+                    "boundary_hit": False,
+                },
+            },
             "methods": ["jacobian", "profile_likelihood"],
             "condition_number": 2.0,
             "max_parameter_correlation": 0.2,
@@ -365,7 +426,9 @@ def build_gate_repository(
             "preregistration_commit": preregistration_commit,
             "model_commit": preregistration_commit,
             "config_hash": config_hash,
+            "parameter_contract_hash": contract_hash,
             "parameter_result_hash": parameter_hash,
+            "parameters": parameters,
             "holdout_ids": ["HOLD_001"],
             "result_file_checksums": {
                 model_output_path.relative_to(root).as_posix(): calculate_sha256(

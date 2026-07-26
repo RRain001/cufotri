@@ -259,6 +259,30 @@ def _build_independent_parameter_chain(
             "prediction_value_column": "predicted_bq",
         },
     }
+    parameter_contract = [
+        {
+            "name": "approved_decay_rate",
+            "unit": "s-1",
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "lower_inclusive": True,
+            "upper_inclusive": True,
+            "transform": "IDENTITY",
+        }
+    ]
+    parameter_contract_hash = _canonical_hash(
+        [
+            {
+                "name": "approved_decay_rate",
+                "unit": "s-1",
+                "lower_bound": 0.0,
+                "upper_bound": 1.0,
+                "lower_inclusive": True,
+                "upper_inclusive": True,
+                "transform": "IDENTITY",
+            }
+        ]
+    )
     frozen = repository / "validation/review2/frozen_preregistration.yaml"
     _write_yaml(
         frozen,
@@ -268,7 +292,7 @@ def _build_independent_parameter_chain(
             "calibration_ids": ["CAL_R2"],
             "holdout_ids": ["HOLD_R2"],
             "primary_metrics": [metric_rule],
-            "parameter_set": ["approved_decay_rate"],
+            "parameter_contract": parameter_contract,
             "status": "FROZEN_BEFORE_HOLDOUT_INSPECTION",
         },
     )
@@ -290,13 +314,29 @@ def _build_independent_parameter_chain(
             "calibration_ids": ["CAL_R2"],
             "holdout_ids": ["HOLD_R2"],
             "primary_metrics": [metric_rule],
-            "parameter_set": ["approved_decay_rate"],
+            "parameter_contract": parameter_contract,
+            "parameter_contract_hash": parameter_contract_hash,
             "status": "FROZEN_BEFORE_HOLDOUT_INSPECTION",
         },
     )
 
-    parameters = {"approved_decay_rate": 0.2}
-    parameter_hash = _canonical_hash(parameters)
+    parameters = {
+        "approved_decay_rate": {
+            "value": 0.2,
+            "unit": "s-1",
+            "transform": "IDENTITY",
+        }
+    }
+    parameter_hash = _canonical_hash(
+        [
+            {
+                "name": "approved_decay_rate",
+                "value": 0.2,
+                "unit": "s-1",
+                "transform": "IDENTITY",
+            }
+        ]
+    )
     config_hash = "3" * 64
     calibration = repository / "validation/review2/calibration.yaml"
     _write_yaml(
@@ -309,6 +349,7 @@ def _build_independent_parameter_chain(
             "preregistration_sha256": frozen_hash,
             "preregistration_commit": preregistration_commit,
             "calibration_ids": ["CAL_R2"],
+            "parameter_contract_hash": parameter_contract_hash,
             "parameter_result_hash": parameter_hash,
             "config_hash": config_hash,
             "model_commit": preregistration_commit,
@@ -325,7 +366,16 @@ def _build_independent_parameter_chain(
             "schema_version": "1.0.0",
             "dataset_id": dataset_id,
             "preregistration_sha256": frozen_hash,
+            "parameter_contract_hash": parameter_contract_hash,
             "parameter_result_hash": parameter_hash,
+            "parameter_results": {
+                "approved_decay_rate": {
+                    "status": "IDENTIFIABLE",
+                    "lower_interval": 0.1,
+                    "upper_interval": 0.3,
+                    "boundary_hit": False,
+                }
+            },
             "methods": ["profile_likelihood"],
             "condition_number": 1.2,
             "max_parameter_correlation": 0.1,
@@ -352,7 +402,9 @@ def _build_independent_parameter_chain(
             "preregistration_commit": preregistration_commit,
             "model_commit": preregistration_commit,
             "config_hash": config_hash,
+            "parameter_contract_hash": parameter_contract_hash,
             "parameter_result_hash": parameter_hash,
+            "parameters": parameters,
             "holdout_ids": ["HOLD_R2"],
             "result_file_checksums": {
                 prediction_reference: calculate_sha256(predictions)
@@ -444,8 +496,23 @@ def test_rejects_calibration_parameter_set_not_frozen_by_preregistration(
     )
     assert baseline["status"] == "READY_FOR_BOUNDED_V3_PHYSICS"
 
-    replacement_parameters = {"unregistered_rate": 0.2}
-    replacement_hash = _canonical_hash(replacement_parameters)
+    replacement_parameters = {
+        "unregistered_rate": {
+            "value": 0.2,
+            "unit": "s-1",
+            "transform": "IDENTITY",
+        }
+    }
+    replacement_hash = _canonical_hash(
+        [
+            {
+                "name": "unregistered_rate",
+                "value": 0.2,
+                "unit": "s-1",
+                "transform": "IDENTITY",
+            }
+        ]
+    )
     calibration = yaml.safe_load(
         paths["calibration"].read_text(encoding="utf-8")
     )
@@ -456,9 +523,18 @@ def test_rejects_calibration_parameter_set_not_frozen_by_preregistration(
         paths["identifiability"].read_text(encoding="utf-8")
     )
     identifiability["parameter_result_hash"] = replacement_hash
+    identifiability["parameter_results"] = {
+        "unregistered_rate": {
+            "status": "IDENTIFIABLE",
+            "lower_interval": 0.1,
+            "upper_interval": 0.3,
+            "boundary_hit": False,
+        }
+    }
     _write_yaml(paths["identifiability"], identifiability)
     holdout = yaml.safe_load(paths["holdout"].read_text(encoding="utf-8"))
     holdout["parameter_result_hash"] = replacement_hash
+    holdout["parameters"] = replacement_parameters
     _write_yaml(paths["holdout"], holdout)
     _git(
         tmp_path,
