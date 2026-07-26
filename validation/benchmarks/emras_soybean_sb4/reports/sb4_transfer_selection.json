@@ -1,0 +1,81 @@
+{
+  "protocol_id": "SB1_TO_SB4_FROZEN_MECHANISM_TRANSFER_V1",
+  "protocol_commit": "e7ff0d26968a2ae39b332a33e9d88afe355ab064",
+  "parameter_source_commit": "4b79f62741db4d4b51f4d608df33d2e13c499636",
+  "mechanism_parameter_result_hash": "f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9",
+  "sb4_parameter_refit_count": 0,
+  "selected_from_sb4": false,
+  "run_count": 42,
+  "candidate_results": {
+    "H2_SB1_FROZEN": {
+      "parameters": {
+        "slow_capture_fraction": 0.001,
+        "slow_release_rate_s": 1e-06
+      },
+      "parameter_source_commit": "4b79f62741db4d4b51f4d608df33d2e13c499636",
+      "selected_from_sb4": false,
+      "sb4_parameter_refit_count": 0,
+      "profiles": {
+        "CONSTANT_REPORTED_MEAN": {
+          "primary_overall_log10_rmse_improvement_dex": 1.1827743224468898,
+          "primary_late_log10_rmse_improvement_dex": 1.6802701343310886,
+          "primary_early_pass": true,
+          "forcing_pass_count": 7,
+          "pods_log10_rmse_worsening_dex": 0.0004528043087341782,
+          "obt_absolute_log10_error_worsening_dex": -0.0010939254402806409,
+          "profile_supported": true
+        },
+        "SCALED_SB1_OBSERVED_SHAPE": {
+          "primary_overall_log10_rmse_improvement_dex": 1.1824338495324995,
+          "primary_late_log10_rmse_improvement_dex": 1.6826460817157542,
+          "primary_early_pass": true,
+          "forcing_pass_count": 7,
+          "pods_log10_rmse_worsening_dex": 0.00045703024862175923,
+          "obt_absolute_log10_error_worsening_dex": -0.0011129696906098108,
+          "profile_supported": true
+        }
+      },
+      "all_mass_balance_pass": true,
+      "supported": true,
+      "status": "SUPPORTED_FOR_BOUNDED_CROSS_EXPERIMENT_DESIGN"
+    },
+    "H3_SB1_FROZEN": {
+      "parameters": {
+        "fast_to_slow_rate_s": 1e-07,
+        "slow_to_fast_rate_s": 1e-06
+      },
+      "parameter_source_commit": "4b79f62741db4d4b51f4d608df33d2e13c499636",
+      "selected_from_sb4": false,
+      "sb4_parameter_refit_count": 0,
+      "profiles": {
+        "CONSTANT_REPORTED_MEAN": {
+          "primary_overall_log10_rmse_improvement_dex": 1.1697972078102146,
+          "primary_late_log10_rmse_improvement_dex": 1.574312975015064,
+          "primary_early_pass": true,
+          "forcing_pass_count": 7,
+          "pods_log10_rmse_worsening_dex": 0.00017089487663768388,
+          "obt_absolute_log10_error_worsening_dex": -0.0005302674425589071,
+          "profile_supported": true
+        },
+        "SCALED_SB1_OBSERVED_SHAPE": {
+          "primary_overall_log10_rmse_improvement_dex": 1.1699578495669825,
+          "primary_late_log10_rmse_improvement_dex": 1.575084048733237,
+          "primary_early_pass": true,
+          "forcing_pass_count": 7,
+          "pods_log10_rmse_worsening_dex": 0.000168385538500182,
+          "obt_absolute_log10_error_worsening_dex": -0.0005301132622756999,
+          "profile_supported": true
+        }
+      },
+      "all_mass_balance_pass": true,
+      "supported": true,
+      "status": "SUPPORTED_FOR_BOUNDED_CROSS_EXPERIMENT_DESIGN"
+    }
+  },
+  "sb4_transfer_status": "MULTIPLE_SLOW_MECHANISMS_TRANSFER_SUPPORTED",
+  "formal_v3_design_recommendation": "BOUNDED_COMPARATIVE_DESIGN_REVIEW_ONLY",
+  "formal_v3_physics": "NOT_STARTED",
+  "empirical_validation_claim": false,
+  "production_gate_eligible": false,
+  "v3_physics_start_gate": "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+}
