@@ -1,0 +1,7 @@
+experiment,compartment,obt_bq_ml_combustion_water,obt_bq_l_combustion_water,normalized_obt,reported_mean_air_moisture_hto_bq_ml,source_table,source_page,source_printed_page,source_row,transcription_method,verification_status
+SB4,stem,19.8,19800,,52700,Table 5.3,105,97,SB4 stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,leaves,8.8,8800,,52700,Table 5.3,105,97,SB4 leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,plant_body_average,14.3,14300,0.000271,52700,Table 5.3,105,97,SB4 body average and normalized average,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,shell,74.7,74700,,52700,Table 5.3,105,97,SB4 shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,seeds,200.0,200000,,52700,Table 5.3,105,97,SB4 seeds,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,pods_average,137.4,137400,0.00261,52700,Table 5.3,105,97,SB4 pods average and normalized average,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL

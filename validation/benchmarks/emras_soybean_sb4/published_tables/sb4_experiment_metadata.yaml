@@ -1,0 +1,36 @@
+experiment: SB4
+scenario: EMRAS_SOYBEAN
+sowing_date: 2001-05-22
+flowering_date: 2001-07-07
+pod_growth_start:
+  value: 2001-07-10
+  status: APPROXIMATELY_ON_OR_AFTER
+exposure_date: 2001-08-09
+exposure_start_local: 2001-08-09T09:30:00+09:00
+exposure_end_local: 2001-08-09T10:30:00+09:00
+exposure_duration_h: 1.0
+harvest_date: 2001-10-05
+harvest_reference_time_local: 2001-10-05T10:30:00+09:00
+soil_surface_covered_during_exposure: true
+soil_cover_material: vinyl_paper
+outdoor_growth_after_exposure: true
+reported_mean_air_moisture_hto_bq_ml: 52700
+chamber_curve_status: NOT_PUBLICLY_REPORTED_FOR_SB4
+chamber_meteorology_status: NOT_PUBLICLY_REPORTED_AT_5_MIN_FOR_SB4
+sampling:
+  requested_compartments: [plant_body, pods]
+  hours_after_exposure: [0.2, 1, 24, 120, 336, 768, 1368]
+measurement:
+  instrument: Quantulus 1220 liquid scintillation detector
+  repetitions: 3
+  count_duration_min: 20_to_30
+  analytical_relative_uncertainty: 0.10
+  total_uncertainty_status: PARTIAL_NOT_FULLY_QUANTIFIED
+  detection_limit_status: NOT_REPORTED
+source:
+  tfwt_obt_pdf_page: 105
+  biomass_pdf_page: 287
+  sampling_pdf_page: 290
+  verification_status: VERIFIED_TEXT_AND_VISUAL_PAGE_REVIEW
+empirical_validation_claim: false
+production_gate_eligible: false

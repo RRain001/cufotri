@@ -1,0 +1,17 @@
+experiment,stage,mass_basis,component,value,unit,source_table,source_page,source_printed_page,source_row,source_column,transcription_method,verification_status
+SB4,exposure,fresh,stem,545.8,g fresh weight m-2,Table I.4.2,287,279,SB4,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,fresh,leaves,914.6,g fresh weight m-2,Table I.4.2,287,279,SB4,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,fresh,shell,392.8,g fresh weight m-2,Table I.4.2,287,279,SB4,Shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,fresh,seed,162.6,g fresh weight m-2,Table I.4.2,287,279,SB4,Seed,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,dry,stem,174.3,g dry weight m-2,Table I.4.3,287,279,SB4,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,dry,leaves,303.5,g dry weight m-2,Table I.4.3,287,279,SB4,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,dry,shell,109.5,g dry weight m-2,Table I.4.3,287,279,SB4,Shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,exposure,dry,seed,44.5,g dry weight m-2,Table I.4.3,287,279,SB4,Seed,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,fresh,stem,1194.5,g fresh weight m-2,Table I.4.4,287,279,SB4,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,fresh,leaves,1687.1,g fresh weight m-2,Table I.4.4,287,279,SB4,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,fresh,shell,876.0,g fresh weight m-2,Table I.4.4,287,279,SB4,Shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,fresh,seed,193.9,g fresh weight m-2,Table I.4.4,287,279,SB4,Seed,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,dry,stem,329.2,g dry weight m-2,Table I.4.5,287,279,SB4,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,dry,leaves,617.1,g dry weight m-2,Table I.4.5,287,279,SB4,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,dry,shell,261.2,g dry weight m-2,Table I.4.5,287,279,SB4,Shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB4,harvest,dry,seed,79.4,g dry weight m-2,Table I.4.5,287,279,SB4,Seed,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL

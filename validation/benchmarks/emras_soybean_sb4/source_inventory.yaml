@@ -1,0 +1,30 @@
+case_id: EMRAS_SOYBEAN_SB4_PDF_ERA5_V1
+source_document:
+  title: IAEA EMRAS Tritium Working Group report
+  local_path: validation/external_local/emras_soybean_sb1/references/IAEA-emras-tritium-wg.pdf
+  sha256: 15b2591d82d8276c83030327d6a65d3f5a2e2ec3b11429d63b7c39461f50d211
+  redistribution_status: NOT_RECOMMITTED_REUSED_LOCAL_SOURCE
+  reviewed_pdf_pages: [105, 287, 290]
+  reviewed_printed_pages: [97, 279, 282]
+  review_method: PDF_TEXT_LAYER_PLUS_RENDERED_PAGE_CELL_BY_CELL
+tables:
+  tfwt: Table 5.2
+  obt: Table 5.3
+  exposure_fresh_biomass: Table I.4.2
+  exposure_dry_biomass: Table I.4.3
+  harvest_fresh_biomass: Table I.4.4
+  harvest_dry_biomass: Table I.4.5
+  sampling_schedule: Table I.4.10
+era5_raw:
+  reuse_case: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1
+  reuse_status: CHECKSUM_REQUIRED_NO_REDOWLOAD
+  points:
+    - CENTRE
+    - NORTH_0P25
+    - SOUTH_0P25
+    - EAST_0P25
+    - WEST_0P25
+evidence_class: HYBRID_LITERATURE_REANALYSIS_RECONSTRUCTED_CHAMBER
+empirical_validation_claim: false
+production_gate_eligible: false
+trusted_registry_eligible: false

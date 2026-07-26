@@ -1,0 +1,18 @@
+{
+  "biomass_cell_count": 16,
+  "case_id": "EMRAS_SOYBEAN_SB4_PDF_ERA5_V1",
+  "empirical_validation_claim": false,
+  "evidence_class": "HYBRID_LITERATURE_REANALYSIS_RECONSTRUCTED_CHAMBER",
+  "obt_observation_count": 6,
+  "production_gate_eligible": false,
+  "published_table_checksums": {
+    "sb4_biomass.csv": "07b5ecaf3f46808fc14a04047a51cb79000c67fa180ccf08b51e45dbeb5b8f16",
+    "sb4_experiment_metadata.yaml": "8e9b9e5dba4655bc27cd55eac39ff25f8e54abb1c3070221afafa8ffaadcf132",
+    "sb4_obt_harvest.csv": "032c1a6a8e57b63d9a13d381da049252de1e5671d9f67be9a61ad548aa462a5e",
+    "sb4_sampling_schedule.csv": "d44f8aefb24c8c8783a398126cd661e02a25c29d27b9d6292ae76d721ffc6a13",
+    "sb4_tfwt_observations.csv": "af51427038da81530d77586a0c5d0275757bcc7b8e10c697b07f148b28f933cc"
+  },
+  "sampling_schedule_count": 14,
+  "source_document_sha256": "15b2591d82d8276c83030327d6a65d3f5a2e2ec3b11429d63b7c39461f50d211",
+  "tfwt_observation_count": 14
+}
