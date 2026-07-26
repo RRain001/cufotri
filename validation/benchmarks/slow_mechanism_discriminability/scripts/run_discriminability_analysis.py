@@ -78,8 +78,7 @@ def git_output(*arguments: str) -> str:
     ).stdout.strip()
 
 
-def load_protocol() -> dict[str, Any]:
-    protocol = yaml.safe_load(PROTOCOL_PATH.read_text(encoding="utf-8"))
+def validate_protocol_mapping(protocol: dict[str, Any]) -> None:
     if not isinstance(protocol, dict):
         raise ValueError("Discriminability protocol must be a mapping")
     if protocol["status"] != "FROZEN_BEFORE_SYNTHETIC_EXECUTION":
@@ -91,10 +90,87 @@ def load_protocol() -> dict[str, Any]:
         or scope["parameter_bound_expansion_allowed"]
     ):
         raise ValueError("Parameter refit or bound expansion is not allowed")
+    if (
+        scope["synthetic_status"]
+        != "DESIGN_ONLY_NOT_EXPERIMENTAL_EVIDENCE"
+        or scope["empirical_validation_claim"]
+        or scope["production_gate_eligible"]
+        or scope["trusted_registry_eligible"]
+        or scope["formal_model_change"]
+        or scope["formal_v3_physics"] != "NOT_STARTED"
+        or scope["v3_physics_start_gate"]
+        != "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+        or scope["model_selection_from_current_sb1_sb4_data_authorized"]
+    ):
+        raise ValueError("Design-only evidence or production-gate scope changed")
     if protocol["observables"]["latent_pool_used_for_classification"]:
         raise ValueError("Latent pool cannot be used for classification")
+    if (
+        protocol["observables"]["primary"]["id"]
+        != "total_plant_body_tfwt"
+        or protocol["observables"]["primary"]["classification_role"]
+        != "PRIMARY_ONLY"
+    ):
+        raise ValueError("Primary observable contract changed")
     if len(protocol["designs"]) != 6:
         raise ValueError("Exactly six frozen designs are required")
+    expected_parameters = {
+        "H2_SB1_FROZEN": {
+            "slow_capture_fraction": 0.001,
+            "slow_release_rate_s": 1.0e-6,
+        },
+        "H3_SB1_FROZEN": {
+            "fast_to_slow_rate_s": 1.0e-7,
+            "slow_to_fast_rate_s": 1.0e-6,
+        },
+    }
+    for mechanism_id, parameters in expected_parameters.items():
+        if parameter_values(protocol, mechanism_id) != parameters:
+            raise ValueError(f"{mechanism_id} frozen parameters changed")
+        model = protocol["target_models"][mechanism_id]
+        if model["refit_allowed"] or model["selected_from_sb4"]:
+            raise ValueError(f"{mechanism_id} refit or SB4 selection enabled")
+    if protocol["sampling"]["candidate_hours_after_final_exposure"] != [
+        0.2,
+        0.5,
+        1,
+        3,
+        6,
+        12,
+        24,
+        48,
+        72,
+        120,
+        168,
+        336,
+        504,
+        768,
+    ] or not protocol["sampling"]["frozen_before_execution"]:
+        raise ValueError("Frozen sampling grid changed")
+    monte_carlo = protocol["monte_carlo"]
+    if (
+        monte_carlo["coefficient_of_variation"] != [0.10, 0.20, 0.30]
+        or monte_carlo["random_seed"] != 20260727
+        or monte_carlo["replicates_per_truth_model_design_noise"] != 1000
+        or monte_carlo["truth_models"] != list(MECHANISMS)
+        or monte_carlo["parameter_refit"]
+        or monte_carlo["latent_pool_input_allowed"]
+    ):
+        raise ValueError("Frozen Monte Carlo contract changed")
+    criteria = protocol["design_success_criteria"]
+    if (
+        criteria["classification_accuracy_minimum"]
+        != {"cv_0_10": 0.90, "cv_0_20": 0.80, "cv_0_30": 0.70}
+        or criteria["strong_pointwise_separation"]
+        != {"delta_log10_minimum": 0.30, "minimum_time_point_count": 2}
+        or criteria["latent_pool_observation_allowed"]
+    ):
+        raise ValueError("Frozen discrimination criteria changed")
+
+
+def load_protocol() -> dict[str, Any]:
+    protocol = yaml.safe_load(PROTOCOL_PATH.read_text(encoding="utf-8"))
+    validate_protocol_mapping(protocol)
     relative = PROTOCOL_PATH.relative_to(ROOT).as_posix()
     subprocess.run(
         ["git", "ls-files", "--error-unmatch", relative],
@@ -1498,9 +1574,13 @@ def design_summary(protocol: dict[str, Any]) -> pd.DataFrame:
             "DISCRIMINATING_DESIGN_SUPPORTED"
             if row.base_criteria_pass and row.robustness_pass
             else (
-                "BASE_PROMISING_PENDING_OR_FAILED_ROBUSTNESS"
-                if row.base_criteria_pass
-                else "SYNTHETIC_DESIGN_NOT_ROBUST"
+                "SYNTHETIC_DESIGN_NOT_ROBUST"
+                if row.base_criteria_pass and row.robustness_evaluated
+                else (
+                    "BASE_CRITERIA_PASS_ROBUSTNESS_NOT_EVALUATED"
+                    if row.base_criteria_pass
+                    else "SYNTHETIC_DESIGN_NOT_ROBUST"
+                )
             )
         )
         for row in frame.itertuples()
@@ -1552,6 +1632,13 @@ def repeat_recommendation(
         if passed:
             return max(3, replicate_count)
     return 6
+
+
+def all_factor_levels_pass(
+    robustness: pd.DataFrame, factor: str
+) -> bool:
+    selected = robustness[robustness["factor"] == factor]
+    return bool(len(selected) and selected["criteria_pass"].all())
 
 
 def write_reports(protocol: dict[str, Any]) -> None:
@@ -1818,6 +1905,13 @@ specification is authorized from this screen.
         if len(supported)
         else summary.iloc[0]
     )
+    design_status_lines = "\n".join(
+        f"{row.design_id.split('_', 1)[0]}_STATUS = {row.final_status}"
+        for row in summary.sort_values("design_id").itertuples()
+    )
+    best_robustness = robustness[
+        robustness["design_id"] == best_design
+    ]
     main_report = f"""# H2/H3 slow-mechanism discriminability design
 
 ```text
@@ -1850,6 +1944,8 @@ CV10_CLASSIFICATION_ACCURACY = {best_row['cv10_min_accuracy']:.3f}
 CV20_CLASSIFICATION_ACCURACY = {best_row['cv20_min_accuracy']:.3f}
 CV30_CLASSIFICATION_ACCURACY = {best_row['cv30_min_accuracy']:.3f}
 
+{design_status_lines}
+
 H2_H3_SELECTION_FROM_CURRENT_DATA = NOT_AUTHORIZED
 SYNTHETIC_DESIGN_STATUS = DESIGN_ONLY
 EXPERIMENT_SPECIFICATION = {spec_status}
@@ -1873,10 +1969,11 @@ every reported level passes both truth directions, all noise thresholds,
 finite/nonnegative checks and the independent paired-transfer ledger.
 
 ```text
-CONCENTRATION_ROBUSTNESS = {bool(robustness[robustness['factor'] == 'exposure_concentration_multiplier']['criteria_pass'].all())}
-RH_ROBUSTNESS = {bool(robustness[robustness['factor'] == 'relative_humidity_percent']['criteria_pass'].all())}
-WIND_ROBUSTNESS = {bool(robustness[robustness['factor'] == 'wind_speed_m_s']['criteria_pass'].all())}
-LEAF_PARAMETER_ROBUSTNESS = {bool(robustness[robustness['factor'] == 'stomatal_resistance_multiplier']['criteria_pass'].all())}
+BEST_DESIGN_ROBUSTNESS_SCOPE = {best_design}
+CONCENTRATION_ROBUSTNESS = {all_factor_levels_pass(best_robustness, 'exposure_concentration_multiplier')}
+RH_ROBUSTNESS = {all_factor_levels_pass(best_robustness, 'relative_humidity_percent')}
+WIND_ROBUSTNESS = {all_factor_levels_pass(best_robustness, 'wind_speed_m_s')}
+LEAF_PARAMETER_ROBUSTNESS = {all_factor_levels_pass(best_robustness, 'stomatal_resistance_multiplier')}
 ALL_BASE_RUNS_FINITE_NONNEGATIVE = {bool(qa['finite_nonnegative_pass'].all())}
 ALL_BASE_RUNS_MASS_CONSERVATIVE = {bool(qa['mass_conservation_pass'].all())}
 LATENT_SLOW_POOL_USED_FOR_CLASSIFICATION = FALSE

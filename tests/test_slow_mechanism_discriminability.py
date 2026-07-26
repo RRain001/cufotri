@@ -21,6 +21,8 @@ PROTOCOL_PATH = (
 SCRIPT = (
     BENCHMARK / "scripts" / "run_discriminability_analysis.py"
 )
+RESULTS = BENCHMARK / "results"
+REPORTS = BENCHMARK / "reports"
 
 
 def load_runner():
@@ -251,20 +253,227 @@ def test_design_branch_not_production_gate_eligible() -> None:
 def test_attack_modified_noise_level_rejected_by_frozen_contract() -> None:
     forged = copy.deepcopy(PROTOCOL)
     forged["monte_carlo"]["coefficient_of_variation"] = [0.10, 0.25, 0.30]
-    assert forged["monte_carlo"]["coefficient_of_variation"] != [
-        0.10,
-        0.20,
-        0.30,
-    ]
+    with pytest.raises(ValueError, match="Monte Carlo"):
+        RUNNER.validate_protocol_mapping(forged)
 
 
 def test_attack_parameter_refit_rejected_by_frozen_contract() -> None:
     forged = copy.deepcopy(PROTOCOL)
     forged["scope"]["parameter_refit_allowed"] = True
-    assert forged["scope"]["parameter_refit_allowed"] is not False
+    with pytest.raises(ValueError, match="refit"):
+        RUNNER.validate_protocol_mapping(forged)
 
 
 def test_attack_latent_pool_classifier_rejected_by_frozen_contract() -> None:
     forged = copy.deepcopy(PROTOCOL)
     forged["observables"]["latent_pool_used_for_classification"] = True
-    assert forged["observables"]["latent_pool_used_for_classification"] is not False
+    with pytest.raises(ValueError, match="Latent pool"):
+        RUNNER.validate_protocol_mapping(forged)
+
+
+def test_attack_sampling_grid_change_rejected_after_execution() -> None:
+    forged = copy.deepcopy(PROTOCOL)
+    forged["sampling"]["candidate_hours_after_final_exposure"].append(1000)
+    with pytest.raises(ValueError, match="sampling grid"):
+        RUNNER.validate_protocol_mapping(forged)
+
+
+def test_attack_synthetic_empirical_claim_rejected() -> None:
+    forged = copy.deepcopy(PROTOCOL)
+    forged["scope"]["empirical_validation_claim"] = True
+    with pytest.raises(ValueError, match="Design-only evidence"):
+        RUNNER.validate_protocol_mapping(forged)
+
+
+def test_all_required_output_contract_files_exist() -> None:
+    for name in PROTOCOL["output_contract"]["required_outputs"]:
+        assert (RESULTS / name).is_file() or (REPORTS / name).is_file()
+    assert (
+        ROOT / PROTOCOL["output_contract"]["experiment_specification"]
+    ).is_file()
+    assert (ROOT / PROTOCOL["output_contract"]["final_report"]).is_file()
+
+
+def test_all_base_runs_are_finite_nonnegative_and_conservative() -> None:
+    qa = pd.read_csv(RESULTS / "design_run_qa.csv")
+    assert len(qa) == 12
+    assert qa["finite_nonnegative_pass"].all()
+    assert qa["mass_conservation_pass"].all()
+    assert (qa["parameter_refit_count"] == 0).all()
+    assert (qa["nan_count"] == 0).all()
+    assert (qa["inf_count"] == 0).all()
+    assert (qa["negative_inventory_count"] == 0).all()
+    assert (qa["negative_concentration_count"] == 0).all()
+    assert (
+        qa["maximum_formal_mass_closure_abs_bq_m2"] <= 1.0e-6
+    ).all()
+    assert (
+        qa["maximum_internal_transfer_ledger_residual_abs_bq_m2"]
+        <= 1.0e-9
+    ).all()
+
+
+def test_synthetic_predictions_are_design_only_and_observable_only() -> None:
+    predictions = pd.read_csv(
+        RESULTS / "synthetic_design_predictions.csv"
+    )
+    assert set(predictions["design_id"]) == set(PROTOCOL["designs"])
+    assert set(predictions["mechanism_id"]) == set(
+        PROTOCOL["monte_carlo"]["truth_models"]
+    )
+    assert set(predictions["evidence_class"]) == {"SYNTHETIC_DESIGN_ONLY"}
+    assert set(predictions["classification_observable"]) == {
+        "total_plant_body_tfwt"
+    }
+    assert not predictions["latent_pool_used_for_classification"].any()
+    assert (predictions["parameter_refit_count"] == 0).all()
+    numeric = predictions.select_dtypes(include=[np.number]).to_numpy()
+    assert np.isfinite(numeric).all()
+    assert (
+        predictions[
+            [
+                "plant_body_tfwt_bq_l_water",
+                "plant_fast_tfwt_inventory_bq_m2",
+                "plant_slow_tfwt_inventory_bq_m2",
+            ]
+        ]
+        >= 0
+    ).all().all()
+
+
+def test_monte_carlo_output_covers_frozen_truth_noise_matrix() -> None:
+    frame = pd.read_csv(RESULTS / "monte_carlo_classification.csv")
+    expected = {
+        (design, truth, cv)
+        for design in PROTOCOL["designs"]
+        for truth in PROTOCOL["monte_carlo"]["truth_models"]
+        for cv in PROTOCOL["monte_carlo"]["coefficient_of_variation"]
+    }
+    actual = set(
+        zip(
+            frame["design_id"],
+            frame["truth_model"],
+            frame["coefficient_of_variation"],
+            strict=True,
+        )
+    )
+    assert actual == expected
+    assert (frame["replicate_count"] == 1000).all()
+    assert (frame["parameter_refit_count"] == 0).all()
+    assert not frame["latent_pool_used"].any()
+
+
+def test_attack_forged_accuracy_rejected_by_independent_recalculation() -> None:
+    predictions = pd.read_csv(
+        RESULTS / "synthetic_design_predictions.csv"
+    )
+    stored = pd.read_csv(RESULTS / "monte_carlo_classification.csv")
+    design_id = "D3_SHORT_STEP_24H"
+    truth_model = "H2_SB1_FROZEN"
+    cv = 0.20
+    hours, h2, h3 = RUNNER.prediction_vectors(predictions, design_id)
+    observations = RUNNER.noise_replicates(
+        PROTOCOL,
+        h2,
+        cv,
+        f"full_grid:{design_id}:{truth_model}:{cv:.2f}",
+    )
+    recalculated = RUNNER.classify_replicates(
+        observations, h2, h3, truth_model
+    )
+    selected = stored[
+        (stored["design_id"] == design_id)
+        & (stored["truth_model"] == truth_model)
+        & np.isclose(stored["coefficient_of_variation"], cv)
+    ]
+    assert len(selected) == 1
+    assert recalculated == pytest.approx(
+        float(selected.iloc[0]["correct_classification_rate"])
+    )
+    forged = min(1.0, recalculated + 0.001)
+    if forged == recalculated:
+        forged = recalculated - 0.001
+    assert forged != pytest.approx(recalculated)
+    assert len(hours) == 14
+
+
+def test_minimum_sampling_results_use_frozen_grid_and_bounds() -> None:
+    frame = pd.read_csv(RESULTS / "minimum_sampling_design.csv")
+    candidates = set(
+        float(value)
+        for value in PROTOCOL["sampling"][
+            "candidate_hours_after_final_exposure"
+        ]
+    )
+    assert set(frame["design_id"]) == set(PROTOCOL["designs"])
+    assert frame["sample_count"].between(3, 8).all()
+    for row in frame.itertuples():
+        hours = {float(value) for value in row.sample_hours.split(";")}
+        assert hours <= candidates
+        assert len(hours) == row.sample_count
+    assert (frame["parameter_refit_count"] == 0).all()
+    assert not frame["latent_pool_used"].any()
+
+
+def test_d3_is_only_fully_robust_screened_design() -> None:
+    frame = pd.read_csv(RESULTS / "design_robustness_matrix.csv")
+    assert (frame["parameter_refit_count"] == 0).all()
+    assert not frame["latent_pool_used"].any()
+    assert frame["finite_nonnegative_pass"].all()
+    assert frame["mass_conservation_pass"].all()
+    pass_by_design = frame.groupby("design_id")["criteria_pass"].all()
+    assert pass_by_design.to_dict() == {
+        "D3_SHORT_STEP_24H": True,
+        "D4_LONG_STEP_72H": False,
+        "D5_PULSE_WASHOUT_REEXPOSURE": False,
+    }
+
+
+@pytest.mark.parametrize(
+    ("filename", "mechanism_id", "parameter_names"),
+    [
+        (
+            "h2_local_sensitivity.csv",
+            "H2_SB1_FROZEN",
+            {"slow_capture_fraction", "slow_release_rate_s"},
+        ),
+        (
+            "h3_local_sensitivity.csv",
+            "H3_SB1_FROZEN",
+            {"fast_to_slow_rate_s", "slow_to_fast_rate_s"},
+        ),
+    ],
+)
+def test_local_sensitivity_is_bounded_not_global_claim(
+    filename: str,
+    mechanism_id: str,
+    parameter_names: set[str],
+) -> None:
+    frame = pd.read_csv(RESULTS / filename)
+    assert set(frame["mechanism_id"]) == {mechanism_id}
+    assert set(frame["parameter_name"]) == parameter_names
+    assert set(frame["design_id"]) == set(PROTOCOL["designs"])
+    assert not frame["global_identifiability_claim"].any()
+    numeric = frame.select_dtypes(include=[np.number]).to_numpy()
+    assert np.isfinite(numeric).all()
+    assert (frame["lower_parameter_value"] > 0).all()
+    assert (
+        frame["upper_parameter_value"]
+        > frame["lower_parameter_value"]
+    ).all()
+
+
+def test_final_report_preserves_design_only_gate_and_d3_robustness() -> None:
+    report = (
+        ROOT / PROTOCOL["output_contract"]["final_report"]
+    ).read_text(encoding="utf-8")
+    assert "BEST_DISCRIMINATING_DESIGN = D3_SHORT_STEP_24H" in report
+    assert "D3_STATUS = DISCRIMINATING_DESIGN_SUPPORTED" in report
+    assert "CONCENTRATION_ROBUSTNESS = True" in report
+    assert "RH_ROBUSTNESS = True" in report
+    assert "WIND_ROBUSTNESS = True" in report
+    assert "LEAF_PARAMETER_ROBUSTNESS = True" in report
+    assert "EMPIRICAL_VALIDATION_CLAIM = FALSE" in report
+    assert (
+        "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA" in report
+    )

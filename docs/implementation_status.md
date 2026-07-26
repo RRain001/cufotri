@@ -848,3 +848,33 @@ EXTERNAL_VALIDATION_PHASE1_STATUS = INFRASTRUCTURE_COMPLETE_EXTERNAL_EVIDENCE_BL
 V3_GATE_VERDICT = READY_FOR_V3_ARCHITECTURE_ONLY_EXTERNAL_VALIDATION_CONTINUES
 MERGE_EXTERNAL_VALIDATION_BRANCH_RECOMMENDATION = READY_FOR_MAINTAINER_REVIEW
 ```
+
+## V3 H2/H3 slow-mechanism discriminability design
+
+The independently reviewed SB4 benchmark was fast-forwarded to `main` at
+`e10c0be1d1fac51eb99643ceac71708426c30dd3`. From that baseline, the
+validation-only branch
+`codex/v3-slow-mechanism-discriminability-design` froze its protocol before
+synthetic execution. H2 and H3 retain the SB1 parameters from
+`4b79f62741db4d4b51f4d608df33d2e13c499636`; the parameter-refit count is
+zero.
+
+Existing SB1 and SB4 output distances remain insufficient to select H2 or H3.
+Six controlled exposure designs were screened with both models as Monte Carlo
+truth, 1,000 replicates per design/truth/noise cell, and CV 10/20/30%.
+D3, a 24 h low-concentration step followed by samples at 0.2, 48, and 120 h,
+is the only screened design that passes every preregistered concentration, RH,
+wind, stomatal-resistance, bidirectional classification, strong-separation,
+finite/nonnegative, and conservation check. This is an experiment-design
+result only, not empirical validation or model selection.
+
+```text
+SB1_EXISTING_DATA_DISCRIMINABILITY = INSUFFICIENT_TO_SELECT_H2_OR_H3
+SB4_EXISTING_DATA_DISCRIMINABILITY = INSUFFICIENT_TO_SELECT_H2_OR_H3
+BEST_DISCRIMINATING_DESIGN = D3_SHORT_STEP_24H
+PARAMETER_REFIT_COUNT = 0
+SYNTHETIC_DESIGN_STATUS = DESIGN_ONLY
+EXPERIMENT_SPECIFICATION = READY_FOR_EXTERNAL_DATA_SEARCH_OR_NEW_EXPERIMENT
+FORMAL_V3_PHYSICS = NOT_STARTED
+V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+```
