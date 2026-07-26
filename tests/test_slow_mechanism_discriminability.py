@@ -294,16 +294,20 @@ def test_all_required_output_contract_files_exist() -> None:
     assert (ROOT / PROTOCOL["output_contract"]["final_report"]).is_file()
 
 
-def test_all_base_runs_are_finite_nonnegative_and_conservative() -> None:
+def test_all_synthetic_runs_finite_nonnegative() -> None:
     qa = pd.read_csv(RESULTS / "design_run_qa.csv")
     assert len(qa) == 12
     assert qa["finite_nonnegative_pass"].all()
-    assert qa["mass_conservation_pass"].all()
     assert (qa["parameter_refit_count"] == 0).all()
     assert (qa["nan_count"] == 0).all()
     assert (qa["inf_count"] == 0).all()
     assert (qa["negative_inventory_count"] == 0).all()
     assert (qa["negative_concentration_count"] == 0).all()
+
+
+def test_all_synthetic_runs_mass_conservative() -> None:
+    qa = pd.read_csv(RESULTS / "design_run_qa.csv")
+    assert qa["mass_conservation_pass"].all()
     assert (
         qa["maximum_formal_mass_closure_abs_bq_m2"] <= 1.0e-6
     ).all()
