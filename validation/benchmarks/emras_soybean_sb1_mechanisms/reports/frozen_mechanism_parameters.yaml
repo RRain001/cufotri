@@ -1,0 +1,70 @@
+protocol_id: SB1_PLANT_WATER_MECHANISM_DISCRIMINATION_V1
+protocol_commit: 104b1b5264c60b4035f489ad1804f870f94be6c4
+merged_sb1_baseline_head: 2a56c56d6de3ee79c1069b799a5dab90e10a0097
+frozen_existing_leaf_parameters:
+  leaf_stomatal_resistance_day_s_m: 800.0
+  leaf_characteristic_length_m: 0.1
+candidates:
+  H0_CURRENT_SINGLE_POOL:
+    parameters: {}
+    calibration_metrics:
+      log10_rmse: 1.4663773921701029
+      log10_mean_bias: -1.029289453697932
+      median_predicted_to_observed_ratio: 0.048010769780640665
+      factor_2_coverage: 0.4
+      factor_10_coverage: 0.4
+      n: 5
+    boundary_hit: false
+    identifiability_status: NOT_APPLICABLE_NO_NEW_PARAMETERS
+  H1_DYNAMIC_WATER_STORAGE:
+    parameters: {}
+    calibration_metrics:
+      log10_rmse: 1.5068904179383946
+      log10_mean_bias: -1.0677749738131812
+      median_predicted_to_observed_ratio: 0.042684790558340964
+      factor_2_coverage: 0.4
+      factor_10_coverage: 0.4
+      n: 5
+    boundary_hit: false
+    identifiability_status: NOT_APPLICABLE_NO_NEW_PARAMETERS
+  H2_PARALLEL_FAST_SLOW_RESIDUAL:
+    parameters:
+      slow_capture_fraction: 0.001
+      slow_release_rate_s: 1.0e-06
+    calibration_metrics:
+      log10_rmse: 0.5996877479119134
+      log10_mean_bias: 0.48228912774987887
+      median_predicted_to_observed_ratio: 2.5640198074732914
+      factor_2_coverage: 0.4
+      factor_10_coverage: 1.0
+      n: 5
+    boundary_hit: true
+    identifiability_status: LIMITED_BOUNDARY_RANK_OR_CORRELATION
+  H3_REVERSIBLE_FAST_SLOW_EXCHANGE:
+    parameters:
+      fast_to_slow_rate_s: 1.0e-07
+      slow_to_fast_rate_s: 1.0e-06
+    calibration_metrics:
+      log10_rmse: 0.2758599654751513
+      log10_mean_bias: 0.1719487086778851
+      median_predicted_to_observed_ratio: 1.6962788792915358
+      factor_2_coverage: 0.8
+      factor_10_coverage: 1.0
+      n: 5
+    boundary_hit: false
+    identifiability_status: PASS_BOUNDED_LOCAL_SCREEN
+  H4_OBT_MEDIATED_RECYCLE:
+    parameters:
+      formation_multiplier: 2.0
+      turnover_multiplier: 2.52
+    calibration_metrics:
+      log10_rmse: 1.1505051341726669
+      log10_mean_bias: -0.7927545986119438
+      median_predicted_to_observed_ratio: 0.14408482392445277
+      factor_2_coverage: 0.4
+      factor_10_coverage: 0.6
+      n: 5
+    boundary_hit: true
+    identifiability_status: LIMITED_BOUNDARY_RANK_OR_CORRELATION
+mechanism_parameter_result_hash: f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9
+late_check_executed: false

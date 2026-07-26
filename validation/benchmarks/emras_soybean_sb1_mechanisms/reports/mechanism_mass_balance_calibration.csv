@@ -1,0 +1,6 @@
+mechanism_id,nan_count,inf_count,negative_inventory_count,negative_concentration_count,maximum_formal_mass_closure_abs_bq_m2,maximum_internal_transfer_residual_abs_bq_m2,mass_balance_pass
+H0_CURRENT_SINGLE_POOL,0,0,0,0,9.313225746154785e-10,0.0,True
+H1_DYNAMIC_WATER_STORAGE,0,0,0,0,9.313225746154785e-10,0.0,True
+H2_PARALLEL_FAST_SLOW_RESIDUAL,0,0,0,0,9.313225746154785e-10,7.057678885757923e-10,True
+H3_REVERSIBLE_FAST_SLOW_EXCHANGE,0,0,0,0,9.313225746154785e-10,6.002665031701326e-10,True
+H4_OBT_MEDIATED_RECYCLE,0,0,0,0,9.313225746154785e-10,0.0,True
