@@ -80,10 +80,10 @@ BRANCH =
 codex/v3-external-evidence-gate-remediation-3
 
 BRANCH_HEAD =
-RECORDED_AFTER_FINAL_REMEDIATION_COMMIT
+54d1e8112e0e64c5835c709f28a88ac68d6292d2
 
 WORKTREE_STATUS =
-PENDING_FINAL_COMMITS
+CLEAN
 ```
 
 No external data was searched, acquired, or inspected. No real calibration,
