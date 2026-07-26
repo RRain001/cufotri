@@ -21,6 +21,24 @@ digitized and no missing observation was invented.
 
 ## Reproduction
 
+ERA5 is downloaded through the repository's audited CDS time-series entry
+point. Repeat the command for the five coordinates in
+`docs/v3/benchmarks/emras_soybean_sb1_site_resolution.md`, changing
+`--output-dir` to the matching point identifier:
+
+```bash
+.venv/bin/python era5/download_era5_timeseries.py \
+  --latitude 36.425 --longitude 127.373611 \
+  --start-date 2001-05-20 --end-date 2001-10-06 \
+  --variable 2m_temperature,2m_dewpoint_temperature,surface_pressure,10m_u_component_of_wind,10m_v_component_of_wind,total_precipitation,surface_solar_radiation_downwards,surface_thermal_radiation_downwards,total_cloud_cover \
+  --format netcdf \
+  --output-dir validation/external_local/emras_soybean_sb1/era5_raw/CENTRE \
+  --execute
+```
+
+The credentials file is local and ignored. Do not copy it into this benchmark
+or a log.
+
 ```bash
 .venv/bin/python validation/benchmarks/emras_soybean_sb1/scripts/build_sb1_dataset.py
 .venv/bin/python validation/benchmarks/emras_soybean_sb1/scripts/verify_sb1_dataset.py
