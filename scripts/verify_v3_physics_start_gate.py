@@ -39,6 +39,13 @@ from validation.holdout_verdict import (
     derive_holdout_verdict,
     recompute_holdout_metrics,
 )
+from validation.parameter_contract import (
+    ParameterContractError,
+    canonicalize_parameter_contract,
+    parameter_contract_hash,
+    parameter_result_hash,
+    validate_calibrated_parameters,
+)
 
 
 RUNTIME_SCHEMA_ROOT = RUNTIME_ROOT / "schemas/v3"
@@ -95,6 +102,15 @@ DIAGNOSTIC_KEYS = (
     "PREREGISTRATION_PRECEDES_HOLDOUT",
     "CALIBRATION_HOLDOUT_DISJOINT",
     "CALIBRATION_RESULT_VALID",
+    "FROZEN_PARAMETER_CONTRACT_STATUS",
+    "CALIBRATION_PARAMETER_SET_STATUS",
+    "CALIBRATION_PARAMETER_BOUNDS_STATUS",
+    "CALIBRATION_PARAMETER_UNIT_STATUS",
+    "CALIBRATION_PARAMETER_TRANSFORM_STATUS",
+    "PARAMETER_CONTRACT_HASH_STATUS",
+    "PARAMETER_RESULT_HASH_STATUS",
+    "IDENTIFIABILITY_PARAMETER_COVERAGE_STATUS",
+    "HOLDOUT_PARAMETER_CONTRACT_STATUS",
     "IDENTIFIABILITY_RESULT_VALID",
     "DECLARED_HOLDOUT_VERDICT_STATUS",
     "DERIVED_HOLDOUT_VERDICT_STATUS",
@@ -778,13 +794,42 @@ def _evaluate_artifacts(
         "calibration_ids",
         "holdout_ids",
         "primary_metrics",
-        "parameter_set",
         "status",
     ):
         if frozen_preregistration[key] != preregistration[key]:
             raise EvidenceValidationError(
                 f"preregistration record differs from frozen file: {key}"
             )
+    try:
+        canonical_parameter_contract = canonicalize_parameter_contract(
+            frozen_preregistration["parameter_contract"]
+        )
+        canonical_record_parameter_contract = canonicalize_parameter_contract(
+            preregistration["parameter_contract"]
+        )
+    except ParameterContractError as exc:
+        raise GateDecisionError(
+            exc.code,
+            str(exc),
+            "FROZEN_PARAMETER_CONTRACT_STATUS",
+        ) from exc
+    if canonical_record_parameter_contract != canonical_parameter_contract:
+        raise GateDecisionError(
+            "FROZEN_PARAMETER_CONTRACT_MISMATCH",
+            "preregistration record parameter contract differs from frozen file",
+            "FROZEN_PARAMETER_CONTRACT_STATUS",
+        )
+    calculated_contract_hash = parameter_contract_hash(
+        canonical_parameter_contract
+    )
+    if preregistration["parameter_contract_hash"] != calculated_contract_hash:
+        raise GateDecisionError(
+            "PARAMETER_CONTRACT_HASH_MISMATCH",
+            "preregistration parameter_contract_hash mismatch",
+            "PARAMETER_CONTRACT_HASH_STATUS",
+        )
+    diagnostics["FROZEN_PARAMETER_CONTRACT_STATUS"] = "PASS"
+    diagnostics["PARAMETER_CONTRACT_HASH_STATUS"] = "PASS"
     verify_git_file_at_commit(
         repository_root,
         preregistration_file_live,
@@ -811,11 +856,51 @@ def _evaluate_artifacts(
     verify_disjoint_ids(calibration["calibration_ids"], holdout["holdout_ids"])
     diagnostics["CALIBRATION_HOLDOUT_DISJOINT"] = "PASS"
 
-    _verify_finite_mapping(calibration["parameters"], "calibration.parameters")
     _verify_finite_mapping(calibration["metrics"], "calibration.metrics")
-    parameter_hash = _canonical_sha256(calibration["parameters"])
+    try:
+        canonical_parameters = validate_calibrated_parameters(
+            canonical_parameter_contract,
+            calibration["parameters"],
+            artifact_label="calibration",
+        )
+    except ParameterContractError as exc:
+        diagnostic = {
+            "CALIBRATION_PARAMETER_SET_NOT_FROZEN":
+                "CALIBRATION_PARAMETER_SET_STATUS",
+            "CALIBRATION_PARAMETER_OUT_OF_FROZEN_BOUNDS":
+                "CALIBRATION_PARAMETER_BOUNDS_STATUS",
+            "CALIBRATION_PARAMETER_VALUE_INVALID":
+                "CALIBRATION_PARAMETER_BOUNDS_STATUS",
+        }.get(exc.code)
+        if diagnostic is None:
+            diagnostic = (
+                "CALIBRATION_PARAMETER_TRANSFORM_STATUS"
+                if "transform" in str(exc)
+                else "CALIBRATION_PARAMETER_UNIT_STATUS"
+            )
+        raise GateDecisionError(
+            exc.code,
+            str(exc),
+            diagnostic,
+        ) from exc
+    if calibration["parameter_contract_hash"] != calculated_contract_hash:
+        raise GateDecisionError(
+            "CALIBRATION_PARAMETER_CONTRACT_MISMATCH",
+            "calibration parameter_contract_hash mismatch",
+            "PARAMETER_CONTRACT_HASH_STATUS",
+        )
+    parameter_hash = parameter_result_hash(canonical_parameters)
     if calibration["parameter_result_hash"] != parameter_hash:
-        raise EvidenceValidationError("calibration parameter hash mismatch")
+        raise GateDecisionError(
+            "CALIBRATION_PARAMETER_RESULT_HASH_MISMATCH",
+            "calibration parameter_result_hash mismatch",
+            "PARAMETER_RESULT_HASH_STATUS",
+        )
+    diagnostics["CALIBRATION_PARAMETER_SET_STATUS"] = "PASS"
+    diagnostics["CALIBRATION_PARAMETER_BOUNDS_STATUS"] = "PASS"
+    diagnostics["CALIBRATION_PARAMETER_UNIT_STATUS"] = "PASS"
+    diagnostics["CALIBRATION_PARAMETER_TRANSFORM_STATUS"] = "PASS"
+    diagnostics["PARAMETER_RESULT_HASH_STATUS"] = "PASS"
     if (
         calibration["model_commit"] != holdout["model_commit"]
         or calibration["config_hash"] != holdout["config_hash"]
@@ -827,9 +912,46 @@ def _evaluate_artifacts(
 
     if (
         identifiability["preregistration_sha256"] != prereg_sha
+        or identifiability["parameter_contract_hash"] != calculated_contract_hash
         or identifiability["parameter_result_hash"] != parameter_hash
     ):
         raise EvidenceValidationError("identifiability hashes mismatch")
+    frozen_parameter_names = {
+        item["name"] for item in canonical_parameter_contract
+    }
+    identifiability_names = set(identifiability["parameter_results"])
+    if identifiability_names != frozen_parameter_names:
+        raise GateDecisionError(
+            "IDENTIFIABILITY_PARAMETER_COVERAGE_MISMATCH",
+            "identifiability parameter coverage differs from frozen contract",
+            "IDENTIFIABILITY_PARAMETER_COVERAGE_STATUS",
+        )
+    declared_boundary_hits = {
+        name
+        for name, result in identifiability["parameter_results"].items()
+        if result["boundary_hit"]
+    }
+    if set(identifiability["boundary_hits"]) != declared_boundary_hits:
+        raise GateDecisionError(
+            "IDENTIFIABILITY_PARAMETER_COVERAGE_MISMATCH",
+            "identifiability boundary_hits differs from per-parameter results",
+            "IDENTIFIABILITY_PARAMETER_COVERAGE_STATUS",
+        )
+    for name, result in identifiability["parameter_results"].items():
+        lower_interval = result["lower_interval"]
+        upper_interval = result["upper_interval"]
+        if (
+            isinstance(lower_interval, bool)
+            or isinstance(upper_interval, bool)
+            or not math.isfinite(float(lower_interval))
+            or not math.isfinite(float(upper_interval))
+            or float(lower_interval) > float(upper_interval)
+        ):
+            raise GateDecisionError(
+                "IDENTIFIABILITY_PARAMETER_RESULT_INVALID",
+                f"identifiability interval is invalid for {name}",
+                "IDENTIFIABILITY_PARAMETER_COVERAGE_STATUS",
+            )
     for field in ("condition_number", "max_parameter_correlation"):
         value = identifiability[field]
         if (
@@ -838,7 +960,38 @@ def _evaluate_artifacts(
             or not math.isfinite(float(value))
         ):
             raise EvidenceValidationError(f"identifiability {field} is not finite")
+    diagnostics["IDENTIFIABILITY_PARAMETER_COVERAGE_STATUS"] = "PASS"
     diagnostics["IDENTIFIABILITY_RESULT_VALID"] = "PASS"
+
+    if holdout["parameter_contract_hash"] != calculated_contract_hash:
+        raise GateDecisionError(
+            "HOLDOUT_PARAMETER_CONTRACT_MISMATCH",
+            "holdout parameter_contract_hash mismatch",
+            "HOLDOUT_PARAMETER_CONTRACT_STATUS",
+        )
+    try:
+        canonical_holdout_parameters = validate_calibrated_parameters(
+            canonical_parameter_contract,
+            holdout["parameters"],
+            artifact_label="holdout",
+        )
+    except ParameterContractError as exc:
+        raise GateDecisionError(
+            "HOLDOUT_PARAMETER_CONTRACT_MISMATCH",
+            str(exc),
+            "HOLDOUT_PARAMETER_CONTRACT_STATUS",
+        ) from exc
+    if (
+        canonical_holdout_parameters != canonical_parameters
+        or holdout["parameter_result_hash"]
+        != parameter_result_hash(canonical_holdout_parameters)
+    ):
+        raise GateDecisionError(
+            "HOLDOUT_PARAMETER_RESULT_MISMATCH",
+            "holdout parameters differ from canonical calibration parameters",
+            "HOLDOUT_PARAMETER_CONTRACT_STATUS",
+        )
+    diagnostics["HOLDOUT_PARAMETER_CONTRACT_STATUS"] = "PASS"
 
     result_live_paths: list[Path] = []
     result_snapshot_paths: dict[str, Path] = {}
