@@ -1,0 +1,21 @@
+case_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1
+calibration_partition_hours:
+- 0.2
+- 1
+- 24
+- 120
+- 336
+parameters:
+  leaf_stomatal_resistance_day_s_m:
+    value: 800.0
+    unit: s m-1
+    lower: 200.0
+    upper: 800.0
+    bounds_source: configs/default_parameters.yaml uncertainty specification
+  leaf_characteristic_length_m:
+    value: 0.1
+    unit: m
+    lower: 0.02
+    upper: 0.1
+    bounds_source: configs/default_parameters.yaml uncertainty specification
+parameter_result_hash: 51609eadd468b64d6aff9953b9c316f9ebbad53121ae6e8f50bda76b8ab57687

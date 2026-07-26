@@ -1,0 +1,24 @@
+{
+  "status": "CALIBRATED_MODEL_DEVELOPMENT_ONLY",
+  "method": "7x7 bounded grid",
+  "grid_evaluations": 49,
+  "best_log10_rmse": 1.4663773921701029,
+  "calibration_metrics": {
+    "log10_rmse": 1.4663773921701029,
+    "log10_mean_bias": -1.029289453697932,
+    "median_predicted_to_observed_ratio": 0.048010769780640665,
+    "factor_2_coverage": 0.4,
+    "factor_10_coverage": 0.4,
+    "n": 5
+  },
+  "best_parameters": {
+    "leaf_stomatal_resistance_day_s_m": 800.0,
+    "leaf_characteristic_length_m": 0.1
+  },
+  "parameter_result_hash": "51609eadd468b64d6aff9953b9c316f9ebbad53121ae6e8f50bda76b8ab57687",
+  "jacobian_rank": 2,
+  "jacobian_parameter_count": 2,
+  "maximum_absolute_off_diagonal_correlation": 0.3074376607722694,
+  "boundary_hit": true,
+  "identifiability_screening": "LIMITED_BOUNDARY_OR_CORRELATION"
+}

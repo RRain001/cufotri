@@ -1,0 +1,5 @@
+parameter_1,parameter_2,jacobian_column_correlation
+leaf_stomatal_resistance_day_s_m,leaf_stomatal_resistance_day_s_m,1.0
+leaf_stomatal_resistance_day_s_m,leaf_characteristic_length_m,-0.3074376607722694
+leaf_characteristic_length_m,leaf_stomatal_resistance_day_s_m,-0.3074376607722694
+leaf_characteristic_length_m,leaf_characteristic_length_m,1.0
