@@ -18,7 +18,7 @@
     "holdout_ids",
     "result_file_checksums",
     "metrics",
-    "verdict",
+    "declared_verdict",
     "generated_at"
   ],
   "properties": {
@@ -60,11 +60,20 @@
       }
     },
     "metrics": {
-      "type": "object",
-      "minProperties": 1,
-      "additionalProperties": {"type": "number"}
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metric_id", "value", "value_unit"],
+        "properties": {
+          "metric_id": {"type": "string", "minLength": 1},
+          "value": {"type": "number"},
+          "value_unit": {"type": "string", "minLength": 1}
+        }
+      }
     },
-    "verdict": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
+    "declared_verdict": {"enum": ["PASS", "FAIL", "INCONCLUSIVE"]},
     "generated_at": {"type": "string", "minLength": 1}
   }
 }
