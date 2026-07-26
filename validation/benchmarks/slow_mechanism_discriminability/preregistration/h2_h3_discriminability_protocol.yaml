@@ -1,0 +1,316 @@
+protocol_id: H2_H3_SLOW_MECHANISM_DISCRIMINABILITY_V1
+status: FROZEN_BEFORE_SYNTHETIC_EXECUTION
+protocol_class: VALIDATION_ONLY_CONTROLLED_EXPERIMENT_DESIGN
+created_from_main:
+  commit: e10c0be1d1fac51eb99643ceac71708426c30dd3
+  merged_sb4_benchmark_head: e10c0be1d1fac51eb99643ceac71708426c30dd3
+  reviewed_sb4_source_head: b540387087cecedee2a3d2a078657e0b313a2c8e
+  sb4_independent_review_commit: dc6d14adc22df69f9edf2c3996dc8d522a42c858
+
+scope:
+  synthetic_status: DESIGN_ONLY_NOT_EXPERIMENTAL_EVIDENCE
+  empirical_validation_claim: false
+  production_gate_eligible: false
+  trusted_registry_eligible: false
+  formal_model_change: false
+  formal_v3_physics: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+  parameter_refit_allowed: false
+  parameter_refit_count: 0
+  parameter_bound_expansion_allowed: false
+  model_selection_from_current_sb1_sb4_data_authorized: false
+
+source_contract:
+  sb1_parameter_source_commit: 4b79f62741db4d4b51f4d608df33d2e13c499636
+  sb1_frozen_parameter_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/reports/frozen_mechanism_parameters.yaml
+  sb1_frozen_parameter_file_sha256: 9224d4019d1e71f28f653699125c09328ae95af8bfc39a71442dc9dc355dc2d9
+  mechanism_parameter_result_hash: f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9
+  runtime_adapter_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/scripts/run_mechanism_discrimination.py
+  runtime_adapter_sha256: ed2b8b3fc724a48d0d75a7417e5f02e7fe85a1f567090f182acc23dae5c7e7cb
+  h2_implementation_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/models/parallel_fast_slow.py
+  h2_implementation_sha256: 9ca1bda7c9719bdbb236863839756eec1aa89e3c19b1185b96c15998bcb9f2ad
+  h3_implementation_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/models/reversible_fast_slow.py
+  h3_implementation_sha256: ee519e50006a32cd5d7387445bdf8794155188935f3276e7b26f9e92657f3f95
+
+target_models:
+  H2_SB1_FROZEN:
+    source_mechanism_id: H2_PARALLEL_FAST_SLOW_RESIDUAL
+    parameters:
+      slow_capture_fraction:
+        value: 0.001
+        unit: "1"
+      slow_release_rate_s:
+        value: 1.0e-6
+        unit: s-1
+    selected_from_sb4: false
+    refit_allowed: false
+  H3_SB1_FROZEN:
+    source_mechanism_id: H3_REVERSIBLE_FAST_SLOW_EXCHANGE
+    parameters:
+      fast_to_slow_rate_s:
+        value: 1.0e-7
+        unit: s-1
+      slow_to_fast_rate_s:
+        value: 1.0e-6
+        unit: s-1
+    selected_from_sb4: false
+    refit_allowed: false
+
+observables:
+  primary:
+    id: total_plant_body_tfwt
+    model_field: plant_body_tfwt_bq_l_water
+    unit: Bq L-1 tissue water
+    experimentally_observable: true
+    classification_role: PRIMARY_ONLY
+  secondary:
+    - id: fast_pool_tfwt
+      model_field: plant_fast_tfwt_inventory_bq_m2
+      experimentally_observable: false
+      classification_role: INTERPRETATION_ONLY
+    - id: slow_pool_tfwt
+      model_field: plant_slow_tfwt_inventory_bq_m2
+      experimentally_observable: false
+      classification_role: INTERPRETATION_ONLY
+  latent_pool_used_for_classification: false
+
+controlled_conditions:
+  status: SYNTHETIC_CONTROLLED_CONDITIONS
+  temperature_c: 25.0
+  relative_humidity_percent: 70.0
+  wind_speed_m_s: 0.5
+  surface_pressure_pa: 101325.0
+  shortwave_down_w_m2: 200.0
+  longwave_down_w_m2: 350.0
+  total_cloud_cover_fraction: 0.25
+  precipitation_mm_interval: 0.0
+  background_air_moisture_hto_bq_ml_water: 0.0
+  lai: 4.0
+  leaf_stomatal_resistance_day_s_m: 800.0
+  leaf_characteristic_length_m: 0.10
+  exchange_state: CONSTANT_DAYTIME
+  time_step_minutes: 5
+  high_exposure_concentration_bq_ml_water: 52700.0
+  low_exposure_concentration_bq_ml_water: 5270.0
+  air_conversion_formula: >-
+    air_hto_bq_m3 =
+    air_moisture_hto_bq_ml_water * actual_vapour_density_g_m3
+
+designs:
+  D0_SINGLE_PULSE_BASELINE:
+    first_exposure:
+      start_h: 0.0
+      duration_h: 1.0
+      concentration_bq_ml_water: 52700.0
+    washout:
+      duration_h: 0.0
+      concentration_bq_ml_water: 0.0
+    second_exposure: null
+    final_exposure_end_h: 1.0
+    simulation_length_days_after_final_exposure: 120
+  D1_SECOND_PULSE_AFTER_24H:
+    first_exposure:
+      start_h: 0.0
+      duration_h: 1.0
+      concentration_bq_ml_water: 52700.0
+    washout:
+      duration_h: 24.0
+      concentration_bq_ml_water: 0.0
+    second_exposure:
+      start_h: 25.0
+      duration_h: 1.0
+      concentration_bq_ml_water: 52700.0
+    final_exposure_end_h: 26.0
+    simulation_length_days_after_final_exposure: 120
+  D2_SECOND_PULSE_AFTER_72H:
+    first_exposure:
+      start_h: 0.0
+      duration_h: 1.0
+      concentration_bq_ml_water: 52700.0
+    washout:
+      duration_h: 72.0
+      concentration_bq_ml_water: 0.0
+    second_exposure:
+      start_h: 73.0
+      duration_h: 1.0
+      concentration_bq_ml_water: 52700.0
+    final_exposure_end_h: 74.0
+    simulation_length_days_after_final_exposure: 120
+  D3_SHORT_STEP_24H:
+    first_exposure:
+      start_h: 0.0
+      duration_h: 24.0
+      concentration_bq_ml_water: 5270.0
+    washout:
+      duration_h: 0.0
+      concentration_bq_ml_water: 0.0
+    second_exposure: null
+    final_exposure_end_h: 24.0
+    simulation_length_days_after_final_exposure: 120
+  D4_LONG_STEP_72H:
+    first_exposure:
+      start_h: 0.0
+      duration_h: 72.0
+      concentration_bq_ml_water: 5270.0
+    washout:
+      duration_h: 0.0
+      concentration_bq_ml_water: 0.0
+    second_exposure: null
+    final_exposure_end_h: 72.0
+    simulation_length_days_after_final_exposure: 120
+  D5_PULSE_WASHOUT_REEXPOSURE:
+    first_exposure:
+      start_h: 0.0
+      duration_h: 1.0
+      concentration_bq_ml_water: 52700.0
+    washout:
+      duration_h: 72.0
+      concentration_bq_ml_water: 0.0
+    second_exposure:
+      start_h: 73.0
+      duration_h: 24.0
+      concentration_bq_ml_water: 5270.0
+    final_exposure_end_h: 97.0
+    simulation_length_days_after_final_exposure: 120
+
+sampling:
+  reference: FINAL_EXPOSURE_END
+  candidate_hours_after_final_exposure:
+    [0.2, 0.5, 1, 3, 6, 12, 24, 48, 72, 120, 168, 336, 504, 768]
+  exposure_period_hours_from_first_exposure_start:
+    [1, 6, 12, 24, 48, 72]
+  exposure_period_designs: [D3_SHORT_STEP_24H, D4_LONG_STEP_72H]
+  frozen_before_execution: true
+  optimization:
+    algorithm: DETERMINISTIC_GREEDY_WORST_NOISE_ACCURACY
+    minimum_sample_count: 3
+    maximum_sample_count: 8
+    first_point_rule: MAXIMUM_DELTA_LOG10
+    subsequent_point_rule: >-
+      add the unused candidate time that maximizes the worst classification
+      accuracy across both truth models and all frozen noise levels
+    tie_breaker: EARLIEST_TIME
+    objective_noise_cv: 0.20
+    must_meet_all_frozen_accuracy_thresholds: true
+
+existing_evidence_analysis:
+  sb1_hours: [0.2, 1, 24, 120, 336, 936, 1608, 2280]
+  sb4_hours: [0.2, 1, 24, 120, 336, 768, 1368]
+  parameter_refit: false
+  noise_cv: [0.10, 0.20, 0.30]
+  normalized_difference: >-
+    absolute H2-H3 prediction difference divided by the stated
+    coefficient-of-variation times the geometric-mean prediction
+  allowed_conclusions:
+    - SUFFICIENT_TO_SELECT_H2
+    - SUFFICIENT_TO_SELECT_H3
+    - INSUFFICIENT_TO_SELECT_H2_OR_H3
+
+pointwise_metrics:
+  delta_log10: abs(log10(H2) - log10(H3))
+  ratio: max(H2,H3) / min(H2,H3)
+  signed_difference: H2 - H3
+  relative_difference: abs(H2-H3) / geometric_mean(H2,H3)
+  strong_separation_delta_log10_minimum: 0.30
+  moderate_separation_delta_log10_minimum: 0.15
+
+monte_carlo:
+  replicates_per_truth_model_design_noise: 1000
+  truth_models: [H2_SB1_FROZEN, H3_SB1_FROZEN]
+  noise_distribution: LOGNORMAL_MEAN_ONE
+  coefficient_of_variation: [0.10, 0.20, 0.30]
+  random_seed: 20260727
+  parameter_refit: false
+  classifier: MINIMUM_LOG10_RMSE_TO_FROZEN_PREDICTION
+  tie_breaker: INCONCLUSIVE
+  latent_pool_input_allowed: false
+
+design_success_criteria:
+  both_truth_models_must_pass: true
+  classification_accuracy_minimum:
+    cv_0_10: 0.90
+    cv_0_20: 0.80
+    cv_0_30: 0.70
+  strong_pointwise_separation:
+    delta_log10_minimum: 0.30
+    minimum_time_point_count: 2
+  exposure_concentration_robustness_required: true
+  relative_humidity_robustness_required: true
+  stomatal_resistance_robustness_required: true
+  all_runs_finite_nonnegative_required: true
+  all_runs_mass_conservative_required: true
+  latent_pool_observation_allowed: false
+  passing_status: DISCRIMINATING_DESIGN_SUPPORTED
+  failing_status: SYNTHETIC_DESIGN_NOT_ROBUST
+
+robustness:
+  evaluation_mode: ONE_FACTOR_AT_A_TIME
+  top_design_count: 3
+  exposure_concentration_multiplier: [0.8, 1.0, 1.2]
+  relative_humidity_percent: [60.0, 70.0, 80.0]
+  wind_speed_m_s: [0.2, 0.5, 1.0]
+  stomatal_resistance_multiplier: [0.8, 1.0, 1.2]
+  slow_process_parameter_refit: false
+  required_interpretation: >-
+    discrimination must persist under uptake-related perturbations and be
+    attributed to slow-pool structural dynamics rather than uptake magnitude
+
+local_sensitivity:
+  output: total_plant_body_tfwt
+  coordinate: LOG_PARAMETER
+  fractional_step: 0.01
+  boundary_rule: FORWARD_DIFFERENCE_WITHIN_FROZEN_BOUNDS
+  interior_rule: CENTRAL_DIFFERENCE_WITHIN_FROZEN_BOUNDS
+  diagnostics:
+    - rank
+    - condition_number
+    - maximum_absolute_column_correlation
+    - fisher_information_determinant
+    - h2_h3_model_output_distance
+  allowed_conclusions:
+    - CURRENT_DATA_INSUFFICIENT
+    - SYNTHETIC_DESIGN_PROMISING
+    - SYNTHETIC_DESIGN_NOT_ROBUST
+  global_structural_identifiability_claim: false
+
+output_contract:
+  reports_root: >-
+    validation/benchmarks/slow_mechanism_discriminability/reports
+  data_root: >-
+    validation/benchmarks/slow_mechanism_discriminability/results
+  required_outputs:
+    - existing_sb1_discriminability.csv
+    - existing_sb4_discriminability.csv
+    - existing_evidence_discriminability_report.md
+    - synthetic_design_predictions.csv
+    - synthetic_design_ranking.md
+    - monte_carlo_classification.csv
+    - monte_carlo_classification_report.md
+    - minimum_sampling_design.csv
+    - sampling_design_tradeoff.csv
+    - sampling_optimization_report.md
+    - design_robustness_matrix.csv
+    - robustness_report.md
+    - h2_local_sensitivity.csv
+    - h3_local_sensitivity.csv
+    - model_output_distance.csv
+    - structural_discriminability_report.md
+  experiment_specification: >-
+    docs/v3/benchmarks/h2_h3_minimum_discriminating_experiment_spec.md
+  final_report: >-
+    docs/v3/benchmarks/h2_h3_slow_mechanism_discriminability_report.md
+
+failure_rules:
+  - H2 or H3 parameters differ from the bound SB1 frozen contract
+  - any H2 or H3 slow-process parameter is refitted
+  - any parameter bound is expanded
+  - the candidate sampling grid or noise levels change after execution
+  - a latent fast or slow pool is used by the classifier
+  - synthetic output is labelled experimental or empirical evidence
+  - formal src or root configs files change
+  - the trusted external evidence registry changes
+  - the production physics gate is unblocked
