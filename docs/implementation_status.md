@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-07-25
+Updated: 2026-07-26
 
 ## Current repository and release status
 
@@ -15,7 +15,7 @@ CURRENT_MAIN_HEAD =
 f618515caef22a19867d75d59b1d4c78f1cb212f
 
 CURRENT_DEVELOPMENT_BRANCH =
-codex/v3-external-evidence-gate-remediation
+codex/v3-external-evidence-gate-remediation-2
 
 CURRENT_DEVELOPMENT_BASELINE_HEAD =
 f618515caef22a19867d75d59b1d4c78f1cb212f
@@ -24,10 +24,10 @@ CURRENT_DEVELOPMENT_HEAD =
 RECORDED_IN_REMEDIATION_HANDOFF
 
 CURRENT_DEVELOPMENT_STATUS =
-V3_EXTERNAL_EVIDENCE_GATE_REMEDIATION_READY_FOR_INDEPENDENT_REVIEW
+V3_EXTERNAL_EVIDENCE_GATE_REMEDIATION_2_READY_FOR_SECOND_INDEPENDENT_REVIEW
 
 CURRENT_TEST_STATUS =
-PASS_234_ONE_KNOWN_NUMPY_NETCDF_WARNING
+PASS_279
 
 CURRENT_V1_RECOMPUTE_STATUS =
 PASS_5_FROZEN_CASES
@@ -48,7 +48,7 @@ CURRENT_EXTERNAL_EVIDENCE_PACKAGE_STATUS =
 READY_FAIL_CLOSED_BLOCKED_EXTERNAL_DATA
 
 CURRENT_EXTERNAL_EVIDENCE_GATE_REMEDIATION_STATUS =
-READY_FOR_INDEPENDENT_ADVERSARIAL_REVIEW
+READY_FOR_SECOND_INDEPENDENT_ADVERSARIAL_REVIEW
 
 CURRENT_SOYBEAN_DATA_STATUS =
 BLOCKED_EXTERNAL_DATA
@@ -68,8 +68,35 @@ publishes V3 architecture only. The remediation branch replaces declaration
 booleans with a runtime-validated artifact chain, strengthens numeric/checksum
 intake validation, and remains pending independent adversarial review. It is
 not a V3 physics release and contains no empirical data, calibration result,
-or accepted holdout. The final development-branch head is recorded in the
-remediation handoff to avoid a commit claiming its own hash.
+or accepted holdout. The second remediation adds a protected-ref approval
+registry, stable-FD snapshots with final identity/hash rechecks, and
+preregistered holdout-verdict recomputation. Full regression and a new
+independent adversarial worktree remain mandatory before any merge.
+
+## V3 external-evidence gate second remediation
+
+The three independent-review weaknesses were reproduced as three failing
+attacks before repair. The imported attacks now pass together with the
+original 32 attacks and 40 second-remediation tests.
+
+```text
+F_01_STATUS = FIXED_PENDING_SECOND_INDEPENDENT_REVIEW
+F_02_STATUS = FIXED_PENDING_SECOND_INDEPENDENT_REVIEW
+F_03_STATUS = FIXED_PENDING_SECOND_INDEPENDENT_REVIEW
+TRUSTED_POLICY_PATH =
+validation/v3/policy/trusted_external_evidence_registry.yaml
+PRODUCTION_REGISTRY_ENTRY_COUNT = 0
+TARGETED_ATTACK_STATUS = PASS_77
+FULL_REGRESSION_STATUS = PASS_279
+V1_RECOMPUTE_STATUS = PASS_5_FROZEN_CASES
+V2_RECOMPUTE_STATUS = PASS_6_END_TO_END_AND_EXPANDED_ACCEPTANCE
+VALIDATION_READINESS_STATUS =
+FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_VALIDATION_READY
+V3_COMPATIBILITY_STATUS = PASS_BITWISE_WHERE_DETERMINISTIC
+V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
+V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+MERGE_RECOMMENDATION = HOLD_PENDING_SECOND_INDEPENDENT_REVIEW
+```
 
 ## V3 external-evidence gate directed remediation
 

@@ -9,6 +9,9 @@ import pytest
 import yaml
 
 import scripts.verify_v3_physics_start_gate as gate
+from tests.helpers.v3_gate_fixture import (
+    build_gate_repository as build_protected_gate_repository,
+)
 
 
 EXPECTED_BLOCKED = "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
@@ -345,6 +348,20 @@ def _build_independent_chain(
     }
 
 
+def _build_independent_chain(
+    repository: Path,
+    *,
+    holdout_verdict: str = "PASS",
+) -> tuple[Path, dict[str, Path]]:
+    """Use a separately named protected-ref chain for the imported attacks."""
+
+    return build_protected_gate_repository(
+        repository,
+        dataset_id="INDEPENDENT_REVIEW_ONLY",
+        declared_verdict=holdout_verdict,
+    )
+
+
 def test_rejects_production_reference_to_test_fixture(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -368,7 +385,7 @@ def test_rejects_raw_file_replaced_after_initial_checksum(
     def verify_then_replace(*args, **kwargs):
         checksums = original_verify(*args, **kwargs)
         original = paths["raw_file"].read_text(encoding="utf-8")
-        replacement = original.replace("CAL_REVIEW,11", "CAL_REVIEW,99")
+        replacement = original.replace("CAL_001,1", "CAL_001,9")
         assert len(replacement.encode("utf-8")) == len(original.encode("utf-8"))
         paths["raw_file"].write_text(replacement, encoding="utf-8")
         return checksums
@@ -379,7 +396,10 @@ def test_rejects_raw_file_replaced_after_initial_checksum(
         verify_then_replace,
     )
 
-    result = gate.evaluate_gate(config_path)
+    result = gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == EXPECTED_BLOCKED
 
@@ -394,6 +414,9 @@ def test_rejects_failed_holdout_verdict(
     )
     monkeypatch.setattr(gate, "ROOT", tmp_path)
 
-    result = gate.evaluate_gate(config_path)
+    result = gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == EXPECTED_BLOCKED

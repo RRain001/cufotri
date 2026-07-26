@@ -19,6 +19,9 @@ from validation.adapters.soybean_emras_adapter import (
     create_synthetic_package,
     validate_local_package,
 )
+from tests.helpers.v3_gate_fixture import (
+    build_gate_repository as build_protected_gate_repository,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -364,6 +367,19 @@ def _build_gate_repository(
     }
 
 
+def _build_gate_repository(
+    root: Path,
+    *,
+    evidence_type: str = "CONTROLLED_EXPERIMENT",
+) -> tuple[Path, dict[str, Path]]:
+    """Use the second-round protected-ref fixture for gate attack tests."""
+
+    return build_protected_gate_repository(
+        root,
+        evidence_type=evidence_type,
+    )
+
+
 def test_physics_gate_rejects_nonexistent_manifest_paths(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -614,7 +630,10 @@ def test_complete_test_fixture_exercises_full_gate_logic(
     config_path, _ = _build_gate_repository(tmp_path)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "READY_FOR_BOUNDED_V3_PHYSICS"
     assert all(value == "PASS" for value in result["diagnostics"].values())
@@ -631,7 +650,10 @@ def _assert_gate_rejects_evidence_type(
     )
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -679,7 +701,10 @@ def test_physics_gate_rejects_invalid_bundle_artifact(
     _write_yaml(config_path, config)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -692,7 +717,10 @@ def test_physics_gate_rejects_raw_checksum_tamper(
     paths["raw_file"].write_text("tampered\n", encoding="utf-8")
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -709,7 +737,10 @@ def test_physics_gate_rejects_checksum_mismatch(
     _write_yaml(paths["raw_manifest"], raw_manifest)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -724,7 +755,10 @@ def test_physics_gate_rejects_manifest_not_validated_by_schema(
     _write_yaml(paths["bundle"], bundle)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -737,7 +771,10 @@ def test_physics_gate_rejects_missing_holdout_result(
     paths["holdout"].unlink()
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -753,7 +790,10 @@ def test_physics_gate_rejects_uncommitted_preregistration(
     )
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -772,7 +812,10 @@ def test_physics_gate_rejects_preregistration_committed_after_holdout(
         _write_yaml(paths[artifact_name], artifact)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -783,11 +826,14 @@ def test_physics_gate_rejects_non_numeric_holdout_metrics(
 ) -> None:
     config_path, paths = _build_gate_repository(tmp_path)
     holdout = yaml.safe_load(paths["holdout"].read_text(encoding="utf-8"))
-    holdout["metrics"]["normalized_rmse"] = "not-a-number"
+    holdout["metrics"][0]["value"] = "not-a-number"
     _write_yaml(paths["holdout"], holdout)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -804,7 +850,10 @@ def test_manual_boolean_bypass_is_rejected(
     _write_yaml(config_path, config)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
 
@@ -824,6 +873,9 @@ def test_physics_gate_rejects_path_escape(
     _write_yaml(config_path, config)
     monkeypatch.setattr(physics_gate, "ROOT", tmp_path)
 
-    result = physics_gate.evaluate_gate(config_path)
+    result = physics_gate.evaluate_gate_for_test(
+        config_path,
+        repository_root=tmp_path,
+    )
 
     assert result["status"] == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
