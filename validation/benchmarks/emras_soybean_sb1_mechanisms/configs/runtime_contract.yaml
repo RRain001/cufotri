@@ -1,0 +1,11 @@
+contract_id: SB1_MECHANISM_RUNTIME_V1
+time_step_seconds: 300
+formal_kernel: src/cteas_ufotri/coupling/integrator.py::advance
+source_forcing_directory: validation/external_local/emras_soybean_sb1/generated_forcing
+source_observations: validation/benchmarks/emras_soybean_sb1/published_tables/sb1_tfwt_observations.csv
+source_biomass: validation/benchmarks/emras_soybean_sb1/published_tables/sb1_biomass.csv
+source_frozen_leaf_parameters: validation/benchmarks/emras_soybean_sb1/reports/calibrated_parameter_set.yaml
+validation_only: true
+production_gate_eligible: false
+formal_config_override: false
+late_data_used_for_fit: false
