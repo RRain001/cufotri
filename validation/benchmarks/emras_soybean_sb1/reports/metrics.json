@@ -1,0 +1,189 @@
+{
+  "parameter_result_hash": "51609eadd468b64d6aff9953b9c316f9ebbad53121ae6e8f50bda76b8ab57687",
+  "metrics_by_run": {
+    "RUN_01": {
+      "calibration": {
+        "log10_rmse": 1.4663773921701029,
+        "log10_mean_bias": -1.029289453697932,
+        "median_predicted_to_observed_ratio": 0.048010769780640665,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 2.610971968938851,
+        "log10_mean_bias": -2.5673856319555477,
+        "median_predicted_to_observed_ratio": 0.0019847751183623328,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.141618900813427,
+        "log10_mean_bias": -1.1350653928063685,
+        "median_predicted_to_observed_ratio": 0.07161749526921166,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.3333333333333333,
+        "n": 3
+      }
+    },
+    "RUN_02": {
+      "calibration": {
+        "log10_rmse": 1.4580997442475,
+        "log10_mean_bias": -1.0174620324124244,
+        "median_predicted_to_observed_ratio": 0.049336244826659416,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 2.5993428799478697,
+        "log10_mean_bias": -2.5555582106700387,
+        "median_predicted_to_observed_ratio": 0.002039570529962029,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.1298600839989372,
+        "log10_mean_bias": -1.1232379715208634,
+        "median_predicted_to_observed_ratio": 0.07359470170167266,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.3333333333333333,
+        "n": 3
+      }
+    },
+    "RUN_03": {
+      "calibration": {
+        "log10_rmse": 1.5214549658934116,
+        "log10_mean_bias": -1.0905887150228892,
+        "median_predicted_to_observed_ratio": 0.0328696122109883,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 2.5805868259045717,
+        "log10_mean_bias": -2.5325393876277142,
+        "median_predicted_to_observed_ratio": 0.0021776065343584003,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.1417093725428726,
+        "log10_mean_bias": -1.1351028684358593,
+        "median_predicted_to_observed_ratio": 0.07167562433969903,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.3333333333333333,
+        "n": 3
+      }
+    },
+    "RUN_04": {
+      "calibration": {
+        "log10_rmse": 1.448103764888275,
+        "log10_mean_bias": -0.9569154014582608,
+        "median_predicted_to_observed_ratio": 0.04760620469633296,
+        "factor_2_coverage": 0.2,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 2.5567100631016655,
+        "log10_mean_bias": -2.5084801196215194,
+        "median_predicted_to_observed_ratio": 0.0019336829113450332,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.0645501311799108,
+        "log10_mean_bias": -1.0574864932453565,
+        "median_predicted_to_observed_ratio": 0.08570136536626678,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.3333333333333333,
+        "n": 3
+      }
+    },
+    "RUN_05": {
+      "calibration": {
+        "log10_rmse": 1.4516905574224233,
+        "log10_mean_bias": -1.0180119955501368,
+        "median_predicted_to_observed_ratio": 0.04848605097936524,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 1.6369345930188675,
+        "log10_mean_bias": -1.6300480791879537,
+        "median_predicted_to_observed_ratio": 0.023670533727346687,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.0966232828500386,
+        "log10_mean_bias": -1.0887167793141392,
+        "median_predicted_to_observed_ratio": 0.08710956376128977,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.3333333333333333,
+        "n": 3
+      }
+    },
+    "RUN_06": {
+      "calibration": {
+        "log10_rmse": 1.4291293976387685,
+        "log10_mean_bias": -1.0006448965432777,
+        "median_predicted_to_observed_ratio": 0.049273235464752714,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 1.534728910228093,
+        "log10_mean_bias": -1.5283681880070628,
+        "median_predicted_to_observed_ratio": 0.029097383243945896,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.0608515251887485,
+        "log10_mean_bias": -1.0518837801123908,
+        "median_predicted_to_observed_ratio": 0.09667139551738117,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.3333333333333333,
+        "n": 3
+      }
+    },
+    "RUN_07": {
+      "calibration": {
+        "log10_rmse": 1.4084378292629258,
+        "log10_mean_bias": -0.984668481124662,
+        "median_predicted_to_observed_ratio": 0.05006041995014031,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5
+      },
+      "pseudo_holdout_a": {
+        "log10_rmse": 1.4523827226486448,
+        "log10_mean_bias": -1.4462601349535162,
+        "median_predicted_to_observed_ratio": 0.03452423276054508,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "pseudo_holdout_b": {
+        "log10_rmse": 1.0280579165024353,
+        "log10_mean_bias": -1.0180463428531603,
+        "median_predicted_to_observed_ratio": 0.1062332272734714,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.6666666666666666,
+        "n": 3
+      }
+    }
+  },
+  "empirical_validation": false,
+  "independent_external_holdout": false
+}

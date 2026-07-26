@@ -725,6 +725,7 @@ def holdout_stage() -> None:
         encoding="utf-8",
     )
     plot_results(predictions)
+    plot_forcing_and_sensitivity()
     print(f"PSEUDO_HOLDOUT_RUN_COUNT = {len(RUN_FILES)}")
     print("PSEUDO_HOLDOUT_CLASS = PUBLISHED_REPORT_PSEUDO_HOLDOUT")
 
@@ -772,6 +773,82 @@ def plot_results(predictions: pd.DataFrame) -> None:
     ax.legend(ncol=2, fontsize=8)
     fig.tight_layout()
     fig.savefig(figure_dir / "sb1_predicted_observed_ratio.png", dpi=180)
+    plt.close(fig)
+
+
+def plot_forcing_and_sensitivity() -> None:
+    """Render the three preregistered diagnostic plots not based on holdout fit."""
+    figure_dir = OUTPUTS / "figures"
+    figure_dir.mkdir(parents=True, exist_ok=True)
+    primary = load_forcing("RUN_01")
+    constrained = load_forcing("RUN_02")
+
+    chamber_end = EXPOSURE_END + pd.Timedelta(minutes=5)
+    chamber_primary = primary[
+        primary["time_local"].between(
+            EXPOSURE_START - pd.Timedelta(minutes=5), chamber_end
+        )
+    ]
+    chamber_constrained = constrained[
+        constrained["time_local"].between(
+            EXPOSURE_START - pd.Timedelta(minutes=5), chamber_end
+        )
+    ]
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.plot(
+        chamber_primary["time_local"],
+        chamber_primary["air_hto_bq_m3"],
+        "o-",
+        label="published raw profile",
+    )
+    ax.plot(
+        chamber_constrained["time_local"],
+        chamber_constrained["air_hto_bq_m3"],
+        "s--",
+        label="mean-constrained sensitivity",
+    )
+    ax.set_ylabel("Air HTO (Bq m$^{-3}$ air)")
+    ax.set_xlabel("Local time (Asia/Seoul)")
+    ax.tick_params(axis="x", rotation=30)
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(figure_dir / "sb1_chamber_hto_forcing.png", dpi=180)
+    plt.close(fig)
+
+    outdoor = primary[primary["time_local"] > chamber_end].copy()
+    outdoor = outdoor.set_index("time_local")
+    daily = outdoor.resample("1D").agg(
+        air_temperature_c=("air_temperature_c", "mean"),
+        wind_speed_m_s=("wind_speed_m_s", "mean"),
+        precipitation_mm=("precipitation_mm_interval", "sum"),
+    )
+    fig, axes = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
+    axes[0].plot(daily.index, daily["air_temperature_c"])
+    axes[0].set_ylabel("T (°C)")
+    axes[1].plot(daily.index, daily["wind_speed_m_s"])
+    axes[1].set_ylabel("Wind (m s$^{-1}$)")
+    axes[2].bar(daily.index, daily["precipitation_mm"], width=0.8)
+    axes[2].set_ylabel("Rain (mm d$^{-1}$)")
+    axes[2].set_xlabel("Local date (Asia/Seoul)")
+    fig.tight_layout()
+    fig.savefig(figure_dir / "sb1_era5_outdoor_meteorology.png", dpi=180)
+    plt.close(fig)
+
+    sensitivity = pd.read_csv(REPORTS / "parameter_sensitivity.csv")
+    fig, ax = plt.subplots(figsize=(7, 4))
+    for parameter, values in sensitivity.groupby("parameter_name"):
+        ax.semilogx(
+            values["hours_after_exposure"],
+            values["normalized_log10_sensitivity"],
+            marker="o",
+            label=parameter,
+        )
+    ax.axhline(0.0, color="black", linewidth=1)
+    ax.set_xlabel("Hours after exposure")
+    ax.set_ylabel("Normalized log10 sensitivity")
+    ax.legend(fontsize=8)
+    fig.tight_layout()
+    fig.savefig(figure_dir / "sb1_parameter_sensitivity.png", dpi=180)
     plt.close(fig)
 
 
