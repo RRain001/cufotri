@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SB4 frozen transfer result",
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "protocol_commit",
+    "sb4_parameter_refit_count",
+    "selected_from_sb4",
+    "run_count",
+    "candidate_results",
+    "sb4_transfer_status",
+    "empirical_validation_claim",
+    "production_gate_eligible",
+    "v3_physics_start_gate"
+  ],
+  "properties": {
+    "protocol_id": {
+      "const": "SB1_TO_SB4_FROZEN_MECHANISM_TRANSFER_V1"
+    },
+    "sb4_parameter_refit_count": {
+      "const": 0
+    },
+    "selected_from_sb4": {
+      "const": false
+    },
+    "run_count": {
+      "const": 42
+    },
+    "sb4_transfer_status": {
+      "enum": [
+        "H2_H3_NOT_TRANSFERABLE",
+        "H2_PARALLEL_RESIDUAL_TRANSFER_SUPPORTED",
+        "H3_REVERSIBLE_EXCHANGE_TRANSFER_SUPPORTED",
+        "MULTIPLE_SLOW_MECHANISMS_TRANSFER_SUPPORTED"
+      ]
+    },
+    "empirical_validation_claim": {
+      "const": false
+    },
+    "production_gate_eligible": {
+      "const": false
+    },
+    "v3_physics_start_gate": {
+      "const": "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+    }
+  },
+  "additionalProperties": true
+}
