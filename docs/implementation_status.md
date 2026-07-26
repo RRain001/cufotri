@@ -45,6 +45,57 @@ plant-body TFWT after 24 h and the late residual platform. These limitations
 are retained as scientific findings rather than removed by parameter
 expansion.
 
+## Independent SB1 review, merge and validation-only mechanism screen
+
+The independent review branch rebuilt the benchmark from the source PDF and
+five read-only raw ERA5 responses at exact benchmark head
+`178fb0a3ebae53b20b101000cdbb2b39406088c0`. It added 27 independent tests,
+confirmed the 24-2280 h structural underprediction, and returned
+`PASS_REPRODUCIBLE_STRUCTURAL_DEFICIT`. The review was fast-forwarded through
+the benchmark branch into `main`; merged `main` and `origin/main` are
+`2a56c56d6de3ee79c1069b799a5dab90e10a0097`.
+
+The subsequent branch
+`codex/v3-sb1-plant-water-mechanism-discrimination` is validation-only. Its
+protocol and all candidate ranges were committed before execution, and its
+calibration parameters were committed before the late check. H1-H4 do not
+modify `src/`, formal `configs/`, the trusted registry or a production gate.
+
+```text
+INDEPENDENT_SB1_BENCHMARK_REVIEW =
+PASS_REPRODUCIBLE_STRUCTURAL_DEFICIT
+
+SB1_BENCHMARK_MERGE_STATUS = MERGED_AND_PUSHED
+MERGED_SB1_BASELINE_HEAD =
+2a56c56d6de3ee79c1069b799a5dab90e10a0097
+
+MECHANISM_PROTOCOL_STATUS = FROZEN_BEFORE_CANDIDATE_EXECUTION
+MECHANISM_PARAMETER_STATUS = FROZEN_BEFORE_LATE_CHECK
+MECHANISM_TARGETED_TEST_STATUS = PASS_17
+MECHANISM_FULL_REGRESSION_STATUS =
+PASS_411_ONE_KNOWN_NUMPY_NETCDF_WARNING
+MECHANISM_V1_RECOMPUTE_STATUS = PASS_5_FROZEN_CASES
+MECHANISM_V2_RECOMPUTE_STATUS =
+PASS_6_END_TO_END_AND_EXPANDED_ACCEPTANCE
+MECHANISM_V2_VALIDATION_READINESS_STATUS = PASS
+MECHANISM_V3_COMPATIBILITY_STATUS = PASS_BITWISE_WHERE_DETERMINISTIC
+MECHANISM_V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
+MECHANISM_V3_EXTERNAL_EVIDENCE_STATUS =
+READY_FAIL_CLOSED_BLOCKED_EXTERNAL_DATA
+MECHANISM_MASS_BALANCE_STATUS = PASS_35_OF_35
+MECHANISM_FORCING_STATUS =
+H1_0_OF_7_H2_7_OF_7_H3_4_OF_7_H4_0_OF_7
+MECHANISM_DISCRIMINATION_STATUS =
+NO_MINIMAL_MECHANISM_SUPPORTED
+BEST_SUPPORTED_MECHANISM = NONE
+FORMAL_V3_DESIGN_RECOMMENDATION = NOT_READY
+MECHANISM_BRANCH_MERGE = NOT_REQUESTED
+FORMAL_V3_PHYSICS_CHANGE = NOT_STARTED
+EMPIRICAL_VALIDATION_CLAIM = FALSE
+PRODUCTION_GATE_ELIGIBLE = FALSE
+V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+```
+
 ## Current repository and release status
 
 ```text
