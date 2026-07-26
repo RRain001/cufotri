@@ -12,22 +12,22 @@ CURRENT_MAIN_BASELINE_HEAD =
 f02636f10e900174226edc2659f20a2fdb15d3ce
 
 CURRENT_MAIN_HEAD =
-f618515caef22a19867d75d59b1d4c78f1cb212f
+RECORDED_IN_V3_GATE_REMEDIATION_3_MERGE_HANDOFF
 
 CURRENT_DEVELOPMENT_BRANCH =
-codex/v3-external-evidence-gate-remediation-3
+main
 
 CURRENT_DEVELOPMENT_BASELINE_HEAD =
 f618515caef22a19867d75d59b1d4c78f1cb212f
 
 CURRENT_DEVELOPMENT_HEAD =
-RECORDED_IN_REMEDIATION_HANDOFF
+RECORDED_IN_V3_GATE_REMEDIATION_3_MERGE_HANDOFF
 
 CURRENT_DEVELOPMENT_STATUS =
-V3_EXTERNAL_EVIDENCE_GATE_REMEDIATION_3_READY_FOR_THIRD_INDEPENDENT_REVIEW
+V3_EXTERNAL_EVIDENCE_GATE_REMEDIATION_3_MERGED_AFTER_PASSED_REVIEW
 
 CURRENT_TEST_STATUS =
-PASS_317
+PASS_351
 
 CURRENT_V1_RECOMPUTE_STATUS =
 PASS_5_FROZEN_CASES
@@ -48,7 +48,7 @@ CURRENT_EXTERNAL_EVIDENCE_PACKAGE_STATUS =
 READY_FAIL_CLOSED_BLOCKED_EXTERNAL_DATA
 
 CURRENT_EXTERNAL_EVIDENCE_GATE_REMEDIATION_STATUS =
-READY_FOR_THIRD_INDEPENDENT_ADVERSARIAL_REVIEW
+PASS_ADVERSARIAL_REVIEW_MERGED
 
 CURRENT_SOYBEAN_DATA_STATUS =
 BLOCKED_EXTERNAL_DATA
@@ -64,16 +64,18 @@ NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
 ```
 
 The current released model is the immutable V2 candidate. The current `main`
-publishes V3 architecture only. The remediation branch replaces declaration
+publishes V3 architecture and the fail-closed external-evidence gate only.
+The merged remediation replaces declaration
 booleans with a runtime-validated artifact chain, strengthens numeric/checksum
-intake validation, and remains pending independent adversarial review. It is
+intake validation, and passed the third independent adversarial review. It is
 not a V3 physics release and contains no empirical data, calibration result,
-or accepted holdout. The second remediation adds a protected-ref approval
+or accepted holdout. The second remediation added a protected-ref approval
 registry, stable-FD snapshots with final identity/hash rechecks, and
-preregistered holdout-verdict recomputation. Full regression and a new
-independent adversarial worktree remain mandatory before any merge.
+preregistered holdout-verdict recomputation. The third remediation binds
+calibration, identifiability, and holdout to a canonical frozen parameter
+contract.
 
-## V3 external-evidence gate third remediation
+## V3 external-evidence gate third remediation before independent review
 
 The second independent review exposed an unbound preregistered parameter set.
 The third remediation replaces the list with a canonical semantic contract
@@ -94,6 +96,25 @@ V3_COMPATIBILITY_STATUS = PASS_BITWISE_WHERE_DETERMINISTIC
 V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
 V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 MERGE_RECOMMENDATION = HOLD_PENDING_THIRD_INDEPENDENT_REVIEW
+```
+
+### Third independent review and merge
+
+The third independent worktree added 34 new cases without importing the
+remediation fixture builder. All 149 targeted gate cases and all 351
+repository tests passed on the merged main worktree.
+
+```text
+THIRD_INDEPENDENT_REVIEW_STATUS = PASS_ADVERSARIAL_REVIEW
+F_01_STATUS = CONFIRMED_FIXED
+F_02_STATUS = CONFIRMED_FIXED
+F_03_STATUS = CONFIRMED_FIXED
+F_04_STATUS = CONFIRMED_FIXED
+THIRD_INDEPENDENT_ATTACK_COUNT = 34
+TOTAL_TARGETED_GATE_STATUS = PASS_149
+POST_MERGE_FULL_REGRESSION_STATUS = PASS_351
+REMEDIATION_3_MERGE_STATUS = MERGED_BY_STRICT_FAST_FORWARD
+V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 ```
 
 ## V3 external-evidence gate second remediation
