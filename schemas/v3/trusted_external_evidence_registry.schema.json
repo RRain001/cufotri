@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/trusted_external_evidence_registry.schema.json",
+  "title": "Trusted external empirical evidence approval registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dataset_id",
+          "raw_manifest_sha256",
+          "evidence_type",
+          "empirical_eligibility",
+          "test_only",
+          "source_authority",
+          "licence_review",
+          "approval"
+        ],
+        "properties": {
+          "dataset_id": {"type": "string", "minLength": 1},
+          "raw_manifest_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "evidence_type": {
+            "enum": [
+              "CONTROLLED_EXPERIMENT",
+              "MATCHED_FIELD_OBSERVATION",
+              "LICENSED_EXTERNAL_HOLDOUT"
+            ]
+          },
+          "empirical_eligibility": {
+            "enum": ["APPROVED", "REJECTED", "PENDING"]
+          },
+          "test_only": {"type": "boolean"},
+          "source_authority": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["organization", "dataset_title", "reference"],
+            "properties": {
+              "organization": {"type": "string", "minLength": 1},
+              "dataset_title": {"type": "string", "minLength": 1},
+              "reference": {"type": "string", "minLength": 1}
+            }
+          },
+          "licence_review": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "review_record_path",
+              "review_record_sha256"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "APPROVED_LOCAL_USE",
+                  "APPROVED_REDISTRIBUTION",
+                  "REJECTED",
+                  "PENDING"
+                ]
+              },
+              "review_record_path": {"type": "string", "minLength": 1},
+              "review_record_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "approval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "approval_commit",
+              "approved_registry_sha256",
+              "approved_entry_sha256"
+            ],
+            "properties": {
+              "approval_commit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "approved_registry_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "approved_entry_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

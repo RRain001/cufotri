@@ -7,6 +7,8 @@
   "required": [
     "schema_version",
     "dataset_id",
+    "raw_manifest_sha256",
+    "evidence_type",
     "raw_manifest_path",
     "intake_manifest_path",
     "preregistration_record_path",
@@ -17,6 +19,24 @@
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "dataset_id": {"type": "string", "minLength": 1},
+    "raw_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "evidence_type": {
+      "enum": [
+        "CONTROLLED_EXPERIMENT",
+        "MATCHED_FIELD_OBSERVATION",
+        "LICENSED_EXTERNAL_HOLDOUT",
+        "SYNTHETIC_CONTRACT_TEST",
+        "INTERNAL_REFERENCE",
+        "ANALYTIC_BENCHMARK",
+        "INTEGRATION_SCENARIO",
+        "REGRESSION_CASE",
+        "ERA5_FORCING",
+        "LITERATURE_COMPARISON"
+      ]
+    },
+    "artifact_purpose": {"type": "string", "minLength": 1},
+    "test_only": {"type": "boolean"},
+    "origin_class": {"type": "string", "minLength": 1},
     "raw_manifest_path": {"type": "string", "minLength": 1},
     "intake_manifest_path": {"type": "string", "minLength": 1},
     "preregistration_record_path": {"type": "string", "minLength": 1},

@@ -1,8 +1,5 @@
-schema_version: 2.0.0
+schema_version: 3.0.0
 evidence_bundle_path: null
-allowed_artifact_roots:
-  - validation
-  - docs/v3/gates
 allowed_raw_data_roots:
   - validation/external_local
 required_regression_reports:
