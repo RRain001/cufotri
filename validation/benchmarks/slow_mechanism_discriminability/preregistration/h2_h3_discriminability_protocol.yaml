@@ -240,6 +240,7 @@ design_success_criteria:
     minimum_time_point_count: 2
   exposure_concentration_robustness_required: true
   relative_humidity_robustness_required: true
+  wind_speed_robustness_required: true
   stomatal_resistance_robustness_required: true
   all_runs_finite_nonnegative_required: true
   all_runs_mass_conservative_required: true
