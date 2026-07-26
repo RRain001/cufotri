@@ -1,0 +1,209 @@
+{
+  "protocol_id": "SB1_PLANT_WATER_MECHANISM_DISCRIMINATION_V1",
+  "frozen_parameter_commit": "4b79f62741db4d4b51f4d608df33d2e13c499636",
+  "mechanism_parameter_result_hash": "f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9",
+  "late_check_hours": [
+    936,
+    1608,
+    2280
+  ],
+  "late_data_used_for_fit": false,
+  "candidate_results": {
+    "H0_CURRENT_SINGLE_POOL": {
+      "status": "REFERENCE_BASELINE",
+      "supported": false
+    },
+    "H1_DYNAMIC_WATER_STORAGE": {
+      "late_rmse_improvement_dex": -0.4268832756523908,
+      "late_median_ratio_closeness_improvement_dex": -0.42683322387902933,
+      "late_median_ratio_improvement_factor_toward_unity": 0.3742542803905734,
+      "calibration_rmse_change_dex": 0.040513025768291744,
+      "early_min_ratio": 0.9386476163393934,
+      "early_max_ratio": 1.9394386676385555,
+      "forcing_pass_count": 0,
+      "checks": {
+        "late_rmse": false,
+        "late_median_ratio": false,
+        "calibration_not_worse": true,
+        "early_within_factor": true,
+        "finite_nonnegative": true,
+        "mass_balance": true,
+        "no_parameter_boundary_hit": true,
+        "identifiability": true,
+        "forcing_robustness": false,
+        "obt_consistency": true
+      },
+      "supported": false,
+      "status": "NOT_SUPPORTED_BY_FROZEN_CRITERIA",
+      "new_fitted_parameter_count": 0,
+      "parameters": {},
+      "identifiability_status": "NOT_APPLICABLE_NO_NEW_PARAMETERS",
+      "boundary_hit": false,
+      "primary_late_metrics": {
+        "log10_rmse": 3.037855244591242,
+        "log10_mean_bias": -2.9839643128843574,
+        "median_predicted_to_observed_ratio": 0.0007428105836598096,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "primary_calibration_metrics": {
+        "log10_rmse": 1.5068904179383946,
+        "log10_mean_bias": -1.0677749738131812,
+        "median_predicted_to_observed_ratio": 0.0426847905583409,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.4,
+        "n": 5.0
+      },
+      "primary_plant_body_obt_bq_l": 3.499311771304654
+    },
+    "H2_PARALLEL_FAST_SLOW_RESIDUAL": {
+      "late_rmse_improvement_dex": 1.7897506811656845,
+      "late_median_ratio_closeness_improvement_dex": 2.4476679234830585,
+      "late_median_ratio_improvement_factor_toward_unity": 280.32893266912066,
+      "calibration_rmse_change_dex": -0.8666896442581895,
+      "early_min_ratio": 0.9390903240991367,
+      "early_max_ratio": 1.9500594305017127,
+      "forcing_pass_count": 7,
+      "checks": {
+        "late_rmse": true,
+        "late_median_ratio": true,
+        "calibration_not_worse": true,
+        "early_within_factor": true,
+        "finite_nonnegative": true,
+        "mass_balance": true,
+        "no_parameter_boundary_hit": false,
+        "identifiability": false,
+        "forcing_robustness": true,
+        "obt_consistency": true
+      },
+      "supported": false,
+      "status": "NOT_SUPPORTED_BY_FROZEN_CRITERIA",
+      "new_fitted_parameter_count": 2,
+      "parameters": {
+        "slow_capture_fraction": 0.001,
+        "slow_release_rate_s": 1e-06
+      },
+      "identifiability_status": "LIMITED_BOUNDARY_RANK_OR_CORRELATION",
+      "boundary_hit": true,
+      "primary_late_metrics": {
+        "log10_rmse": 0.8212212877731666,
+        "log10_mean_bias": -0.337591593772403,
+        "median_predicted_to_observed_ratio": 0.5563898905187402,
+        "factor_2_coverage": 0.3333333333333333,
+        "factor_10_coverage": 0.6666666666666666,
+        "n": 3
+      },
+      "primary_calibration_metrics": {
+        "log10_rmse": 0.5996877479119134,
+        "log10_mean_bias": 0.4822891277498788,
+        "median_predicted_to_observed_ratio": 2.5640198074732914,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 1.0,
+        "n": 5.0
+      },
+      "primary_plant_body_obt_bq_l": 3.6253333824784635
+    },
+    "H3_REVERSIBLE_FAST_SLOW_EXCHANGE": {
+      "late_rmse_improvement_dex": 1.4926328132376738,
+      "late_median_ratio_closeness_improvement_dex": 1.9395050584517879,
+      "late_median_ratio_improvement_factor_toward_unity": 86.99715660137124,
+      "calibration_rmse_change_dex": -1.1905174266949516,
+      "early_min_ratio": 0.9388475713972358,
+      "early_max_ratio": 1.9434287621809152,
+      "forcing_pass_count": 4,
+      "checks": {
+        "late_rmse": true,
+        "late_median_ratio": true,
+        "calibration_not_worse": true,
+        "early_within_factor": true,
+        "finite_nonnegative": true,
+        "mass_balance": true,
+        "no_parameter_boundary_hit": true,
+        "identifiability": true,
+        "forcing_robustness": false,
+        "obt_consistency": true
+      },
+      "supported": false,
+      "status": "NOT_SUPPORTED_BY_FROZEN_CRITERIA",
+      "new_fitted_parameter_count": 2,
+      "parameters": {
+        "fast_to_slow_rate_s": 1e-07,
+        "slow_to_fast_rate_s": 1e-06
+      },
+      "identifiability_status": "PASS_BOUNDED_LOCAL_SCREEN",
+      "boundary_hit": false,
+      "primary_late_metrics": {
+        "log10_rmse": 1.1183391557011773,
+        "log10_mean_bias": -0.8405300525462414,
+        "median_predicted_to_observed_ratio": 0.17266979179067296,
+        "factor_2_coverage": 0.3333333333333333,
+        "factor_10_coverage": 0.6666666666666666,
+        "n": 3
+      },
+      "primary_calibration_metrics": {
+        "log10_rmse": 0.2758599654751513,
+        "log10_mean_bias": 0.1719487086778851,
+        "median_predicted_to_observed_ratio": 1.6962788792915358,
+        "factor_2_coverage": 0.8,
+        "factor_10_coverage": 1.0,
+        "n": 5.0
+      },
+      "primary_plant_body_obt_bq_l": 3.5379066836797706
+    },
+    "H4_OBT_MEDIATED_RECYCLE": {
+      "late_rmse_improvement_dex": -2.6377725535214456,
+      "late_median_ratio_closeness_improvement_dex": -2.452821669877264,
+      "late_median_ratio_improvement_factor_toward_unity": 0.0035251559137952845,
+      "calibration_rmse_change_dex": -0.315872257997436,
+      "early_min_ratio": 0.9386246310498402,
+      "early_max_ratio": 1.9399667315036284,
+      "forcing_pass_count": 0,
+      "checks": {
+        "late_rmse": false,
+        "late_median_ratio": false,
+        "calibration_not_worse": true,
+        "early_within_factor": true,
+        "finite_nonnegative": true,
+        "mass_balance": true,
+        "no_parameter_boundary_hit": false,
+        "identifiability": false,
+        "forcing_robustness": false,
+        "obt_consistency": false
+      },
+      "supported": false,
+      "status": "NOT_SUPPORTED_BY_FROZEN_CRITERIA",
+      "new_fitted_parameter_count": 2,
+      "parameters": {
+        "formation_multiplier": 2.0,
+        "turnover_multiplier": 2.52
+      },
+      "identifiability_status": "LIMITED_BOUNDARY_RANK_OR_CORRELATION",
+      "boundary_hit": true,
+      "primary_late_metrics": {
+        "log10_rmse": 5.248744522460297,
+        "log10_mean_bias": -5.016970149889745,
+        "median_predicted_to_observed_ratio": 6.9966417460487125e-06,
+        "factor_2_coverage": 0.0,
+        "factor_10_coverage": 0.0,
+        "n": 3
+      },
+      "primary_calibration_metrics": {
+        "log10_rmse": 1.1505051341726669,
+        "log10_mean_bias": -0.7927545986119438,
+        "median_predicted_to_observed_ratio": 0.1440848239244527,
+        "factor_2_coverage": 0.4,
+        "factor_10_coverage": 0.6,
+        "n": 5.0
+      },
+      "primary_plant_body_obt_bq_l": 0.00023255782795895624
+    }
+  },
+  "best_supported_mechanism": null,
+  "mechanism_discrimination_status": "NO_MINIMAL_MECHANISM_SUPPORTED",
+  "formal_v3_design_recommendation": "NOT_READY",
+  "v3_physics_implementation_status": "NOT_STARTED",
+  "empirical_validation_claim": false,
+  "production_gate_eligible": false,
+  "v3_physics_start_gate": "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
+}

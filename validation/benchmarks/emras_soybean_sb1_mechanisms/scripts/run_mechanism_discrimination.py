@@ -16,7 +16,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import curve_fit
+from scipy.optimize import least_squares
 import yaml
 
 
@@ -76,9 +76,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--stage",
-        choices=("calibrate", "late"),
+        choices=("calibrate", "late", "reports"),
         required=True,
-        help="Late is refused until calibration parameters are tracked.",
+        help=(
+            "Late is refused until calibration parameters are tracked; "
+            "reports only regenerates descriptive and Markdown summaries."
+        ),
     )
     return parser.parse_args()
 
@@ -796,16 +799,35 @@ def descriptive_timescales() -> dict[str, Any]:
             + slow_amplitude * np.exp(-slow_rate * time)
         )
 
-    double_status = "PASS"
+    double_status = "PASS_LOG_RESIDUAL_LEAST_SQUARES"
     try:
-        fitted, _ = curve_fit(
-            double_model,
-            time_h,
-            values,
-            p0=[values[0] * 0.95, 1.0, values[-1] * 10.0, 0.001],
-            bounds=([0, 1.0e-8, 0, 1.0e-10], [1.0e9, 100, 1.0e8, 10]),
-            maxfev=100000,
+        lower = np.array([1.0e-12, 1.0e-8, 1.0e-12, 1.0e-10])
+        upper = np.array([1.0e9, 100.0, 1.0e8, 10.0])
+        starts = (
+            [values[0] * 0.95, 1.0, values[-1] * 10.0, 0.001],
+            [values[0], 0.3, values[-1] * 12.0, 0.001],
+            [values[0] * 0.5, 0.1, values[-1] * 20.0, 0.0005],
+            [values[0] * 0.9, 3.0, values[-1] * 5.0, 0.003],
         )
+
+        def log_residual(parameters: np.ndarray) -> np.ndarray:
+            prediction = double_model(time_h, *parameters)
+            return np.log(prediction) - log_values
+
+        fits = [
+            least_squares(
+                log_residual,
+                np.clip(np.asarray(start, dtype=float), lower, upper),
+                bounds=(lower, upper),
+                max_nfev=100000,
+                x_scale="jac",
+            )
+            for start in starts
+        ]
+        best_fit = min(fits, key=lambda result: float(2.0 * result.cost))
+        if not best_fit.success or not np.all(np.isfinite(best_fit.x)):
+            raise RuntimeError("double-exponential log-residual fit failed")
+        fitted = best_fit.x
         fast_amplitude, fast_rate, slow_amplitude, slow_rate = fitted
         if fast_rate < slow_rate:
             fast_amplitude, slow_amplitude = slow_amplitude, fast_amplitude
@@ -1162,6 +1184,27 @@ def late_stage(protocol: dict[str, Any]) -> None:
     )
 
 
+def report_stage(protocol: dict[str, Any]) -> None:
+    frozen = load_frozen_parameters()
+    final = json.loads(
+        (REPORTS / "mechanism_selection.json").read_text(encoding="utf-8")
+    )
+    descriptive = descriptive_timescales()
+    (REPORTS / "descriptive_timescale_results.json").write_text(
+        json.dumps(descriptive, indent=2) + "\n", encoding="utf-8"
+    )
+    write_reports(protocol, frozen, descriptive, final)
+    print(
+        "MECHANISM_DISCRIMINATION_STATUS = "
+        f"{final['mechanism_discrimination_status']}"
+    )
+    print(
+        "BEST_SUPPORTED_MECHANISM = "
+        f"{final['best_supported_mechanism'] or 'NONE'}"
+    )
+    print("REPORT_REFRESH_ONLY = TRUE")
+
+
 def write_reports(
     protocol: dict[str, Any],
     frozen: dict[str, Any],
@@ -1321,8 +1364,10 @@ def main() -> int:
     REPORTS.mkdir(parents=True, exist_ok=True)
     if args.stage == "calibrate":
         calibration_stage(protocol)
-    else:
+    elif args.stage == "late":
         late_stage(protocol)
+    else:
+        report_stage(protocol)
     return 0
 
 

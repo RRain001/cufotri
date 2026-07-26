@@ -1,0 +1,27 @@
+{
+  "descriptive_only": true,
+  "used_for_candidate_calibration": false,
+  "used_for_model_selection": false,
+  "single_exponential": {
+    "amplitude_bq_l": 33564.34410678586,
+    "rate_h": 0.0036346927159051565,
+    "e_folding_time_h": 275.12642145072437,
+    "log_sse": 76.95497343103027
+  },
+  "double_exponential_status": "PASS_LOG_RESIDUAL_LEAST_SQUARES",
+  "double_exponential": {
+    "fast_amplitude_bq_l": 3854391.28335367,
+    "fast_rate_h": 0.29718095681803286,
+    "fast_e_folding_time_h": 3.364953160886116,
+    "slow_amplitude_bq_l": 704.4864828908337,
+    "slow_rate_h": 0.001308007115547684,
+    "slow_e_folding_time_h": 764.5218348688292,
+    "log_sse": 3.466030025421948
+  },
+  "piecewise_log_linear": {
+    "break_time_h": 24.0,
+    "early_log10_slope_per_h": -0.12521550071721715,
+    "late_log10_slope_per_h": -0.000726626491400083,
+    "log10_sse": 1.0339085468500482
+  }
+}
