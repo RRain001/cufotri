@@ -10,7 +10,7 @@
     "calibration_ids",
     "holdout_ids",
     "primary_metrics",
-    "parameter_set",
+    "parameter_contract",
     "status"
   ],
   "properties": {
@@ -87,11 +87,31 @@
         }
       }
     },
-    "parameter_set": {
+    "parameter_contract": {
       "type": "array",
       "minItems": 1,
-      "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "unit",
+          "lower_bound",
+          "upper_bound",
+          "lower_inclusive",
+          "upper_inclusive",
+          "transform"
+        ],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "unit": {"type": "string", "minLength": 1},
+          "lower_bound": {"type": "number"},
+          "upper_bound": {"type": "number"},
+          "lower_inclusive": {"type": "boolean"},
+          "upper_inclusive": {"type": "boolean"},
+          "transform": {"enum": ["IDENTITY", "LOG", "LOG10", "LOGIT"]}
+        }
+      }
     },
     "status": {"const": "FROZEN_BEFORE_HOLDOUT_INSPECTION"}
   }

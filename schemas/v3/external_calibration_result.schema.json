@@ -12,6 +12,7 @@
     "preregistration_sha256",
     "preregistration_commit",
     "calibration_ids",
+    "parameter_contract_hash",
     "parameter_result_hash",
     "config_hash",
     "model_commit",
@@ -33,13 +34,29 @@
       "uniqueItems": true,
       "items": {"type": "string"}
     },
+    "parameter_contract_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "parameter_result_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "config_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "model_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
     "parameters": {
       "type": "object",
       "minProperties": 1,
-      "additionalProperties": {"type": "number"}
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "unit", "transform"],
+          "properties": {
+            "value": {"type": "number"},
+            "unit": {"type": "string", "minLength": 1},
+            "transform": {"enum": ["IDENTITY", "LOG", "LOG10", "LOGIT"]}
+          }
+        }
+      }
     },
     "metrics": {
       "type": "object",

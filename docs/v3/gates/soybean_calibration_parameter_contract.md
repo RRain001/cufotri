@@ -35,3 +35,46 @@ At most one parameter from a strongly compensating pair may remain free after
 profile/Jacobian diagnostics unless independent repeats identify both. Every
 active parameter, prior, bound, transform, and source must be frozen in the
 preregistration before calibration.
+
+## Executable frozen-contract representation
+
+The formal V3 evidence gate accepts only `parameter_contract`; the legacy
+`parameter_set` list has no production authority. Parameter order has no
+semantic meaning. Names are case-sensitive ASCII and must match:
+
+```text
+^[a-z][a-z0-9_]*$
+```
+
+Each parameter is frozen as:
+
+```yaml
+parameter_contract:
+  - name: turnover_rate
+    unit: s-1
+    lower_bound: 0.0
+    upper_bound: 1.0e-6
+    lower_inclusive: true
+    upper_inclusive: true
+    transform: IDENTITY
+```
+
+Allowed transforms are `IDENTITY`, `LOG`, `LOG10`, and `LOGIT`. The gate
+rejects duplicate names, unknown fields, missing units, non-finite bounds,
+reversed/empty intervals, and dynamic expressions.
+
+The canonical contract is sorted by parameter name before hashing. A
+calibration artifact must provide every frozen parameter exactly once:
+
+```yaml
+parameters:
+  turnover_rate:
+    value: 1.78e-9
+    unit: s-1
+    transform: IDENTITY
+```
+
+Names, units, transforms, values, and inclusive/exclusive bounds are checked
+semantically before `parameter_result_hash` is computed. Identifiability must
+report every frozen name, and holdout must carry the same contract hash,
+canonical parameter hash, and full parameter mapping.

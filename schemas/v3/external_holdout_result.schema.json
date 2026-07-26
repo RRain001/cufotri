@@ -14,7 +14,9 @@
     "preregistration_commit",
     "model_commit",
     "config_hash",
+    "parameter_contract_hash",
     "parameter_result_hash",
+    "parameters",
     "holdout_ids",
     "result_file_checksums",
     "metrics",
@@ -44,7 +46,28 @@
     "preregistration_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
     "model_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
     "config_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "parameter_contract_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "parameter_result_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "parameters": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-z][a-z0-9_]*$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "unit", "transform"],
+          "properties": {
+            "value": {"type": "number"},
+            "unit": {"type": "string", "minLength": 1},
+            "transform": {"enum": ["IDENTITY", "LOG", "LOG10", "LOGIT"]}
+          }
+        }
+      }
+    },
     "holdout_ids": {
       "type": "array",
       "minItems": 1,

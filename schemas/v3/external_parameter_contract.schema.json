@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3/external_parameter_contract.schema.json",
+  "title": "Frozen external calibration parameter contract",
+  "type": "array",
+  "additionalProperties": false,
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "name",
+      "unit",
+      "lower_bound",
+      "upper_bound",
+      "lower_inclusive",
+      "upper_inclusive",
+      "transform"
+    ],
+    "properties": {
+      "name": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "unit": {"type": "string", "minLength": 1},
+      "lower_bound": {"type": "number"},
+      "upper_bound": {"type": "number"},
+      "lower_inclusive": {"type": "boolean"},
+      "upper_inclusive": {"type": "boolean"},
+      "transform": {"enum": ["IDENTITY", "LOG", "LOG10", "LOGIT"]}
+    }
+  }
+}
