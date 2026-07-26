@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas.local/schemas/sb1_case_manifest.schema.json",
+  "title": "EMRAS soybean SB1 PDF ERA5 case manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "case_version",
+    "evidence_type",
+    "production_gate_eligible",
+    "trusted_registry_eligible",
+    "source_document_sha256",
+    "site_coordinate",
+    "coordinate_status",
+    "timezone",
+    "published_table_checksums",
+    "era5_request_hash",
+    "era5_raw_file_checksums",
+    "processed_forcing_checksum",
+    "config_checksum",
+    "observation_checksum",
+    "generation_commit"
+  ],
+  "properties": {
+    "case_id": {"const": "EMRAS_SOYBEAN_SB1_PDF_ERA5_V1"},
+    "case_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "evidence_type": {"const": "HYBRID_LITERATURE_REANALYSIS"},
+    "production_gate_eligible": {"const": false},
+    "trusted_registry_eligible": {"const": false},
+    "source_document_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "site_coordinate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latitude", "longitude"],
+      "properties": {
+        "latitude": {"type": "number", "minimum": -90, "maximum": 90},
+        "longitude": {"type": "number", "minimum": -180, "maximum": 180}
+      }
+    },
+    "coordinate_status": {"const": "PROVISIONAL_INSTITUTIONAL_LOCATION"},
+    "timezone": {"const": "Asia/Seoul"},
+    "published_table_checksums": {
+      "type": "object",
+      "minProperties": 6,
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "era5_request_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "era5_raw_file_checksums": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "processed_forcing_checksum": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "config_checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observation_checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generation_commit": {"type": "string", "minLength": 7}
+  }
+}

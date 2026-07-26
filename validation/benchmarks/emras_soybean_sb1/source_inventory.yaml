@@ -1,0 +1,28 @@
+case_id: EMRAS_SOYBEAN_SB1_PDF_ERA5_V1
+document_title: >-
+  Modelling the Environmental Transfer of Tritium and Carbon-14 to Biota and Man
+organization: International Atomic Energy Agency
+scenario: EMRAS Soybean
+local_file: >-
+  validation/external_local/emras_soybean_sb1/references/IAEA-emras-tritium-wg.pdf
+local_sha256: 15b2591d82d8276c83030327d6a65d3f5a2e2ec3b11429d63b7c39461f50d211
+publication_status: PUBLIC_REPORT
+data_origin: KAERI_EXPERIMENT
+redistribution_scope: NUMERIC_PUBLICATION_TABLE_TRANSCRIPTION_ONLY
+transcription_status: VERIFIED_TEXT_LAYER_AND_VISUAL_CELL_REVIEW
+source_pdf_pages:
+  table_5_1: 105
+  table_5_3: 105
+  tables_I_4_2_to_I_4_5: 287
+  table_I_4_6: 289
+  table_I_4_9: 289
+source_printed_pages:
+  table_5_1: 97
+  table_5_3: 97
+  tables_I_4_2_to_I_4_5: 279
+  table_I_4_6: 281
+  table_I_4_9: 281
+forbidden_methods:
+  - FIGURE_PIXEL_DIGITIZATION
+  - MODEL_PREDICTION_AS_OBSERVATION
+  - INVENTED_MISSING_SAMPLE

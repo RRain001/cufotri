@@ -1,0 +1,16 @@
+experiment,time_local,minutes_from_exposure_start,air_temperature_c,relative_humidity_percent,illuminance_klux,air_moisture_hto_bq_ml_water,source_table,source_status,source_pdf_page,source_printed_page,source_row,source_column,transcription_method,verification_status
+SB1,2001-07-02T09:25:00+09:00,-5,33.5,59.4,36.3,,Table I.4.6,NOT_REPORTED,289,281,09:25,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T09:30:00+09:00,0,34.2,75.1,44.3,,Table I.4.6,NOT_REPORTED_BOUNDARY_ASSUMPTION_REQUIRED,289,281,09:30 start,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T09:35:00+09:00,5,34.7,80.4,42.6,7050,Table I.4.6,REPORTED,289,281,09:35,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T09:40:00+09:00,10,36.0,83.7,46.4,67400,Table I.4.6,REPORTED,289,281,09:40,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T09:45:00+09:00,15,37.0,85.2,44.1,72500,Table I.4.6,REPORTED,289,281,09:45,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T09:50:00+09:00,20,38.1,85.1,48.9,101000,Table I.4.6,REPORTED,289,281,09:50,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T09:55:00+09:00,25,39.2,84.9,61.7,94500,Table I.4.6,REPORTED,289,281,09:55,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:00:00+09:00,30,40.4,83.7,42.9,104000,Table I.4.6,REPORTED,289,281,10:00,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:05:00+09:00,35,41.0,82.6,48.1,93000,Table I.4.6,REPORTED,289,281,10:05,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:10:00+09:00,40,41.5,81.5,61.5,90700,Table I.4.6,REPORTED,289,281,10:10,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:15:00+09:00,45,42.2,81.0,66.7,84100,Table I.4.6,REPORTED,289,281,10:15,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:20:00+09:00,50,43.1,80.2,61.7,83700,Table I.4.6,REPORTED,289,281,10:20,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:25:00+09:00,55,43.6,78.8,66.9,73100,Table I.4.6,REPORTED,289,281,10:25,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:30:00+09:00,60,44.0,77.1,72.3,72600,Table I.4.6,REPORTED,289,281,10:30 end,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,2001-07-02T10:35:00+09:00,65,42.2,43.5,35.2,66300,Table I.4.6,REPORTED_POST_EXPOSURE_CLEARANCE,289,281,10:35,all columns,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL

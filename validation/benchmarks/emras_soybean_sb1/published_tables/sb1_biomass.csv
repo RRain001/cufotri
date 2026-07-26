@@ -1,0 +1,13 @@
+experiment,stage,mass_basis,component,value,unit,source_table,source_page,source_printed_page,source_row,source_column,transcription_method,verification_status
+SB1,exposure,fresh,stem,323.7,g fresh weight m-2,Table I.4.2,287,279,SB1,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,exposure,fresh,leaves,637.7,g fresh weight m-2,Table I.4.2,287,279,SB1,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,exposure,dry,stem,57.6,g dry weight m-2,Table I.4.3,287,279,SB1,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,exposure,dry,leaves,115.6,g dry weight m-2,Table I.4.3,287,279,SB1,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,fresh,stem,1259.6,g fresh weight m-2,Table I.4.4,287,279,SB1,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,fresh,leaves,1503.0,g fresh weight m-2,Table I.4.4,287,279,SB1,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,fresh,shell,920.0,g fresh weight m-2,Table I.4.4,287,279,SB1,Shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,fresh,seed,703.0,g fresh weight m-2,Table I.4.4,287,279,SB1,Seed,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,dry,stem,370.0,g dry weight m-2,Table I.4.5,287,279,SB1,Stem,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,dry,leaves,552.4,g dry weight m-2,Table I.4.5,287,279,SB1,Leaves,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,dry,shell,448.5,g dry weight m-2,Table I.4.5,287,279,SB1,Shell,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL
+SB1,harvest,dry,seed,358.0,g dry weight m-2,Table I.4.5,287,279,SB1,Seed,PDF text layer plus visual page review,VERIFIED_CELL_BY_CELL

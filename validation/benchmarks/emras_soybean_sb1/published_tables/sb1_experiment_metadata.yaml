@@ -1,0 +1,39 @@
+experiment: SB1
+scenario: EMRAS_SOYBEAN
+sowing_date: 2001-05-22
+flowering_date: 2001-07-07
+pod_growth_start:
+  value: 2001-07-10
+  status: APPROXIMATELY_ON_OR_AFTER
+exposure_date: 2001-07-02
+exposure_start_local: 2001-07-02T09:30:00+09:00
+exposure_end_local: 2001-07-02T10:30:00+09:00
+exposure_duration_h: 1.0
+harvest_date: 2001-10-05
+soil_surface_covered_during_exposure: true
+soil_cover_material: vinyl_paper
+outdoor_growth_after_exposure: true
+glove_box:
+  length_cm: 95
+  width_cm: 95
+  height_cm: 130
+  natural_solar_conditions: true
+  internal_fan_circulation: true
+  fan_speed_or_mixing_rate_status: NOT_REPORTED
+  contaminated_air_sampling_l_every_5_min: 1.5
+sampling:
+  sb1_plants_per_pot: 12
+  sampling_plants_each_time: 1_or_2
+  composite_samples: true
+  composite_sample_details_status: INCOMPLETE
+measurement:
+  instrument: Quantulus 1220 liquid scintillation detector
+  repetitions: 3
+  count_duration_min: 20_to_30
+  analytical_relative_uncertainty: 0.10
+  total_uncertainty_status: PARTIAL_NOT_FULLY_QUANTIFIED
+  detection_limit_status: NOT_REPORTED
+source:
+  report_pdf_page_range: [286, 290]
+  report_printed_page_range: [278, 282]
+  verification_status: VERIFIED_TEXT_AND_VISUAL_PAGE_REVIEW

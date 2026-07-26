@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas.local/schemas/sb1_chamber_conditions.schema.json",
+  "title": "EMRAS soybean SB1 chamber condition row",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "experiment",
+    "time_local",
+    "minutes_from_exposure_start",
+    "air_temperature_c",
+    "relative_humidity_percent",
+    "illuminance_klux",
+    "air_moisture_hto_bq_ml_water",
+    "source_table",
+    "source_status",
+    "verification_status"
+  ],
+  "properties": {
+    "experiment": {"const": "SB1"},
+    "time_local": {"type": "string", "format": "date-time"},
+    "minutes_from_exposure_start": {"type": "number"},
+    "air_temperature_c": {"type": "number", "minimum": -80, "maximum": 60},
+    "relative_humidity_percent": {"type": "number", "minimum": 0, "maximum": 100},
+    "illuminance_klux": {"type": "number", "minimum": 0},
+    "air_moisture_hto_bq_ml_water": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "source_table": {"const": "Table I.4.6"},
+    "source_status": {"type": "string", "minLength": 1},
+    "verification_status": {"const": "VERIFIED_CELL_BY_CELL"}
+  }
+}

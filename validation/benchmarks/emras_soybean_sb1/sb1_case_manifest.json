@@ -1,0 +1,34 @@
+{
+  "case_id": "EMRAS_SOYBEAN_SB1_PDF_ERA5_V1",
+  "case_version": "1.0.0",
+  "config_checksum": "05deacfd36feb94d8aa4b68833d31c100760ab596341e91a9d2f542dc7f45af8",
+  "coordinate_status": "PROVISIONAL_INSTITUTIONAL_LOCATION",
+  "era5_raw_file_checksums": {
+    "validation/external_local/emras_soybean_sb1/era5_raw/CENTRE/era5_surface_2001-05-20_2001-10-06.nc": "f01366f54fc14735ae28ea8e2e75e87bd2acbe129fc5d8096dab50589b44d290",
+    "validation/external_local/emras_soybean_sb1/era5_raw/EAST_0P25/era5_surface_2001-05-20_2001-10-06.nc": "5bdc10883c8edb9953a811e3441897076ad591df8c5da63a3569c2a648e9bea6",
+    "validation/external_local/emras_soybean_sb1/era5_raw/NORTH_0P25/era5_surface_2001-05-20_2001-10-06.nc": "ae0f7596ffab190382e97f8c26a3f937bed2dea057f888254d79cce5bccc1868",
+    "validation/external_local/emras_soybean_sb1/era5_raw/SOUTH_0P25/era5_surface_2001-05-20_2001-10-06.nc": "2e93bca85b6eac020a96d21926b393bdc3eb7871e3511f8310a7c8641ab5b1d1",
+    "validation/external_local/emras_soybean_sb1/era5_raw/WEST_0P25/era5_surface_2001-05-20_2001-10-06.nc": "c889a7002074c0c3abf97158d7e11d69abbaf5634db701dd572add0a5682740f"
+  },
+  "era5_request_hash": "63628672d8cbad381544bb4466e29de0fd4d0d3538ec81360eb100b021b97181",
+  "evidence_type": "HYBRID_LITERATURE_REANALYSIS",
+  "generation_commit": "ae23ac037781caa5d69e2b69adb7de7214549c85",
+  "observation_checksum": "2f2e55cd57e3956df3ccbd061bc74ef622eaff052eb999cb99053a84ad924df2",
+  "processed_forcing_checksum": "8527f6d9a9189997b9afa69cb0965437d2d3d6c036252a327fb24b6d1e4656df",
+  "production_gate_eligible": false,
+  "published_table_checksums": {
+    "sb1_biomass.csv": "92203d32ea79dee84757f4346aec09d67d44eb3041e126257b076c69b33959f6",
+    "sb1_chamber_conditions_5min.csv": "cbfc26a6d6fa8c2b0ec41ce402dfd821f3cfafddc5261f899e9ad357d77499a7",
+    "sb1_experiment_metadata.yaml": "01f9eda1bfeb10d05faf83851389126939665027ed0264a0e30c4500ef83eae0",
+    "sb1_obt_harvest.csv": "8f55559e766572da31768a7675a7b3ef07aa44cae2094cce9445fcd475ab3236",
+    "sb1_sampling_schedule.csv": "be88feb9fdf551b1f0356b3fa7d01bd74e333ef4b9b366878f2534cc9b05360c",
+    "sb1_tfwt_observations.csv": "d71e2752356755d47963ce0d27e7e37190782374ec82b9cc4635665ebe6a9bca"
+  },
+  "site_coordinate": {
+    "latitude": 36.425,
+    "longitude": 127.373611
+  },
+  "source_document_sha256": "15b2591d82d8276c83030327d6a65d3f5a2e2ec3b11429d63b7c39461f50d211",
+  "timezone": "Asia/Seoul",
+  "trusted_registry_eligible": false
+}

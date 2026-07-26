@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas.local/schemas/sb1_tfwt_observations.schema.json",
+  "title": "EMRAS soybean SB1 TFWT observation row",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "experiment",
+    "compartment",
+    "sample_datetime_local",
+    "sample_datetime_utc",
+    "hours_after_exposure",
+    "tfwt_bq_ml_water",
+    "tfwt_bq_l_water",
+    "normalized_tfwt",
+    "analytical_relative_uncertainty",
+    "total_uncertainty_status",
+    "detection_limit_status",
+    "replicate_status",
+    "source_table",
+    "verification_status"
+  ],
+  "properties": {
+    "experiment": {"const": "SB1"},
+    "compartment": {"enum": ["plant_body", "pods"]},
+    "sample_datetime_local": {"type": "string", "format": "date-time"},
+    "sample_datetime_utc": {"type": "string", "format": "date-time"},
+    "hours_after_exposure": {"type": "number", "exclusiveMinimum": 0},
+    "tfwt_bq_ml_water": {"type": "number", "exclusiveMinimum": 0},
+    "tfwt_bq_l_water": {"type": "number", "exclusiveMinimum": 0},
+    "normalized_tfwt": {"type": "number", "exclusiveMinimum": 0},
+    "analytical_relative_uncertainty": {"const": 0.1},
+    "total_uncertainty_status": {"const": "PARTIAL_NOT_FULLY_QUANTIFIED"},
+    "detection_limit_status": {"const": "NOT_REPORTED"},
+    "replicate_status": {"const": "COMPOSITE_SAMPLE_DETAILS_INCOMPLETE"},
+    "source_table": {"const": "Table 5.1"},
+    "verification_status": {"const": "VERIFIED_CELL_BY_CELL"}
+  }
+}
