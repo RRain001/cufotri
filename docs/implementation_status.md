@@ -1,6 +1,55 @@
 # Implementation status
 
-Updated: 2026-07-26
+Updated: 2026-07-27
+
+## D3 discriminability review and external-evidence acquisition
+
+The frozen H2/H3 D3 discriminability design was independently reproduced and
+reviewed, then fast-forwarded through the design branch into `main` at
+`1f44f8f847e8869e09b6f87262b81cafc2f2828e`. The independent review added 35
+tests and returned `PASS`; it did not fit either candidate, use a latent pool,
+or authorize formal V3 physics.
+
+The separate, intentionally unmerged branch
+`codex/v3-d3-external-evidence-acquisition` froze its search protocol before
+searching. It found no executable public Tier A or Tier B dataset. Three
+sources contain Tier C public numeric evidence and five primary records are
+non-executable. The best request target is the IAEA/KAERI EMRAS soybean
+package, whose three named forcing workbooks are
+`REFERENCED_NOT_ACCESSIBLE`.
+
+```text
+MERGED_D3_DESIGN_HEAD =
+1f44f8f847e8869e09b6f87262b81cafc2f2828e
+D3_MINIMUM_EXPERIMENT =
+24H_EXPOSURE_PLUS_120H_FOLLOWUP_EQUALS_144H
+D3_EXTENDED_120_DAY_FOLLOWUP = OPTIONAL
+D3_INDEPENDENT_REVIEW_TEST_STATUS = PASS_35_OF_35
+D3_RESEARCH_MERGE_STATUS = MERGED_AND_PUSHED
+
+D3_ACQUISITION_BRANCH =
+codex/v3-d3-external-evidence-acquisition
+D3_ACQUISITION_BRANCH_MERGE = NOT_REQUESTED
+D3_EXTERNAL_SEARCH_STATUS =
+COMPLETE_NO_EXECUTABLE_PUBLIC_DATA
+D3_TIER_COUNTS = A_0_B_0_C_3_NON_EXECUTABLE_5
+D3_PUBLIC_RAW_DATA_FOUND = FALSE
+D3_PUBLIC_NUMERIC_DATA_FOUND = TRUE
+D3_RAW_FILE_DOWNLOAD_COUNT = 0
+D3_EMRAS_ATTACHMENT_STATUS =
+REFERENCED_NOT_ACCESSIBLE_ALL_3
+D3_DATA_REQUEST_STATUS = DRAFT_READY_NOT_SENT
+D3_EXPERIMENT_COMMISSION_PACKAGE_STATUS = READY
+D3_ACQUISITION_TEST_STATUS = PASS_20_OF_20
+D3_FULL_REPOSITORY_TEST_STATUS = PASS_586
+
+D3_REAL_EXTERNAL_VALIDATION_RUN = NOT_STARTED
+D3_TRUSTED_REGISTRY_CHANGE_COUNT = 0
+D3_H2_H3_FORMAL_SELECTION = NOT_AUTHORIZED
+D3_FORMAL_V3_PHYSICS = NOT_STARTED
+V3_PHYSICS_START_GATE =
+BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+```
 
 ## EMRAS soybean SB1 research benchmark branch
 
