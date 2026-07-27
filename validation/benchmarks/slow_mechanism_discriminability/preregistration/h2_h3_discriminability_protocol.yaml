@@ -108,6 +108,22 @@ controlled_conditions:
     air_hto_bq_m3 =
     air_moisture_hto_bq_ml_water * actual_vapour_density_g_m3
 
+experiment_duration_contract:
+  minimum_discriminating_experiment:
+    design_id: D3_SHORT_STEP_24H
+    exposure_duration_h: 24
+    post_exposure_observation_h: 120
+    total_elapsed_duration_h: 144
+    approximate_total_duration_days: 6
+    required_sampling_hours_after_final_exposure: [0.2, 48, 120]
+  extended_diagnostic_experiment:
+    required: false
+    maximum_followup_days_after_final_exposure: 120
+    purposes:
+      - LONG_TAIL_BEHAVIOUR
+      - MODEL_ANOMALY_DIAGNOSIS
+      - OPTIONAL_OBT_OR_ORGAN_TRANSFER_ANALYSIS
+
 designs:
   D0_SINGLE_PULSE_BASELINE:
     first_exposure:
@@ -158,6 +174,7 @@ designs:
       concentration_bq_ml_water: 0.0
     second_exposure: null
     final_exposure_end_h: 24.0
+    minimum_followup_hours_after_final_exposure: 120
     simulation_length_days_after_final_exposure: 120
   D4_LONG_STEP_72H:
     first_exposure:

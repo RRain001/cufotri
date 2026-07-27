@@ -25,7 +25,11 @@ SB4_EXISTING_DATA_DISCRIMINABILITY =
 INSUFFICIENT_TO_SELECT_H2_OR_H3
 
 BEST_DISCRIMINATING_DESIGN = D3_SHORT_STEP_24H
+MINIMUM_DISCRIMINATING_EXPERIMENT =
+24H_EXPOSURE_PLUS_120H_POST_EXPOSURE_OBSERVATION
+MINIMUM_TOTAL_ELAPSED_DURATION_H = 144
 MINIMUM_SAMPLING_TIMES = 0.2;48;120
+EXTENDED_DIAGNOSTIC_FOLLOWUP = OPTIONAL_UP_TO_120D
 CV10_CLASSIFICATION_ACCURACY = 1.000
 CV20_CLASSIFICATION_ACCURACY = 1.000
 CV30_CLASSIFICATION_ACCURACY = 1.000
@@ -82,3 +86,12 @@ not a global structural-identifiability proof. The valid interpretation is
 either `SYNTHETIC_DESIGN_PROMISING` for fully robust designs or
 `SYNTHETIC_DESIGN_NOT_ROBUST`; current SB1/SB4 observations remain
 `CURRENT_DATA_INSUFFICIENT`.
+
+## Experiment duration boundary
+
+The minimum D3 experiment is a 24 h controlled exposure plus 120 h of
+post-exposure observation, for 144 h (approximately 6 d) total elapsed time.
+The 120 d simulation horizon is an optional extended diagnostic follow-up for
+long-tail, anomaly, OBT or organ-transfer analysis. It is not a minimum
+experimental requirement and does not replace the preregistered minimum
+sampling times of 0.2 h, 48 h and 120 h after exposure.

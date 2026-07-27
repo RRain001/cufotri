@@ -112,6 +112,44 @@ def test_d3_short_step_schedule(
     assert frame["hours_from_first_exposure_start"].max() == 24.0
 
 
+def test_minimum_experiment_is_24h_plus_120h_followup() -> None:
+    minimum = PROTOCOL["experiment_duration_contract"][
+        "minimum_discriminating_experiment"
+    ]
+    assert minimum["design_id"] == "D3_SHORT_STEP_24H"
+    assert minimum["exposure_duration_h"] == 24
+    assert minimum["post_exposure_observation_h"] == 120
+    assert minimum["total_elapsed_duration_h"] == 144
+    assert minimum["approximate_total_duration_days"] == 6
+    assert minimum["required_sampling_hours_after_final_exposure"] == [
+        0.2,
+        48,
+        120,
+    ]
+    assert PROTOCOL["designs"]["D3_SHORT_STEP_24H"][
+        "minimum_followup_hours_after_final_exposure"
+    ] == 120
+
+
+def test_extended_120d_followup_is_optional() -> None:
+    extended = PROTOCOL["experiment_duration_contract"][
+        "extended_diagnostic_experiment"
+    ]
+    assert extended["required"] is False
+    assert extended["maximum_followup_days_after_final_exposure"] == 120
+
+
+def test_minimum_and_extended_experiment_not_conflated() -> None:
+    duration = PROTOCOL["experiment_duration_contract"]
+    minimum = duration["minimum_discriminating_experiment"]
+    extended = duration["extended_diagnostic_experiment"]
+    assert minimum["post_exposure_observation_h"] == 120
+    assert extended["maximum_followup_days_after_final_exposure"] == 120
+    assert minimum["total_elapsed_duration_h"] != (
+        extended["maximum_followup_days_after_final_exposure"] * 24
+    )
+
+
 def test_d4_long_step_schedule(
     forcing_by_design: dict[str, pd.DataFrame],
 ) -> None:

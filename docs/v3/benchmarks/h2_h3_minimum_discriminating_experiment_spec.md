@@ -15,8 +15,14 @@ EMPIRICAL_VALIDATION_CLAIM = FALSE
   5270 Bq/mL water.
 - Washout: 0 h at strict zero background.
 - Second exposure: null.
-- Total planned model follow-up: 120 d after the final exposure; minimum
-  TFWT sampling times after final exposure: 0.2 h, 48 h, 120 h.
+- Minimum discriminating experiment: 24 h controlled HTO exposure followed by
+  120 h of post-exposure observation. The minimum total elapsed duration is
+  therefore 144 h (approximately 6 d).
+- Minimum TFWT sampling times after final exposure: 0.2 h, 48 h, 120 h.
+- Extended diagnostic experiment: optional follow-up up to 120 d after the
+  final exposure. This extension is for long-tail behaviour, anomaly
+  diagnosis and optional OBT or organ-transfer measurements; it is not a
+  requirement for the minimum discriminating experiment.
 - Recommended additional times: all remaining preregistered candidate times
   needed for diagnostic coverage:
   0.2, 0.5, 1, 3, 6, 12, 24, 48, 72, 120, 168, 336, 504, 768 h.
