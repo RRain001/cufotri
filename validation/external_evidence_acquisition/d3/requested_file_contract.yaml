@@ -1,0 +1,86 @@
+contract_id: D3_REQUESTED_FILE_CONTRACT_V1
+request_status: DRAFT_READY_NOT_SENT
+request_sent: false
+automatic_contact_authorized: false
+target_candidate_id: D3C-001
+target_evidence_status: TIER_C_NOT_EXECUTABLE_FOR_FROZEN_D3
+
+requested_named_files:
+  - filename: sbTbox.xls
+    purpose: AIR_MOISTURE_HTO_TIME_SERIES
+    current_status: REFERENCED_NOT_ACCESSIBLE
+  - filename: sbTHS.xls
+    purpose: TEMPERATURE_RH_AND_SOLAR_OR_LIGHT_TIME_SERIES
+    current_status: REFERENCED_NOT_ACCESSIBLE
+  - filename: sbWR.xls
+    purpose: WIND_MIXING_AND_PRECIPITATION_TIME_SERIES
+    current_status: REFERENCED_NOT_ACCESSIBLE
+
+required_data_groups:
+  exposure:
+    - exposure_start_timestamp
+    - exposure_end_timestamp
+    - timestamp_time_zone
+    - air_hto_time_series
+    - air_hto_unit_and_water_basis
+  post_exposure_forcing:
+    - background_air_hto_time_series
+    - temperature_time_series
+    - relative_humidity_time_series
+    - mixing_or_wind_time_series
+    - precipitation_time_series
+  observations:
+    - total_plant_body_tfwt
+    - organ_level_tfwt_if_available
+    - sampling_timestamp
+    - time_after_exposure
+    - replicate_id
+    - composite_sample_membership
+  biomass_and_water:
+    - fresh_mass
+    - dry_mass
+    - extracted_tissue_water_mass_or_volume
+  analytical:
+    - detection_limit
+    - quantification_limit_if_available
+    - analytical_uncertainty
+    - instrument
+    - preparation_method
+    - counting_method
+    - blanks_and_quality_controls
+  semantics:
+    - data_dictionary
+    - units
+    - missing_value_encoding
+    - quality_flags
+    - version_and_corrections
+  rights:
+    - licence
+    - required_attribution
+    - redistribution_conditions
+    - permission_to_publish_checksums_and_metadata
+
+preferred_delivery:
+  native_original_files: true
+  lossless_csv_export_per_sheet: true
+  preserve_formula_cells: true
+  preserve_precision: true
+  preserve_missing_values: true
+  preserve_quality_flags: true
+  interpolation_allowed: false
+  reconstruction_allowed: false
+
+intake_boundary:
+  raw_storage: READ_ONLY_OUTSIDE_GIT
+  sha256_manifest_required: true
+  licence_review_required: true
+  data_quality_review_required: true
+  trusted_registry_change_authorized: false
+  calibration_authorized: false
+  h2_h3_run_authorized: false
+  observation_unblinding_authorized: false
+  formal_external_validation_authorized: false
+  production_gate_eligible: false
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+missing_value_tokens: [UNKNOWN, NOT_REPORTED, NOT_AVAILABLE]

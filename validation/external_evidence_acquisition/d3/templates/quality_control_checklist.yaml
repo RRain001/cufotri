@@ -1,0 +1,76 @@
+checklist_id: D3_EXPERIMENT_QC_V1
+status: TEMPLATE_NOT_COMPLETED
+minimum_schedule:
+  exposure_duration_h:
+    required: 24
+    result: NOT_AVAILABLE
+  post_exposure_followup_h:
+    required: 120
+    result: NOT_AVAILABLE
+  total_elapsed_h:
+    required: 144
+    result: NOT_AVAILABLE
+  extended_120_day_followup:
+    required: false
+    status: OPTIONAL
+forcing:
+  air_hto_resolution_min:
+    maximum_allowed: 5
+    result: NOT_AVAILABLE
+  temperature_rh_mixing_resolution_min:
+    maximum_allowed: 5
+    result: NOT_AVAILABLE
+  post_exposure_background_measured:
+    required: true
+    result: NOT_AVAILABLE
+  precipitation_mm:
+    required: 0
+    result: NOT_AVAILABLE
+sampling:
+  required_post_exposure_h: [0.2, 48, 120]
+  minimum_biological_replicates_per_destructive_time: 3
+  primary_endpoint: TOTAL_PLANT_BODY_TFWT_BQ_PER_L_TISSUE_WATER
+  replicate_identity_preserved:
+    required: true
+    result: NOT_AVAILABLE
+  fresh_and_dry_mass_preserved:
+    required: true
+    result: NOT_AVAILABLE
+analytical:
+  target_total_relative_uncertainty_percent:
+    maximum: 20
+    result: NOT_AVAILABLE
+  detection_limits_reported:
+    required: true
+    result: NOT_AVAILABLE
+  instrument_and_method_reported:
+    required: true
+    result: NOT_AVAILABLE
+data_integrity:
+  original_raw_files_read_only:
+    required: true
+    result: NOT_AVAILABLE
+  sha256_manifest_complete:
+    required: true
+    result: NOT_AVAILABLE
+  missing_value_encoding_documented:
+    required: true
+    result: NOT_AVAILABLE
+  quality_flags_documented:
+    required: true
+    result: NOT_AVAILABLE
+  synthetic_or_reconstructed_rows_present:
+    required: false
+    result: NOT_AVAILABLE
+rights:
+  licence_identified:
+    required: true
+    result: NOT_AVAILABLE
+  redistribution_conditions_identified:
+    required: true
+    result: NOT_AVAILABLE
+gate:
+  registry_eligible: false
+  formal_external_validation_authorized: false
+  production_gate_eligible: false
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA

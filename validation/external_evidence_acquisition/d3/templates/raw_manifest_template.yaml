@@ -1,0 +1,17 @@
+manifest_schema_id: D3_RAW_MANIFEST_TEMPLATE_V1
+template_only: true
+candidate_or_experiment_id: REQUIRED
+created_utc: REQUIRED_ISO8601
+licence_review_status: REQUIRED_BEFORE_REGISTRY
+redistribution_allowed: UNKNOWN
+files:
+  - filename: REQUIRED_BASENAME
+    source_url_or_instrument_export_id: REQUIRED
+    acquisition_timestamp_utc: REQUIRED_ISO8601
+    sha256: REQUIRED_64_LOWERCASE_HEX
+    byte_size: REQUIRED_NONNEGATIVE_INTEGER
+    mime_type: REQUIRED
+    licence: REQUIRED_OR_UNKNOWN
+    raw_or_derived: REQUIRED_RAW_OR_DERIVED
+    immutable_read_only_copy: REQUIRED_BOOLEAN
+    notes: NOT_AVAILABLE
