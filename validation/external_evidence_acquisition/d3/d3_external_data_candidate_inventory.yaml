@@ -1,0 +1,503 @@
+inventory_id: D3_EXTERNAL_DATA_CANDIDATE_INVENTORY_V1
+protocol_id: D3_EXTERNAL_DATA_SEARCH_V1
+search_date_utc: "2026-07-27"
+inventory_status: COMPLETE_NO_EXECUTABLE_PUBLIC_DATA
+missing_value_tokens: [UNKNOWN, NOT_REPORTED, NOT_AVAILABLE]
+score_scale: [0, 2]
+score_aggregation:
+  exact_match_score:
+    - EXPOSURE_24H_MATCH
+    - SAMPLE_0P2H_MATCH
+    - SAMPLE_48H_MATCH
+    - SAMPLE_120H_MATCH
+    - TOTAL_PLANT_BODY_TFWT
+  forcing_completeness_score:
+    - AIR_HTO_FORCING_COMPLETENESS
+    - BACKGROUND_HTO_COMPLETENESS
+    - TEMPERATURE_RH_MIXING_COMPLETENESS
+  observation_completeness_score:
+    - REPLICATES
+    - UNCERTAINTY_AND_DETECTION_LIMIT
+    - FRESH_AND_DRY_MASS
+    - RAW_NUMERIC_DATA
+  licence_score:
+    - LICENCE_CLARITY
+  overall_executability_score: SUM_ALL_13_CRITERIA
+  hard_gaps_override_score: true
+tier_counts:
+  TIER_A: 0
+  TIER_B: 0
+  TIER_C: 3
+  NON_EXECUTABLE: 5
+public_raw_data_found: false
+public_numeric_data_found: true
+raw_file_download_count: 0
+emras_attachments:
+  sbTbox.xls: REFERENCED_NOT_ACCESSIBLE
+  sbTHS.xls: REFERENCED_NOT_ACCESSIBLE
+  sbWR.xls: REFERENCED_NOT_ACCESSIBLE
+candidates:
+  - candidate_id: D3C-001
+    title: EMRAS Tritium and C-14 Working Group Soybean Scenario Final Report
+    organization: IAEA_EMRAS_AND_KAERI
+    authors: EMRAS_TRITIUM_AND_C14_WORKING_GROUP
+    year: 2008
+    doi_or_report_id: IAEA_EMRAS_SOYBEAN_FINAL
+    source_url: https://www-ns.iaea.org/projects/emras/emras-tritium-wg.asp?s=8
+    data_url: https://www-ns.iaea.org/downloads/rw/projects/emras/tritium/soybean-final.pdf
+    crop: soybean
+    exposure_duration_h: 1
+    exposure_concentration: "SB1 7.77E4 Bq/mL air moisture; SB4 5.27E4 Bq/mL air moisture"
+    air_hto_time_series: REFERENCED_IN_sbTbox.xls_NOT_ACCESSIBLE
+    post_exposure_background_measured: REFERENCED_IN_SCENARIO_SUPPORT_FILES_NOT_ACCESSIBLE
+    tfwt_observable: PLANT_BODY_AND_PODS_TFWT_NUMERIC_TABLES
+    organ_resolution: PLANT_BODY_STEM_PLUS_LEAVES_AND_PODS
+    sampling_times_h: "SB1 0.2;1;24;120;336;936;1608;2280 | SB4 0.2;1;24;120;336;768;1368"
+    replicates: COMPOSITE_SAMPLES_FROM_MULTIPLE_PLANTS_COUNT_NOT_REPORTED
+    fresh_mass: NUMERIC_SCENARIO_TABLES
+    dry_mass: NUMERIC_SCENARIO_TABLES
+    uncertainty: APPROXIMATELY_10_PERCENT_COUNTING_ERROR_OTHER_COMPONENTS_NOT_QUANTIFIED
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: true
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: EMRAS_TRITIUM_WORKING_GROUP_OR_KAERI_SCENARIO_AUTHORS
+    contact_route: IAEA_EMRAS_PAGE_AND_REPORT_AUTHOR_AFFILIATIONS
+    tier: TIER_C
+    executable_status: NOT_EXECUTABLE_FOR_FROZEN_D3
+    blocking_gaps:
+      - EXPOSURE_IS_1H_NOT_APPROXIMATELY_24H
+      - SAMPLE_48H_MISSING
+      - AIR_AND_METEOROLOGICAL_WORKBOOKS_NOT_ACCESSIBLE
+      - RAW_SAMPLE_LEVEL_DATA_NOT_PUBLIC
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: BEST_CANDIDATE_BY_CROP_ENDPOINT_AND_0P2_120H_COVERAGE_BUT_MECHANISM_SUPPORT_ONLY
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 2
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 2
+      TOTAL_PLANT_BODY_TFWT: 2
+      AIR_HTO_FORCING_COMPLETENESS: 1
+      BACKGROUND_HTO_COMPLETENESS: 1
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 1
+      REPLICATES: 1
+      UNCERTAINTY_AND_DETECTION_LIMIT: 1
+      FRESH_AND_DRY_MASS: 2
+      RAW_NUMERIC_DATA: 1
+      LICENCE_CLARITY: 0
+    exact_match_score: 6
+    forcing_completeness_score: 3
+    observation_completeness_score: 5
+    licence_score: 0
+    overall_executability_score: 14
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-002
+    title: Etude des transferts de tritium atmospherique chez la laitue
+    organization: UNIVERSITE_DE_FRANCHE_COMTE_AND_CEA
+    authors: Cecile_Boyer
+    year: 2009
+    doi_or_report_id: DOCTORAL_THESIS_0859A688_9903_498C_91F2_E03AB1ABCE5A
+    source_url: https://indexation.univ-fcomte.fr/nuxeo/nxfile/default/0859a688-9903-498c-91f2-e03ab1abce5a/blobholder%3A0/these_Boyer_Cecile.pdf
+    data_url: https://indexation.univ-fcomte.fr/nuxeo/nxfile/default/0859a688-9903-498c-91f2-e03ab1abce5a/blobholder%3A0/these_Boyer_Cecile.pdf
+    crop: lettuce
+    exposure_duration_h: 24
+    exposure_concentration: NUMERIC_ATMOSPHERIC_HTO_VALUES_IN_TABLE_27
+    air_hto_time_series: NUMERIC_EXPOSURE_TABLE_AT_1_2_3_5_6_7_24H
+    post_exposure_background_measured: NOT_REPORTED
+    tfwt_observable: NUMERIC_TFWT_TABLE_DURING_EXPOSURE
+    organ_resolution: LETTUCE_SAMPLE_NOT_TOTAL_SOYBEAN_BODY
+    sampling_times_h: "1;2;3;5;6;7;24 DURING_EXPOSURE"
+    replicates: NOT_REPORTED
+    fresh_mass: NOT_REPORTED
+    dry_mass: NOT_REPORTED
+    uncertainty: NUMERIC_UNCERTAINTIES_REPORTED_IN_TABLE_27
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: true
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: Cecile_Boyer
+    contact_route: UNIVERSITY_REPOSITORY_AND_THESIS_AFFILIATIONS
+    tier: TIER_C
+    executable_status: NOT_EXECUTABLE_FOR_FROZEN_D3
+    blocking_gaps:
+      - CROP_IS_LETTUCE_NOT_SOYBEAN
+      - POST_EXPOSURE_0P2_48_120H_SERIES_MISSING
+      - POST_EXPOSURE_BACKGROUND_NOT_REPORTED
+      - RAW_SAMPLE_LEVEL_DATA_NOT_PUBLIC
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: THESIS_STATES_48H_EXPOSURES_INDUCED_WATER_STRESS_AND_RESULTS_WERE_NOT_PRESENTED
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 2
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 1
+      AIR_HTO_FORCING_COMPLETENESS: 2
+      BACKGROUND_HTO_COMPLETENESS: 0
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 2
+      REPLICATES: 1
+      UNCERTAINTY_AND_DETECTION_LIMIT: 2
+      FRESH_AND_DRY_MASS: 1
+      RAW_NUMERIC_DATA: 1
+      LICENCE_CLARITY: 0
+    exact_match_score: 3
+    forcing_completeness_score: 4
+    observation_completeness_score: 5
+    licence_score: 0
+    overall_executability_score: 12
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-003
+    title: Study of Aerial Tritium Uptake by Vegetable Crops under Chamber and Field Conditions
+    organization: NATIONAL_NUCLEAR_CENTER_REPUBLIC_OF_KAZAKHSTAN
+    authors: "NNC_RK_AUTHORS_SEE_ARTICLE"
+    year: 2024
+    doi_or_report_id: NNC_RK_BULLETIN_2024_ARTICLE
+    source_url: https://www.nnc.kz/media/bulletin/files/tVeKBb0aZQ.pdf
+    data_url: https://www.nnc.kz/media/bulletin/files/tVeKBb0aZQ.pdf
+    crop: pepper_and_eggplant
+    exposure_duration_h: "6_TO_8"
+    exposure_concentration: NUMERIC_AIR_HTO_TABLE
+    air_hto_time_series: NUMERIC_2_4_6H_VALUES
+    post_exposure_background_measured: PARTIAL_POST_EXPOSURE_CONTEXT_NOT_COMPLETE_FOR_D3
+    tfwt_observable: NUMERIC_TFWT_TABLE
+    organ_resolution: LEAF_STEM_FRUIT
+    sampling_times_h: "2;4;6 DURING_EXPOSURE | 1;24;336 AFTER_EXPOSURE"
+    replicates: "3_TO_4"
+    fresh_mass: NOT_REPORTED
+    dry_mass: NOT_REPORTED
+    uncertainty: MEAN_AND_STANDARD_DEVIATION_REPORTED
+    detection_limit: "4_TO_7_BQ_PER_L"
+    raw_data_available: false
+    numeric_table_available: true
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: NNC_RK_ARTICLE_CORRESPONDING_AUTHOR
+    contact_route: NNC_RK_BULLETIN
+    tier: TIER_C
+    executable_status: NOT_EXECUTABLE_FOR_FROZEN_D3
+    blocking_gaps:
+      - CROP_IS_PEPPER_OR_EGGPLANT_NOT_SOYBEAN
+      - EXPOSURE_IS_6_TO_8H_NOT_APPROXIMATELY_24H
+      - TARGET_0P2_48_120H_SERIES_MISSING
+      - TOTAL_PLANT_BODY_TFWT_NOT_DIRECTLY_REPORTED
+      - RAW_SAMPLE_LEVEL_DATA_NOT_PUBLIC
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: USEFUL_PUBLIC_NUMERIC_WASHOUT_EVIDENCE_BUT_NOT_A_D3_EXECUTION_DATASET
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 1
+      AIR_HTO_FORCING_COMPLETENESS: 2
+      BACKGROUND_HTO_COMPLETENESS: 1
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 2
+      REPLICATES: 2
+      UNCERTAINTY_AND_DETECTION_LIMIT: 2
+      FRESH_AND_DRY_MASS: 0
+      RAW_NUMERIC_DATA: 1
+      LICENCE_CLARITY: 0
+    exact_match_score: 1
+    forcing_completeness_score: 5
+    observation_completeness_score: 5
+    licence_score: 0
+    overall_executability_score: 11
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-004
+    title: Tritium Concentration in Agricultural Plants Exposed to Atmospheric HTO Vapor for Short-term
+    organization: KOREA_ATOMIC_ENERGY_RESEARCH_INSTITUTE
+    authors: "Dong-Kwon_Keum;Han-Soo_Lee;Hee-Seok_Kang;In_Jun;Young-Ho_Choi;Chang-Woo_Lee"
+    year: UNKNOWN
+    doi_or_report_id: KNS_PRE_PAPER_18_8
+    source_url: https://www.kns.org/files/pre_paper/18/8%EA%B8%88%EB%8F%99%EA%B6%8C.pdf
+    data_url: NOT_AVAILABLE
+    crop: rice_soybean_cabbage_radish
+    exposure_duration_h: 1
+    exposure_concentration: NOT_REPORTED
+    air_hto_time_series: MODEL_ASSUMPTION_AND_FIGURE_ONLY
+    post_exposure_background_measured: NOT_REPORTED
+    tfwt_observable: TIME_SERIES_DESCRIBED_BUT_NO_REUSABLE_NUMERIC_TABLE
+    organ_resolution: BODY_AND_FRUIT_COMPARTMENTS_DESCRIBED
+    sampling_times_h: NOT_REPORTED
+    replicates: NOT_REPORTED
+    fresh_mass: BIOMASS_MEASURED_VALUES_NOT_TABULATED
+    dry_mass: NOT_REPORTED
+    uncertainty: NOT_REPORTED
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: false
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: Dong-Kwon_Keum
+    contact_route: CONTACT_EMAIL_PRINTED_IN_PUBLIC_PAPER
+    tier: NON_EXECUTABLE
+    executable_status: NON_EXECUTABLE_FIGURE_ONLY
+    blocking_gaps:
+      - FIGURE_ONLY_NO_NUMERIC_DATA
+      - AIR_HTO_TIME_SERIES_NOT_AVAILABLE
+      - POST_EXPOSURE_BACKGROUND_NOT_REPORTED
+      - SAMPLING_TIMES_NOT_REPORTED
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: PRIMARY_KAERI_CONFERENCE_PAPER_OPENED_AND_REVIEWED
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 1
+      AIR_HTO_FORCING_COMPLETENESS: 1
+      BACKGROUND_HTO_COMPLETENESS: 0
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 0
+      REPLICATES: 0
+      UNCERTAINTY_AND_DETECTION_LIMIT: 0
+      FRESH_AND_DRY_MASS: 1
+      RAW_NUMERIC_DATA: 0
+      LICENCE_CLARITY: 0
+    exact_match_score: 1
+    forcing_completeness_score: 1
+    observation_completeness_score: 1
+    licence_score: 0
+    overall_executability_score: 3
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-005
+    title: Experimental Study on the Behavior of Tritium in Soybean Exposed to Atmospheric HTO Vapor at Different Growth Stages
+    organization: KOREA_ATOMIC_ENERGY_RESEARCH_INSTITUTE
+    authors: "KAERI_AUTHORS_SEE_DBPIA_RECORD"
+    year: UNKNOWN
+    doi_or_report_id: DBPIA_NODE09713378
+    source_url: https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE09713378
+    data_url: NOT_AVAILABLE
+    crop: soybean
+    exposure_duration_h: 1
+    exposure_concentration: NOT_REPORTED
+    air_hto_time_series: NOT_AVAILABLE
+    post_exposure_background_measured: NOT_REPORTED
+    tfwt_observable: ABSTRACT_DESCRIBES_TFWT_AND_OBT
+    organ_resolution: NOT_REPORTED
+    sampling_times_h: NOT_REPORTED
+    replicates: NOT_REPORTED
+    fresh_mass: NOT_REPORTED
+    dry_mass: NOT_REPORTED
+    uncertainty: NOT_REPORTED
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: false
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: UNKNOWN
+    contact_route: DBPIA_ARTICLE_RECORD
+    tier: NON_EXECUTABLE
+    executable_status: NON_EXECUTABLE_ABSTRACT_ONLY
+    blocking_gaps:
+      - PUBLIC_NUMERIC_DATA_NOT_AVAILABLE
+      - AIR_HTO_TIME_SERIES_NOT_AVAILABLE
+      - POST_EXPOSURE_BACKGROUND_NOT_REPORTED
+      - SAMPLING_TIMES_NOT_REPORTED
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: KOREAN_DATABASE_RECORD_REVIEWED_NO_PUBLIC_RAW_OR_TABULAR_DATA_LOCATED
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 1
+      AIR_HTO_FORCING_COMPLETENESS: 0
+      BACKGROUND_HTO_COMPLETENESS: 0
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 0
+      REPLICATES: 0
+      UNCERTAINTY_AND_DETECTION_LIMIT: 0
+      FRESH_AND_DRY_MASS: 0
+      RAW_NUMERIC_DATA: 0
+      LICENCE_CLARITY: 0
+    exact_match_score: 1
+    forcing_completeness_score: 0
+    observation_completeness_score: 0
+    licence_score: 0
+    overall_executability_score: 1
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-006
+    title: Tritium Concentrations in Soybean Exposed to Atmospheric HTO Vapor in Daytime and Nighttime
+    organization: SHANGHAI_INSTITUTE_OF_APPLIED_PHYSICS_AND_COLLABORATORS
+    authors: "SEE_DOI_RECORD"
+    year: 2016
+    doi_or_report_id: 10.1007/s41365-016-0031-8
+    source_url: https://www.nst.sinap.ac.cn/article/id/2580
+    data_url: NOT_AVAILABLE
+    crop: soybean
+    exposure_duration_h: 1
+    exposure_concentration: NOT_REPORTED_IN_PUBLIC_RECORD_REVIEWED
+    air_hto_time_series: NOT_AVAILABLE
+    post_exposure_background_measured: NOT_REPORTED
+    tfwt_observable: END_OF_EXPOSURE_TFWT_DESCRIBED
+    organ_resolution: LEAVES_AND_BEANS_DESCRIBED
+    sampling_times_h: END_OF_EXPOSURE_ONLY_IN_PUBLIC_RECORD_REVIEWED
+    replicates: NOT_REPORTED
+    fresh_mass: NOT_REPORTED
+    dry_mass: NOT_REPORTED
+    uncertainty: NOT_REPORTED
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: false
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: UNKNOWN
+    contact_route: DOI_AND_PUBLISHER_RECORD
+    tier: NON_EXECUTABLE
+    executable_status: NON_EXECUTABLE_NO_PUBLIC_NUMERIC_DATA
+    blocking_gaps:
+      - PUBLIC_NUMERIC_DATA_NOT_LOCATED
+      - POST_EXPOSURE_TIME_SERIES_MISSING
+      - AIR_HTO_TIME_SERIES_NOT_AVAILABLE
+      - POST_EXPOSURE_BACKGROUND_NOT_REPORTED
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: PRIMARY_PUBLISHER_RECORD_IDENTIFIED_BUT_WEB_FETCH_TIMED_OUT_DURING_REVIEW
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 0
+      AIR_HTO_FORCING_COMPLETENESS: 0
+      BACKGROUND_HTO_COMPLETENESS: 0
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 0
+      REPLICATES: 0
+      UNCERTAINTY_AND_DETECTION_LIMIT: 0
+      FRESH_AND_DRY_MASS: 0
+      RAW_NUMERIC_DATA: 0
+      LICENCE_CLARITY: 0
+    exact_match_score: 0
+    forcing_completeness_score: 0
+    observation_completeness_score: 0
+    licence_score: 0
+    overall_executability_score: 0
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-007
+    title: Tritium Dynamics in Maize Following Acute Exposure to Atmospheric HTO
+    organization: "AUTHORS_INSTITUTIONS_SEE_PUBMED_RECORD"
+    authors: "Shen_et_al"
+    year: 2019
+    doi_or_report_id: 10.1016/j.apradiso.2019.108905
+    source_url: https://pubmed.ncbi.nlm.nih.gov/31581057/
+    data_url: NOT_AVAILABLE
+    crop: maize
+    exposure_duration_h: 1
+    exposure_concentration: NOT_REPORTED_IN_PUBLIC_ABSTRACT
+    air_hto_time_series: NOT_AVAILABLE
+    post_exposure_background_measured: NOT_REPORTED
+    tfwt_observable: TFWT_DYNAMICS_DESCRIBED_IN_ABSTRACT
+    organ_resolution: NOT_REPORTED_IN_PUBLIC_ABSTRACT
+    sampling_times_h: ONE_DAY_RAPID_PHASE_DESCRIBED_EXACT_TIMES_NOT_AVAILABLE
+    replicates: NOT_REPORTED
+    fresh_mass: NOT_REPORTED
+    dry_mass: NOT_REPORTED
+    uncertainty: NOT_REPORTED
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: false
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: UNKNOWN
+    contact_route: PUBMED_AND_DOI_RECORD
+    tier: NON_EXECUTABLE
+    executable_status: NON_EXECUTABLE_ABSTRACT_ONLY
+    blocking_gaps:
+      - CROP_IS_MAIZE_NOT_BROADLEAF
+      - PUBLIC_NUMERIC_DATA_NOT_AVAILABLE
+      - AIR_HTO_TIME_SERIES_NOT_AVAILABLE
+      - POST_EXPOSURE_BACKGROUND_NOT_REPORTED
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: RELEVANT_WASHOUT_STUDY_BUT_NOT_A_FROZEN_D3_EXECUTION_DATASET
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 0
+      AIR_HTO_FORCING_COMPLETENESS: 0
+      BACKGROUND_HTO_COMPLETENESS: 0
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 0
+      REPLICATES: 0
+      UNCERTAINTY_AND_DETECTION_LIMIT: 0
+      FRESH_AND_DRY_MASS: 0
+      RAW_NUMERIC_DATA: 0
+      LICENCE_CLARITY: 0
+    exact_match_score: 0
+    forcing_completeness_score: 0
+    observation_completeness_score: 0
+    licence_score: 0
+    overall_executability_score: 0
+    registry_eligible: false
+    synthetic: false
+
+  - candidate_id: D3C-008
+    title: Day and Night Time Wheat HTO Experiments
+    organization: IAEA_EMRAS_II_WORKING_GROUP_7
+    authors: "PRESENTATION_AUTHORS_SEE_SOURCE"
+    year: UNKNOWN
+    doi_or_report_id: EMRAS_II_WG7_DAY_NIGHT_WHEAT_PRESENTATION
+    source_url: https://www-ns.iaea.org/downloads/rw/projects/emras/emras-two/first-technical-meeting/fourth-working-group-meeting/working-group-presentations/workgroup7-presentations/presentation-4th-wg7-day-and-night-time.pdf
+    data_url: NOT_AVAILABLE
+    crop: wheat
+    exposure_duration_h: "EXPOSURE_START_TIMES_7_10_14_15_20_23H_DURATION_NOT_REUSABLY_TABULATED"
+    exposure_concentration: NOT_REPORTED_AS_REUSABLE_DATA
+    air_hto_time_series: FIGURE_OR_PRESENTATION_ONLY
+    post_exposure_background_measured: NOT_REPORTED
+    tfwt_observable: LEAF_TISSUE_WATER_TRITIUM_FIGURES
+    organ_resolution: LEAF
+    sampling_times_h: NOT_AVAILABLE_AS_REUSABLE_NUMERIC_DATA
+    replicates: NOT_REPORTED
+    fresh_mass: NOT_REPORTED
+    dry_mass: NOT_REPORTED
+    uncertainty: NOT_REPORTED
+    detection_limit: NOT_REPORTED
+    raw_data_available: false
+    numeric_table_available: false
+    licence: UNKNOWN
+    redistribution_allowed: UNKNOWN
+    contact_person: UNKNOWN
+    contact_route: IAEA_EMRAS_II_PRESENTATION_PAGE
+    tier: NON_EXECUTABLE
+    executable_status: NON_EXECUTABLE_FIGURE_ONLY
+    blocking_gaps:
+      - CROP_IS_WHEAT_NOT_BROADLEAF
+      - FIGURE_ONLY_NO_NUMERIC_DATA
+      - AIR_HTO_TIME_SERIES_NOT_AVAILABLE
+      - POST_EXPOSURE_BACKGROUND_NOT_REPORTED
+      - LICENCE_AND_REDISTRIBUTION_TERMS_UNKNOWN
+    notes: PUBLIC_PRESENTATION_REVIEWED_AS_SOURCE_DISCOVERY_EVIDENCE_ONLY
+    criterion_scores:
+      EXPOSURE_24H_MATCH: 0
+      SAMPLE_0P2H_MATCH: 0
+      SAMPLE_48H_MATCH: 0
+      SAMPLE_120H_MATCH: 0
+      TOTAL_PLANT_BODY_TFWT: 0
+      AIR_HTO_FORCING_COMPLETENESS: 0
+      BACKGROUND_HTO_COMPLETENESS: 0
+      TEMPERATURE_RH_MIXING_COMPLETENESS: 0
+      REPLICATES: 0
+      UNCERTAINTY_AND_DETECTION_LIMIT: 0
+      FRESH_AND_DRY_MASS: 0
+      RAW_NUMERIC_DATA: 0
+      LICENCE_CLARITY: 0
+    exact_match_score: 0
+    forcing_completeness_score: 0
+    observation_completeness_score: 0
+    licence_score: 0
+    overall_executability_score: 0
+    registry_eligible: false
+    synthetic: false
