@@ -1,0 +1,189 @@
+protocol_id: D3_EXTERNAL_DATA_SEARCH_V1
+status: FROZEN_BEFORE_FORMAL_SEARCH
+created_from_main: 1f44f8f847e8869e09b6f87262b81cafc2f2828e
+branch: codex/v3-d3-external-evidence-acquisition
+search_date_utc: "2026-07-27"
+
+scope:
+  purpose: REAL_D3_LIKE_EXTERNAL_DATA_DISCOVERY_AND_PRE_INTAKE_REVIEW
+  empirical_validation_run_authorized: false
+  calibration_authorized: false
+  h2_h3_execution_authorized: false
+  trusted_registry_change_authorized: false
+  production_gate_eligible: false
+  formal_v3_physics: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+  synthetic_data_eligible_as_external_observation: false
+  automatic_contact_authorized: false
+
+target_experiment:
+  crop: soybean
+  exposure:
+    medium: AIR_MOISTURE_HTO
+    duration_h: 24
+    concentration_bq_ml_water: 5270
+  post_exposure_observation_h: 120
+  total_elapsed_duration_h: 144
+  minimum_sampling_hours_after_exposure: [0.2, 48, 120]
+  primary_endpoint: TOTAL_PLANT_BODY_TFWT
+  primary_endpoint_unit: Bq L-1 tissue water
+  extended_120_day_followup_required: false
+
+candidate_tiers:
+  TIER_A:
+    interpretation: FULL_D3_MATCH_CANDIDATE
+    hard_requirements:
+      crop: soybean
+      exposure_duration_match: APPROXIMATELY_24_H
+      air_hto_time_series: REQUIRED
+      post_exposure_background_measured: REQUIRED
+      total_plant_body_tfwt: REQUIRED
+      sampling_near_0p2_48_120_h: REQUIRED
+      temperature_rh_mixing: REQUIRED
+      sample_level_or_numeric_tabular_data: REQUIRED
+  TIER_B:
+    interpretation: APPROXIMATE_D3_MATCH_NOT_FULL_EMPIRICAL_VALIDATION
+    allowed_variants:
+      exposure_duration_h: [12, 48]
+      sampling_times_bracket_target: true
+      separately_measured_leaf_stem_recombinable: true
+      different_exposure_concentration_with_complete_forcing: true
+      crop: OTHER_BROADLEAF_ALLOWED
+    empirical_validation_claim_allowed: false
+  TIER_C:
+    interpretation: MECHANISM_SUPPORT_ONLY
+    examples:
+      - PARTIAL_TFWT_TIME_SERIES
+      - ONE_KEY_SAMPLING_WINDOW_MISSING
+      - DIFFERENT_CROP
+      - DIFFERENT_EXPOSURE_PATTERN_CONSTRAINS_SLOW_PROCESS
+    full_d3_validation_eligible: false
+  NON_EXECUTABLE:
+    interpretation: CANNOT_EXECUTE_FROZEN_D3_COMPARISON
+    hard_blockers:
+      - HARVEST_OBT_ONLY
+      - FIGURE_ONLY_NO_NUMERIC_DATA
+      - AIR_HTO_UNKNOWN
+      - POST_EXPOSURE_BACKGROUND_UNKNOWN
+      - SAMPLING_TIME_UNKNOWN
+      - TISSUE_WATER_BASIS_UNKNOWN
+      - NO_EXPERIMENTAL_OBSERVATIONS
+      - MODEL_OUTPUT_ONLY
+
+candidate_inventory:
+  missing_value_tokens: [UNKNOWN, NOT_REPORTED, NOT_AVAILABLE]
+  required_fields:
+    - candidate_id
+    - title
+    - organization
+    - authors
+    - year
+    - doi_or_report_id
+    - source_url
+    - data_url
+    - crop
+    - exposure_duration_h
+    - exposure_concentration
+    - air_hto_time_series
+    - post_exposure_background_measured
+    - tfwt_observable
+    - organ_resolution
+    - sampling_times_h
+    - replicates
+    - fresh_mass
+    - dry_mass
+    - uncertainty
+    - detection_limit
+    - raw_data_available
+    - numeric_table_available
+    - licence
+    - redistribution_allowed
+    - contact_person
+    - contact_route
+    - tier
+    - executable_status
+    - blocking_gaps
+    - notes
+
+scoring:
+  scale: [0, 2]
+  criteria:
+    - EXPOSURE_24H_MATCH
+    - SAMPLE_0P2H_MATCH
+    - SAMPLE_48H_MATCH
+    - SAMPLE_120H_MATCH
+    - TOTAL_PLANT_BODY_TFWT
+    - AIR_HTO_FORCING_COMPLETENESS
+    - BACKGROUND_HTO_COMPLETENESS
+    - TEMPERATURE_RH_MIXING_COMPLETENESS
+    - REPLICATES
+    - UNCERTAINTY_AND_DETECTION_LIMIT
+    - FRESH_AND_DRY_MASS
+    - RAW_NUMERIC_DATA
+    - LICENCE_CLARITY
+  output_scores:
+    - exact_match_score
+    - forcing_completeness_score
+    - observation_completeness_score
+    - licence_score
+    - overall_executability_score
+  hard_gaps_override_score: true
+
+search:
+  languages: [English, Korean, Japanese, French]
+  preferred_sources:
+    - IAEA
+    - KAERI
+    - IRSN
+    - CEA
+    - CNSC
+    - JAEA
+    - NRA_RELATED_RESEARCH_INSTITUTES
+    - JOURNAL_PUBLISHERS
+    - UNIVERSITY_REPOSITORIES
+    - FORMAL_DATA_REPOSITORIES
+    - JOURNAL_SUPPLEMENTARY_MATERIALS
+    - AUTHOR_OR_LABORATORY_FORMAL_PAGES
+  search_result_snippet_is_evidence: false
+  emras_attachment_targets: [sbTbox.xls, sbTHS.xls, sbWR.xls]
+  emras_attachment_status_values:
+    - FOUND_PUBLICLY
+    - REFERENCED_NOT_ACCESSIBLE
+    - NOT_LOCATED
+
+public_download:
+  local_root: validation/external_local/d3_candidate_<candidate_id>/raw
+  tracked_by_git: false
+  permitted_actions:
+    - DOWNLOAD
+    - SHA256
+    - FORMAT_REVIEW
+    - LICENCE_REVIEW
+    - FIELD_INVENTORY
+  forbidden_actions:
+    - CALIBRATION
+    - H2_H3_MODEL_RUN
+    - OBSERVATION_UNBLINDING
+    - TRUSTED_REGISTRY_WRITE
+    - FORMAL_PREREGISTRATION
+  manifest_required_fields:
+    - filename
+    - source_url
+    - download_timestamp_utc
+    - sha256
+    - byte_size
+    - mime_type
+    - licence
+
+future_gate_order:
+  - RAW_FILES_READ_ONLY
+  - SHA256_MANIFEST
+  - LICENCE_REVIEW
+  - DATA_QUALITY_REVIEW
+  - APPROVAL_BRANCH_TRUSTED_REGISTRY_ENTRY
+  - INDEPENDENT_REGISTRY_REVIEW
+  - REGISTRY_APPROVAL_MERGED_TO_MAIN
+  - REAL_EXTERNAL_VALIDATION_PROTOCOL_FROZEN
+  - H2_H3_FROZEN_PREDICTIONS
+  - DISCRIMINATING_OBSERVATIONS_OPENED
+  - INDEPENDENT_EXTERNAL_VALIDATION_REVIEW
