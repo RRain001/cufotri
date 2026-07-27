@@ -516,6 +516,30 @@ def test_final_report_preserves_design_only_gate_and_d3_robustness() -> None:
     assert "WIND_ROBUSTNESS = True" in report
     assert "LEAF_PARAMETER_ROBUSTNESS = True" in report
     assert "EMPIRICAL_VALIDATION_CLAIM = FALSE" in report
+
+
+def test_report_regeneration_preserves_duration_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    reports = tmp_path / "reports"
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    monkeypatch.setattr(RUNNER, "REPORTS", reports)
+    monkeypatch.setattr(RUNNER, "DOCS", docs)
+    RUNNER.write_reports(PROTOCOL)
+
+    specification = (
+        docs / "h2_h3_minimum_discriminating_experiment_spec.md"
+    ).read_text(encoding="utf-8")
+    report = (
+        docs / "h2_h3_slow_mechanism_discriminability_report.md"
+    ).read_text(encoding="utf-8")
+    assert "minimum total elapsed duration is therefore\n  144 h" in (
+        specification
+    )
+    assert "optional follow-up up to\n  120 d" in specification
+    assert "MINIMUM_TOTAL_ELAPSED_DURATION_H = 144" in report
+    assert "EXTENDED_DIAGNOSTIC_FOLLOWUP = OPTIONAL_UP_TO_120D" in report
     assert (
         "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA" in report
     )

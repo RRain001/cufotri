@@ -1822,6 +1822,13 @@ classification observable.
             * 0.10
         )
         design = protocol["designs"][best_design]
+        duration_contract = protocol["experiment_duration_contract"]
+        minimum_duration = duration_contract[
+            "minimum_discriminating_experiment"
+        ]
+        extended_duration = duration_contract[
+            "extended_diagnostic_experiment"
+        ]
         spec_status = "READY_FOR_EXTERNAL_DATA_SEARCH_OR_NEW_EXPERIMENT"
         spec = f"""# Minimum H2/H3 discriminating experiment specification
 
@@ -1840,8 +1847,19 @@ EMPIRICAL_VALIDATION_CLAIM = FALSE
   {design['first_exposure']['concentration_bq_ml_water']:g} Bq/mL water.
 - Washout: {design['washout']['duration_h']:g} h at strict zero background.
 - Second exposure: {json.dumps(design['second_exposure'], sort_keys=True)}.
-- Total planned model follow-up: 120 d after the final exposure; minimum
-  TFWT sampling times after final exposure: {', '.join(f'{v:g} h' for v in sample_hours)}.
+- Minimum discriminating experiment: {minimum_duration['exposure_duration_h']:g} h
+  controlled HTO exposure followed by
+  {minimum_duration['post_exposure_observation_h']:g} h of post-exposure
+  observation. The minimum total elapsed duration is therefore
+  {minimum_duration['total_elapsed_duration_h']:g} h (approximately
+  {minimum_duration['approximate_total_duration_days']:g} d).
+- Minimum TFWT sampling times after final exposure:
+  {', '.join(f'{v:g} h' for v in sample_hours)}.
+- Extended diagnostic experiment: optional follow-up up to
+  {extended_duration['maximum_followup_days_after_final_exposure']:g} d after
+  the final exposure. This extension is for long-tail behaviour, anomaly
+  diagnosis and optional OBT or organ-transfer measurements; it is not a
+  requirement for the minimum discriminating experiment.
 - Recommended additional times: all remaining preregistered candidate times
   needed for diagnostic coverage:
   {', '.join(str(v) for v in protocol['sampling']['candidate_hours_after_final_exposure'])} h.
@@ -1939,7 +1957,11 @@ SB4_EXISTING_DATA_DISCRIMINABILITY =
 INSUFFICIENT_TO_SELECT_H2_OR_H3
 
 BEST_DISCRIMINATING_DESIGN = {best_design}
+MINIMUM_DISCRIMINATING_EXPERIMENT =
+24H_EXPOSURE_PLUS_120H_POST_EXPOSURE_OBSERVATION
+MINIMUM_TOTAL_ELAPSED_DURATION_H = 144
 MINIMUM_SAMPLING_TIMES = {best_row['sample_hours']}
+EXTENDED_DIAGNOSTIC_FOLLOWUP = OPTIONAL_UP_TO_120D
 CV10_CLASSIFICATION_ACCURACY = {best_row['cv10_min_accuracy']:.3f}
 CV20_CLASSIFICATION_ACCURACY = {best_row['cv20_min_accuracy']:.3f}
 CV30_CLASSIFICATION_ACCURACY = {best_row['cv30_min_accuracy']:.3f}
@@ -1984,6 +2006,15 @@ not a global structural-identifiability proof. The valid interpretation is
 either `SYNTHETIC_DESIGN_PROMISING` for fully robust designs or
 `SYNTHETIC_DESIGN_NOT_ROBUST`; current SB1/SB4 observations remain
 `CURRENT_DATA_INSUFFICIENT`.
+
+## Experiment duration boundary
+
+The minimum D3 experiment is a 24 h controlled exposure plus 120 h of
+post-exposure observation, for 144 h (approximately 6 d) total elapsed time.
+The 120 d simulation horizon is an optional extended diagnostic follow-up for
+long-tail, anomaly, OBT or organ-transfer analysis. It is not a minimum
+experimental requirement and does not replace the preregistered minimum
+sampling times of 0.2 h, 48 h and 120 h after exposure.
 """
     (
         DOCS / "h2_h3_slow_mechanism_discriminability_report.md"
