@@ -338,7 +338,7 @@ candidates:
     data_url: NOT_AVAILABLE
     crop: soybean
     exposure_duration_h: 1
-    exposure_concentration: NOT_REPORTED_IN_PUBLIC_RECORD_REVIEWED
+    exposure_concentration: NOT_REPORTED
     air_hto_time_series: NOT_AVAILABLE
     post_exposure_background_measured: NOT_REPORTED
     tfwt_observable: END_OF_EXPOSURE_TFWT_DESCRIBED
@@ -396,11 +396,11 @@ candidates:
     data_url: NOT_AVAILABLE
     crop: maize
     exposure_duration_h: 1
-    exposure_concentration: NOT_REPORTED_IN_PUBLIC_ABSTRACT
+    exposure_concentration: NOT_REPORTED
     air_hto_time_series: NOT_AVAILABLE
     post_exposure_background_measured: NOT_REPORTED
     tfwt_observable: TFWT_DYNAMICS_DESCRIBED_IN_ABSTRACT
-    organ_resolution: NOT_REPORTED_IN_PUBLIC_ABSTRACT
+    organ_resolution: NOT_REPORTED
     sampling_times_h: ONE_DAY_RAPID_PHASE_DESCRIBED_EXACT_TIMES_NOT_AVAILABLE
     replicates: NOT_REPORTED
     fresh_mass: NOT_REPORTED
@@ -454,12 +454,12 @@ candidates:
     data_url: NOT_AVAILABLE
     crop: wheat
     exposure_duration_h: "EXPOSURE_START_TIMES_7_10_14_15_20_23H_DURATION_NOT_REUSABLY_TABULATED"
-    exposure_concentration: NOT_REPORTED_AS_REUSABLE_DATA
+    exposure_concentration: NOT_REPORTED
     air_hto_time_series: FIGURE_OR_PRESENTATION_ONLY
     post_exposure_background_measured: NOT_REPORTED
     tfwt_observable: LEAF_TISSUE_WATER_TRITIUM_FIGURES
     organ_resolution: LEAF
-    sampling_times_h: NOT_AVAILABLE_AS_REUSABLE_NUMERIC_DATA
+    sampling_times_h: NOT_AVAILABLE
     replicates: NOT_REPORTED
     fresh_mass: NOT_REPORTED
     dry_mass: NOT_REPORTED
