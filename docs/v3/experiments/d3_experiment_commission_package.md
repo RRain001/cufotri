@@ -1,9 +1,9 @@
 # D3 discriminating experiment commission package
 
 ```text
-PACKAGE_STATUS = READY_FOR_LAB_FEASIBILITY_REVIEW
+PACKAGE_STATUS = READY_FOR_LAB_FEASIBILITY_AND_COMMISSIONING
 COMMISSIONING_STATUS =
-HOLD_CLASSIFICATION_POWER_TARGET_NOT_MET
+READY_SUBJECT_TO_LAB_SAFETY_AND_CAPABILITY_CONFIRMATION
 TIER_A_EXECUTABLE_PUBLIC_DATA_COUNT = 0
 EXPERIMENTAL_DATA_ALREADY_COLLECTED = FALSE
 FORMAL_EXTERNAL_VALIDATION_AUTHORIZED = FALSE
@@ -14,26 +14,27 @@ FORMAL_EXTERNAL_VALIDATION_AUTHORIZED = FALSE
 Prepare a prospective soybean chamber experiment for laboratory feasibility
 and radiation-safety review. The intended endpoint is discrimination between
 the frozen H2 and H3 validation-only hypotheses without parameter fitting.
-The synthetic dry run showed that the current 0.15 dex fail-closed threshold
-with 3--6 replicates does not meet the preregistered positive-control
-classification target. This document therefore specifies the operational and
-data-quality package but does not claim that the current sample size is
-statistically sufficient or authorize commissioning as a decisive experiment.
+The corrected V2 synthetic dry run retained the 0.15 dex fail-closed threshold
+and met the preregistered positive-control target with five and six biological
+replicates at total CV 20%. This document specifies the operational and
+data-quality package for laboratory feasibility, radiation-safety and
+commissioning review. Synthetic power is not empirical validation.
 
 ## Dry-run decision boundary
 
 ```text
-H2_TRUTH_CLASSIFICATION = FAIL_DATA_INCONCLUSIVE
-H3_TRUTH_CLASSIFICATION = FAIL_DATA_INCONCLUSIVE
+H2_TRUTH_CLASSIFICATION = PASS
+H3_TRUTH_CLASSIFICATION = PASS
 OUT_OF_MODEL_CHALLENGE = PASS_DATA_INCONCLUSIVE
-CV20_PASSING_REPLICATE_COUNTS_3_TO_6 = NONE
+CV20_PASSING_REPLICATE_COUNTS_3_TO_6 = 5_AND_6
 FORMAL_H2_H3_SELECTION = NOT_AUTHORIZED
 ```
 
-The laboratory may review feasibility, safety, detection limits, schedule and
-plant availability now. Before a real discriminating experiment is
-commissioned, a new preregistered design or power analysis must resolve the
-positive-control failure without tuning a rule after seeing real observations.
+The V1 result remains archived because it treated the 0.5% background upper
+bound as an exact mean. V2 froze a 0.25% synthetic operational mean before the
+rerun and did not change H2/H3 parameters, classifier thresholds or seeds.
+The laboratory must confirm it can achieve the specified background, safety,
+detection limits, schedule and plant availability before execution.
 
 ## Minimum formal experiment
 
@@ -49,7 +50,7 @@ positive-control failure without tuning a rule after seeing real observations.
 | relative humidity | 70% |
 | wind/mixing | 0.5 m/s |
 | precipitation | zero |
-| post-exposure HTO background | measured, not assumed zero |
+| post-exposure HTO background | measured; planning mean <=0.25% of exposure setpoint and target maximum <=0.5% |
 | minimum post-exposure samples | 0.2, 48 and 120 h |
 | biological replication | 5 independent plants per destructive sampling time as the operational default |
 | primary endpoint | total plant-body TFWT |
@@ -144,11 +145,13 @@ an undocumented assumption.
 ## Replication and uncertainty
 
 Five biological replicates per destructive sampling time are the current
-operational default, not five analytical repeats of one plant. In the dry-run
-Monte Carlo at total CV 20%, 3--6 replicates yielded only 18.3%--30.7%
-positive-control classification accuracy under the frozen 0.15 dex
-inconclusive threshold. Five replicates are retained for sample-loss and
-outlier resistance, but this is not a statistical power proof.
+operational default, not five analytical repeats of one plant. In the V2
+dry-run Monte Carlo at total CV 20%, five replicates produced 93.7% H2 and
+92.7% H3 correct classification with 3.5% false-confident challenge
+classification. Six replicates produced 95.5%/95.5% and 2.7%. Three and four
+replicates did not meet both 90% positive-control targets. Five is therefore
+the minimum synthetic planning count that meets the frozen rule, while still
+not constituting empirical power validation.
 
 The laboratory should provide the uncertainty budget and confirm whether total
 relative uncertainty at or below 20% is feasible. The planning detection limit

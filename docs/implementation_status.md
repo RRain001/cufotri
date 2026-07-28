@@ -60,10 +60,13 @@ BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 ## D3 prospective synthetic experiment dry run
 
 The branch `codex/v3-d3-prospective-experiment-dry-run` was created from the
-locally merged acquisition review. The preregistration
-`D3_PROSPECTIVE_ASSUMPTIONS_V1` marks every planning number as
-`PROJECT_ASSUMPTION_NOT_LITERATURE_FACT` and separately pins the frozen H2/H3
-parameter source, file hash, and result hash without refitting.
+locally merged acquisition review. V1 exposed a specification defect: the
+post-exposure target of at most 0.5% of setpoint had been encoded as an exact
+0.5% mean. Its positive-control failure remains archived. The prospectively
+committed `D3_PROSPECTIVE_ASSUMPTIONS_V2` amendment separates a 0.25%
+operational synthetic mean from the 0.5% target upper bound. It marks every
+planning number as `PROJECT_ASSUMPTION_NOT_LITERATURE_FACT` and does not change
+the frozen H2/H3 parameters, seeds or classifier thresholds.
 
 The first executable stage generates 5-minute synthetic chamber forcing for a
 24 h exposure and 120 h follow-up. The exposure time-weighted mean is exactly
@@ -73,16 +76,20 @@ sensitivity scenario. Both files regenerate byte-for-byte from the frozen
 seed and remain Git-ignored local dry-run data.
 
 Three sample-level baseline datasets contain seven destructive sampling times
-and five biological replicates per time. They are tracked only under blind IDs
-A/B/C with `SYNTHETIC_NOT_EXTERNAL_EVIDENCE`; their generation manifest does
-not map blind IDs to truth. The local truth plan and truth key remain ignored,
-while only the truth-key SHA-256 is tracked. CV20, one-missing-replicate,
-flagged-outlier, and detection-limit challenges are also generated locally and
-ignored. The fail-closed classification protocol and classifier are committed
-with these blinded inputs before any classification execution.
+and five biological replicates per time. They are tracked under the benchmark
+`blinded/` directory only under IDs A/B/C with
+`SYNTHETIC_NOT_EXTERNAL_EVIDENCE`; their generation manifest does not map
+blind IDs to truth. `validation/external_local/` again contains no tracked
+data. The local truth plan and truth key remain ignored, while only the
+truth-key SHA-256 is tracked. The V2 protocol and inputs were committed before
+classification at `f69dee0fb9a7e88e6c3ceebbde6bdd73adc9bdf2`; only then was
+the truth key opened.
 
 ```text
-D3_PROSPECTIVE_ASSUMPTIONS = FROZEN_AND_TRACEABLE
+D3_PROSPECTIVE_ASSUMPTIONS = V2_FROZEN_AND_TRACEABLE
+D3_V1_FAILURE_ARCHIVE = PRESERVED
+D3_BACKGROUND_OPERATIONAL_MEAN_FRACTION = 0.0025
+D3_BACKGROUND_TARGET_MAXIMUM_FRACTION = 0.005
 D3_PROSPECTIVE_EVIDENCE_CLASS =
 SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
 D3_FORCING_STATUS = PASS_SYNTHETIC_CONTROLLED_FORCING
@@ -94,32 +101,32 @@ D3_TRUTH_KEY_GIT_TRACKED = FALSE
 D3_TRACKED_TRUTH_ARTIFACT = SHA256_ONLY
 D3_CLASSIFICATION_PROTOCOL = FROZEN_PRE_EXECUTION
 D3_CLASSIFICATION_EXECUTION = COMPLETED_PREUNBLINDING
-D3_BLIND_A_RESULT = DATA_INCONCLUSIVE
-D3_BLIND_B_RESULT = DATA_INCONCLUSIVE
+D3_BLIND_A_RESULT = H2_SUPPORTED_OVER_H3
+D3_BLIND_B_RESULT = H3_SUPPORTED_OVER_H2
 D3_BLIND_C_RESULT = DATA_INCONCLUSIVE
-D3_TRUTH_KEY_ACCESSED = FALSE
+D3_TRUTH_KEY_ACCESSED = AFTER_CLASSIFICATION_COMMIT_ONLY
 D3_CLASSIFICATION_PARAMETER_REFIT_COUNT = 0
-D3_UNBLINDING_STATUS = FAIL_POSITIVE_CONTROL_CLASSIFICATION
-D3_EXPECTATION_PASS_COUNT = 1_OF_3
-D3_H2_TRUTH_CLASSIFICATION = FAIL_DATA_INCONCLUSIVE
-D3_H3_TRUTH_CLASSIFICATION = FAIL_DATA_INCONCLUSIVE
+D3_UNBLINDING_STATUS = PASS_ALL_EXPECTATIONS
+D3_EXPECTATION_PASS_COUNT = 3_OF_3
+D3_H2_TRUTH_CLASSIFICATION = PASS
+D3_H3_TRUTH_CLASSIFICATION = PASS
 D3_OUT_OF_MODEL_CHALLENGE = PASS_DATA_INCONCLUSIVE
-D3_CV20_PASSING_REPLICATE_COUNTS_3_TO_6 = NONE
-D3_CV20_H2_CORRECT_RANGE = 0.239_TO_0.307
-D3_CV20_H3_CORRECT_RANGE = 0.183_TO_0.268
-D3_CV20_CHALLENGE_FALSE_CONFIDENT_RANGE = 0.007_TO_0.019
-D3_DEFAULT_PLANNING_REPLICATES = 5_NOT_POWER_PROOF
+D3_CV20_PASSING_REPLICATE_COUNTS_3_TO_6 = 5_AND_6
+D3_CV20_H2_CORRECT_RANGE = 0.869_TO_0.955
+D3_CV20_H3_CORRECT_RANGE = 0.846_TO_0.955
+D3_CV20_CHALLENGE_FALSE_CONFIDENT_RANGE = 0.027_TO_0.067
+D3_DEFAULT_PLANNING_REPLICATES = 5_SYNTHETIC_TARGET_PASS
 D3_DATA_INTAKE_DRY_RUN = PASS_SYNTHETIC_INTAKE_WORKFLOW
 D3_INTAKE_RAW_SNAPSHOT = READ_ONLY_GIT_IGNORED
 D3_INTAKE_REGISTRY_ELIGIBLE = FALSE
-D3_PROSPECTIVE_TARGETED_TESTS = PASS_28_XFAIL_2_POSITIVE_CONTROLS
-D3_FULL_PYTEST = PASS_614_XFAIL_2_OF_616
+D3_PROSPECTIVE_TARGETED_TESTS = PASS_32_OF_32
+D3_FULL_PYTEST = PENDING_FINAL_RERUN
 D3_V1_V2_AND_V3_COMPATIBILITY_ARCHITECTURE = PASS
-D3_V3_EXTERNAL_UNBLOCKING_VERIFIER =
-BLOCKED_LEGACY_TRACKED_EXTERNAL_LOCAL_RULE
-D3_EXPERIMENT_PACKAGE = READY_FOR_LAB_FEASIBILITY_REVIEW
+D3_V3_EXTERNAL_UNBLOCKING_VERIFIER = PASS_FAIL_CLOSED
+D3_EXPERIMENT_PACKAGE =
+READY_FOR_LAB_FEASIBILITY_AND_COMMISSIONING
 D3_EXPERIMENT_COMMISSIONING =
-HOLD_CLASSIFICATION_POWER_TARGET_NOT_MET
+READY_SUBJECT_TO_LAB_SAFETY_AND_CAPABILITY_CONFIRMATION
 D3_REAL_EXTERNAL_EVIDENCE = FALSE
 D3_TRUSTED_REGISTRY_ELIGIBLE = FALSE
 D3_EMPIRICAL_VALIDATION_CLAIM = FALSE

@@ -8,7 +8,7 @@ FORCING_INTERVAL = 5_MINUTES_COMPLETE
 
 | scenario | rows | exposure mean | exposure CV | background mean fraction | background max fraction |
 |---|---:|---:|---:|---:|---:|
-| MEASURED_NONZERO_BACKGROUND | 1729 | 5270.000000 | 0.050000 | 0.005000 | 0.006282 |
+| MEASURED_NONZERO_BACKGROUND | 1729 | 5270.000000 | 0.050000 | 0.002500 | 0.002821 |
 | STRICT_ZERO_BACKGROUND_SENSITIVITY | 1729 | 5270.000000 | 0.050000 | 0.000000 | 0.000000 |
 
 The measured-background scenario is the primary synthetic forcing.

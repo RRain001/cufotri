@@ -23,4 +23,4 @@ blinded files, not an external raw-data package. The review proves
 only that the intake workflow detects schema, unit, missing-value,
 mass, detection-limit, licence, and eligibility boundaries.
 
-`manifest_sha256 = 4357a9fafc6fb1ed6d2097e795c37bc8af02d82167d04c4afb510f62345371b4`
+`manifest_sha256 = 5de2522b68a6c8f3e55f1028edb1dfdaa8f22352588e11db4cc451ad0ee21c77`

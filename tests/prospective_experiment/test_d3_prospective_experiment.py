@@ -271,21 +271,11 @@ def test_no_parameter_refit() -> None:
 
 
 def test_dataset_a_classifies_h2() -> None:
-    actual = classification_results()["A"]
-    if actual != "H2_SUPPORTED_OVER_H3":
-        pytest.xfail(
-            "preregistered positive control A returned DATA_INCONCLUSIVE"
-        )
-    assert actual == "H2_SUPPORTED_OVER_H3"
+    assert classification_results()["A"] == "H2_SUPPORTED_OVER_H3"
 
 
 def test_dataset_b_classifies_h3() -> None:
-    actual = classification_results()["B"]
-    if actual != "H3_SUPPORTED_OVER_H2":
-        pytest.xfail(
-            "preregistered positive control B returned DATA_INCONCLUSIVE"
-        )
-    assert actual == "H3_SUPPORTED_OVER_H2"
+    assert classification_results()["B"] == "H3_SUPPORTED_OVER_H2"
 
 
 def test_dataset_c_returns_inconclusive() -> None:
@@ -352,6 +342,39 @@ def test_v3_gate_remains_blocked() -> None:
         INTAKE["v3_physics_start_gate"]
         == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
     )
+
+
+def test_v2_amendment_preserves_parameters_thresholds_and_seeds() -> None:
+    preregistration = BENCHMARK / "preregistration"
+    v1_assumptions = yaml.safe_load(
+        (
+            preregistration / "d3_prospective_experiment_assumptions.yaml"
+        ).read_text(encoding="utf-8")
+    )
+    v1_protocol = yaml.safe_load(
+        (
+            preregistration / "d3_blinded_classification_protocol.yaml"
+        ).read_text(encoding="utf-8")
+    )
+    assert ASSUMPTIONS["amendment"]["original_v1_result_preserved"] is True
+    assert ASSUMPTIONS["random_seeds"] == v1_assumptions["random_seeds"]
+    assert PROTOCOL["model_contract"] == v1_protocol["model_contract"]
+    assert PROTOCOL["classifier"] == v1_protocol["classifier"]
+    archived = yaml.safe_load(
+        (
+            BENCHMARK
+            / "results"
+            / "archive"
+            / "v1_unblinding_manifest.yaml"
+        ).read_text(encoding="utf-8")
+    )
+    current = yaml.safe_load(
+        (BENCHMARK / "results" / "unblinding_manifest.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert archived["status"] == "FAIL_POSITIVE_CONTROL_CLASSIFICATION"
+    assert current["status"] == "PASS_ALL_EXPECTATIONS"
 
 
 def test_attack_synthetic_status_changed_to_real_fails(

@@ -1,4 +1,4 @@
-manifest_id: D3_SYNTHETIC_DATA_INTAKE_DRY_RUN_V1
+manifest_id: D3_SYNTHETIC_DATA_INTAKE_DRY_RUN_V2
 status: PASS_SYNTHETIC_INTAKE_WORKFLOW
 licence: SYNTHETIC_INTERNAL_TEST_DATA
 raw_snapshot_read_only: true
@@ -15,23 +15,23 @@ formal_v3_physics: NOT_STARTED
 v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 files:
 - dataset_blind_id: A
-  source_path: validation/external_local/d3_prospective_experiment/dataset_A.csv
+  source_path: validation/benchmarks/d3_prospective_experiment/blinded/dataset_A.csv
   snapshot_path: validation/external_local/d3_prospective_experiment/intake/raw_read_only/dataset_A.csv
-  sha256: c13c94489c1aa73965967fd45d353b47f521b215c85bee95e20f6a8c585fca5c
-  byte_size: 8764
+  sha256: 2232b970d9b22bcc42f25371217fd73ac0e6ab1631f84ff257cc5d676d8179e9
+  byte_size: 8760
   read_only: true
   licence: SYNTHETIC_INTERNAL_TEST_DATA
 - dataset_blind_id: B
-  source_path: validation/external_local/d3_prospective_experiment/dataset_B.csv
+  source_path: validation/benchmarks/d3_prospective_experiment/blinded/dataset_B.csv
   snapshot_path: validation/external_local/d3_prospective_experiment/intake/raw_read_only/dataset_B.csv
-  sha256: d245116b91817c18be6f1b49b0dfcdad21fa373cc5a28c21845b8adc49c9ae87
-  byte_size: 8768
+  sha256: b7eefcbead890a4071f38d94743c43163a6250cdb2797e2cf4e059d821606da5
+  byte_size: 8772
   read_only: true
   licence: SYNTHETIC_INTERNAL_TEST_DATA
 - dataset_blind_id: C
-  source_path: validation/external_local/d3_prospective_experiment/dataset_C.csv
+  source_path: validation/benchmarks/d3_prospective_experiment/blinded/dataset_C.csv
   snapshot_path: validation/external_local/d3_prospective_experiment/intake/raw_read_only/dataset_C.csv
-  sha256: 03fd7763ce3bee5fe17f3557442bdc25998d66fdd99223a9e9fe9c7aa9e1c16c
-  byte_size: 8767
+  sha256: cc9129247e16deafbdaec190b8592304f65cfb98b0ad1a45115b207d3ae7f25e
+  byte_size: 8782
   read_only: true
   licence: SYNTHETIC_INTERNAL_TEST_DATA
