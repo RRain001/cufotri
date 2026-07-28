@@ -19,6 +19,7 @@ BENCHMARK = ROOT / "validation" / "benchmarks" / "d3_prospective_experiment"
 LOCAL_ROOT = (
     ROOT / "validation" / "external_local" / "d3_prospective_experiment"
 )
+TRACKED_DATA_ROOT = BENCHMARK / "blinded"
 RAW_SNAPSHOT = LOCAL_ROOT / "intake" / "raw_read_only"
 MANIFEST_PATH = BENCHMARK / "results" / "data_intake_manifest.yaml"
 SCHEMA_REVIEW_PATH = BENCHMARK / "results" / "data_intake_schema_review.csv"
@@ -180,7 +181,7 @@ def main() -> int:
     file_entries: list[dict[str, Any]] = []
     review_rows: list[dict[str, Any]] = []
     for blind_id in ("A", "B", "C"):
-        source = LOCAL_ROOT / f"dataset_{blind_id}.csv"
+        source = TRACKED_DATA_ROOT / f"dataset_{blind_id}.csv"
         snapshot = RAW_SNAPSHOT / source.name
         temporary = snapshot.with_suffix(".csv.tmp")
         shutil.copyfile(source, temporary)
@@ -276,7 +277,7 @@ def main() -> int:
         raise ValueError("Synthetic data intake review failed")
     write_schema_review(review_rows)
     manifest = {
-        "manifest_id": "D3_SYNTHETIC_DATA_INTAKE_DRY_RUN_V1",
+        "manifest_id": "D3_SYNTHETIC_DATA_INTAKE_DRY_RUN_V2",
         "status": "PASS_SYNTHETIC_INTAKE_WORKFLOW",
         "licence": "SYNTHETIC_INTERNAL_TEST_DATA",
         "raw_snapshot_read_only": True,

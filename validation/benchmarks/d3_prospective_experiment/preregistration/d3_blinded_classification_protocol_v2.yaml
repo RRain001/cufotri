@@ -1,0 +1,139 @@
+protocol_id: D3_BLINDED_CLASSIFICATION_PROTOCOL_V2
+status: FROZEN_BACKGROUND_BOUND_CORRECTION_BEFORE_RERUN
+protocol_class: SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
+
+amendment:
+  supersedes_protocol: D3_BLINDED_CLASSIFICATION_PROTOCOL_V1
+  amendment_id: D3_BACKGROUND_BOUND_CORRECTION_V2
+  original_classification_commit: bf4ff0880b9b064e48dd8a1f02ef51f14c5b3c0a
+  post_unblinding_design_amendment: true
+  original_v1_result_preserved: true
+  classification_threshold_changed: false
+  mechanism_parameter_changed: false
+  random_seed_changed: false
+
+evidence_boundary:
+  real_external_evidence: false
+  empirical_validation_claim: false
+  trusted_registry_eligible: false
+  production_eligible: false
+  formal_v3_physics: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+source_contract:
+  assumptions_commit: c6b56abb8f38608c92249a7fa197c949f8d5e95a
+  assumptions_file: >-
+    validation/benchmarks/d3_prospective_experiment/preregistration/d3_prospective_experiment_assumptions_v2.yaml
+  assumptions_file_sha256: 95fa317455de5e284976ab9e2e65953bf466eb14b1f62418c3486d65249d5471
+  forcing_generator_commit: 347181b1400b55aca1c5d5112ce5fc058957262e
+  forcing_generator_file: >-
+    validation/benchmarks/d3_prospective_experiment/scripts/generate_d3_prospective_forcing.py
+  forcing_generator_sha256: e0a33c9fd489d712e602e6c29a8516a626b20ea74557c7b24250811238059d50
+  forcing_scenario: MEASURED_NONZERO_BACKGROUND
+  forcing_file: >-
+    validation/external_local/d3_prospective_experiment/forcing/d3_forcing_measured_background.csv
+  parameter_source_commit: 4b79f62741db4d4b51f4d608df33d2e13c499636
+  frozen_parameter_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/reports/frozen_mechanism_parameters.yaml
+  frozen_parameter_file_sha256: 9224d4019d1e71f28f653699125c09328ae95af8bfc39a71442dc9dc355dc2d9
+  parameter_result_hash: f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9
+
+model_contract:
+  H2_SB1_FROZEN:
+    source_mechanism_id: H2_PARALLEL_FAST_SLOW_RESIDUAL
+    parameters:
+      slow_capture_fraction: 0.001
+      slow_release_rate_s: 1.0e-6
+  H3_SB1_FROZEN:
+    source_mechanism_id: H3_REVERSIBLE_FAST_SLOW_EXCHANGE
+    parameters:
+      fast_to_slow_rate_s: 1.0e-7
+      slow_to_fast_rate_s: 1.0e-6
+  parameter_refit: false
+  parameter_refit_count: 0
+  parameter_bound_expansion: false
+
+observable_contract:
+  classifier_observable: total plant-body TFWT
+  model_field: plant_body_tfwt_bq_l_water
+  sample_field: tfwt_bq_l_water
+  unit: Bq/L tissue water
+  organ: combined_stem_and_leaf
+  latent_state_allowed: false
+  pods_allowed: false
+  roots_allowed: false
+
+sampling_contract:
+  classification_times_h: [0.2, 48, 120]
+  diagnostic_times_h: [1, 6, 24, 72]
+  diagnostic_times_allowed_for_classification: false
+  minimum_uncensored_replicates_per_time: 3
+  biological_replicates_per_time: 5
+
+detection_limit_contract:
+  below_detection_limit_flag_required: true
+  raw_simulated_value_preserved: true
+  silent_lod_half_substitution: false
+  primary_censoring_rule: >-
+    EXCLUDE_FLAGGED_VALUE_FROM_TIME_MEAN_IF_AT_LEAST_THREE_UNCENSORED_REPLICATES
+  insufficient_uncensored_replicate_result: DATA_INCONCLUSIVE
+
+quality_control_contract:
+  accepted_quality_flag: OK
+  non_ok_rows_excluded_before_aggregation: true
+  outlier_flag: SYNTHETIC_OUTLIER_EXCLUDE
+  unflagged_automatic_outlier_deletion: false
+
+classifier:
+  aggregation: ARITHMETIC_MEAN_BY_PRIMARY_TIME
+  uncertainty: SAMPLE_STANDARD_ERROR_AND_REPLICATE_CV
+  primary_metric: log10 RMSE
+  preferred_model: lower log10 RMSE
+  absolute_rmse_difference_inconclusive_dex:
+    value: 0.15
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  both_model_rmse_inadequate_dex:
+    value: 0.50
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  decision_order:
+    - >-
+      IF_ABSOLUTE_RMSE_DIFFERENCE_LT_0P15_DEX_THEN_DATA_INCONCLUSIVE
+    - IF_BOTH_MODEL_RMSE_GT_0P50_DEX_THEN_BOTH_INADEQUATE
+    - OTHERWISE_SELECT_LOWER_RMSE_MODEL
+  allowed_results:
+    - H2_SUPPORTED_OVER_H3
+    - H3_SUPPORTED_OVER_H2
+    - BOTH_INADEQUATE
+    - DATA_INCONCLUSIVE
+
+challenge_contract:
+  class: SYNTHETIC_OUT_OF_MODEL_CHALLENGE
+  base_truth: GEOMETRIC_MEAN_OF_FROZEN_H2_H3_PREDICTIONS
+  systematic_deviation_time_h:
+    value: 48
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  systematic_deviation_factor:
+    value: 1.25
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  expected_result: DATA_INCONCLUSIVE
+  third_physical_model_claim: false
+
+sensitivity_contract:
+  replicate_counts: [3, 4, 5, 6]
+  total_cv: [0.10, 0.15, 0.20, 0.25, 0.30]
+  monte_carlo_replicates_per_cell: 1000
+  h2_truth_correct_minimum_at_cv20: 0.90
+  h3_truth_correct_minimum_at_cv20: 0.90
+  challenge_false_confident_maximum: 0.10
+  default_replicates_retained_if_three_pass: 5
+  parameter_refit: false
+
+blind_boundary:
+  truth_key_path: >-
+    validation/external_local/d3_prospective_experiment/truth/truth_key.yaml
+  truth_key_git_tracked: false
+  truth_key_access_before_classification_commit: false
+  tracked_artifact_root: >-
+    validation/benchmarks/d3_prospective_experiment/blinded
+  tracked_truth_key_sha256_only: true
+  tracked_files_must_not_map_blind_id_to_truth: true

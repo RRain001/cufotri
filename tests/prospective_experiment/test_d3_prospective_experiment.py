@@ -35,22 +35,21 @@ BENCHMARK = (
 LOCAL = (
     ROOT / "validation" / "external_local" / "d3_prospective_experiment"
 )
+TRACKED = (
+    ROOT
+    / "validation"
+    / "benchmarks"
+    / "d3_prospective_experiment"
+    / "blinded"
+)
 ASSUMPTIONS = yaml.safe_load(
-    (
-        BENCHMARK
-        / "preregistration"
-        / "d3_prospective_experiment_assumptions.yaml"
-    ).read_text(encoding="utf-8")
+    forcing.ASSUMPTIONS_PATH.read_text(encoding="utf-8")
 )
 PROTOCOL = yaml.safe_load(
-    (
-        BENCHMARK
-        / "preregistration"
-        / "d3_blinded_classification_protocol.yaml"
-    ).read_text(encoding="utf-8")
+    core.CLASSIFICATION_PROTOCOL_PATH.read_text(encoding="utf-8")
 )
 GENERATION = yaml.safe_load(
-    (LOCAL / "generation_manifest.yaml").read_text(encoding="utf-8")
+    (TRACKED / "generation_manifest.yaml").read_text(encoding="utf-8")
 )
 INTAKE = yaml.safe_load(
     (BENCHMARK / "results" / "data_intake_manifest.yaml").read_text(
@@ -71,7 +70,7 @@ def classification_results() -> dict[str, str]:
 
 
 def baseline_rows(blind_id: str) -> list[dict[str, object]]:
-    with (LOCAL / f"dataset_{blind_id}.csv").open(
+    with (TRACKED / f"dataset_{blind_id}.csv").open(
         encoding="utf-8", newline=""
     ) as stream:
         return [dict(row) for row in csv.DictReader(stream)]
@@ -97,6 +96,8 @@ def write_protocol(path: Path, protocol: dict[str, object]) -> None:
 
 def test_assumptions_marked_project_only() -> None:
     loaded = forcing.load_assumptions(require_committed=True)
+    assert loaded["assumption_set"] == "D3_PROSPECTIVE_ASSUMPTIONS_V2"
+    assert loaded["amendment"]["post_unblinding_design_amendment"] is True
     assert (
         loaded["numeric_assumption_status"]
         == "PROJECT_ASSUMPTION_NOT_LITERATURE_FACT"
@@ -152,8 +153,10 @@ def test_background_hto_measured_not_silent_zero() -> None:
         for row in strict_zero
         if row["phase"] == "POST_EXPOSURE_BACKGROUND"
     ]
+    measured_fraction = np.asarray(measured_background) / 5270.0
     assert min(measured_background) > 0
-    assert max(measured_background) <= 0.01 * 5270
+    assert measured_fraction.mean() == pytest.approx(0.0025)
+    assert measured_fraction.max() <= 0.005
     assert set(zero_background) == {0.0}
 
 
@@ -189,7 +192,34 @@ def test_truth_key_not_git_tracked() -> None:
         text=True,
     ).stdout
     assert tracked == ""
-    assert (LOCAL / "truth_key_sha256").read_text(encoding="utf-8").strip()
+    assert (TRACKED / "truth_key_sha256").read_text(
+        encoding="utf-8"
+    ).strip()
+
+
+def test_tracked_blind_artifacts_are_outside_external_local() -> None:
+    tracked_local = subprocess.run(
+        ["git", "ls-files", "validation/external_local"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.splitlines()
+    assert set(tracked_local) <= {
+        "validation/external_local/.gitignore",
+        "validation/external_local/README.md",
+    }
+    assert {
+        path.name
+        for path in TRACKED.iterdir()
+        if path.is_file()
+    } == {
+        "dataset_A.csv",
+        "dataset_B.csv",
+        "dataset_C.csv",
+        "generation_manifest.yaml",
+        "truth_key_sha256",
+    }
 
 
 def test_blinded_files_do_not_reveal_truth() -> None:
@@ -205,7 +235,7 @@ def test_blinded_files_do_not_reveal_truth() -> None:
         "dataset_C.csv",
         "generation_manifest.yaml",
     ):
-        text = (LOCAL / name).read_text(encoding="utf-8")
+        text = (TRACKED / name).read_text(encoding="utf-8")
         assert not any(token in text for token in forbidden)
     assert GENERATION["truth_mapping_disclosed"] is False
 

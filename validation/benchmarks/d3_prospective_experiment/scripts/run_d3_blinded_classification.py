@@ -25,6 +25,7 @@ from d3_prospective_core import (  # noqa: E402
     LOCAL_ROOT,
     PRIMARY_TIMES,
     SYNTHETIC_STATUS,
+    TRACKED_DATA_ROOT,
     classify_means,
     frozen_prediction_table,
     load_classification_protocol,
@@ -45,8 +46,8 @@ CLASSIFICATION_MANIFEST_PATH = RESULTS / "classification_manifest.yaml"
 PREUNBLINDING_REPORT_PATH = (
     REPORTS / "blinded_classification_preunblinding.md"
 )
-GENERATION_MANIFEST_PATH = LOCAL_ROOT / "generation_manifest.yaml"
-TRUTH_KEY_HASH_PATH = LOCAL_ROOT / "truth_key_sha256"
+GENERATION_MANIFEST_PATH = TRACKED_DATA_ROOT / "generation_manifest.yaml"
+TRUTH_KEY_HASH_PATH = TRACKED_DATA_ROOT / "truth_key_sha256"
 TRUTH_KEY_PATH = LOCAL_ROOT / "truth" / "truth_key.yaml"
 RESULT_COLUMNS = (
     "dataset_blind_id",
@@ -76,7 +77,9 @@ TIME_COLUMNS = (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset-root", type=Path, default=LOCAL_ROOT)
+    parser.add_argument(
+        "--dataset-root", type=Path, default=TRACKED_DATA_ROOT
+    )
     parser.add_argument("--results-root", type=Path, default=RESULTS)
     parser.add_argument("--reports-root", type=Path, default=REPORTS)
     return parser.parse_args()
@@ -335,7 +338,7 @@ def run_classification(
     result_hash = sha256(result_path)
     render_preunblinding_report(result_rows, report_path, result_hash)
     classification_manifest = {
-        "manifest_id": "D3_BLINDED_CLASSIFICATION_EXECUTION_V1",
+        "manifest_id": "D3_BLINDED_CLASSIFICATION_EXECUTION_V2",
         "status": "COMPLETED_PREUNBLINDING",
         "truth_key_accessed": False,
         "truth_mapping_disclosed": False,

@@ -1,0 +1,15 @@
+manifest_id: D3_SYNTHETIC_UNBLINDING_V1
+status: FAIL_POSITIVE_CONTROL_CLASSIFICATION
+truth_key_hash_verified: true
+truth_key_git_tracked: false
+classification_result_commit: bf4ff08c430dc01022a4da40712efa1bbec0b176
+expectation_pass_count: 1
+expectation_total_count: 3
+comparison_sha256: 8bf379f3f8b986bf825d98ae51910a3dbdb67879f7e2f26528ab9fd342c94fef
+report_sha256: c9e0aac0128ec59f9cef59b84e05ded96f983332205e147ba41f067f87b0af65
+parameter_refit_count: 0
+real_external_evidence: false
+trusted_registry_eligible: false
+production_eligible: false
+formal_v3_physics: NOT_STARTED
+v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA

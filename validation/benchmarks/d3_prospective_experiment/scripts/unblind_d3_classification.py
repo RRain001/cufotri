@@ -16,9 +16,10 @@ BENCHMARK = ROOT / "validation" / "benchmarks" / "d3_prospective_experiment"
 LOCAL_ROOT = (
     ROOT / "validation" / "external_local" / "d3_prospective_experiment"
 )
+TRACKED_DATA_ROOT = BENCHMARK / "blinded"
 RESULT_PATH = BENCHMARK / "results" / "d3_blinded_classification_results.csv"
 TRUTH_KEY_PATH = LOCAL_ROOT / "truth" / "truth_key.yaml"
-TRUTH_HASH_PATH = LOCAL_ROOT / "truth_key_sha256"
+TRUTH_HASH_PATH = TRACKED_DATA_ROOT / "truth_key_sha256"
 COMPARISON_PATH = BENCHMARK / "results" / "unblinding_comparison.csv"
 MANIFEST_PATH = BENCHMARK / "results" / "unblinding_manifest.yaml"
 REPORT_PATH = BENCHMARK / "reports" / "blinded_classification_report.md"
@@ -125,19 +126,29 @@ def render_report(rows: list[dict[str, Any]], output_path: Path) -> None:
             f'{float(row["h3_log10_rmse"]):.6f} | '
             f'{float(row["absolute_rmse_difference_dex"]):.6f} |'
         )
+    lines.append("")
+    if passed == len(rows):
+        lines.extend(
+            [
+                "The corrected V2 dry run selected H2 for its H2 positive control,",
+                "selected H3 for its H3 positive control and returned",
+                "`DATA_INCONCLUSIVE` for the out-of-model challenge. The V1 failure",
+                "remains preserved under the benchmark archive and in Git history.",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "At least one preregistered positive-control or challenge expectation",
+                "failed. The result must remain fail-closed and cannot be rewritten",
+                "as a successful classifier dry run.",
+            ]
+        )
     lines.extend(
         [
             "",
-            "Dataset C confirms that the classifier does not force a binary model",
-            "choice. Datasets A and B do not meet their expected selections because",
-            "their realized absolute RMSE differences are below the preregistered",
-            "0.15 dex threshold. The frozen threshold, aggregation, seeds, and data",
-            "were not changed after unblinding.",
-            "",
-            "The dry run therefore fails its H2/H3 positive-control classification",
-            "objective while passing its out-of-model fail-closed objective. It cannot",
-            "authorize formal H2/H3 selection, trusted-registry promotion, empirical",
-            "validation, or V3 physics.",
+            "Neither result authorizes formal H2/H3 selection, trusted-registry",
+            "promotion, empirical validation, or V3 physics.",
         ]
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -175,7 +186,7 @@ def main() -> int:
     render_report(rows, REPORT_PATH)
     passed = sum(bool(row["expectation_pass"]) for row in rows)
     manifest = {
-        "manifest_id": "D3_SYNTHETIC_UNBLINDING_V1",
+        "manifest_id": "D3_SYNTHETIC_UNBLINDING_V2",
         "status": (
             "PASS_ALL_EXPECTATIONS"
             if passed == len(rows)

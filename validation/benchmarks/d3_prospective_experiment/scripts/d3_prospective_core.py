@@ -19,7 +19,7 @@ BENCHMARK = ROOT / "validation" / "benchmarks" / "d3_prospective_experiment"
 CLASSIFICATION_PROTOCOL_PATH = (
     BENCHMARK
     / "preregistration"
-    / "d3_blinded_classification_protocol.yaml"
+    / "d3_blinded_classification_protocol_v2.yaml"
 )
 H2H3_PROTOCOL_PATH = (
     ROOT
@@ -35,6 +35,7 @@ FORCING_SUMMARY_PATH = (
 LOCAL_ROOT = (
     ROOT / "validation" / "external_local" / "d3_prospective_experiment"
 )
+TRACKED_DATA_ROOT = BENCHMARK / "blinded"
 MEASURED_FORCING_PATH = (
     LOCAL_ROOT / "forcing" / "d3_forcing_measured_background.csv"
 )
@@ -80,8 +81,9 @@ def load_classification_protocol() -> dict[str, Any]:
         CLASSIFICATION_PROTOCOL_PATH.read_text(encoding="utf-8")
     )
     if (
-        protocol["protocol_id"] != "D3_BLINDED_CLASSIFICATION_PROTOCOL_V1"
-        or protocol["status"] != "FROZEN_BEFORE_BLINDED_CLASSIFICATION"
+        protocol["protocol_id"] != "D3_BLINDED_CLASSIFICATION_PROTOCOL_V2"
+        or protocol["status"]
+        != "FROZEN_BACKGROUND_BOUND_CORRECTION_BEFORE_RERUN"
     ):
         raise ValueError("Blinded classification protocol is not frozen")
     boundary = protocol["evidence_boundary"]
@@ -161,10 +163,13 @@ def validate_source_contract(
     source = protocol["source_contract"]
     assumptions = ROOT / source["assumptions_file"]
     frozen = ROOT / source["frozen_parameter_file"]
+    forcing_generator = ROOT / source["forcing_generator_file"]
     if sha256(assumptions) != source["assumptions_file_sha256"]:
         raise ValueError("Prospective assumptions checksum mismatch")
     if sha256(frozen) != source["frozen_parameter_file_sha256"]:
         raise ValueError("Frozen parameter checksum mismatch")
+    if sha256(forcing_generator) != source["forcing_generator_sha256"]:
+        raise ValueError("Forcing generator checksum mismatch")
     frozen_mapping = yaml.safe_load(frozen.read_text(encoding="utf-8"))
     if (
         frozen_mapping["mechanism_parameter_result_hash"]
@@ -224,6 +229,8 @@ def read_measured_forcing(
         raise ValueError("Prospective forcing columns changed")
     if set(raw["forcing_source"]) != {"SYNTHETIC_CONTROLLED_EXPERIMENT"}:
         raise ValueError("Forcing source is not synthetic controlled experiment")
+    if set(raw["assumption_set"]) != {"D3_PROSPECTIVE_ASSUMPTIONS_V2"}:
+        raise ValueError("Forcing does not use the corrected assumption set")
     minutes = raw["minutes_from_exposure_start"].to_numpy(int)
     if (
         len(raw) != 1729

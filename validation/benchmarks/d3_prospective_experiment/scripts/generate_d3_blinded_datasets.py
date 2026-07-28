@@ -24,6 +24,7 @@ from d3_prospective_core import (  # noqa: E402
     COMPLETE_TIMES,
     LOCAL_ROOT,
     SYNTHETIC_STATUS,
+    TRACKED_DATA_ROOT,
     frozen_prediction_table,
     load_classification_protocol,
     mean_one_lognormal,
@@ -41,8 +42,8 @@ from generate_d3_prospective_forcing import (  # noqa: E402
 ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_TRUTH_PLAN = LOCAL_ROOT / "truth" / "truth_plan.yaml"
 DEFAULT_TRUTH_KEY = LOCAL_ROOT / "truth" / "truth_key.yaml"
-TRUTH_KEY_HASH_PATH = LOCAL_ROOT / "truth_key_sha256"
-GENERATION_MANIFEST_PATH = LOCAL_ROOT / "generation_manifest.yaml"
+TRUTH_KEY_HASH_PATH = TRACKED_DATA_ROOT / "truth_key_sha256"
+GENERATION_MANIFEST_PATH = TRACKED_DATA_ROOT / "generation_manifest.yaml"
 PREDICTION_QA_PATH = BENCHMARK / "results" / "frozen_truth_prediction_qa.yaml"
 DATASET_COLUMNS = (
     "experiment_id",
@@ -74,7 +75,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--truth-plan", type=Path, default=DEFAULT_TRUTH_PLAN)
     parser.add_argument("--truth-key", type=Path, default=DEFAULT_TRUTH_KEY)
-    parser.add_argument("--output-root", type=Path, default=LOCAL_ROOT)
+    parser.add_argument(
+        "--output-root", type=Path, default=TRACKED_DATA_ROOT
+    )
     return parser.parse_args()
 
 
@@ -215,7 +218,7 @@ def sample_rows(
             )
             rows.append(
                 {
-                    "experiment_id": "D3-PROSPECTIVE-DRY-RUN-V1",
+                    "experiment_id": "D3-PROSPECTIVE-DRY-RUN-V2",
                     "dataset_blind_id": blind_id,
                     "chamber_id": "D3-SYNTHETIC-CHAMBER-01",
                     "replicate_id": (
@@ -363,7 +366,7 @@ def generate(
         }
         for variant_id, rows in variants.items():
             path = (
-                output_root
+                LOCAL_ROOT
                 / "challenges"
                 / f"{variant_id}_dataset_{blind_id}.csv"
             )
@@ -393,8 +396,7 @@ def generate(
         yaml.safe_dump(truth_key, sort_keys=False), encoding="utf-8"
     )
     truth_hash = sha256(truth_key_path)
-    hash_path = output_root / TRUTH_KEY_HASH_PATH.name
-    hash_path.write_text(f"{truth_hash}\n", encoding="utf-8")
+    TRUTH_KEY_HASH_PATH.write_text(f"{truth_hash}\n", encoding="utf-8")
 
     prediction_qa_rows = prediction_qa.to_dict(orient="records")
     PREDICTION_QA_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -411,7 +413,7 @@ def generate(
         encoding="utf-8",
     )
     manifest = {
-        "manifest_id": "D3_BLINDED_SYNTHETIC_GENERATION_V1",
+        "manifest_id": "D3_BLINDED_SYNTHETIC_GENERATION_V2",
         "evidence_class": "SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN",
         "synthetic_status": SYNTHETIC_STATUS,
         "licence": "SYNTHETIC_INTERNAL_TEST_DATA",
@@ -435,8 +437,7 @@ def generate(
         "local_untracked_variants": variant_entries,
         "prediction_qa_path": PREDICTION_QA_PATH.relative_to(ROOT).as_posix(),
     }
-    manifest_path = output_root / GENERATION_MANIFEST_PATH.name
-    manifest_path.write_text(
+    GENERATION_MANIFEST_PATH.write_text(
         yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8"
     )
     return manifest
