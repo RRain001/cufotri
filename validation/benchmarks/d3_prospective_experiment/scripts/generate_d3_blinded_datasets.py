@@ -107,7 +107,7 @@ def load_truth_plan(path: Path) -> dict[str, Any]:
     assert_local_truth_boundary(path)
     plan = yaml.safe_load(path.read_text(encoding="utf-8"))
     if (
-        plan["plan_id"] != "D3_LOCAL_BLIND_TRUTH_PLAN_V1"
+        plan["plan_id"] != "D3_LOCAL_BLIND_TRUTH_PLAN_V2"
         or plan["tracked"] is not False
     ):
         raise ValueError("Local truth plan boundary changed")
@@ -387,7 +387,7 @@ def generate(
         )
 
     truth_key = {
-        "truth_key_id": "D3_LOCAL_TRUTH_KEY_V1",
+        "truth_key_id": "D3_LOCAL_TRUTH_KEY_V2",
         "tracked": False,
         "synthetic_status": SYNTHETIC_STATUS,
         "third_physical_model_claim": False,
