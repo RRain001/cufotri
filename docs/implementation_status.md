@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-07-27
+Updated: 2026-07-28
 
 ## D3 discriminability review and external-evidence acquisition
 
@@ -10,13 +10,15 @@ reviewed, then fast-forwarded through the design branch into `main` at
 tests and returned `PASS`; it did not fit either candidate, use a latent pool,
 or authorize formal V3 physics.
 
-The separate, intentionally unmerged branch
-`codex/v3-d3-external-evidence-acquisition` froze its search protocol before
-searching. It found no executable public Tier A or Tier B dataset. Three
-sources contain Tier C public numeric evidence and five primary records are
-non-executable. The best request target is the IAEA/KAERI EMRAS soybean
-package, whose three named forcing workbooks are
-`REFERENCED_NOT_ACCESSIBLE`.
+The acquisition branch froze its search protocol before searching. It found no
+executable public Tier A or Tier B dataset. Three sources contain Tier C public
+numeric evidence and five primary records are non-executable. The best request
+target is the IAEA/KAERI EMRAS soybean package, whose three named forcing
+workbooks are `REFERENCED_NOT_ACCESSIBLE`. A fresh worktree independently
+reproduced the inventory and gate boundary, passed all 586 repository tests,
+and fast-forwarded the reviewed acquisition research into local `main` at
+`e0d6f89a34e75b939ec9fe64411d18f23866d76e`. This local merge has not been
+pushed.
 
 ```text
 MERGED_D3_DESIGN_HEAD =
@@ -29,7 +31,11 @@ D3_RESEARCH_MERGE_STATUS = MERGED_AND_PUSHED
 
 D3_ACQUISITION_BRANCH =
 codex/v3-d3-external-evidence-acquisition
-D3_ACQUISITION_BRANCH_MERGE = NOT_REQUESTED
+D3_ACQUISITION_INDEPENDENT_REVIEW =
+PASS_REPRODUCIBLE_NO_EXECUTABLE_PUBLIC_DATA
+D3_ACQUISITION_REVIEW_HEAD =
+e0d6f89a34e75b939ec9fe64411d18f23866d76e
+D3_ACQUISITION_BRANCH_MERGE = MERGED_LOCAL_NOT_PUSHED
 D3_EXTERNAL_SEARCH_STATUS =
 COMPLETE_NO_EXECUTABLE_PUBLIC_DATA
 D3_TIER_COUNTS = A_0_B_0_C_3_NON_EXECUTABLE_5
@@ -46,6 +52,36 @@ D3_FULL_REPOSITORY_TEST_STATUS = PASS_586
 D3_REAL_EXTERNAL_VALIDATION_RUN = NOT_STARTED
 D3_TRUSTED_REGISTRY_CHANGE_COUNT = 0
 D3_H2_H3_FORMAL_SELECTION = NOT_AUTHORIZED
+D3_FORMAL_V3_PHYSICS = NOT_STARTED
+V3_PHYSICS_START_GATE =
+BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+```
+
+## D3 prospective synthetic experiment dry run
+
+The branch `codex/v3-d3-prospective-experiment-dry-run` was created from the
+locally merged acquisition review. The preregistration
+`D3_PROSPECTIVE_ASSUMPTIONS_V1` marks every planning number as
+`PROJECT_ASSUMPTION_NOT_LITERATURE_FACT` and separately pins the frozen H2/H3
+parameter source, file hash, and result hash without refitting.
+
+The first executable stage generates 5-minute synthetic chamber forcing for a
+24 h exposure and 120 h follow-up. The exposure time-weighted mean is exactly
+5270 Bq/mL water with CV 5%. The default background remains positive and
+measured in the synthetic record; a separate strict-zero background file is a
+sensitivity scenario. Both files regenerate byte-for-byte from the frozen
+seed and remain Git-ignored local dry-run data.
+
+```text
+D3_PROSPECTIVE_ASSUMPTIONS = FROZEN_AND_TRACEABLE
+D3_PROSPECTIVE_EVIDENCE_CLASS =
+SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
+D3_FORCING_STATUS = PASS_SYNTHETIC_CONTROLLED_FORCING
+D3_FORCING_INTERVAL = COMPLETE_5_MINUTE_AXIS
+D3_FORCING_REGENERATION = PASS_BYTEWISE
+D3_REAL_EXTERNAL_EVIDENCE = FALSE
+D3_TRUSTED_REGISTRY_ELIGIBLE = FALSE
+D3_EMPIRICAL_VALIDATION_CLAIM = FALSE
 D3_FORMAL_V3_PHYSICS = NOT_STARTED
 V3_PHYSICS_START_GATE =
 BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
