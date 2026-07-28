@@ -1,0 +1,34 @@
+manifest_id: D3_TRUE_REBLINDING_GENERATION_V3
+status: FROZEN_PRECLASSIFICATION
+generation_attempt: 1
+maximum_generation_attempts: 1
+regeneration_permitted: false
+protocol_sha256: f9ed6491e35ac2f0ba849df5c2d907214a5445204bef3389ec260afdb20f4616
+generator_sha256: fce0033d6b7f58bcf866074548c32d70cef538289a94483ad575915ffd4fc4b0
+forcing_sha256: 6ece248d6f8fca9a57d967d0f111bd626e8fd1937693042de9d3ad2a73f20db0
+sealed_generation_secret_sha256: 00cef70341c21220e0e3913ff93e59315e5a5a16c313bd5e62a8058323ccefef
+truth_mapping_disclosed: false
+secret_values_disclosed: false
+observation_realization_reused: false
+blind_ids_reused: false
+datasets:
+- dataset_blind_id: 2L9ET5
+  path: validation/benchmarks/d3_prospective_experiment/reblinding_v3/blinded/dataset_2L9ET5.csv
+  sha256: e1ac2774f08e8fec1d100efef61b6850af9c77f80da06759ee56730cd7007f43
+  row_count: 35
+  truth_disclosed: false
+- dataset_blind_id: 4SUJBR
+  path: validation/benchmarks/d3_prospective_experiment/reblinding_v3/blinded/dataset_4SUJBR.csv
+  sha256: 6e4b145b08ffde7871163c5881e31513ced97fdc149e47c6197e48af6ea3c037
+  row_count: 35
+  truth_disclosed: false
+- dataset_blind_id: VYBVXE
+  path: validation/benchmarks/d3_prospective_experiment/reblinding_v3/blinded/dataset_VYBVXE.csv
+  sha256: fd1d0c4e16876347042d71635ee137779cb240597926c78bcd189ffaf3392158
+  row_count: 35
+  truth_disclosed: false
+real_external_evidence: false
+trusted_registry_eligible: false
+production_eligible: false
+formal_v3_physics: NOT_STARTED
+v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA

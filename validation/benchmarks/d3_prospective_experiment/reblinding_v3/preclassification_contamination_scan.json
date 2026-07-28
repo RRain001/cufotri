@@ -1,0 +1,14 @@
+{
+  "dataset_sha256": {
+    "2L9ET5": "e1ac2774f08e8fec1d100efef61b6850af9c77f80da06759ee56730cd7007f43",
+    "4SUJBR": "6e4b145b08ffde7871163c5881e31513ced97fdc149e47c6197e48af6ea3c037",
+    "VYBVXE": "fd1d0c4e16876347042d71635ee137779cb240597926c78bcd189ffaf3392158"
+  },
+  "opaque_ids": [
+    "2L9ET5",
+    "4SUJBR",
+    "VYBVXE"
+  ],
+  "scan_id": "D3_V3_PRECLASSIFICATION_CONTAMINATION_SCAN",
+  "status": "PASS"
+}
