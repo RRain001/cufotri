@@ -1,14 +1,14 @@
-summary_id: D3_PROSPECTIVE_FORCING_QUALITY_V1
+summary_id: D3_PROSPECTIVE_FORCING_QUALITY_V2
 status: PASS_SYNTHETIC_CONTROLLED_FORCING
 project_assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
 scenarios:
 - scenario_id: MEASURED_NONZERO_BACKGROUND
   forcing_source: SYNTHETIC_CONTROLLED_EXPERIMENT
-  assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V1
+  assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V2
   evidence_class: SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
   real_external_evidence: false
   csv_path: validation/external_local/d3_prospective_experiment/forcing/d3_forcing_measured_background.csv
-  csv_sha256: 421852c1a1e7319d1d3e9bc458552729921dc1a47b7413df5990aa562ed5be2d
+  csv_sha256: 6ece248d6f8fca9a57d967d0f111bd626e8fd1937693042de9d3ad2a73f20db0
   row_count: 1729
   exposure_row_count: 288
   post_exposure_row_count: 1441
@@ -16,9 +16,9 @@ scenarios:
   actual_exposure_mean_relative_error: 0.0
   actual_exposure_cv: 0.05
   maximum_setpoint_deviation: 670.5605847301986
-  post_exposure_background_mean: 26.350000000000005
-  post_exposure_background_mean_fraction: 0.005000000000000001
-  post_exposure_background_maximum_fraction: 0.006282279188290008
+  post_exposure_background_mean: 13.175000000000002
+  post_exposure_background_mean_fraction: 0.0025000000000000005
+  post_exposure_background_maximum_fraction: 0.002820569797072502
   temperature_c:
     mean: 25.0
     minimum: 24.2
@@ -33,11 +33,11 @@ scenarios:
     maximum: 0.5792936079596356
 - scenario_id: STRICT_ZERO_BACKGROUND_SENSITIVITY
   forcing_source: SYNTHETIC_CONTROLLED_EXPERIMENT
-  assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V1
+  assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V2
   evidence_class: SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
   real_external_evidence: false
   csv_path: validation/external_local/d3_prospective_experiment/forcing/d3_forcing_zero_background.csv
-  csv_sha256: d1a12921168a5851214c70f704a3a428b92121b745b86d90c6935c71fe743988
+  csv_sha256: 4a9b92eb9652e8f1f207fddbf4ac750bbd75091d54da03bae634901515390483
   row_count: 1729
   exposure_row_count: 288
   post_exposure_row_count: 1441
