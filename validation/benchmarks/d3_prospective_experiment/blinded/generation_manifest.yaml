@@ -1,4 +1,4 @@
-manifest_id: D3_BLINDED_SYNTHETIC_GENERATION_V1
+manifest_id: D3_BLINDED_SYNTHETIC_GENERATION_V2
 evidence_class: SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
 synthetic_status: SYNTHETIC_NOT_EXTERNAL_EVIDENCE
 licence: SYNTHETIC_INTERNAL_TEST_DATA
@@ -8,98 +8,100 @@ trusted_registry_eligible: false
 production_eligible: false
 formal_v3_physics: NOT_STARTED
 v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
-assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V1
-assumptions_sha256: da80f25724a04fdbd56d7a424d9c6133bc730da9f2e8e7fd416bf4d2dc2d90e4
-classification_protocol_sha256: de0126c088e4846e688b8252c152879762ca53d72a35fa11c48e510abd488e82
-generator_sha256: 2ea7c80b71ced10772cf44eaa3d816098734d81980ca41fc4b8fd7699c67d432
-truth_key_sha256: 4c00c75a5c4802df7d2fe7d67063bd697f1c75e8f6af9b485bcc4bfd4e3e91dd
+assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V2
+assumptions_sha256: 95fa317455de5e284976ab9e2e65953bf466eb14b1f62418c3486d65249d5471
+classification_protocol_sha256: 8ca9bd6104a6295620a101dfb9be1032ae1e8c208c90a2d50f11e64acfa8adcb
+forcing_summary_sha256: 321162dacdb1b883adcdebc6c6e64ac5611793fea3ab7677e1cd8454d7cc1baf
+measured_forcing_sha256: 6ece248d6f8fca9a57d967d0f111bd626e8fd1937693042de9d3ad2a73f20db0
+generator_sha256: ac75c14071690afea64feaf48eb9ff6b10741e61b79d836b70fffcabab40bd11
+truth_key_sha256: 136103ce2d5bfe1bc93801e6f0c7958b8782812a3510dc5f77db4ca0bf5216f2
 truth_mapping_disclosed: false
 datasets:
 - dataset_blind_id: A
-  path: validation/external_local/d3_prospective_experiment/dataset_A.csv
-  sha256: c13c94489c1aa73965967fd45d353b47f521b215c85bee95e20f6a8c585fca5c
+  path: validation/benchmarks/d3_prospective_experiment/blinded/dataset_A.csv
+  sha256: 2232b970d9b22bcc42f25371217fd73ac0e6ab1631f84ff257cc5d676d8179e9
   row_count: 35
   truth_disclosed: false
 - dataset_blind_id: B
-  path: validation/external_local/d3_prospective_experiment/dataset_B.csv
-  sha256: d245116b91817c18be6f1b49b0dfcdad21fa373cc5a28c21845b8adc49c9ae87
+  path: validation/benchmarks/d3_prospective_experiment/blinded/dataset_B.csv
+  sha256: b7eefcbead890a4071f38d94743c43163a6250cdb2797e2cf4e059d821606da5
   row_count: 35
   truth_disclosed: false
 - dataset_blind_id: C
-  path: validation/external_local/d3_prospective_experiment/dataset_C.csv
-  sha256: 03fd7763ce3bee5fe17f3557442bdc25998d66fdd99223a9e9fe9c7aa9e1c16c
+  path: validation/benchmarks/d3_prospective_experiment/blinded/dataset_C.csv
+  sha256: cc9129247e16deafbdaec190b8592304f65cfb98b0ad1a45115b207d3ae7f25e
   row_count: 35
   truth_disclosed: false
 local_untracked_variants:
 - dataset_blind_id: A
   path: validation/external_local/d3_prospective_experiment/challenges/cv20_dataset_A.csv
-  sha256: bd53cb9ead1f66c2a582d442472701b505fccd6b920a64bb3e7aa1aa59c430ca
+  sha256: 84cab57fe2487c135579f53e05c89ad355143b5dd42407db5407557afe67352a
   row_count: 35
   truth_disclosed: false
   variant_id: cv20
 - dataset_blind_id: A
   path: validation/external_local/d3_prospective_experiment/challenges/one_missing_replicate_dataset_A.csv
-  sha256: 93953064b828586c9b7b90cb71269acdf9cbf26bbe5528dc87cd7b3b152a185d
+  sha256: 2fbd2406d77b8462ddc4191d92cee43e1ba1b6c533ad18b3803c9077c1d2da6d
   row_count: 34
   truth_disclosed: false
   variant_id: one_missing_replicate
 - dataset_blind_id: A
   path: validation/external_local/d3_prospective_experiment/challenges/one_outlier_dataset_A.csv
-  sha256: b56e4528494f48543e92e70a656437f5d03dade096350f0c6e0fcbaf329a9bbf
+  sha256: ae54f6de1ebc57b1857125dbadb123c6376a7e2c7e48dbc495e155685d6720e6
   row_count: 35
   truth_disclosed: false
   variant_id: one_outlier
 - dataset_blind_id: A
   path: validation/external_local/d3_prospective_experiment/challenges/detection_limit_dataset_A.csv
-  sha256: 79bc97a241179d2cc43e40e03dff652f867abcb23ce5d407c125b8bea6b991b3
+  sha256: 4961420bca50207f1215bcdb767ea59b2ea70505bf9eda0f2c1669552c41a36f
   row_count: 35
   truth_disclosed: false
   variant_id: detection_limit
 - dataset_blind_id: B
   path: validation/external_local/d3_prospective_experiment/challenges/cv20_dataset_B.csv
-  sha256: 178bca142f3ba7cf359b344b47e67340d3ab23de0894f6a83c0f81f794d81945
+  sha256: 7cf90f9532d7263165a3fe5a69d93208b4186cd062c2b27a9d45280c5f2b4d00
   row_count: 35
   truth_disclosed: false
   variant_id: cv20
 - dataset_blind_id: B
   path: validation/external_local/d3_prospective_experiment/challenges/one_missing_replicate_dataset_B.csv
-  sha256: 04f2b54167278f2260cc4c23deda65722dacea23d5931602476f19563fda652c
+  sha256: 78bc872adb52812a5682b022256585613ffcb08fed26c92031dbe65f81454ce4
   row_count: 34
   truth_disclosed: false
   variant_id: one_missing_replicate
 - dataset_blind_id: B
   path: validation/external_local/d3_prospective_experiment/challenges/one_outlier_dataset_B.csv
-  sha256: 454420f212e428b3ef3ff5112ad89d9e2a89092b72bec3b87bb9f2876282a7e4
+  sha256: 750e8c8c28f642393f3718282297285deec9cc553b3babbae7caaba0d86b183b
   row_count: 35
   truth_disclosed: false
   variant_id: one_outlier
 - dataset_blind_id: B
   path: validation/external_local/d3_prospective_experiment/challenges/detection_limit_dataset_B.csv
-  sha256: 09b3a29692b5ace592ded771cb37b9b697512d52763f7838dfc9424d7209d92f
+  sha256: 8a22023e027d8689ef7923041525d8a1e9975e67af295c160bdb4301f656cc05
   row_count: 35
   truth_disclosed: false
   variant_id: detection_limit
 - dataset_blind_id: C
   path: validation/external_local/d3_prospective_experiment/challenges/cv20_dataset_C.csv
-  sha256: f44e9d095c60f8ae9cfbd859533c8db22b72ac60c517fdb28675791d2a7ca585
+  sha256: 00606e243b451e4514741e632ec9786a3838a4adfe10a4cb5ba56342cd61ea6e
   row_count: 35
   truth_disclosed: false
   variant_id: cv20
 - dataset_blind_id: C
   path: validation/external_local/d3_prospective_experiment/challenges/one_missing_replicate_dataset_C.csv
-  sha256: 85ec12020675c71f0f18fe4c365dbf8e56643dcaee40e0ff34758d59946b8b30
+  sha256: 35162de9c6dfdd428fd01b517ca5a3bde43a613f03dc79a0be2754eabe45c2ab
   row_count: 34
   truth_disclosed: false
   variant_id: one_missing_replicate
 - dataset_blind_id: C
   path: validation/external_local/d3_prospective_experiment/challenges/one_outlier_dataset_C.csv
-  sha256: 3e5b2bdb496484ab1543a1fc16d5f70259e5fceca40ffa9f92a8d6165bbf70fd
+  sha256: acad67e24b8f27284a2d8e541af94edf552c0c70634783f7f9546ea30e46da3f
   row_count: 35
   truth_disclosed: false
   variant_id: one_outlier
 - dataset_blind_id: C
   path: validation/external_local/d3_prospective_experiment/challenges/detection_limit_dataset_C.csv
-  sha256: a16b746d7d77dbadcc767170f6f1f126520bdabc9d426126036786f77ce5abc6
+  sha256: d52c9c18602800abf680cef202107ae6ce3328881d4647e7446ab5363a9e78c1
   row_count: 35
   truth_disclosed: false
   variant_id: detection_limit
