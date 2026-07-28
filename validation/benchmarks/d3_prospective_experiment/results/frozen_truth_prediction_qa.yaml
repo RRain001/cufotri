@@ -1,0 +1,24 @@
+status: PASS_FROZEN_PREDICTION_QA
+parameter_refit_count: 0
+latent_state_used_for_classification: false
+rows:
+- mechanism_id: H2_SB1_FROZEN
+  nan_count: 0
+  inf_count: 0
+  negative_inventory_count: 0
+  negative_concentration_count: 0
+  maximum_formal_mass_closure_abs_bq_m2: 9.313225746154785e-10
+  maximum_internal_transfer_ledger_residual_abs_bq_m2: 0.0
+  maximum_internal_state_sum_roundoff_abs_bq_m2: 5.857145879417658e-10
+  finite_nonnegative_pass: true
+  mass_conservation_pass: true
+- mechanism_id: H3_SB1_FROZEN
+  nan_count: 0
+  inf_count: 0
+  negative_inventory_count: 0
+  negative_concentration_count: 0
+  maximum_formal_mass_closure_abs_bq_m2: 9.313225746154785e-10
+  maximum_internal_transfer_ledger_residual_abs_bq_m2: 0.0
+  maximum_internal_state_sum_roundoff_abs_bq_m2: 6.184563972055912e-10
+  finite_nonnegative_pass: true
+  mass_conservation_pass: true

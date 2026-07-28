@@ -72,6 +72,15 @@ measured in the synthetic record; a separate strict-zero background file is a
 sensitivity scenario. Both files regenerate byte-for-byte from the frozen
 seed and remain Git-ignored local dry-run data.
 
+Three sample-level baseline datasets contain seven destructive sampling times
+and five biological replicates per time. They are tracked only under blind IDs
+A/B/C with `SYNTHETIC_NOT_EXTERNAL_EVIDENCE`; their generation manifest does
+not map blind IDs to truth. The local truth plan and truth key remain ignored,
+while only the truth-key SHA-256 is tracked. CV20, one-missing-replicate,
+flagged-outlier, and detection-limit challenges are also generated locally and
+ignored. The fail-closed classification protocol and classifier are committed
+with these blinded inputs before any classification execution.
+
 ```text
 D3_PROSPECTIVE_ASSUMPTIONS = FROZEN_AND_TRACEABLE
 D3_PROSPECTIVE_EVIDENCE_CLASS =
@@ -79,6 +88,12 @@ SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
 D3_FORCING_STATUS = PASS_SYNTHETIC_CONTROLLED_FORCING
 D3_FORCING_INTERVAL = COMPLETE_5_MINUTE_AXIS
 D3_FORCING_REGENERATION = PASS_BYTEWISE
+D3_BLINDED_BASELINE_DATASETS = GENERATED_3_BY_35_ROWS
+D3_BLINDED_DATASET_REGENERATION = PASS_BYTEWISE
+D3_TRUTH_KEY_GIT_TRACKED = FALSE
+D3_TRACKED_TRUTH_ARTIFACT = SHA256_ONLY
+D3_CLASSIFICATION_PROTOCOL = FROZEN_PRE_EXECUTION
+D3_CLASSIFICATION_EXECUTION = NOT_STARTED
 D3_REAL_EXTERNAL_EVIDENCE = FALSE
 D3_TRUSTED_REGISTRY_ELIGIBLE = FALSE
 D3_EMPIRICAL_VALIDATION_CLAIM = FALSE
