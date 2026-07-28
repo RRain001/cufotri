@@ -1,0 +1,169 @@
+protocol_id: D3_TRUE_REBLINDING_V3_PROTOCOL
+status: FROZEN_BEFORE_PRIVATE_SECRET_GENERATION
+protocol_class: SYNTHETIC_PROSPECTIVE_TRUE_REBLINDING_DRY_RUN
+
+remediation:
+  reason: PRIOR_A_B_C_MAPPING_PUBLIC_IN_GIT_HISTORY
+  invalidated_review_target: a5af7e862b2860e4f3e441d7f3582eb0ffce01d4
+  failure_record_commit: f3a1ddc
+  v1_status: FAILED_BACKGROUND_ENCODING
+  v2_numerical_status: SUCCESSFUL_DIAGNOSTIC_ONLY
+  v2_blinding_status: INVALID_TRUTH_MAPPING_PREEXPOSED
+  preserve_v1_v2_history: true
+  rewrite_or_rebase_history: false
+
+frozen_change_contract:
+  model_parameters_changed: false
+  forcing_changed: false
+  classification_rule_changed: false
+  primary_times_changed: false
+  challenge_definition_changed: false
+  observation_realization_reused: false
+  blind_ids_reused: false
+
+evidence_boundary:
+  evidence_class: SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
+  real_external_evidence: false
+  empirical_validation_claim: false
+  trusted_registry_eligible: false
+  production_eligible: false
+  formal_v3_physics: NOT_STARTED
+  h2_h3_formal_selection: NOT_AUTHORIZED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+source_contract:
+  assumptions_file: >-
+    validation/benchmarks/d3_prospective_experiment/preregistration/d3_prospective_experiment_assumptions_v2.yaml
+  assumptions_sha256: 95fa317455de5e284976ab9e2e65953bf466eb14b1f62418c3486d65249d5471
+  v2_classification_protocol_file: >-
+    validation/benchmarks/d3_prospective_experiment/preregistration/d3_blinded_classification_protocol_v2.yaml
+  v2_classification_protocol_sha256: 8ca9bd6104a6295620a101dfb9be1032ae1e8c208c90a2d50f11e64acfa8adcb
+  forcing_summary_file: >-
+    validation/benchmarks/d3_prospective_experiment/results/forcing_quality_summary.yaml
+  forcing_summary_sha256: 321162dacdb1b883adcdebc6c6e64ac5611793fea3ab7677e1cd8454d7cc1baf
+  measured_forcing_sha256: 6ece248d6f8fca9a57d967d0f111bd626e8fd1937693042de9d3ad2a73f20db0
+  parameter_source_commit: 4b79f62741db4d4b51f4d608df33d2e13c499636
+  frozen_parameter_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/reports/frozen_mechanism_parameters.yaml
+  frozen_parameter_file_sha256: 9224d4019d1e71f28f653699125c09328ae95af8bfc39a71442dc9dc355dc2d9
+  parameter_result_hash: f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9
+
+forcing_contract:
+  exposure_duration_h: 24
+  exposure_setpoint_bq_ml_water: 5270
+  exposure_cv: 0.05
+  post_exposure_background_positive: true
+  post_exposure_background_mean_fraction: 0.0025
+  post_exposure_background_maximum_fraction: 0.005
+
+model_contract:
+  H2_SB1_FROZEN:
+    slow_capture_fraction: 0.001
+    slow_release_rate_s: 1.0e-6
+  H3_SB1_FROZEN:
+    fast_to_slow_rate_s: 1.0e-7
+    slow_to_fast_rate_s: 1.0e-6
+  parameter_refit: false
+  parameter_bound_expansion: false
+
+observable_contract:
+  primary_observable: total plant-body TFWT
+  sample_field: tfwt_bq_l_water
+  unit: Bq/L tissue water
+  organ: combined_stem_and_leaf
+  latent_state_allowed: false
+  pods_allowed: false
+  roots_allowed: false
+
+sampling_contract:
+  complete_times_h: [0.2, 1, 6, 24, 48, 72, 120]
+  classification_times_h: [0.2, 48, 120]
+  diagnostic_times_allowed_for_classification: false
+  biological_replicates_per_time: 5
+  minimum_uncensored_replicates_per_primary_time: 3
+
+classifier:
+  aggregation: ARITHMETIC_MEAN_BY_PRIMARY_TIME
+  primary_metric: log10 RMSE
+  absolute_rmse_difference_inconclusive_dex: 0.15
+  both_model_rmse_inadequate_dex: 0.50
+  allowed_results:
+    - H2_SUPPORTED_OVER_H3
+    - H3_SUPPORTED_OVER_H2
+    - BOTH_INADEQUATE
+    - DATA_INCONCLUSIVE
+  frozen_primary_predictions_bq_l_water:
+    times_h: [0.2, 48, 120]
+    H2_SB1_FROZEN:
+      - 2467363.4344040933
+      - 13396.939599201656
+      - 14366.63825633111
+    H3_SB1_FROZEN:
+      - 2471421.4681441905
+      - 27279.2880344002
+      - 25453.509399311944
+
+challenge_contract:
+  class: SYNTHETIC_OUT_OF_MODEL_CHALLENGE
+  base_truth: GEOMETRIC_MEAN_OF_FROZEN_H2_H3_PREDICTIONS
+  systematic_deviation_time_h: 48
+  systematic_deviation_factor: 1.25
+  expected_result: DATA_INCONCLUSIVE
+  third_physical_model_claim: false
+
+reblinding_contract:
+  forbidden_blind_ids: [A, B, C]
+  opaque_id_regex: "^[A-Z2-9]{6}$"
+  opaque_id_count: 3
+  new_biological_noise_realization: true
+  private_permutation: true
+  filename_must_not_encode_truth: true
+  generation_truth_index_tracked: false
+  truth_mapping_tracked: false
+  expected_result_tracked_preclassification: false
+
+private_secret_contract:
+  secret_path: >-
+    validation/external_local/d3_prospective_reblind_v3/sealed_generation_secret.json
+  truth_key_path: >-
+    validation/external_local/d3_prospective_reblind_v3/truth_key_v3.json
+  generated_by_system_csprng: true
+  secret_values_printed_to_stdout: false
+  tracked_commitment: sealed_generation_secret_sha256
+  secret_or_truth_tracked: false
+
+single_realization_contract:
+  generation_attempt: 1
+  maximum_generation_attempts: 1
+  retry_until_expected_result: false
+  regeneration_after_preclassification: false
+  regeneration_after_classification: false
+
+preclassification_contract:
+  tracked_root: >-
+    validation/benchmarks/d3_prospective_experiment/reblinding_v3
+  contamination_scan_file: >-
+    validation/benchmarks/d3_prospective_experiment/reblinding_v3/preclassification_contamination_scan.json
+  new_ids_must_have_no_truth_association: true
+  classifier_worktree_must_not_contain_secret: true
+  classifier_must_not_read_external_local_truth: true
+
+prior_dataset_hashes:
+  v1:
+    - c13c94489c1aa73965967fd45d353b47f521b215c85bee95e20f6a8c585fca5c
+    - d245116b91817c18be6f1b49b0dfcdad21fa373cc5a28c21845b8adc49c9ae87
+    - 03fd7763ce3bee5fe17f3557442bdc25998d66fdd99223a9e9fe9c7aa9e1c16c
+  v2:
+    - 2232b970d9b22bcc42f25371217fd73ac0e6ab1631f84ff257cc5d676d8179e9
+    - b7eefcbead890a4071f38d94743c43163a6250cdb2797e2cf4e059d821606da5
+    - cc9129247e16deafbdaec190b8592304f65cfb98b0ad1a45115b207d3ae7f25e
+
+sensitivity_contract:
+  replicate_counts: [3, 4, 5, 6]
+  total_cv: [0.10, 0.15, 0.20, 0.25, 0.30]
+  monte_carlo_replicates_per_cell: 1000
+  h2_truth_correct_minimum_at_cv20: 0.90
+  h3_truth_correct_minimum_at_cv20: 0.90
+  challenge_false_confident_maximum: 0.10
+  default_replicates: 5
+  use_original_frozen_monte_carlo_seed: true
