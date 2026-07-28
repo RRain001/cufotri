@@ -20,7 +20,7 @@ BENCHMARK = ROOT / "validation" / "benchmarks" / "d3_prospective_experiment"
 ASSUMPTIONS_PATH = (
     BENCHMARK
     / "preregistration"
-    / "d3_prospective_experiment_assumptions.yaml"
+    / "d3_prospective_experiment_assumptions_v2.yaml"
 )
 DEFAULT_OUTPUT_ROOT = (
     ROOT / "validation" / "external_local" / "d3_prospective_experiment"
@@ -74,9 +74,9 @@ def sha256(path: Path) -> str:
 def load_assumptions(*, require_committed: bool = True) -> dict[str, Any]:
     assumptions = yaml.safe_load(ASSUMPTIONS_PATH.read_text(encoding="utf-8"))
     if (
-        assumptions["assumption_set"] != "D3_PROSPECTIVE_ASSUMPTIONS_V1"
+        assumptions["assumption_set"] != "D3_PROSPECTIVE_ASSUMPTIONS_V2"
         or assumptions["status"]
-        != "FROZEN_BEFORE_SYNTHETIC_PROSPECTIVE_EXECUTION"
+        != "FROZEN_BACKGROUND_BOUND_CORRECTION_BEFORE_RERUN"
     ):
         raise ValueError("D3 prospective assumptions are not frozen")
     boundary = assumptions["evidence_boundary"]
@@ -208,12 +208,22 @@ def generate_forcing(
     precipitation = assumption_value(
         exposure, "precipitation_mm_interval"
     )
-    background_target_fraction = assumption_value(
-        exposure, "post_exposure_background_target_fraction"
+    background_operational_fraction = assumption_value(
+        exposure, "post_exposure_background_operational_mean_fraction"
+    )
+    background_target_maximum_fraction = assumption_value(
+        exposure, "post_exposure_background_target_maximum_fraction"
     )
     maximum_background_fraction = assumption_value(
         exposure, "maximum_acceptable_background_fraction"
     )
+    if not (
+        0
+        < background_operational_fraction
+        <= background_target_maximum_fraction
+        <= maximum_background_fraction
+    ):
+        raise ValueError("Post-exposure background bounds are inconsistent")
     light_hours = assumption_value(exposure, "light_hours_per_day")
 
     total_minutes = int(round((exposure_h + followup_h) * 60))
@@ -238,16 +248,18 @@ def generate_forcing(
         background = np.zeros(post_count, dtype=float)
     else:
         background_noise = standardized_noise(rng, post_count)
-        background = setpoint * background_target_fraction * (
-            1.0 + 0.10 * background_noise
-        )
-        background = np.clip(
-            background,
-            setpoint * 0.0005,
-            setpoint * maximum_background_fraction,
+        background = setpoint * background_operational_fraction * (
+            1.0 + setpoint_cv * background_noise
         )
         if np.any(background <= 0):
             raise ValueError("Measured-background scenario cannot be silent zero")
+        if (
+            np.max(background) / setpoint
+            > background_target_maximum_fraction
+        ):
+            raise ValueError(
+                "Measured-background scenario exceeded its target maximum"
+            )
 
     hto = np.concatenate([exposure_hto, background])
     temperature = bounded_control_series(
@@ -385,7 +397,7 @@ def generate_outputs(
     write_csv(measured_path, measured)
     write_csv(zero_path, strict_zero)
     summary = {
-        "summary_id": "D3_PROSPECTIVE_FORCING_QUALITY_V1",
+        "summary_id": "D3_PROSPECTIVE_FORCING_QUALITY_V2",
         "status": "PASS_SYNTHETIC_CONTROLLED_FORCING",
         "project_assumption_status": PROJECT_MARKER,
         "scenarios": [
