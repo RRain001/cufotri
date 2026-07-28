@@ -1,7 +1,7 @@
 # D3 external-data candidate inventory
 
-Status: `COMPLETE_NO_EXECUTABLE_PUBLIC_DATA`  
-Protocol: `D3_EXTERNAL_DATA_SEARCH_V1`  
+Status: `COMPLETE_NO_EXECUTABLE_PUBLIC_DATA`
+Protocol: `D3_EXTERNAL_DATA_SEARCH_V1`
 Search date (UTC): `2026-07-27`
 
 ## Conclusion

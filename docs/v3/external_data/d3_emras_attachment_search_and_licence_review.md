@@ -1,7 +1,7 @@
 # D3 EMRAS attachment search and licence review
 
-Search date (UTC): `2026-07-27`  
-Scope: read-only public-source discovery  
+Search date (UTC): `2026-07-27`
+Scope: read-only public-source discovery
 Candidate: `D3C-001`
 
 ## Result
