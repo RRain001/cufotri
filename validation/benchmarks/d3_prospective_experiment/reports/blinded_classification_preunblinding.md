@@ -12,10 +12,10 @@ BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 
 | blind dataset | result | H2 RMSE | H3 RMSE | absolute difference |
 |---|---|---:|---:|---:|
-| A | DATA_INCONCLUSIVE | 0.030850 | 0.178846 | 0.147996 |
-| B | DATA_INCONCLUSIVE | 0.170728 | 0.028921 | 0.141807 |
-| C | DATA_INCONCLUSIVE | 0.137515 | 0.033267 | 0.104248 |
+| A | H2_SUPPORTED_OVER_H3 | 0.030850 | 0.242964 | 0.212114 |
+| B | H3_SUPPORTED_OVER_H2 | 0.234831 | 0.028921 | 0.205910 |
+| C | DATA_INCONCLUSIVE | 0.169511 | 0.064171 | 0.105341 |
 
-`classification_result_sha256 = 3a8916ba67c9de79b33babe796ae82ad3078113fff861c6a96c447294c0cdd8e`
+`classification_result_sha256 = b9b04bcf66132bc1173af47fd509aa14e6c42d828573e66b430afe1acff6f6d1`
 
 This report was generated without opening or parsing the local truth key.
