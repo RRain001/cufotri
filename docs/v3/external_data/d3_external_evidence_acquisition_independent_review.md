@@ -125,7 +125,8 @@ follow-up, registry/production prohibitions, and eight fail-closed attacks.
 
 ```text
 COLLECTED_TESTS = 586
-FULL_REPOSITORY_REGRESSION = PASS
+FULL_REPOSITORY_REGRESSION = PASS_586_OF_586
+WARNINGS = 1_NUMPY_XARRAY_BINARY_COMPATIBILITY_WARNING
 ```
 
 The first fresh-worktree run correctly failed because Git-ignored SB1/SB4
