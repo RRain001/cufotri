@@ -1,0 +1,22 @@
+manifest_id: D3_TRUE_BLIND_CLASSIFICATION_V3
+status: COMPLETED_PREUNBLINDING
+preclassification_commit: b616d934fb0ae9d4abc90543d598de7c3754af23
+classification_attempt: 1
+retry_permitted: false
+truth_key_accessed: false
+secret_accessed: false
+truth_mapping_disclosed: false
+classifier_observable: total plant-body TFWT
+classification_times_h:
+- 0.2
+- 48
+- 120
+parameter_refit_count: 0
+latent_state_used: false
+classification_result_sha256: bd314abe46dee29dd5dcc0f829eda28f7eac1b2b4d0f3a56b6cf86da78df403b
+sealed_generation_secret_sha256: 00cef70341c21220e0e3913ff93e59315e5a5a16c313bd5e62a8058323ccefef
+real_external_evidence: false
+trusted_registry_eligible: false
+production_eligible: false
+formal_v3_physics: NOT_STARTED
+v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
