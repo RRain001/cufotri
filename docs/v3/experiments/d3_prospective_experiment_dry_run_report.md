@@ -143,3 +143,24 @@ The package is ready for laboratory feasibility discussion, but commissioning
 as a decisive H2/H3 experiment is on hold. A new preregistered design or power
 analysis must resolve the positive-control failure without tuning against real
 observations.
+
+## Repository verification
+
+The final collection contains 616 tests. The full run completed with 614
+passes and two explicit expected failures for the H2 and H3 positive-control
+classification requirements. The V1 recomputation, V2 recomputation and
+readiness, V3 compatibility, V3 architecture, compile-all and physics-gate
+commands passed. The physics gate remained
+`BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA`.
+
+`verify_v3_external_evidence_unblocking.py` did not pass. Its legacy scope
+check permits only `.gitignore` and `README.md` below
+`validation/external_local`, while this dry-run specification requires the
+synthetic A/B/C blinded datasets, generation manifest and truth-key hash to be
+tracked there. The tracked files are explicitly synthetic and no `/raw/`
+files are tracked, but the verifier does not distinguish that case. The
+root-level verifier was not changed because this dry run is restricted to
+`validation/`, `tests/` and `docs/`.
+
+No `src/`, formal `configs/` or trusted-registry file changed, and no V3 tag
+was created.

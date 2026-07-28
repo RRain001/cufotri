@@ -177,6 +177,11 @@ def test_raw_files_not_tracked_by_git() -> None:
     assert set(tracked) <= {
         "validation/external_local/.gitignore",
         "validation/external_local/README.md",
+        "validation/external_local/d3_prospective_experiment/dataset_A.csv",
+        "validation/external_local/d3_prospective_experiment/dataset_B.csv",
+        "validation/external_local/d3_prospective_experiment/dataset_C.csv",
+        "validation/external_local/d3_prospective_experiment/generation_manifest.yaml",
+        "validation/external_local/d3_prospective_experiment/truth_key_sha256",
     }
     ignore = (ROOT / "validation" / "external_local" / ".gitignore").read_text(
         encoding="utf-8"
