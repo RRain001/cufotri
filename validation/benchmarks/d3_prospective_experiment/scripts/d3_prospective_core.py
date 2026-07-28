@@ -102,6 +102,14 @@ def load_classification_protocol() -> dict[str, Any]:
         or model["parameter_bound_expansion"]
     ):
         raise ValueError("Parameter refit or expansion is prohibited")
+    if model["H2_SB1_FROZEN"]["parameters"] != {
+        "slow_capture_fraction": 0.001,
+        "slow_release_rate_s": 1.0e-6,
+    } or model["H3_SB1_FROZEN"]["parameters"] != {
+        "fast_to_slow_rate_s": 1.0e-7,
+        "slow_to_fast_rate_s": 1.0e-6,
+    }:
+        raise ValueError("Frozen H2/H3 parameters changed")
     observable = protocol["observable_contract"]
     if (
         observable["classifier_observable"] != "total plant-body TFWT"
@@ -115,9 +123,21 @@ def load_classification_protocol() -> dict[str, Any]:
         for value in protocol["sampling_contract"]["classification_times_h"]
     ) != PRIMARY_TIMES:
         raise ValueError("Primary classification times changed")
+    if protocol["sampling_contract"][
+        "diagnostic_times_allowed_for_classification"
+    ]:
+        raise ValueError("Diagnostic times cannot enter classification")
     classifier = protocol["classifier"]
     if classifier["primary_metric"] != "log10 RMSE":
         raise ValueError("Primary metric changed")
+    if classifier["absolute_rmse_difference_inconclusive_dex"] != {
+        "value": 0.15,
+        "status": "PROJECT_ASSUMPTION_NOT_LITERATURE_FACT",
+    } or classifier["both_model_rmse_inadequate_dex"] != {
+        "value": 0.50,
+        "status": "PROJECT_ASSUMPTION_NOT_LITERATURE_FACT",
+    }:
+        raise ValueError("Fail-closed RMSE thresholds changed")
     if set(classifier["allowed_results"]) != {
         "H2_SUPPORTED_OVER_H3",
         "H3_SUPPORTED_OVER_H2",
@@ -125,6 +145,13 @@ def load_classification_protocol() -> dict[str, Any]:
         "DATA_INCONCLUSIVE",
     }:
         raise ValueError("Allowed classification outcomes changed")
+    challenge = protocol["challenge_contract"]
+    if (
+        challenge["class"] != "SYNTHETIC_OUT_OF_MODEL_CHALLENGE"
+        or challenge["expected_result"] != "DATA_INCONCLUSIVE"
+        or challenge["third_physical_model_claim"]
+    ):
+        raise ValueError("Out-of-model challenge boundary changed")
     return protocol
 
 

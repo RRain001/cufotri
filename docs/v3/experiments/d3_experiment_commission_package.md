@@ -1,7 +1,9 @@
 # D3 discriminating experiment commission package
 
 ```text
-PACKAGE_STATUS = READY
+PACKAGE_STATUS = READY_FOR_LAB_FEASIBILITY_REVIEW
+COMMISSIONING_STATUS =
+HOLD_CLASSIFICATION_POWER_TARGET_NOT_MET
 TIER_A_EXECUTABLE_PUBLIC_DATA_COUNT = 0
 EXPERIMENTAL_DATA_ALREADY_COLLECTED = FALSE
 FORMAL_EXTERNAL_VALIDATION_AUTHORIZED = FALSE
@@ -9,12 +11,31 @@ FORMAL_EXTERNAL_VALIDATION_AUTHORIZED = FALSE
 
 ## Objective
 
-Commission a prospective soybean chamber experiment that can distinguish the
-frozen H2 and H3 validation-only hypotheses without changing either model or
-using the observations for fitting. This document specifies acquisition and
-quality requirements only; it does not preregister or run formal validation.
+Prepare a prospective soybean chamber experiment for laboratory feasibility
+and radiation-safety review. The intended endpoint is discrimination between
+the frozen H2 and H3 validation-only hypotheses without parameter fitting.
+The synthetic dry run showed that the current 0.15 dex fail-closed threshold
+with 3--6 replicates does not meet the preregistered positive-control
+classification target. This document therefore specifies the operational and
+data-quality package but does not claim that the current sample size is
+statistically sufficient or authorize commissioning as a decisive experiment.
 
-## Minimum design
+## Dry-run decision boundary
+
+```text
+H2_TRUTH_CLASSIFICATION = FAIL_DATA_INCONCLUSIVE
+H3_TRUTH_CLASSIFICATION = FAIL_DATA_INCONCLUSIVE
+OUT_OF_MODEL_CHALLENGE = PASS_DATA_INCONCLUSIVE
+CV20_PASSING_REPLICATE_COUNTS_3_TO_6 = NONE
+FORMAL_H2_H3_SELECTION = NOT_AUTHORIZED
+```
+
+The laboratory may review feasibility, safety, detection limits, schedule and
+plant availability now. Before a real discriminating experiment is
+commissioned, a new preregistered design or power analysis must resolve the
+positive-control failure without tuning a rule after seeing real observations.
+
+## Minimum formal experiment
 
 | Item | Required value |
 |---|---|
@@ -30,7 +51,7 @@ quality requirements only; it does not preregister or run formal validation.
 | precipitation | zero |
 | post-exposure HTO background | measured, not assumed zero |
 | minimum post-exposure samples | 0.2, 48 and 120 h |
-| biological replication | at least 3 independent plants per destructive sampling time |
+| biological replication | 5 independent plants per destructive sampling time as the operational default |
 | primary endpoint | total plant-body TFWT |
 | endpoint unit | Bq/L tissue water |
 | target total uncertainty | <=20% |
@@ -40,6 +61,31 @@ quality requirements only; it does not preregister or run formal validation.
 `EXTENDED_120_DAY_FOLLOWUP=OPTIONAL`. A 120-day extension may improve
 long-timescale characterization, but it is not part of the minimum experiment
 and must not be substituted for the required 120-hour follow-up.
+
+The minimum formal sampling set is 0.2, 48 and 120 h with five biological
+replicates at each time. This is 15 exposed plants. Add five pre-exposure
+baseline plants, five zero-HTO controls and a 20% reserve:
+
+```text
+MINIMUM_PACKAGE_PLANTS = ceil((15 + 5 + 5) * 1.20) = 30
+```
+
+This count is a project planning assumption, not a formal power result.
+
+## Recommended diagnostic experiment
+
+The recommended destructive sampling times are 0.2, 1, 6, 24, 48, 72 and
+120 h, with five exposed plants per time. With five pre-exposure baseline
+plants, seven zero-HTO controls and a 20% reserve:
+
+```text
+EXTENDED_PACKAGE_PLANTS = ceil((35 + 5 + 7) * 1.20) = 57
+```
+
+The experimental laboratory must revise 30/57 plants for expected survival,
+destructive-sampling losses, chamber capacity and its own quality-control plan.
+The diagnostic 1/6/24/72 h samples must not be used to refit H2/H3 or replace
+the preregistered primary classification times.
 
 ## Blinding and independence
 
@@ -74,11 +120,10 @@ it with zero.
 
 ## Sampling requirements
 
-Use destructive, independent biological replicates. At minimum collect three
-replicates at each of 0.2, 48 and 120 h after the 24 h exposure. A separate
-exposure-end reference sample and additional points (for example 1, 6, 24 and
-72 h) are recommended, provided the minimum set and replication are not
-reduced.
+Use destructive, independent biological replicates. The current operational
+default is five replicates at each of 0.2, 48 and 120 h after the 24 h
+exposure. Additional diagnostic points are 1, 6, 24 and 72 h, provided the
+minimum set and replication are not reduced.
 
 For every sample record:
 
@@ -98,11 +143,29 @@ an undocumented assumption.
 
 ## Replication and uncertainty
 
-The minimum is three biological replicates per destructive sampling time, not
-three analytical repeats of one plant. The laboratory should provide the
-uncertainty budget and target total relative uncertainty at or below 20% for
-the primary endpoint. Values below detection limits must be retained with
-their flags and limits; they must not be silently replaced by zero.
+Five biological replicates per destructive sampling time are the current
+operational default, not five analytical repeats of one plant. In the dry-run
+Monte Carlo at total CV 20%, 3--6 replicates yielded only 18.3%--30.7%
+positive-control classification accuracy under the frozen 0.15 dex
+inconclusive threshold. Five replicates are retained for sample-loss and
+outlier resistance, but this is not a statistical power proof.
+
+The laboratory should provide the uncertainty budget and confirm whether total
+relative uncertainty at or below 20% is feasible. The planning detection limit
+of 250 Bq/L and fresh/dry mass resolution of 0.01 g are project assumptions;
+the laboratory must replace them with instrument-specific capabilities.
+Values below detection limits must be retained with their flags and limits;
+they must not be silently replaced by zero or LOD/2.
+
+## Radiation-safety and feasibility hold points
+
+The operability of 5270 Bq/mL water in chamber air moisture requires an
+independent radiation-safety review covering source inventory, containment,
+worker dose, exhaust treatment, waste and emergency response. Temperature
+25 +/- 1 degrees C, RH 70 +/- 5%, mixing 0.5 +/- 0.1 m/s and a measured
+post-exposure background are planning targets, not claims about an existing
+facility. The laboratory must confirm achievable control bands and detection
+limits before schedule or cost is accepted.
 
 ## Required deliverables
 
@@ -128,4 +191,5 @@ cannot be relabelled as experimental observations.
 
 Data arrival leads only to checksum, licence and data-quality review. Formal
 H2/H3 execution remains prohibited until independent registry approval has
-merged to `main`.
+merged to `main`. The present synthetic dry run cannot enter that registry,
+cannot clear the production gate and cannot be used to choose V3 physics.

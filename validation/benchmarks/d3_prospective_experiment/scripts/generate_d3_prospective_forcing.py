@@ -92,6 +92,43 @@ def load_assumptions(*, require_committed: bool = True) -> dict[str, Any]:
         != "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
     ):
         raise ValueError("D3 prospective evidence boundary changed")
+    unmarked: list[str] = []
+
+    def audit_numeric_values(
+        value: Any, path: tuple[str, ...] = (), marked: bool = False
+    ) -> None:
+        if isinstance(value, dict):
+            if path == ("frozen_mechanism_contract",):
+                return
+            local_marked = marked or value.get("status") == PROJECT_MARKER or (
+                value.get("assumption_status") == PROJECT_MARKER
+            )
+            for key, child in value.items():
+                audit_numeric_values(child, path + (str(key),), local_marked)
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                audit_numeric_values(
+                    child, path + (str(index),), marked
+                )
+        elif (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and not marked
+        ):
+            unmarked.append(".".join(path))
+
+    audit_numeric_values(assumptions)
+    if unmarked:
+        raise ValueError(
+            "Unmarked project numeric assumptions: " + ", ".join(unmarked)
+        )
+    measurement = assumptions["measurement_assumptions"]
+    if (
+        measurement["instrument_capability_claim"]
+        or measurement["assumed_detection_limit_bq_l"]["status"]
+        != PROJECT_MARKER
+    ):
+        raise ValueError("Planning detection limit became an instrument fact")
     if require_committed:
         relative = ASSUMPTIONS_PATH.relative_to(ROOT).as_posix()
         subprocess.run(

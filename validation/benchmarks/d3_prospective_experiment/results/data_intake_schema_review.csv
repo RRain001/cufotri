@@ -1,0 +1,4 @@
+dataset_blind_id,row_count,schema_pass,unit_contract_pass,missing_value_count,nonfinite_numeric_count,invalid_mass_count,detection_flag_mismatch_count,synthetic_status_pass,registry_eligible,production_eligible
+A,35,True,True,0,0,0,0,True,False,False
+B,35,True,True,0,0,0,0,True,False,False
+C,35,True,True,0,0,0,0,True,False,False
