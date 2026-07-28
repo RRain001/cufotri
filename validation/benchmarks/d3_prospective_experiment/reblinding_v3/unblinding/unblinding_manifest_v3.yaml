@@ -1,0 +1,17 @@
+manifest_id: D3_TRUE_REBLINDING_UNBLINDING_V3
+status: PASS_TRUE_REBLINDING
+generation_attempt: 1
+classification_attempt: 1
+regeneration_or_retry_permitted: false
+preclassification_commit: b616d934fb0ae9d4abc90543d598de7c3754af23
+classification_commit: d8ae38373d63f2d4faa9ec0dede3f032077c98d3
+sealed_generation_secret_sha256_verified: true
+truth_key_matches_sealed_secret: true
+expectation_pass_count: 3
+expectation_total_count: 3
+comparison_sha256: a3cc41ea5f9f04d38e8f57c52c7684fe67e8db25be7316f14a7a48dbdf26900a
+real_external_evidence: false
+trusted_registry_eligible: false
+production_eligible: false
+formal_v3_physics: NOT_STARTED
+v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
