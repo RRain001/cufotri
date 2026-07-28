@@ -148,11 +148,11 @@ detection limit, uncertainty and sample-capacity confirmation.
 
 ## Repository verification
 
-The D3 prospective and acquisition targeted set passes 52/52. The V3
+The D3 prospective and acquisition targeted set passes 53/53. The V3
 external-evidence unblocking verifier now passes fail-closed because tracked
 synthetic artifacts reside under the benchmark `blinded/` directory and
 `validation/external_local` contains no tracked data. The post-amendment full
-suite passes 618/618 with one pre-existing NumPy binary-compatibility warning.
+suite passes 619/619 with one pre-existing NumPy binary-compatibility warning.
 V1/V2 recomputation and readiness, V3 compatibility and architecture,
 compile-all and both V3 gate verifiers pass. The physics gate remains
 `BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA`.

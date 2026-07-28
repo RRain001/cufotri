@@ -441,6 +441,12 @@ def test_attack_truth_key_added_to_git_fails(
             ),
             "boundary",
         ),
+        (
+            lambda protocol: protocol["challenge_contract"].__setitem__(
+                "expected_result", "H2_SUPPORTED_OVER_H3"
+            ),
+            "challenge",
+        ),
     ],
 )
 def test_attack_protocol_mutations_fail(
