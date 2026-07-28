@@ -1,0 +1,27 @@
+manifest_id: D3_BLINDED_CLASSIFICATION_EXECUTION_V1
+status: COMPLETED_PREUNBLINDING
+truth_key_accessed: false
+truth_mapping_disclosed: false
+parameter_refit_count: 0
+latent_state_used: false
+classifier_observable: total plant-body TFWT
+classification_times_h:
+- 0.2
+- 48
+- 120
+classification_result_sha256: 3a8916ba67c9de79b33babe796ae82ad3078113fff861c6a96c447294c0cdd8e
+time_summary_sha256: 5a2f4d9bac124d6bb18fd96fe47a3b0702e782d99ab0c805559e1f83f8d2aac8
+preunblinding_report_sha256: b8eb5aee2466fdb0dfbb126d1b63ff81c3946bd7004443d7725809d6d2305c7c
+generation_manifest_sha256: 7f59c4250ddf91618b3ca46e1b859a29e3259a6296ec542c5fd2b891f0220c93
+truth_key_sha256_record_sha256: b28ca1565076449a4e0579aeb63a95724227d4aab26274dfbc8bf17bba2ab127
+protocol_sha256: de0126c088e4846e688b8252c152879762ca53d72a35fa11c48e510abd488e82
+allowed_results:
+- H2_SUPPORTED_OVER_H3
+- H3_SUPPORTED_OVER_H2
+- BOTH_INADEQUATE
+- DATA_INCONCLUSIVE
+real_external_evidence: false
+trusted_registry_eligible: false
+production_eligible: false
+formal_v3_physics: NOT_STARTED
+v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
