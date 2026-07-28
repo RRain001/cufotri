@@ -22,10 +22,12 @@ from d3_prospective_core import (  # noqa: E402
     BENCHMARK,
     CLASSIFICATION_PROTOCOL_PATH,
     COMPLETE_TIMES,
+    FORCING_SUMMARY_PATH,
     LOCAL_ROOT,
     SYNTHETIC_STATUS,
     TRACKED_DATA_ROOT,
     frozen_prediction_table,
+    forcing_expected_sha256,
     load_classification_protocol,
     mean_one_lognormal,
     prediction_vectors,
@@ -430,6 +432,8 @@ def generate(
         "classification_protocol_sha256": sha256(
             CLASSIFICATION_PROTOCOL_PATH
         ),
+        "forcing_summary_sha256": sha256(FORCING_SUMMARY_PATH),
+        "measured_forcing_sha256": forcing_expected_sha256(),
         "generator_sha256": sha256(Path(__file__)),
         "truth_key_sha256": truth_hash,
         "truth_mapping_disclosed": False,

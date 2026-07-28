@@ -199,6 +199,15 @@ def forcing_expected_sha256() -> str:
     summary = yaml.safe_load(
         FORCING_SUMMARY_PATH.read_text(encoding="utf-8")
     )
+    if (
+        summary["summary_id"] != "D3_PROSPECTIVE_FORCING_QUALITY_V2"
+        or summary["status"] != "PASS_SYNTHETIC_CONTROLLED_FORCING"
+        or {
+            str(item["assumption_set"]) for item in summary["scenarios"]
+        }
+        != {"D3_PROSPECTIVE_ASSUMPTIONS_V2"}
+    ):
+        raise ValueError("Forcing summary is not the corrected V2 contract")
     for scenario in summary["scenarios"]:
         if scenario["scenario_id"] == "MEASURED_NONZERO_BACKGROUND":
             return str(scenario["csv_sha256"])
