@@ -1,0 +1,216 @@
+assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V2
+status: FROZEN_BACKGROUND_BOUND_CORRECTION_BEFORE_RERUN
+numeric_assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+
+amendment:
+  supersedes_assumption_set: D3_PROSPECTIVE_ASSUMPTIONS_V1
+  original_classification_commit: bf4ff0880b9b064e48dd8a1f02ef51f14c5b3c0a
+  reason: >-
+    V1 encoded the specified post-exposure background target of at most
+    0.5 percent as an exact 0.5 percent mean. V2 separates the operational
+    synthetic mean from the upper-bound target before a new dry-run.
+  classification_threshold_changed: false
+  mechanism_parameter_changed: false
+  random_seed_changed: false
+  post_unblinding_design_amendment: true
+  original_v1_result_preserved: true
+
+evidence_boundary:
+  evidence_class: SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
+  real_external_evidence: false
+  empirical_validation_claim: false
+  trusted_registry_eligible: false
+  production_eligible: false
+  formal_v3_physics: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+  project_planning_assumptions_are_literature_facts: false
+
+biological_conditions:
+  assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  crop: soybean
+  growth_stage: EARLY_POD_OR_LATE_FLOWERING
+  lai:
+    value: 4.0
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  plant_body_definition: combined_stem_and_leaf
+  root_in_primary_endpoint: false
+  pods_in_primary_endpoint: false
+
+exposure_conditions:
+  assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  experiment_start_utc: "2026-08-01T00:00:00Z"
+  exposure_duration_h:
+    value: 24
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  post_exposure_followup_h:
+    value: 120
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  air_moisture_hto_setpoint_bq_ml_water:
+    value: 5270
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  temperature_target_c:
+    value: 25.0
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  temperature_control_band_c:
+    value: 1.0
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  relative_humidity_target_percent:
+    value: 70
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  relative_humidity_control_band_percent:
+    value: 5
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  mixing_velocity_target_m_s:
+    value: 0.5
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  mixing_velocity_control_band_m_s:
+    value: 0.1
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  precipitation_mm_interval:
+    value: 0
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  post_exposure_background_operational_mean_fraction:
+    value: 0.0025
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  post_exposure_background_target_maximum_fraction:
+    value: 0.005
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  maximum_acceptable_background_fraction:
+    value: 0.01
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  forcing_interval_min:
+    value: 5
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  setpoint_variability_cv:
+    value: 0.05
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  light_hours_per_day:
+    value: 16
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  dark_hours_per_day:
+    value: 8
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+
+sampling_design:
+  assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  primary_classification_times_h:
+    values: [0.2, 48, 120]
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  diagnostic_times_h:
+    values: [1, 6, 24, 72]
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  complete_destructive_sampling_times_h:
+    values: [0.2, 1, 6, 24, 48, 72, 120]
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  diagnostic_times_allowed_for_formal_selection: false
+
+biological_replicates:
+  assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  default_per_time:
+    value: 5
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  sensitivity_counts:
+    values: [3, 4, 5, 6]
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  minimum_exposed_plants:
+    value: 15
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  pre_exposure_baseline_plants:
+    value: 5
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  zero_hto_control_plants_minimum:
+    value: 5
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  reserve_fraction:
+    value: 0.20
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  minimum_prepared_plant_count:
+    value: 30
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  extended_exposed_plants:
+    value: 35
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  extended_zero_hto_control_plants:
+    value: 7
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  extended_pre_reserve_total:
+    value: 47
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  extended_prepared_plant_count:
+    value: 57
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  statistical_power_proof_claim: false
+
+measurement_assumptions:
+  assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  primary_measurement: total plant-body TFWT
+  unit: Bq/L tissue water
+  analytical_cv:
+    value: 0.08
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  biological_cv:
+    value: 0.12
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  combined_total_cv_target:
+    value: 0.15
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  sensitivity_total_cv:
+    values: [0.10, 0.15, 0.20, 0.25, 0.30]
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  assumed_detection_limit_bq_l:
+    value: 250
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  fresh_mass_resolution_g:
+    value: 0.01
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  dry_mass_resolution_g:
+    value: 0.01
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  sample_fresh_mass_mean_g:
+    value: 100
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  sample_fresh_mass_cv:
+    value: 0.10
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  sample_dry_fraction_mean:
+    value: 0.20
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  sample_dry_fraction_cv:
+    value: 0.05
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  instrument_capability_claim: false
+
+random_seeds:
+  assumption_status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  forcing_seed:
+    value: 2026072701
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  h2_truth_seed:
+    value: 2026072702
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  h3_truth_seed:
+    value: 2026072703
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  challenge_seed:
+    value: 2026072704
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+  replicate_sensitivity_seed:
+    value: 2026072705
+    status: PROJECT_ASSUMPTION_NOT_LITERATURE_FACT
+
+frozen_mechanism_contract:
+  status: FROZEN_FROM_SOURCE_COMMIT_NOT_REFIT
+  parameter_source_commit: 4b79f62741db4d4b51f4d608df33d2e13c499636
+  parameter_file: >-
+    validation/benchmarks/emras_soybean_sb1_mechanisms/reports/frozen_mechanism_parameters.yaml
+  parameter_file_sha256: 9224d4019d1e71f28f653699125c09328ae95af8bfc39a71442dc9dc355dc2d9
+  parameter_result_hash: f95f27fe6ce601af688c1a40d3b23619d11374e0c4151d8c1a702d0c6a2160a9
+  parameter_refit: false
+  H2_SB1_FROZEN:
+    source_mechanism_id: H2_PARALLEL_FAST_SLOW_RESIDUAL
+    slow_capture_fraction: 0.001
+    slow_release_rate_s: 1.0e-6
+  H3_SB1_FROZEN:
+    source_mechanism_id: H3_REVERSIBLE_FAST_SLOW_EXCHANGE
+    fast_to_slow_rate_s: 1.0e-7
+    slow_to_fast_rate_s: 1.0e-6
