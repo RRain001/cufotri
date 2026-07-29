@@ -206,9 +206,58 @@ PRIMARY_TIMES_CHANGED =
 FALSE
 
 LAB_HANDOFF_STATUS =
-READY_SUBJECT_TO_FORMAL_SCOPE_REGRESSION
+READY
 ```
 
-The review recommends merging the synthetic dry-run infrastructure only after
-the full V1/V2/V3 verifier suite, repository-wide pytest, compileall and the
-formal `src`/root-`configs`/trusted-registry zero-diff checks pass.
+## Full regression and formal-scope audit
+
+The first repository-wide run in this fresh worktree correctly failed because
+Git-ignored SB1/SB4 and ERA5 evidence had not yet been copied. After the
+existing local evidence was copied from the source worktree, raw evidence was
+kept read-only and only the derived SB1/SB4 `generated_forcing` directories
+were made writable for their existing regeneration tests.
+
+```text
+FULL_REPOSITORY_PYTEST =
+PASS_671_OF_671
+
+V1_RECOMPUTE_ACCEPTANCE =
+PASS
+
+V2_RECOMPUTE_ACCEPTANCE =
+PASS
+
+V2_VALIDATION_READINESS =
+FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_VALIDATION_READY
+
+V3_COMPATIBILITY =
+PASS_BITWISE_WHERE_DETERMINISTIC
+
+V3_ARCHITECTURE =
+READY_ARCHITECTURE_ONLY
+
+V3_EXTERNAL_EVIDENCE_UNBLOCKING =
+READY_FAIL_CLOSED_BLOCKED_EXTERNAL_DATA
+
+V3_PHYSICS_START_GATE =
+BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+COMPILEALL =
+PASS
+
+FORMAL_SRC_DIFF =
+0
+
+FORMAL_CONFIG_DIFF =
+0
+
+TRUSTED_REGISTRY_DIFF =
+0
+```
+
+The only warning was the pre-existing NumPy/NetCDF binary-compatibility
+runtime warning in the independent SB1 ERA5 semantics test.
+
+The review therefore recommends the synthetic true-reblinding dry-run
+infrastructure for fast-forward integration while retaining the fail-closed
+external-evidence and V3-physics boundaries.
