@@ -75,19 +75,33 @@ measured in the synthetic record; a separate strict-zero background file is a
 sensitivity scenario. Both files regenerate byte-for-byte from the frozen
 seed and remain Git-ignored local dry-run data.
 
-Three sample-level baseline datasets contain seven destructive sampling times
-and five biological replicates per time. They are tracked under the benchmark
-`blinded/` directory only under IDs A/B/C with
-`SYNTHETIC_NOT_EXTERNAL_EVIDENCE`; their generation manifest does not map
-blind IDs to truth. `validation/external_local/` again contains no tracked
-data. The local truth plan and truth key remain ignored, while only the
-truth-key SHA-256 is tracked. The V2 protocol and inputs were committed before
-classification at `f69dee0fb9a7e88e6c3ceebbde6bdd73adc9bdf2`; only then was
-the truth key opened.
+V2 tracked three sample-level datasets under A/B/C. Its classification commit
+`f69dee0fb9a7e88e6c3ceebbde6bdd73adc9bdf2` preceded the V2 unblinding
+commit, but the commit tree still contained the V1 A/B/C truth mapping. Because
+V2 reused that mapping, it is numerically useful only and is not a valid blind
+test. This failure is preserved without rewriting V1/V2 history.
+
+V3 true reblinding froze the failure record and protocol before generating
+exactly one new private realization. A system-CSPRNG secret produced three new
+opaque IDs, a new biological-noise realization and a new private permutation.
+The secret and truth key remain Git-ignored; only the secret SHA-256 commitment
+is tracked. The preclassification commit contains no new ID-to-truth mapping,
+and classification ran in a separate clean worktree with no V3 private files.
+The classification commit was created before the first secret/truth-key read.
+The single realization passed H2, H3 and out-of-model expectations 3/3. A new
+independent review recomputed the sample-level classification and all 60 Monte
+Carlo cells without reading the prior result CSVs.
 
 ```text
-D3_PROSPECTIVE_ASSUMPTIONS = V2_FROZEN_AND_TRACEABLE
-D3_V1_FAILURE_ARCHIVE = PRESERVED
+D3_PROSPECTIVE_ASSUMPTIONS = V2_FORCING_FROZEN_AND_TRACEABLE
+D3_DRY_RUN_BLINDING_V1 = FAILED_ARCHIVED
+D3_V1_ARCHIVE_CONTENT_INTEGRITY = PASS
+D3_V1_ARCHIVE_COMMIT_CHRONOLOGY =
+NONCOMPLIANT_WITH_PLANNED_ORDER
+D3_DRY_RUN_BLINDING_V2 =
+INVALID_TRUTH_MAPPING_PREEXPOSED
+D3_V2_NUMERICAL_STATUS = SUCCESSFUL_DIAGNOSTIC_ONLY
+D3_V2_EMPIRICAL_OR_BLIND_VALIDATION_CLAIM = FALSE
 D3_BACKGROUND_OPERATIONAL_MEAN_FRACTION = 0.0025
 D3_BACKGROUND_TARGET_MAXIMUM_FRACTION = 0.005
 D3_PROSPECTIVE_EVIDENCE_CLASS =
@@ -95,19 +109,26 @@ SYNTHETIC_PROSPECTIVE_EXPERIMENT_DRY_RUN
 D3_FORCING_STATUS = PASS_SYNTHETIC_CONTROLLED_FORCING
 D3_FORCING_INTERVAL = COMPLETE_5_MINUTE_AXIS
 D3_FORCING_REGENERATION = PASS_BYTEWISE
-D3_BLINDED_BASELINE_DATASETS = GENERATED_3_BY_35_ROWS
-D3_BLINDED_DATASET_REGENERATION = PASS_BYTEWISE
-D3_TRUTH_KEY_GIT_TRACKED = FALSE
-D3_TRACKED_TRUTH_ARTIFACT = SHA256_ONLY
-D3_CLASSIFICATION_PROTOCOL = FROZEN_PRE_EXECUTION
-D3_CLASSIFICATION_EXECUTION = COMPLETED_PREUNBLINDING
-D3_BLIND_A_RESULT = H2_SUPPORTED_OVER_H3
-D3_BLIND_B_RESULT = H3_SUPPORTED_OVER_H2
-D3_BLIND_C_RESULT = DATA_INCONCLUSIVE
-D3_TRUTH_KEY_ACCESSED = AFTER_CLASSIFICATION_COMMIT_ONLY
+D3_DRY_RUN_BLINDING_V3 = PASS_TRUE_REBLINDING
+D3_V3_OPAQUE_IDS = 2L9ET5_4SUJBR_VYBVXE
+D3_V3_OBSERVATION_REALIZATION_REUSED = FALSE
+D3_V3_GENERATION_ATTEMPTS = 1
+D3_V3_CLASSIFICATION_ATTEMPTS = 1
+D3_V3_REGENERATION_OR_RETRY = PROHIBITED
+D3_V3_SECRET_GIT_TRACKED = FALSE
+D3_V3_TRUTH_KEY_GIT_TRACKED = FALSE
+D3_V3_TRACKED_SECRET_ARTIFACT = SHA256_ONLY
+D3_V3_PRECLASSIFICATION_CONTAMINATION_SCAN = PASS
+D3_V3_PRECLASSIFICATION_COMMIT =
+b616d934fb0ae9d4abc90543d598de7c3754af23
+D3_V3_CLASSIFICATION_COMMIT =
+d8ae38373d63f2d4faa9ec0dede3f032077c98d3
+D3_V3_UNBLINDING_COMMIT =
+48b779980644a86471a049a8b5d3272f5ae9ec7a
+D3_V3_CLASSIFIER_WORKTREE_SECRET_STATUS = ABSENT
 D3_CLASSIFICATION_PARAMETER_REFIT_COUNT = 0
-D3_UNBLINDING_STATUS = PASS_ALL_EXPECTATIONS
-D3_EXPECTATION_PASS_COUNT = 3_OF_3
+D3_V3_UNBLINDING_STATUS = PASS_TRUE_REBLINDING
+D3_V3_EXPECTATION_PASS_COUNT = 3_OF_3
 D3_H2_TRUTH_CLASSIFICATION = PASS
 D3_H3_TRUTH_CLASSIFICATION = PASS
 D3_OUT_OF_MODEL_CHALLENGE = PASS_DATA_INCONCLUSIVE
@@ -119,10 +140,14 @@ D3_DEFAULT_PLANNING_REPLICATES = 5_SYNTHETIC_TARGET_PASS
 D3_DATA_INTAKE_DRY_RUN = PASS_SYNTHETIC_INTAKE_WORKFLOW
 D3_INTAKE_RAW_SNAPSHOT = READ_ONLY_GIT_IGNORED
 D3_INTAKE_REGISTRY_ELIGIBLE = FALSE
-D3_PROSPECTIVE_TARGETED_TESTS = PASS_33_OF_33
-D3_FULL_PYTEST = PASS_619_OF_619_ONE_KNOWN_NUMPY_ABI_WARNING
+D3_V3_REMEDIATION_TESTS = PASS_26_OF_26
+D3_V3_INDEPENDENT_REVIEW_TESTS = PASS_26_OF_26
+D3_V3_INDEPENDENT_REVIEW =
+PASS_REPRODUCIBLE_TRUE_REBLINDING
+D3_FULL_PYTEST = PASS_671_OF_671_ONE_KNOWN_NUMPY_ABI_WARNING
 D3_V1_V2_AND_V3_COMPATIBILITY_ARCHITECTURE = PASS
 D3_V3_EXTERNAL_UNBLOCKING_VERIFIER = PASS_FAIL_CLOSED
+D3_TRUE_REBLINDING_BRANCH_MERGE = NOT_MERGED_TO_MAIN
 D3_EXPERIMENT_PACKAGE =
 READY_FOR_LAB_FEASIBILITY_AND_COMMISSIONING
 D3_EXPERIMENT_COMMISSIONING =
