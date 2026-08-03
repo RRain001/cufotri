@@ -51,6 +51,29 @@ D3_V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 D3_MAPPING_COMMIT_STATUS = R1_PUSHED_NOT_MERGED
 ```
 
+## D3 UFOTRI manual mapping independent rereview R1
+
+The complete manual mapping and external-input portability remediation were
+independently rereviewed in a fresh worktree at fixed target
+`0164a99cae30ab44411fe98be9ea9cc512c51966`. No external SB1/SB4/ERA5 input or
+private secret was read. The independent rereview test and report are in
+`tests/external_evidence_acquisition/test_d3_ufotri_manual_data_mapping_independent_rereview_r1.py`
+and
+`docs/v3/experiments/d3_ufotri_manual_data_mapping_independent_rereview_r1.md`.
+
+```text
+D3_UFOTRI_MANUAL_DATA_MAPPING_INDEPENDENT_REREVIEW_R1 = PASS_TRACEABLE_PORTABLE_AND_FAIL_CLOSED
+D3_INDEPENDENT_REREVIEW_TESTS = 21
+D3_INDEPENDENT_REREVIEW_MANUAL = PASS_36_EXPLICIT_10_DERIVED_3_DEFERRED
+D3_INDEPENDENT_REREVIEW_PORTABILITY = PASS
+D3_INDEPENDENT_REREVIEW_STRICT_EXTERNAL = PASS_49_FAIL_CLOSED_MISSING
+D3_INDEPENDENT_REREVIEW_ERA5_VERIFIERS = PASS_4_EXIT_2_BLOCKED
+D3_INDEPENDENT_REREVIEW_MODEL_OR_PARAMETER_CHANGE = NONE
+D3_INDEPENDENT_REREVIEW_REAL_EXTERNAL_EVIDENCE = FALSE
+D3_INDEPENDENT_REREVIEW_FORMAL_V3_PHYSICS = NOT_STARTED
+D3_INDEPENDENT_REREVIEW_MERGE_RECOMMENDATION = READY_FOR_FAST_FORWARD_MERGE
+```
+
 The external-input portability remediation is isolated on branch
 `codex/v3-external-input-test-portability-r1`, based on R1 snapshot
 `29f59c83cb2ed6b8c4111799a3e3878c8b568b72`. Portable pytest runs preserve all
