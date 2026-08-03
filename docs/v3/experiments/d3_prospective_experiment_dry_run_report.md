@@ -2,11 +2,15 @@
 
 ## Executive decision
 
-The acquisition research was independently reproduced and merged locally by
+The acquisition research was independently reproduced and merged by
 fast-forward. V1 was reproducible but exposed a background-bound encoding
 defect. The corrected V2 rerun preserved that failure, froze its amendment
 before new data generation, selected the matching model for both positive
 controls and returned `DATA_INCONCLUSIVE` for the out-of-model challenge.
+The V3 true-reblinding remediation then used a new private realization and
+strict preclassification, classification and unblinding commits; it passed
+independent review and was fast-forwarded into `main` at
+`569f6bc9b1e86b15056a0b5f178a656c27c5e6b1`.
 
 ```text
 EVIDENCE_CLASS =
@@ -16,6 +20,11 @@ REAL_EXTERNAL_EVIDENCE = FALSE
 EMPIRICAL_VALIDATION_CLAIM = FALSE
 TRUSTED_REGISTRY_ELIGIBLE = FALSE
 PRODUCTION_ELIGIBLE = FALSE
+
+D3_PROSPECTIVE_TRUE_REBLINDING = INDEPENDENTLY_REVIEWED_AND_MERGED
+SYNTHETIC_PROCESS_REHEARSAL = PASS
+LAB_HANDOFF_STATUS = READY_FOR_LAB_FEASIBILITY_CONFIRMATION
+NEXT_STEP = LAB_FEASIBILITY_CONFIRMATION
 
 H2_TRUTH_CLASSIFICATION = PASS
 H3_TRUTH_CLASSIFICATION = PASS
@@ -34,14 +43,16 @@ classifier validation and not authorization to select formal V3 physics.
 
 | milestone | status |
 |---|---|
-| external acquisition package independently reviewed and merged | PASS, local fast-forward merge |
+| external acquisition package independently reviewed and merged | PASS, pushed to `main` |
 | D3 prospective experiment assumptions frozen | PASS |
 | blinded synthetic experiment datasets generated | PASS, bytewise reproducible |
 | intake and H2/H3 classification dry run completed | PASS_ALL_3_EXPECTATIONS |
-| real experiment execution package finalized | READY_FOR_LAB_FEASIBILITY_AND_COMMISSIONING |
+| real experiment execution package finalized | READY_FOR_LAB_FEASIBILITY_CONFIRMATION |
 
-The local acquisition merge and dry-run branch have not been merged or pushed
-to remote `main`.
+The reviewed dry-run branch was merged into `main` with `--ff-only` and pushed;
+the reviewed true-reblinding implementation head is
+`569f6bc9b1e86b15056a0b5f178a656c27c5e6b1`, and this current status update is
+part of the published `main` history.
 
 ## Frozen assumptions and forcing
 
