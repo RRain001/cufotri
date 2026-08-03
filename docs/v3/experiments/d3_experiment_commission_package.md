@@ -42,7 +42,7 @@ detection limits, schedule and plant availability before execution.
 |---|---|
 | crop | soybean |
 | exposure medium | air-moisture HTO |
-| exposure concentration | 5270 Bq/mL water |
+| exposure concentration | 5270 Bq/mL air-moisture water |
 | exposure duration | 24 h |
 | post-exposure follow-up | 120 h |
 | total elapsed schedule | 144 h (approximately 6 days) |
@@ -53,7 +53,7 @@ detection limits, schedule and plant availability before execution.
 | post-exposure HTO background | measured; planning mean <=0.25% of exposure setpoint and target maximum <=0.5% |
 | minimum post-exposure samples | 0.2, 48 and 120 h |
 | biological replication | 5 independent plants per destructive sampling time as the operational default |
-| primary endpoint | total plant-body TFWT |
+| primary endpoint | combined stem-and-leaf TFWT (legacy total plant-body label; roots, pods and seeds excluded) |
 | endpoint unit | Bq/L tissue water |
 | target total uncertainty | <=20% |
 | air HTO logging | 5 min or finer |
@@ -137,10 +137,13 @@ For every sample record:
 - preparation, extraction and counting method;
 - blanks, duplicates, spikes or other laboratory controls.
 
-The primary endpoint is measured total plant-body TFWT. If destructive
-analysis requires separate leaves and stems, preserve their individual
-measurements and masses so a mass-weighted total can be reconstructed without
-an undocumented assumption.
+The primary endpoint is measured combined stem-and-leaf TFWT. The legacy
+classifier label `total plant-body TFWT` refers to this explicit D3 sample
+definition only. Roots, pods and seeds are excluded from the primary endpoint.
+If destructive analysis requires separate leaves and stems, preserve their
+individual measurements and masses so a mass-weighted total can be
+reconstructed without an undocumented assumption. Any root, pod or seed
+measurement is a separate diagnostic sample.
 
 ## Replication and uncertainty
 
@@ -162,7 +165,7 @@ they must not be silently replaced by zero or LOD/2.
 
 ## Radiation-safety and feasibility hold points
 
-The operability of 5270 Bq/mL water in chamber air moisture requires an
+The operability of 5270 Bq/mL air-moisture water in chamber air requires an
 independent radiation-safety review covering source inventory, containment,
 worker dose, exhaust treatment, waste and emergency response. Temperature
 25 +/- 1 degrees C, RH 70 +/- 5%, mixing 0.5 +/- 0.1 m/s and a measured

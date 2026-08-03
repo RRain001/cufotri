@@ -7,6 +7,8 @@ DOCUMENT_TYPE = PURE_DOCUMENT_LAB_FEASIBILITY_HANDOFF
 PRE_LAB_SOFTWARE_BASELINE = f5d18886f3a635cd6c3a813d820b1f3b3e52dd3a
 D3_PROSPECTIVE_TRUE_REBLINDING = INDEPENDENTLY_REVIEWED_AND_MERGED
 SYNTHETIC_PROCESS_REHEARSAL = PASS
+UFOTRI_MANUAL_DATA_MAPPING = FROZEN_PRE_LAB
+UFOTRI_MANUAL_SHA256 = 82c7c7f07975553a51e7ba1666a912f80096e5af4fc138aba6f45a120e6d3562
 REAL_EXPERIMENT = NOT_EXECUTED
 REAL_EXTERNAL_EVIDENCE = FALSE
 H2_H3_FORMAL_SELECTION = NOT_AUTHORIZED
@@ -59,8 +61,8 @@ V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 | LF-13 | 生物重复 | 每个时间点 5 个独立生物重复是否可行；请说明独立性定义、随机化、编号和替补规则。 | 待确认 |  |  |
 | LF-14 | 设施容量 | 30 株最低方案的暴露、培养、采样、制样、测量和暂存容量是否足够。 | 待确认 |  |  |
 | LF-15 | 设施容量 | 57 株扩展方案的暴露、培养、采样、制样、测量和暂存容量是否足够。 | 待确认 |  |  |
-| LF-16 | 样品测量 | 主要终点是否明确为茎和叶合并样品的 TFWT（combined stem and leaf TFWT）；根和豆荚不纳入主要终点，若测量则作为独立诊断样品报告，不并入分类器主终点。请确认分离、制样、密闭转移和测量方法可重复。 | 待确认 |  |  |
-| LF-17 | 样品测量 | 实际 LOD、LOQ 及其计算方法是否可获得；项目规划的 TFWT 检测限目标为不高于 250 Bq/L tissue water，该数值是项目假设，不是实验室已具备能力的声明；请报告实际 LOD、LOQ、空白数、重复数、统计规则和单位。 | 待确认 |  |  |
+| LF-16 | 样品测量 | 主要终点是否明确为茎和叶合并样品的 TFWT（combined stem and leaf TFWT）；根、豆荚和种子不纳入主要终点，若测量则作为独立诊断样品报告，不并入分类器主终点。请确认分离、制样、密闭转移和测量方法可重复。 | 待确认 |  |  |
+| LF-17 | 样品测量 | 实际 LOD、LOQ 及其计算方法是否可获得；项目规划的 TFWT 检测限目标为不高于 250 Bq/L tissue water，该数值是项目规划目标，不是实验室已具备能力的声明；请报告实际 LOD、LOQ、基质、方法、空白数、重复数、统计规则和单位。 | 待确认 |  |  |
 | LF-18 | 测量性能 | 在本方案样品基质、浓度范围和时间点下，能否达到总不确定度不高于 20%；请提供预算或验证依据。 | 待确认 |  |  |
 | LF-19 | 样品元数据 | 鲜重、干重和组织水量是否全部记录，并能与样品级测量结果、时间点和植株编号关联。 | 待确认 |  |  |
 | LF-20 | 质量控制 | 空白、平行样、标准样、仪器校准、期间核查、批次接受标准和偏差处置要求是否可执行。 | 待确认 |  |  |
@@ -73,6 +75,10 @@ V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 | LF-27 | 资源计划 | 人员需求、岗位资质、班次安排、培训、替补和实验期间责任边界是否明确。 | 待确认 |  |  |
 | LF-28 | 植物材料 | 大豆品种、批次、生长阶段、播种日期、培养基质、营养和供水条件、暴露前驯化及植株均一性是否明确并可记录；项目目标为开花后期或结荚早期，请确认是否可实现。 | 待确认 |  |  |
 | LF-29 | 对照设计 | 是否能够设置暴露前基线植株和零 HTO 对照植株，并与暴露组、损耗备用植株实施独立编号、随机分配和污染隔离。 | 待确认 |  |  |
+| LF-30 | 根区控制 | 根途径状态是否能够明确记录为排除、受控或测量；若不能排除，是否能提供根区/基质的诊断证据。 | 待确认 |  |  |
+| LF-31 | 根区控制 | 基质 HTO 状态是否能够实测或以受控流程证明，并保留水分基准、检测方法和质量标志；不得因未填字段而默认基质为零 HTO。 | 待确认 |  |  |
+| LF-32 | 根区控制 | 供水用水的 HTO 状态是否能够确认并记录；该字段必须与空气水分中的 HTO 暴露浓度分开。 | 待确认 |  |  |
+| LF-33 | 根区控制 | 基质/土壤水分是否能形成带时间戳的记录，或是否有可审计的控制与测量 SOP。手册中的 20% 只能作为案例值，不能自动成为 D3 参数。 | 待确认 |  |  |
 
 ## 需实验室附交的证据
 
@@ -95,6 +101,12 @@ V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 2. 关键数值、时间窗、采样方案、质量控制和数据交付边界已写入实验协议；
 3. 许可、放射防护、废物处置和责任边界已由相应负责人签字；
 4. 形成带版本号、日期和双方签字的执行版本后，才可进入真实实验数据接收准备。
+
+手册案例值边界：手册中的 `LAI=3 m2/m2`、日间阻力 `4 s/cm`、夜间阻力
+`60 s/cm` 和土壤含水量 `20%` 均只作为 `MANUAL_EXAMPLE_OR_CASE_PARAMETER`。
+它们不能自动写入 D3 正式参数、实验协议或 H2/H3 预测输入。手册没有给出
+当前实验室大豆品种、批次、基质、供水或根途径隔离能力，这些事项必须等待
+实验室确认。
 
 ```text
 LAB_FEASIBILITY_STATUS = AWAITING_LAB_CONFIRMATION

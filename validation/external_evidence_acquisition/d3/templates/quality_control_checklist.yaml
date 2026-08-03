@@ -1,5 +1,8 @@
 checklist_id: D3_EXPERIMENT_QC_V1
 status: TEMPLATE_NOT_COMPLETED
+manual_mapping_id: D3_UFOTRI_MANUAL_DATA_FIELD_MAPPING_V1
+primary_endpoint_semantics: COMBINED_STEM_AND_LEAF_TFWT_BQ_PER_L_TISSUE_WATER
+primary_endpoint_excludes: [ROOTS, PODS, SEEDS]
 minimum_schedule:
   exposure_duration_h:
     required: 24
@@ -14,7 +17,7 @@ minimum_schedule:
     required: false
     status: OPTIONAL
 forcing:
-  air_hto_resolution_min:
+  air_moisture_hto_resolution_min:
     maximum_allowed: 5
     result: NOT_AVAILABLE
   temperature_rh_mixing_resolution_min:
@@ -26,15 +29,53 @@ forcing:
   precipitation_mm:
     required: 0
     result: NOT_AVAILABLE
+  post_exposure_background_maximum_fraction_of_setpoint:
+    maximum_allowed: 0.005
+    interpretation: MEASURED_MAXIMUM_BOUND_NOT_EXACT_TARGET
+    result: NOT_AVAILABLE
+  post_exposure_background_operational_mean_fraction_of_setpoint:
+    planning_target: 0.0025
+    interpretation: PLANNING_MEAN_SEPARATE_FROM_MAXIMUM_BOUND
+    result: NOT_AVAILABLE
 sampling:
   required_post_exposure_h: [0.2, 48, 120]
-  minimum_biological_replicates_per_destructive_time: 3
-  primary_endpoint: TOTAL_PLANT_BODY_TFWT_BQ_PER_L_TISSUE_WATER
+  planned_biological_replicates_per_primary_time: 5
+  minimum_uncensored_replicates_per_primary_time: 3
+  primary_endpoint: COMBINED_STEM_AND_LEAF_TFWT_BQ_PER_L_TISSUE_WATER
+  roots_in_primary_endpoint: false
+  pods_in_primary_endpoint: false
+  seeds_in_primary_endpoint: false
   replicate_identity_preserved:
     required: true
     result: NOT_AVAILABLE
   fresh_and_dry_mass_preserved:
     required: true
+    result: NOT_AVAILABLE
+plant_material:
+  cultivar: REQUIRED
+  plant_batch: REQUIRED
+  sowing_date: REQUIRED
+  growth_stage: REQUIRED
+  substrate: REQUIRED
+  nutrition: REQUIRED
+  watering: REQUIRED
+  pre_exposure_acclimation: REQUIRED
+  uniformity_assessment: REQUIRED
+root_pathway_and_controls:
+  root_pathway_status:
+    allowed: [EXCLUDED, CONTROLLED, MEASURED, NOT_AVAILABLE]
+    result: NOT_AVAILABLE
+  substrate_hto_status:
+    allowed: [ZERO_CONFIRMED, MEASURED, CONTROLLED_NON_HTO, NOT_AVAILABLE]
+    result: NOT_AVAILABLE
+  watering_water_hto_status:
+    allowed: [ZERO_CONFIRMED, MEASURED, CONTROLLED_NON_HTO, NOT_AVAILABLE]
+    result: NOT_AVAILABLE
+  substrate_moisture_time_series:
+    required: true
+    result: NOT_AVAILABLE
+  control_groups:
+    required: [PRE_EXPOSURE_BASELINE, ZERO_HTO_CONTROL, EXPOSED, RESERVE]
     result: NOT_AVAILABLE
 analytical:
   target_total_relative_uncertainty_percent:
@@ -46,11 +87,32 @@ analytical:
   instrument_and_method_reported:
     required: true
     result: NOT_AVAILABLE
+  matrix_reported:
+    required: true
+    result: NOT_AVAILABLE
+  actual_lod_and_loq_reported:
+    required: true
+    result: NOT_AVAILABLE
+  analytical_qc:
+    required: [BLANK, DUPLICATE, REFERENCE_STANDARD, CALIBRATION, RECOVERY]
+    result: NOT_AVAILABLE
+  batch_and_analyst_reported:
+    required: true
+    result: NOT_AVAILABLE
+  deviations_and_corrective_actions_reported:
+    required: true
+    result: NOT_AVAILABLE
 data_integrity:
   original_raw_files_read_only:
     required: true
     result: NOT_AVAILABLE
   sha256_manifest_complete:
+    required: true
+    result: NOT_AVAILABLE
+  raw_file_creation_and_received_times_recorded:
+    required: true
+    result: NOT_AVAILABLE
+  immutable_copy_status_recorded:
     required: true
     result: NOT_AVAILABLE
   missing_value_encoding_documented:
@@ -67,6 +129,9 @@ rights:
     required: true
     result: NOT_AVAILABLE
   redistribution_conditions_identified:
+    required: true
+    result: NOT_AVAILABLE
+  publication_review_required_status_identified:
     required: true
     result: NOT_AVAILABLE
 gate:

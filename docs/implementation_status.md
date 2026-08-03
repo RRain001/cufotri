@@ -2,6 +2,45 @@
 
 Updated: 2026-08-03
 
+## D3 UFOTRI manual data mapping and laboratory handoff
+
+The working branch `codex/v3-d3-ufotri-manual-data-mapping` was created from
+the clean laboratory-handoff branch `codex/v3-d3-lab-feasibility-handoff` at
+`72c757159807c692c4a4c792db41302356dbcd7e`. The read-only `ufotri_manual.md`
+source was checked at SHA-256
+`82c7c7f07975553a51e7ba1666a912f80096e5af4fc138aba6f45a120e6d3562`.
+The manual-to-D3 matrix contains 100 fields and keeps manual case values
+separate from D3 design values and modern QA fields. The D3 primary endpoint
+is explicitly combined stem-and-leaf TFWT; roots, pods and seeds remain outside
+the primary endpoint. The D3 planning LOD of 250 Bq/L is not a laboratory
+capability claim.
+
+```text
+D3_UFOTRI_MANUAL_MAPPING_ID = D3_UFOTRI_MANUAL_DATA_FIELD_MAPPING_V1
+D3_UFOTRI_MANUAL_MAPPING_STATUS = FROZEN_PRE_LAB
+D3_UFOTRI_MANUAL_MAPPING_FIELDS = 100
+D3_UFOTRI_MANUAL_EXPLICIT_FIELDS = 36
+D3_UFOTRI_MANUAL_DERIVED_FIELDS = 10
+D3_UFOTRI_D3_DESIGN_SPECIFIC_FIELDS = 34
+D3_UFOTRI_MODERN_QA_FIELDS = 17
+D3_UFOTRI_CONTROLLED_CHAMBER_NA_FIELDS = 7
+D3_UFOTRI_UNRESOLVED_FIELDS = 3
+D3_UFOTRI_MAPPING_TESTS = PASS_22_OF_22
+D3_TARGETED_MAPPING_RELATED_TESTS = PASS_101_OF_101
+D3_FULL_PYTEST = PASS_693_OF_693_ONE_KNOWN_NUMPY_ABI_WARNING
+D3_ACCEPTANCE_AND_VERIFIERS = PASS_WITH_PHYSICS_GATE_BLOCKED
+D3_SRC_DIFF_FROM_MAIN = 0
+D3_FORMAL_CONFIGS_DIFF_FROM_MAIN = 0
+D3_TRUSTED_REGISTRY_DIFF_FROM_MAIN = 0
+D3_REAL_EXPERIMENT = NOT_EXECUTED
+D3_REAL_EXTERNAL_EVIDENCE = FALSE
+D3_H2_H3_FORMAL_SELECTION = NOT_AUTHORIZED
+D3_FORMAL_V3_PHYSICS = NOT_STARTED
+D3_LAB_FEASIBILITY_STATUS = AWAITING_LAB_CONFIRMATION
+D3_V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+D3_MAPPING_COMMIT_STATUS = PENDING_REVIEW_AND_COMMIT
+```
+
 ## D3 discriminability review and external-evidence acquisition
 
 The frozen H2/H3 D3 discriminability design was independently reproduced and

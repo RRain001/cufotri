@@ -1,4 +1,5 @@
 contract_id: D3_REQUESTED_FILE_CONTRACT_V1
+manual_mapping_id: D3_UFOTRI_MANUAL_DATA_FIELD_MAPPING_V1
 request_status: DRAFT_READY_NOT_SENT
 request_sent: false
 automatic_contact_authorized: false
@@ -21,7 +22,9 @@ required_data_groups:
     - exposure_start_timestamp
     - exposure_end_timestamp
     - timestamp_time_zone
-    - air_hto_time_series
+    - exposure_medium
+    - air_moisture_hto_setpoint_bq_per_ml_air_moisture_water
+    - air_moisture_hto_time_series
     - air_hto_unit_and_water_basis
   post_exposure_forcing:
     - background_air_hto_time_series
@@ -30,7 +33,10 @@ required_data_groups:
     - mixing_or_wind_time_series
     - precipitation_time_series
   observations:
-    - total_plant_body_tfwt
+    - combined_stem_and_leaf_tfwt
+    - legacy_total_plant_body_tfwt_label_mapping
+    - combined_stem_and_leaf_endpoint_definition
+    - excluded_organs_roots_pods_seeds
     - organ_level_tfwt_if_available
     - sampling_timestamp
     - time_after_exposure
@@ -40,6 +46,26 @@ required_data_groups:
     - fresh_mass
     - dry_mass
     - extracted_tissue_water_mass_or_volume
+  plant_material:
+    - soybean_cultivar
+    - plant_batch
+    - sowing_date
+    - growth_stage
+    - substrate
+    - nutrition
+    - watering
+    - pre_exposure_acclimation
+    - plant_uniformity_assessment
+  root_pathway_and_controls:
+    - root_pathway_status
+    - substrate_hto_status
+    - watering_water_hto_status
+    - substrate_moisture_time_series
+    - substrate_layer_depths_if_relevant
+    - pre_exposure_baseline_group
+    - zero_hto_control_group
+    - exposed_group
+    - reserve_or_attrition_group
   analytical:
     - detection_limit
     - quantification_limit_if_available
@@ -48,17 +74,23 @@ required_data_groups:
     - preparation_method
     - counting_method
     - blanks_and_quality_controls
+    - analytical_batch
+    - analyst
+    - deviations_and_corrective_actions
   semantics:
     - data_dictionary
     - units
     - missing_value_encoding
     - quality_flags
     - version_and_corrections
+    - data_dictionary_version
+    - composite_sample_membership
   rights:
     - licence
     - required_attribution
     - redistribution_conditions
     - permission_to_publish_checksums_and_metadata
+    - publication_review_required
 
 preferred_delivery:
   native_original_files: true
@@ -73,6 +105,8 @@ preferred_delivery:
 intake_boundary:
   raw_storage: READ_ONLY_OUTSIDE_GIT
   sha256_manifest_required: true
+  creation_and_received_times_required: true
+  immutable_copy_required: true
   licence_review_required: true
   data_quality_review_required: true
   trusted_registry_change_authorized: false

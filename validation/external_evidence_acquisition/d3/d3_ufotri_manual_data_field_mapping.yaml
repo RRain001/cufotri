@@ -1,0 +1,1637 @@
+mapping_id: D3_UFOTRI_MANUAL_DATA_FIELD_MAPPING_V1
+status: FROZEN_PRE_LAB
+created_on: '2026-08-03'
+purpose: >-
+  Map the physical data requirements stated or implied by ufotri_manual.md to
+  the frozen D3 laboratory handoff without changing the D3 protocol, model
+  parameters, classifier thresholds, or external-evidence gate.
+
+source:
+  file: ufotri_manual.md
+  source_commit: b885ff80872edd33c0e8657ef44948b3aae8d1ca
+  source_sha256: 82c7c7f07975553a51e7ba1666a912f80096e5af4fc138aba6f45a120e6d3562
+  source_status: READ_ONLY_CONVERTED_HISTORICAL_MANUAL
+  source_caveat: >-
+    The Markdown source is a historical document conversion. OCR, table
+    layout, unit formatting, and equation numbering are not silently repaired.
+
+manual_scope:
+  - section: '2.2.2'
+    title: Plant/Atmosphere Exchange Processes
+    evidence_anchors: 'Equations (7)-(24); text on PAR, soil water, plant type and day/night resistance'
+  - section: '2.2.3'
+    title: Soil/Atmosphere Exchange Processes and Transport in Soil
+    evidence_anchors: 'Equations (33)-(37); soil type, moisture, layers, transport and root uptake'
+  - section: '2.2.4'
+    title: Re-emission
+    evidence_anchors: 'Equations (38)-(44-2); top 5 cm, evapotranspiration, rain and re-emission'
+  - section: '2.2.5'
+    title: Uptake of HTO by the Plant Root System
+    evidence_anchors: 'Top 5 cm, 30 cm root depth, root distribution and uptake fractions'
+  - section: '2.2.6'
+    title: Exchangeable and Non-Exchangeable Tritium
+    evidence_anchors: 'Plant HTO/OBT distinction and OBT uptake/loss discussion'
+  - section: '3.3.3'
+    title: Vegetables
+    evidence_anchors: 'Equations (65)-(66); plant HTO and plant OBT compartments'
+  - section: '5.2.1'
+    title: Site description and release details
+    evidence_anchors: 'Canada 1987 field geometry, soil, moisture and meteorological records'
+  - section: '5.2.2'
+    title: Input parameters
+    evidence_anchors: 'Table 3; release, meteorology, soil, plant mass, LAI and resistance examples'
+  - section: '5.2.3'
+    title: Comparison of measured and calculated results
+    evidence_anchors: 'Figures 21-28; air, soil and vegetation-water observations and limitations'
+  - section: '5.3'
+    title: ITER benchmark calculations
+    evidence_anchors: 'Table 8 and text on HT/HTO, release height, meteorology, soil and vegetation'
+
+classification_enum:
+  - MANUAL_EXPLICIT
+  - MANUAL_DERIVED
+  - D3_DESIGN_SPECIFIC
+  - MODERN_QA_REQUIRED
+  - NOT_APPLICABLE_CONTROLLED_CHAMBER
+  - UNRESOLVED_NO_SOURCE
+
+action_enum:
+  - KEEP
+  - CLARIFY
+  - ADD
+  - NOT_APPLICABLE
+  - DEFER_UNRESOLVED
+
+requirement_enum:
+  - required
+  - optional
+  - not_applicable
+  - defer_unresolved
+
+controlled_chamber_rules:
+  wind_speed_to_mixing_velocity:
+    relation: ANALOGUE_ONLY
+    physical_equivalence_claim: false
+  net_solar_radiation_to_par_or_illumination:
+    relation: CONTROLLED_LIGHT_RECORD
+    physical_equivalence_claim: false
+  wind_direction: NOT_APPLICABLE
+  pasquill_stability: NOT_APPLICABLE
+  release_height: >-
+    Record inlet geometry if useful for engineering traceability, but do not
+    treat it as an atmospheric release-height input.
+  precipitation: >-
+    Not applicable for the dry controlled-chamber design; retain an event or
+    wet-leaf flag if a wet-leaf scenario is deliberately run.
+
+frozen_d3_boundary:
+  exposure_medium: HTO_IN_CHAMBER_AIR_MOISTURE
+  exposure_setpoint_bq_per_ml_air_moisture_water: 5270
+  exposure_duration_h: 24
+  post_exposure_followup_h: 120
+  primary_sampling_times_h: [0.2, 48, 120]
+  diagnostic_sampling_times_h: [1, 6, 24, 72]
+  biological_replicates_per_primary_time: 5
+  primary_endpoint: COMBINED_STEM_AND_LEAF_TFWT
+  primary_endpoint_unit: Bq/L tissue water
+  roots_in_primary_endpoint: false
+  pods_in_primary_endpoint: false
+  seeds_in_primary_endpoint: false
+  planning_lod_bq_per_l_tissue_water: 250
+  planning_lod_status: PROJECT_PLANNING_TARGET_NOT_CONFIRMED_CAPABILITY
+  planning_total_relative_uncertainty_percent_maximum: 20
+  lab_feasibility_status: AWAITING_LAB_CONFIRMATION
+  real_experiment: NOT_EXECUTED
+  real_external_evidence: false
+  formal_v3_physics: NOT_STARTED
+  v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+authorization_boundary:
+  model_code_change_authorized: false
+  formal_root_config_change_authorized: false
+  h2_h3_parameter_change_authorized: false
+  classifier_threshold_change_authorized: false
+  primary_sampling_time_change_authorized: false
+  replicate_count_change_authorized: false
+  synthetic_regeneration_authorized: false
+  trusted_registry_change_authorized: false
+  v3_tag_creation_authorized: false
+  d4_d5_execution_authorized: false
+  formal_h2_h3_selection_authorized: false
+
+fields:
+  - field_id: tritium_chemical_form
+    display_name: Tritium chemical form
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 5.3 Appendix B §1; Table 8'
+    manual_term: HT/HTO
+    manual_unit: chemical form
+    d3_field: exposure_medium
+    d3_unit: controlled-chamber medium definition
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: exposure_medium'
+    action: CLARIFY
+    value_status: D3_FROZEN_MEDIUM_IS_HTO_IN_CHAMBER_AIR_MOISTURE
+    notes: >-
+      The D3 record must say air-moisture HTO. It must not be interpreted as
+      culture water, irrigation water or a liquid reservoir concentration.
+
+  - field_id: air_moisture_hto_concentration
+    display_name: HTO concentration in chamber air moisture
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 5.2.2 Table 3; 5.2.3 Figures 25-28'
+    manual_term: specific HTO concentration in air/vegetation water
+    manual_unit: Bq per volume or mass of water, as defined by the record
+    d3_field: air_moisture_hto_bq_per_ml_water
+    d3_unit: Bq/mL air-moisture water
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: air_moisture_hto_bq_per_ml_water'
+    action: CLARIFY
+    value_status: D3_FROZEN_SETPOINT_AND_MEASURED_TIME_SERIES
+    notes: 5270 Bq/mL must retain the air-moisture-water basis in every handoff.
+
+  - field_id: release_rate
+    display_name: Release rate
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '5.2.2 Table 3; 5.3 Appendix B §1'
+    manual_term: release rate
+    manual_unit: Bq/s in the Canada case
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: MANUAL_CASE_PARAMETER_NOT_D3_VALUE
+    notes: A chamber setpoint time series is not a source-term release rate.
+
+  - field_id: total_released_activity
+    display_name: Total released activity or release quantity
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '5.3 Appendix B §1; Table 8'
+    manual_term: release quantity
+    manual_unit: 100 g in the benchmark appendix; no automatic Bq conversion
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: MANUAL_CASE_PARAMETER_NOT_D3_VALUE
+    notes: Do not convert or reuse the benchmark release quantity for D3.
+
+  - field_id: release_duration
+    display_name: Release or exposure duration
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.2 Table 3; 5.3 Appendix B §1'
+    manual_term: duration of release
+    manual_unit: time
+    d3_field: exposure_duration_h
+    d3_unit: h
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'quality_control_checklist.yaml: minimum_schedule.exposure_duration_h'
+    action: CLARIFY
+    value_status: D3_FROZEN_VALUE_SEPARATE_FROM_MANUAL_CASE_VALUES
+    notes: Manual case durations are examples; D3 duration is independently frozen at 24 h.
+
+  - field_id: release_height
+    display_name: Atmospheric release height
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '5.2.2; 5.3 Appendix B §1 and Table 8'
+    manual_term: release height
+    manual_unit: m
+    d3_field: chamber_inlet_geometry_if_recorded
+    d3_unit: engineering geometry, not atmospheric source height
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: 'chamber_forcing_template.csv: measurement_location'
+    action: NOT_APPLICABLE
+    value_status: MANUAL_CASE_PARAMETER_NOT_D3_VALUE
+    notes: Inlet geometry may be recorded but is not a physical release-height analogue.
+
+  - field_id: source_geometry
+    display_name: Outdoor point or area source geometry
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '2.2.1; Figures 3-4; 5.2.1 Figure 20'
+    manual_term: area source and field layout
+    manual_unit: m and plan geometry
+    d3_field: chamber_geometry_metadata
+    d3_unit: chamber engineering metadata
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: 'requested_file_contract.yaml: exposure and semantics groups'
+    action: NOT_APPLICABLE
+    value_status: MANUAL_FIELD_GEOMETRY_NOT_D3_PHYSICS_INPUT
+    notes: Do not splice field source geometry into the controlled-chamber experiment.
+
+  - field_id: wind_direction
+    display_name: Wind direction
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '2.2.1; 5.2.1; 5.2.2 Table 3'
+    manual_term: wind direction
+    manual_unit: degree
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: CONTROLLED_CHAMBER_NOT_A_WIND_FIELD
+    notes: Never fill this field with a guessed chamber direction.
+
+  - field_id: wind_speed
+    display_name: Outdoor wind speed
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2 Equations (17)-(24); 5.2.2 Table 3'
+    manual_term: wind speed / wind velocity
+    manual_unit: m/s
+    d3_field: mixing_velocity_m_s
+    d3_unit: m/s
+    requirement: required
+    controlled_chamber_mapping: analogue_non_equivalent
+    existing_template_location: 'chamber_forcing_template.csv: mixing_velocity_m_s'
+    action: CLARIFY
+    value_status: D3_CONTROLLED_MIXING_RECORD
+    notes: Chamber mixing velocity is an operational analogue only, not outdoor wind.
+
+  - field_id: stability_class
+    display_name: Pasquill-Gifford stability class
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '2.2.2 Equations (22)-(24); 5.2.2 Table 3; 5.3 Table 8'
+    manual_term: stability class / Pasquill notation
+    manual_unit: A-F category
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: OUTDOOR_DISPERSION_FIELD
+    notes: No stability class should be invented for the chamber.
+
+  - field_id: air_temperature
+    display_name: Air temperature
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2 Equations (10)-(11); 5.2.1; 5.2.2 Table 3'
+    manual_term: temperature / ambient temperature
+    manual_unit: C or K, with recorded unit
+    d3_field: temperature_c
+    d3_unit: deg C
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: temperature_c'
+    action: KEEP
+    value_status: MEASURED_D3_FORCING
+    notes: Preserve timestamp, instrument and quality flag with every record.
+
+  - field_id: relative_humidity
+    display_name: Relative humidity or water-vapour state
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2 Equations (10)-(11); 5.2.1'
+    manual_term: relative humidity / vapour pressure state
+    manual_unit: percent or pressure, as recorded
+    d3_field: relative_humidity_percent
+    d3_unit: percent
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: relative_humidity_percent'
+    action: KEEP
+    value_status: MEASURED_D3_FORCING
+    notes: Do not silently convert a pressure record without retaining the source unit.
+
+  - field_id: net_solar_radiation
+    display_name: Net solar radiation
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.4 Equation (38); 5.2.1; 5.2.2 Table 3'
+    manual_term: net solar radiation / radiation balance
+    manual_unit: W/m2
+    d3_field: par_or_radiation_value
+    d3_unit: value plus explicit PAR or W/m2 unit
+    requirement: required
+    controlled_chamber_mapping: analogue_non_equivalent
+    existing_template_location: 'chamber_forcing_template.csv: par_or_radiation_value and par_or_radiation_unit'
+    action: CLARIFY
+    value_status: CONTROLLED_ILLUMINATION_RECORD
+    notes: PAR or controlled illumination is not asserted to equal outdoor net radiation.
+
+  - field_id: par_day_night_state
+    display_name: PAR and day/night state
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 2.2.4; text on PAR and daylight/night period'
+    manual_term: PAR conditions; daylight and night period
+    manual_unit: PAR unit or categorical state
+    d3_field: par_or_radiation_value_and_experiment_phase
+    d3_unit: recorded value/unit and phase
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: par_or_radiation_value, experiment_phase'
+    action: CLARIFY
+    value_status: D3_LIGHTING_METADATA
+    notes: Retain a phase/event record; do not infer light state from clock time alone.
+
+  - field_id: precipitation
+    display_name: Precipitation or wet-leaf event
+    category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
+    manual_reference: '2.2.2 text on precipitation; 2.2.4; 5.2.1'
+    manual_term: precipitation / rain event
+    manual_unit: mm or event flag
+    d3_field: precipitation_mm_and_wet_leaf_event_flag
+    d3_unit: mm per interval and categorical event flag
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: 'chamber_forcing_template.csv: precipitation_mm and event_flag'
+    action: CLARIFY
+    value_status: D3_DRY_CHAMBER_EXPECTS_ZERO_NOT_UNMEASURED
+    notes: Retain zero/event evidence; a wet-leaf scenario requires separate authorization.
+
+  - field_id: measurement_height
+    display_name: Meteorological measurement height or location
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.1; 5.2.2; Figures 20, 25 and 26'
+    manual_term: instrument measurement height
+    manual_unit: m and location metadata
+    d3_field: measurement_height_or_location
+    d3_unit: m or controlled chamber location
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: measurement_height_m and measurement_location'
+    action: ADD
+    value_status: MODERN_TRACEABILITY_FOR_D3_FORCING
+    notes: Manual results show that height can affect observed gradients; location must be explicit.
+
+  - field_id: plant_type
+    display_name: Plant type
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 3.3.3; 5.3 text on green vegetables'
+    manual_term: type of plant / plant species
+    manual_unit: categorical taxon or crop
+    d3_field: crop_and_cultivar
+    d3_unit: soybean cultivar identifier
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv and biomass_template.csv: crop, cultivar'
+    action: KEEP
+    value_status: D3_DESIGN_SOYBEAN
+    notes: Green-vegetable and single-plant assumptions in the manual do not define a soybean cultivar.
+
+  - field_id: plant_water_mass
+    display_name: Plant water mass
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 5.2.2 Table 3'
+    manual_term: anorganic plant water content / plant water
+    manual_unit: g in the Canada case; retain measured basis
+    d3_field: tissue_water_mass_g_or_volume_ml
+    d3_unit: g and/or mL extracted tissue water
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv and biomass_template.csv: tissue-water fields'
+    action: KEEP
+    value_status: MANUAL_CASE_VALUE_NOT_D3_DEFAULT
+    notes: The manual example of 200 g is not a D3 plant-mass requirement.
+
+  - field_id: organic_plant_matter
+    display_name: Organic plant matter
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 3.3.3; 5.2.2 Table 3'
+    manual_term: organic plant matter / organic plant compartment
+    manual_unit: g or kg per area, with basis
+    d3_field: dry_mass_and_optional_organic_mass
+    d3_unit: g sample basis
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: dry_mass_g and organ mass fields'
+    action: KEEP
+    value_status: MANUAL_CASE_VALUE_NOT_D3_DEFAULT
+    notes: Preserve wet/dry basis; do not import the manual 100 g case value.
+
+  - field_id: leaf_area_index
+    display_name: Leaf area index
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2 Equation (14); 2.2.4 Equation (40); 5.2.2 Table 3'
+    manual_term: leaf area index L
+    manual_unit: m2/m2
+    d3_field: leaf_area_index
+    d3_unit: m2/m2
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: leaf_area_index'
+    action: CLARIFY
+    value_status: MANUAL_EXAMPLE_OR_CASE_PARAMETER
+    notes: Manual LAI=3 is a case/example value and is not the D3 required value.
+
+  - field_id: daytime_stomatal_resistance
+    display_name: Daytime stomatal or diffusion resistance
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2 Equations (9)-(14); Table 3'
+    manual_term: diffusion resistance during the day for a single leaf
+    manual_unit: s/cm in Table 3; model equations also use s/m
+    d3_field: daytime_stomatal_resistance_if_measured
+    d3_unit: recorded value and unit
+    requirement: optional
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: plant_material and analytical metadata'
+    action: CLARIFY
+    value_status: MANUAL_EXAMPLE_OR_CASE_PARAMETER
+    notes: The manual 4 s/cm value must not be adopted as a D3 parameter without independent evidence.
+
+  - field_id: nighttime_epidermal_resistance
+    display_name: Nighttime epidermal or diffusion resistance
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2 text on closed stomata and Table 3'
+    manual_term: diffusion resistance during the night for a single leaf
+    manual_unit: s/cm in Table 3; model equations also use s/m
+    d3_field: nighttime_epidermal_resistance_if_measured
+    d3_unit: recorded value and unit
+    requirement: optional
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: plant_material and analytical metadata'
+    action: CLARIFY
+    value_status: MANUAL_EXAMPLE_OR_CASE_PARAMETER
+    notes: The manual 60 s/cm value is an example/case value, not a D3 default.
+
+  - field_id: soil_type
+    display_name: Soil or substrate type
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.3; 5.2.1; 5.3 Table 8'
+    manual_term: soil type / sandy loam
+    manual_unit: categorical type and laboratory description
+    d3_field: substrate
+    d3_unit: material description and batch
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: substrate'
+    action: ADD
+    value_status: D3_MATERIAL_METADATA
+    notes: A chamber substrate is not automatically the manual sandy-loam case.
+
+  - field_id: soil_organic_content
+    display_name: Soil organic content
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.1; 5.3 Table 8'
+    manual_term: organic part / organic content
+    manual_unit: percent
+    d3_field: substrate_organic_content_percent_if_measured
+    d3_unit: percent
+    requirement: optional
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: plant_material and root pathway groups'
+    action: ADD
+    value_status: D3_MATERIAL_METADATA_IF_MEASURED
+    notes: Record as measured or NOT_AVAILABLE; do not use the field-case values as defaults.
+
+  - field_id: volumetric_soil_water_content
+    display_name: Volumetric soil or substrate water content
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.3 Equations (33)-(37); 2.2.4; 5.2.2 Table 3'
+    manual_term: soil water content / actual water content
+    manual_unit: percent or m3/m3 with basis
+    d3_field: substrate_moisture_time_series
+    d3_unit: percent or m3/m3 with basis and timestamp
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: event/forcing metadata; requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: MANUAL_EXAMPLE_OR_CASE_PARAMETER
+    notes: Manual 20% is a case/example value; D3 needs a measured time series or explicit missing status.
+
+  - field_id: soil_layer_depths
+    display_name: Soil layer depths
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.4; 2.2.5; 3.3.3 Figure 13'
+    manual_term: top 5 cm and root layers up to 30 cm
+    manual_unit: cm
+    d3_field: substrate_layer_depths_cm
+    d3_unit: cm
+    requirement: optional
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_ROOT_DIAGNOSTIC_METADATA
+    notes: Required when root or substrate pathways are not experimentally excluded.
+
+  - field_id: root_distribution
+    display_name: Root distribution and uptake zone
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.3; 2.2.5; 5.2.3 limitation paragraph'
+    manual_term: root distribution and uptake rates by soil layer
+    manual_unit: layer fractions or measured profile
+    d3_field: root_pathway_status_and_root_distribution_if_measured
+    d3_unit: categorical status and optional layer data
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_CONTROL_OR_DIAGNOSTIC
+    notes: The primary endpoint excludes roots, but uncontrolled root HTO remains a confounder.
+
+  - field_id: soil_hto_concentration
+    display_name: HTO concentration in soil or substrate water
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.3; 2.2.4; 5.2.3 Figures 23-24'
+    manual_term: HTO in soil / specific HTO concentration in water
+    manual_unit: recorded activity concentration and water basis
+    d3_field: substrate_hto_status_and_measurement_if_available
+    d3_unit: status plus activity concentration/unit
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_ROOT_PATHWAY_CONTROL
+    notes: Zero, measured, or NOT_AVAILABLE status must be explicit; no silent assumption of zero.
+
+  - field_id: drainage_or_downward_flux
+    display_name: Drainage, infiltration or downward soil-water flux
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.3 Equations (34)-(37); 2.2.4 Equation (44-1)'
+    manual_term: downward flux / transport into deeper layers
+    manual_unit: flux or percent fraction with basis
+    d3_field: substrate_drainage_or_downward_flux_if_measured
+    d3_unit: recorded value and unit
+    requirement: optional
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_ROOT_DIAGNOSTIC_METADATA
+    notes: The field is not needed if a documented root-pathway exclusion is verified.
+
+  - field_id: soil_reemission_rate
+    display_name: Soil HTO re-emission rate
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.4 Equation (44-1) and (44-2)'
+    manual_term: REEM, DIFF and total re-emission rate
+    manual_unit: percent per unit time
+    d3_field: post_exposure_air_background_and_substrate_hto
+    d3_unit: measured concentration/time series, not inferred re-emission rate
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'chamber_forcing_template.csv: air-moisture HTO and event fields'
+    action: CLARIFY
+    value_status: MANUAL_PROCESS_NOT_D3_PRIMARY_ENDPOINT
+    notes: Do not derive a soil re-emission rate from D3 without a frozen protocol.
+
+  - field_id: vegetation_water_hto_observation
+    display_name: HTO in vegetation water / TFWT
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 5.2.3 Figures 27-28'
+    manual_term: HTO concentration in vegetation water / tissue-free water
+    manual_unit: specific activity with water basis
+    d3_field: tfwt_bq_per_l_tissue_water
+    d3_unit: Bq/L tissue water
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: tfwt_bq_per_l_tissue_water'
+    action: KEEP
+    value_status: D3_PRIMARY_MEASUREMENT_BASIS
+    notes: The tissue-water basis must remain in the field name and data dictionary.
+
+  - field_id: plant_obt_observation
+    display_name: Plant organically bound tritium
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '2.2.2; 2.2.6; 3.3.3 Equations (65)-(66)'
+    manual_term: plant OBT, exchangeable and non-exchangeable OBT
+    manual_unit: activity concentration with analytical basis
+    d3_field: obt_if_separately_measured
+    d3_unit: laboratory-defined OBT unit
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: observations and analytical groups'
+    action: CLARIFY
+    value_status: MANUAL_EXPLICIT_NOT_PRIMARY_D3_CLASSIFICATION_ENDPOINT
+    notes: OBT must not be added to the frozen H2/H3 primary classifier.
+
+  - field_id: air_hto_observation
+    display_name: HTO concentration in air
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.3 Figures 25-26; 2.2.2'
+    manual_term: HTO concentration in air
+    manual_unit: Bq/m3 or source-record unit
+    d3_field: air_moisture_hto_bq_per_ml_water
+    d3_unit: Bq/mL air-moisture water
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv: air-moisture HTO fields'
+    action: CLARIFY
+    value_status: D3_MEASURED_FORCING
+    notes: Preserve the measured air-moisture water conversion/basis; do not mix with air-volume concentration.
+
+  - field_id: air_ht_observation
+    display_name: HT concentration in air
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.3 Figure 21; 5.3 Table 8'
+    manual_term: HT concentration in air
+    manual_unit: Bq/m3
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: MANUAL_CASE_OR_OUTDOOR_HT_EVIDENCE
+    notes: D3 is an HTO exposure design and does not require an HT air series.
+
+  - field_id: soil_ht_observation
+    display_name: HT concentration in soil
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.3 Figure 22'
+    manual_term: HT soil concentration after plume passage
+    manual_unit: Bq/m2
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: MANUAL_FIELD_EVIDENCE
+    notes: No HT release or outdoor plume deposition is part of the frozen D3 handoff.
+
+  - field_id: soil_ht_deposited_inventory
+    display_name: HT deposited in soil
+    category: [MANUAL_EXPLICIT]
+    manual_reference: '5.2.3 Figures 21-24; 2.2.3'
+    manual_term: deposited HT / soil inventory
+    manual_unit: Bq/m2 or soil-water basis
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: MANUAL_FIELD_EVIDENCE
+    notes: Do not use field deposition measurements as chamber root-pathway data.
+
+  - field_id: release_start_end_chronology
+    display_name: Release start, end and elapsed chronology
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.1; 5.2.1-5.2.3 time-dependent release and sampling descriptions'
+    manual_term: time after release / hourly sequence
+    manual_unit: timestamp and elapsed time
+    d3_field: timestamp_iso8601_and_elapsed_h_from_exposure_start
+    d3_unit: UTC timestamp and h
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'chamber_forcing_template.csv and tfwt_sample_template.csv: timestamp and elapsed fields'
+    action: CLARIFY
+    value_status: D3_TIME_AXIS
+    notes: Store both timestamp/time zone and elapsed time; do not infer one from a rounded label.
+
+  - field_id: plant_height_and_canopy_characteristics
+    display_name: Plant height and canopy characteristics
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.2 Figures 6-7 and Equations (12)-(24)'
+    manual_term: vegetation height h, canopy and roughness context
+    manual_unit: m and descriptive canopy metadata
+    d3_field: plant_height_cm_and_canopy_description
+    d3_unit: cm and description
+    requirement: optional
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: plant_height_cm and canopy notes'
+    action: ADD
+    value_status: D3_CONTEXT_METADATA
+    notes: The manual does not provide a soybean-chamber transfer rule for this field.
+
+  - field_id: plant_atmosphere_total_resistance
+    display_name: Total plant-atmosphere exchange resistance
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.2 Equations (8)-(14)'
+    manual_term: rG, rST, rAV and canopy resistance
+    manual_unit: s/m, with any source s/cm conversion recorded
+    d3_field: resistance_if_derived_for_diagnostic_analysis
+    d3_unit: s/m
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: analytical and data dictionary groups'
+    action: DEFER_UNRESOLVED
+    value_status: NOT_A_FROZEN_D3_INPUT
+    notes: No resistance inference is authorized for H2/H3 selection in this handoff.
+
+  - field_id: aerodynamic_and_boundary_layer_resistance
+    display_name: Aerodynamic and quasi-laminar boundary-layer resistance
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.2 Equations (15)-(24)'
+    manual_term: rAV, rAM and rBV
+    manual_unit: s/m
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: OUTDOOR_DISPERSION_DERIVATION
+    notes: A chamber mixing record is not a substitute for this resistance model.
+
+  - field_id: actual_evapotranspiration_and_soil_evaporation
+    display_name: Actual evapotranspiration and soil evaporation
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.4 Equations (38)-(43)'
+    manual_term: Ea and EaS
+    manual_unit: kg m-2 s-1
+    d3_field: water_balance_diagnostic_if_measured
+    d3_unit: laboratory-defined flux unit
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: DEFER_UNRESOLVED
+    value_status: MANUAL_PROCESS_REQUIREMENT_NOT_D3_PRIMARY_INPUT
+    notes: The manual explicitly notes unavailable root-zone water-potential information.
+
+  - field_id: top_five_cm_soil_hto_inventory
+    display_name: HTO inventory in top 5 cm soil layer
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.3; 2.2.4; Equation (44-1)'
+    manual_term: top soil layer participating in re-emission
+    manual_unit: activity inventory with soil-water basis
+    d3_field: substrate_hto_status_and_top_layer_if_measured
+    d3_unit: activity and layer basis
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_ROOT_DIAGNOSTIC_METADATA
+    notes: Required only to diagnose an uncontrolled substrate source; not a primary endpoint.
+
+  - field_id: deeper_soil_hto_inventory
+    display_name: HTO inventory in deeper soil layers
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.3; 2.2.5'
+    manual_term: transport/diffusion to deeper layers
+    manual_unit: activity inventory by layer
+    d3_field: deeper_substrate_hto_if_measured
+    d3_unit: activity and layer basis
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_ROOT_DIAGNOSTIC_METADATA
+    notes: Manual layer values cannot be inferred from an unmeasured chamber substrate.
+
+  - field_id: root_hto_uptake_flux
+    display_name: Root uptake HTO flux
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.4; 2.2.5; Equation (37)'
+    manual_term: root uptake coupled to transpiration
+    manual_unit: water/tritium flux with time basis
+    d3_field: root_pathway_status_and_uptake_if_measured
+    d3_unit: status or measured flux
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: D3_CONFOUNDING_PATHWAY_CONTROL
+    notes: If not measured, the laboratory must state how root uptake is excluded or bounded.
+
+  - field_id: calculated_reemission_rate
+    display_name: Calculated total soil re-emission rate
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.4 Equation (44-2)'
+    manual_term: REEMG = REEM + DIFF x ZT
+    manual_unit: percent per unit time
+    d3_field: null
+    d3_unit: null
+    requirement: not_applicable
+    controlled_chamber_mapping: not_applicable
+    existing_template_location: NONE
+    action: NOT_APPLICABLE
+    value_status: MANUAL_MODEL_DERIVED_NOT_D3_FIELD
+    notes: Measured background may be retained, but this model-derived rate is not calculated for D3.
+
+  - field_id: obt_transfer_rates
+    display_name: Plant OBT uptake and loss rates
+    category: [MANUAL_DERIVED]
+    manual_reference: '2.2.6; 3.3.3 Equations (65)-(66)'
+    manual_term: t15,14 and t14,15
+    manual_unit: per day or per hour depending on model time step
+    d3_field: obt_if_separately_measured
+    d3_unit: laboratory-defined rate/measurement
+    requirement: optional
+    controlled_chamber_mapping: diagnostic_only
+    existing_template_location: 'requested_file_contract.yaml: observations and analytical groups'
+    action: DEFER_UNRESOLVED
+    value_status: MANUAL_PROCESS_NOT_PRIMARY_D3_ENDPOINT
+    notes: Do not use the manual OBT rates as current laboratory parameters.
+
+  - field_id: d3_air_moisture_hto_setpoint
+    display_name: D3 nominal air-moisture HTO setpoint
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: NOT_APPLICABLE
+    d3_field: air_moisture_hto_setpoint_bq_per_ml_air_moisture_water
+    d3_unit: Bq/mL air-moisture water
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-03; requested_file_contract.yaml: exposure'
+    action: CLARIFY
+    value_status: D3_PROJECT_SPECIFIC_VALUE
+    notes: 5270 is a D3 planning/design value, not a manual-derived default.
+
+  - field_id: d3_exposure_duration
+    display_name: D3 controlled exposure duration
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: NOT_APPLICABLE
+    d3_field: exposure_duration_h
+    d3_unit: h
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-03; quality_control_checklist.yaml: minimum_schedule'
+    action: KEEP
+    value_status: D3_FROZEN_VALUE
+    notes: Do not replace the 24 h exposure with a manual field-case duration.
+
+  - field_id: d3_post_exposure_followup
+    display_name: D3 post-exposure follow-up
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: NOT_APPLICABLE
+    d3_field: post_exposure_followup_h
+    d3_unit: h
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-11/LF-12; quality_control_checklist.yaml: minimum_schedule'
+    action: KEEP
+    value_status: D3_FROZEN_VALUE
+    notes: This is 120 h, not the optional 120-day extension.
+
+  - field_id: d3_primary_sampling_times
+    display_name: D3 primary classification sampling times
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: NOT_APPLICABLE
+    d3_field: primary_sampling_times_h
+    d3_unit: h after exposure
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-10/LF-12; quality_control_checklist.yaml: sampling.required_post_exposure_h'
+    action: KEEP
+    value_status: D3_FROZEN_VALUE
+    notes: The primary set is 0.2, 48 and 120 h; no change is authorized in this mapping.
+
+  - field_id: d3_diagnostic_sampling_times
+    display_name: D3 optional diagnostic sampling times
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: NOT_APPLICABLE
+    d3_field: diagnostic_sampling_times_h
+    d3_unit: h after exposure
+    requirement: optional
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'd3_experiment_commission_package.md: recommended diagnostic experiment'
+    action: KEEP
+    value_status: D3_PROJECT_SPECIFIC_OPTIONAL_LAYER
+    notes: Diagnostic times cannot replace or refit the primary classifier.
+
+  - field_id: d3_biological_replicates
+    display_name: D3 independent biological replicates per primary time
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: count
+    d3_field: biological_replicates_per_primary_time
+    d3_unit: independent plants per time
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-13; quality_control_checklist.yaml: sampling'
+    action: CLARIFY
+    value_status: D3_OPERATIONAL_DEFAULT_IS_5
+    notes: This is five independent plants, not five analytical repeats of one plant.
+
+  - field_id: d3_exposed_group
+    display_name: Exposed plant group identity
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: group identifier
+    d3_field: exposure_group=EXPOSED
+    d3_unit: categorical
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'tfwt_sample_template.csv and biomass_template.csv: exposure_group'
+    action: ADD
+    value_status: D3_CONTROL_DESIGN
+    notes: Group identity must remain linked to each plant and sample.
+
+  - field_id: d3_pre_exposure_baseline_group
+    display_name: Pre-exposure baseline plants
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: group/count
+    d3_field: exposure_group=PRE_EXPOSURE_BASELINE and plant_count
+    d3_unit: categorical and count
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-29; requested_file_contract.yaml: controls'
+    action: ADD
+    value_status: D3_CONTROL_DESIGN
+    notes: Baseline plants are separate from exposed destructive replicates.
+
+  - field_id: d3_zero_hto_control_group
+    display_name: Zero-HTO control plants
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: group/count
+    d3_field: exposure_group=ZERO_HTO_CONTROL and plant_count
+    d3_unit: categorical and count
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-29; requested_file_contract.yaml: controls'
+    action: ADD
+    value_status: D3_CONTROL_DESIGN
+    notes: Zero-HTO controls require independent numbering and contamination separation.
+
+  - field_id: d3_reserve_group
+    display_name: Reserve or attrition plants
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: group/count
+    d3_field: exposure_group=RESERVE and reserve_rule
+    d3_unit: categorical and count/rule
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-13/LF-14; requested_file_contract.yaml: controls'
+    action: ADD
+    value_status: D3_CONTROL_DESIGN
+    notes: Attrition handling must not silently change the primary endpoint or chronology.
+
+  - field_id: d3_primary_endpoint_definition
+    display_name: D3 primary endpoint definition
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: endpoint definition
+    d3_field: combined_stem_and_leaf_tfwt
+    d3_unit: Bq/L tissue water
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-16; tfwt_sample_template.csv: organ_definition'
+    action: CLARIFY
+    value_status: D3_FROZEN_PRIMARY_ENDPOINT
+    notes: Existing total plant-body classifier wording is operationally mapped to combined stem and leaf.
+
+  - field_id: d3_primary_endpoint_exclusions
+    display_name: Organs excluded from the primary endpoint
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: organ inclusion rule
+    d3_field: roots_pods_seeds_excluded_from_primary_endpoint
+    d3_unit: boolean or categorical exclusion rule
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-16; quality_control_checklist.yaml: sampling'
+    action: CLARIFY
+    value_status: D3_FROZEN_PRIMARY_ENDPOINT_BOUNDARY
+    notes: Any root, pod or seed measurement is a separate diagnostic sample.
+
+  - field_id: d3_soybean_cultivar
+    display_name: Soybean cultivar
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: cultivar identifier
+    d3_field: cultivar
+    d3_unit: laboratory cultivar identifier
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv and biomass_template.csv: cultivar'
+    action: KEEP
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: The manual does not supply the current laboratory cultivar.
+
+  - field_id: d3_plant_batch
+    display_name: Plant material batch
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: batch identifier
+    d3_field: plant_batch
+    d3_unit: laboratory batch identifier
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: plant_batch'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: Batch identity is required for plant-to-sample traceability.
+
+  - field_id: d3_sowing_date
+    display_name: Sowing date
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: ISO date/time
+    d3_field: sowing_date
+    d3_unit: ISO date
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: sowing_date'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: Record the actual date; do not infer plant age from the sampling date alone.
+
+  - field_id: d3_growth_stage
+    display_name: Growth stage
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: stage definition
+    d3_field: growth_stage
+    d3_unit: laboratory stage definition
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv and biomass_template.csv: growth_stage'
+    action: KEEP
+    value_status: D3_PLANNING_TARGET_LATE_FLOWERING_OR_EARLY_POD
+    notes: Record the observed stage and the laboratory definition used.
+
+  - field_id: d3_substrate_nutrition_watering
+    display_name: Substrate, nutrition and watering history
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: material and treatment metadata
+    d3_field: substrate; nutrition; watering
+    d3_unit: description, batch and timestamped treatment record
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv and requested_file_contract.yaml: plant_material'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: These fields prevent an unrecorded root-water source from being mistaken for leaf uptake.
+
+  - field_id: d3_pre_exposure_acclimation
+    display_name: Pre-exposure acclimation
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: duration and condition record
+    d3_field: pre_exposure_acclimation
+    d3_unit: duration/condition metadata
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: pre_exposure_acclimation'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: Retain the actual acclimation record rather than a planned label only.
+
+  - field_id: d3_plant_uniformity
+    display_name: Plant uniformity assessment
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: assessment and rule
+    d3_field: uniformity_assessment
+    d3_unit: method/result
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'biomass_template.csv: uniformity_assessment'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: The acceptance rule and exclusions must be recorded before exposure.
+
+  - field_id: d3_root_pathway_status
+    display_name: Root pathway status
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: status
+    d3_field: root_pathway_status
+    d3_unit: EXCLUDED, CONTROLLED, or MEASURED
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-30; requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: A primary leaf/stem endpoint does not by itself prove root-pathway exclusion.
+
+  - field_id: d3_substrate_hto_status
+    display_name: Substrate HTO status
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: status and measurement basis
+    d3_field: substrate_hto_status
+    d3_unit: status plus activity concentration/basis if measured
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-30; requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: Use an explicit zero/measured/not-available token; never infer from the absence of a field.
+
+  - field_id: d3_watering_water_hto_status
+    display_name: HTO status of watering water
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: status and measurement basis
+    d3_field: watering_water_hto_status
+    d3_unit: status plus activity concentration/basis if measured
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-30; requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: This is separate from the air-moisture HTO exposure concentration.
+
+  - field_id: d3_substrate_moisture_time_series
+    display_name: Substrate moisture time series
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: percent or m3/m3 with timestamp
+    d3_field: substrate_moisture_time_series
+    d3_unit: measured value, unit, timestamp and quality flag
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'requested_file_contract.yaml: root_pathway_and_controls'
+    action: ADD
+    value_status: LAB_CONFIRMATION_REQUIRED
+    notes: At minimum, document how moisture is controlled and when it is measured.
+
+  - field_id: d3_chamber_mixing_velocity
+    display_name: Chamber mixing velocity
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: m/s
+    d3_field: mixing_velocity_m_s
+    d3_unit: m/s
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-09; chamber_forcing_template.csv: mixing_velocity_m_s'
+    action: CLARIFY
+    value_status: D3_PLANNING_TARGET_NOT_OUTDOOR_WIND
+    notes: The current planning target is 0.5 m/s with a laboratory-confirmed control band.
+
+  - field_id: d3_temperature_control
+    display_name: Chamber temperature control
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: deg C
+    d3_field: temperature_target_and_control_band
+    d3_unit: deg C
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-07; chamber_forcing_template.csv: temperature_c'
+    action: KEEP
+    value_status: D3_PLANNING_TARGET_25_PLUS_MINUS_1
+    notes: This planning target is not a manual case parameter.
+
+  - field_id: d3_relative_humidity_control
+    display_name: Chamber relative-humidity control
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: percent
+    d3_field: relative_humidity_target_and_control_band
+    d3_unit: percent
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-08; chamber_forcing_template.csv: relative_humidity_percent'
+    action: KEEP
+    value_status: D3_PLANNING_TARGET_70_PLUS_MINUS_5
+    notes: The laboratory must confirm actual control and alarm capability.
+
+  - field_id: d3_precipitation_condition
+    display_name: D3 precipitation condition
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: mm per interval/event flag
+    d3_field: precipitation_mm_and_event_flag
+    d3_unit: zero expected plus event flag
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'chamber_forcing_template.csv: precipitation_mm and event_flag'
+    action: KEEP
+    value_status: D3_DRY_CHAMBER_PLANNING_CONDITION
+    notes: Zero is a controlled condition to evidence, not an instruction to omit the column.
+
+  - field_id: d3_forcing_logging_interval
+    display_name: D3 forcing logging interval
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: min
+    d3_field: forcing_logging_interval_min
+    d3_unit: min
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-06; quality_control_checklist.yaml: forcing'
+    action: KEEP
+    value_status: D3_PLANNING_TARGET_5_MIN_OR_FINER
+    notes: This requirement is project-specific and not a UFOTRI manual requirement.
+
+  - field_id: d3_background_maximum_fraction
+    display_name: Maximum measured post-exposure air-moisture HTO background
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: fraction of nominal setpoint
+    d3_field: background_maximum_fraction_of_setpoint
+    d3_unit: fraction
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-05; chamber_forcing_template.csv: background fraction field'
+    action: CLARIFY
+    value_status: D3_BOUND_MAXIMUM_0_005_NOT_EXACT_MEAN
+    notes: The measured maximum must be no higher than 0.5%; it is not required to equal 0.5%.
+
+  - field_id: d3_background_operational_mean
+    display_name: Operational post-exposure background summary
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: fraction of nominal setpoint
+    d3_field: background_operational_mean_fraction_of_setpoint
+    d3_unit: fraction
+    requirement: optional
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'quality_control_checklist.yaml: forcing'
+    action: CLARIFY
+    value_status: D3_PLANNING_MEAN_0_0025_NOT_MANUAL_FACT
+    notes: A planning mean must remain separate from the measured maximum bound.
+
+  - field_id: d3_planning_lod
+    display_name: Project planning TFWT detection limit
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: Bq/L tissue water
+    d3_field: planning_lod_bq_per_l_tissue_water
+    d3_unit: Bq/L tissue water
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-17; quality_control_checklist.yaml: analytical'
+    action: CLARIFY
+    value_status: PROJECT_PLANNING_TARGET_NOT_CONFIRMED_LAB_CAPABILITY
+    notes: 250 Bq/L is a planning target; actual LOD and LOQ must be reported by the laboratory.
+
+  - field_id: d3_planning_total_uncertainty
+    display_name: Project planning total relative uncertainty
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: percent
+    d3_field: planning_total_relative_uncertainty_percent_maximum
+    d3_unit: percent
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'checklist LF-18; quality_control_checklist.yaml: analytical'
+    action: CLARIFY
+    value_status: D3_PLANNING_TARGET_NOT_CONFIRMED_LAB_CAPABILITY
+    notes: The laboratory must supply an uncertainty budget or verification evidence.
+
+  - field_id: d3_blind_analysis_chronology
+    display_name: Blind-analysis chronology
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: ordered process record
+    d3_field: prediction_freeze_before_primary_observation_release
+    d3_unit: chronology and commit/checksum record
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'requested_file_contract.yaml: intake_boundary; d3_experiment_commission_package.md: blinding'
+    action: KEEP
+    value_status: D3_FROZEN_PROCESS_REQUIREMENT
+    notes: Sample collection and QC may retain natural IDs; modelling must not see primary values before freeze.
+
+  - field_id: d3_classifier_thresholds
+    display_name: Frozen classifier thresholds
+    category: [D3_DESIGN_SPECIFIC]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: dex
+    d3_field: absolute_rmse_difference_inconclusive_and_both_inadequate_thresholds
+    d3_unit: 0.15 dex and 0.50 dex
+    requirement: required
+    controlled_chamber_mapping: controlled_condition
+    existing_template_location: 'validation/benchmarks/d3_prospective_experiment/preregistration/: classifier protocol'
+    action: KEEP
+    value_status: D3_FROZEN_PROTOCOL_GUARD_NOT_TO_BE_CHANGED
+    notes: This mapping records the boundary only; it does not alter thresholds or predictions.
+
+  - field_id: sample_and_replicate_identity
+    display_name: Sample, plant and biological replicate identifiers
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: identifier
+    d3_field: sample_id; plant_id; biological_replicate_id
+    d3_unit: stable identifier
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: sample_id, plant_id, biological_replicate_id'
+    action: CLARIFY
+    value_status: QA_REQUIRED_FOR_TRACEABILITY
+    notes: Biological replicates must be independent plants, not repeated readings of one plant.
+
+  - field_id: sample_time_axis
+    display_name: Sample timestamp and hours after exposure
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: UTC timestamp and h
+    d3_field: sampling_timestamp_utc; hours_after_exposure
+    d3_unit: ISO-8601 UTC and h
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: sampling_timestamp_utc and hours_after_exposure'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_FROZEN_TIME_MAPPING
+    notes: Keep the exact timestamp even when the classification time is rounded to 0.2/48/120 h.
+
+  - field_id: sample_organ_definition
+    display_name: Sample organ definition
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: '2.2.2; 2.2.6; 5.2.3 Figures 27-28'
+    manual_term: plant water/organic matter and vegetation-water observations
+    manual_unit: organ definition
+    d3_field: organ_definition
+    d3_unit: COMBINED_STEM_AND_LEAF or separate diagnostic organ
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: organ_definition'
+    action: CLARIFY
+    value_status: D3_PRIMARY_ENDPOINT_BOUNDARY
+    notes: Roots, pods and seeds must be separately labelled and excluded from primary aggregation.
+
+  - field_id: sample_mass_and_tissue_water
+    display_name: Fresh mass, dry mass and extracted tissue water
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: '2.2.2; 3.3.3; 5.2.2 Table 3'
+    manual_term: plant water and organic plant matter mass basis
+    manual_unit: g and/or mL
+    d3_field: fresh_mass_g; dry_mass_g; tissue_water_mass_g; tissue_water_volume_ml
+    d3_unit: g and mL
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv and biomass_template.csv: mass/water fields'
+    action: KEEP
+    value_status: QA_REQUIRED_FOR_WATER_BASIS
+    notes: Preserve the raw value and method; do not silently calculate missing water volume.
+
+  - field_id: tfwt_result
+    display_name: TFWT result
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: '2.2.2; 5.2.3 Figures 27-28'
+    manual_term: specific HTO concentration in vegetation water
+    manual_unit: Bq/L tissue water
+    d3_field: tfwt_bq_per_l_tissue_water
+    d3_unit: Bq/L tissue water
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: tfwt_bq_per_l_tissue_water'
+    action: KEEP
+    value_status: D3_PRIMARY_MEASUREMENT
+    notes: Store the unrounded result and its censoring/quality flags.
+
+  - field_id: analytical_lod_loq
+    display_name: Actual analytical LOD and LOQ
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: Bq/L tissue water or method-specific unit
+    d3_field: actual_lod_bq_per_l; actual_loq_bq_per_l
+    d3_unit: Bq/L tissue water
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: detection_limit_bq_per_l and quantification_limit_bq_per_l'
+    action: KEEP
+    value_status: LAB_CAPABILITY_EVIDENCE_REQUIRED
+    notes: These actual values replace neither the 250 Bq/L planning target nor the raw result.
+
+  - field_id: analytical_uncertainty
+    display_name: Sample-level combined uncertainty
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: percent or absolute uncertainty with rule
+    d3_field: combined_uncertainty_percent
+    d3_unit: percent
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv: combined_uncertainty_percent'
+    action: ADD
+    value_status: LAB_CAPABILITY_EVIDENCE_REQUIRED
+    notes: Retain the uncertainty definition and calculation rule, not just a rounded percentage.
+
+  - field_id: analytical_method_and_instrument
+    display_name: Matrix, preparation, counting method and instrument
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: method metadata
+    d3_field: matrix; preparation_method; counting_method; instrument_id; calibration_id
+    d3_unit: metadata
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'tfwt_sample_template.csv and chamber_forcing_template.csv: method/instrument fields'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_REPRODUCIBILITY
+    notes: Method and instrument metadata must be linked to the analytical batch.
+
+  - field_id: analytical_qc_controls
+    display_name: Blank, duplicate, reference standard, recovery and calibration QC
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: QC result and acceptance rule
+    d3_field: blank; duplicate; reference_standard; recovery; calibration
+    d3_unit: laboratory-defined QC units
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'quality_control_checklist.yaml: analytical_qc'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_INTAKE
+    notes: QC failures, acceptance rules and corrective actions must be retained.
+
+  - field_id: analytical_batch_and_analyst
+    display_name: Analytical batch and analyst
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: identifier
+    d3_field: analytical_batch_id; analyst_id
+    d3_unit: stable identifier
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'quality_control_checklist.yaml: analytical_qc'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_BATCH_TRACEABILITY
+    notes: A sample result without batch and analyst provenance is incomplete for intake.
+
+  - field_id: deviation_and_corrective_action
+    display_name: Protocol deviation and corrective action
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: event record
+    d3_field: deviation; corrective_action
+    d3_unit: event description and disposition
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'quality_control_checklist.yaml: deviations'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_FAIL_CLOSED_REVIEW
+    notes: Empty deviation fields mean not reported only when the template token is explicit.
+
+  - field_id: quality_flags_and_missing_encoding
+    display_name: Quality flags and missing-value encoding
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: controlled token
+    d3_field: quality_flag; missing_value_token
+    d3_unit: controlled vocabulary
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'all CSV templates; quality_control_checklist.yaml: data_integrity'
+    action: KEEP
+    value_status: QA_REQUIRED_FOR_NO_SILENT_FILTERING
+    notes: Use UNKNOWN, NOT_REPORTED or NOT_AVAILABLE only as documented; do not substitute zero.
+
+  - field_id: data_dictionary_and_composite_membership
+    display_name: Data dictionary and composite sample membership
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: metadata
+    d3_field: data_dictionary_version; composite_membership
+    d3_unit: version and member IDs
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'requested_file_contract.yaml: semantics; tfwt_sample_template.csv: composite_membership'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_RECONSTRUCTION
+    notes: Any composite sample must list its component plant/sample IDs.
+
+  - field_id: raw_file_identity_and_hash
+    display_name: Raw filename, size and SHA-256
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: file metadata
+    d3_field: filename; byte_size; sha256
+    d3_unit: basename, bytes and lowercase 64-hex hash
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'raw_manifest_template.yaml: files'
+    action: KEEP
+    value_status: QA_REQUIRED_FOR_INTAKE
+    notes: Hash consistency does not authorize semantic or registry acceptance by itself.
+
+  - field_id: raw_file_times_and_immutable_copy
+    display_name: File creation/receipt times and immutable-copy status
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: UTC timestamp and boolean
+    d3_field: creation_time_utc; received_time_utc; immutable_read_only_copy
+    d3_unit: ISO-8601 UTC and boolean
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'raw_manifest_template.yaml: files'
+    action: ADD
+    value_status: QA_REQUIRED_FOR_PROVENANCE
+    notes: Original raw files remain read-only outside Git.
+
+  - field_id: licence_and_publication_rights
+    display_name: Licence, redistribution and publication review status
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: rights metadata
+    d3_field: licence; redistribution_allowed; publication_review_required
+    d3_unit: rights status
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'raw_manifest_template.yaml and requested_file_contract.yaml: rights'
+    action: ADD
+    value_status: QA_REQUIRED_BEFORE_REGISTRY_REVIEW
+    notes: Licence status remains separate from scientific completeness and cannot be guessed.
+
+  - field_id: raw_file_retention
+    display_name: Raw-file retention and read-only policy
+    category: [MODERN_QA_REQUIRED]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: retention policy
+    d3_field: raw_retention_policy
+    d3_unit: documented policy
+    requirement: required
+    controlled_chamber_mapping: direct
+    existing_template_location: 'raw_manifest_template.yaml and requested_file_contract.yaml: intake_boundary'
+    action: CLARIFY
+    value_status: QA_REQUIRED_FOR_REPRODUCIBILITY
+    notes: No raw input is to be overwritten or committed as a generated derivative.
+
+  - field_id: cultivar_specific_resistance_parameter
+    display_name: Cultivar-specific plant resistance transfer parameter
+    category: [UNRESOLVED_NO_SOURCE]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: s/m or s/cm
+    d3_field: cultivar_specific_resistance_parameter
+    d3_unit: laboratory-derived parameter if eventually justified
+    requirement: defer_unresolved
+    controlled_chamber_mapping: unresolved
+    existing_template_location: 'requested_file_contract.yaml: unresolved_items'
+    action: DEFER_UNRESOLVED
+    value_status: SOURCE_NOT_AVAILABLE
+    notes: Do not promote manual mean resistances to soybean D3 parameters.
+
+  - field_id: chamber_mixing_to_outdoor_wind_transform
+    display_name: Chamber mixing velocity to UFOTRI outdoor-wind transform
+    category: [UNRESOLVED_NO_SOURCE]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: unresolved
+    d3_field: chamber_mixing_to_outdoor_wind_transform
+    d3_unit: unresolved
+    requirement: defer_unresolved
+    controlled_chamber_mapping: unresolved
+    existing_template_location: 'requested_file_contract.yaml: unresolved_items'
+    action: DEFER_UNRESOLVED
+    value_status: SOURCE_NOT_AVAILABLE
+    notes: The D3 analogue is recorded operationally but no physical equivalence is asserted.
+
+  - field_id: root_zone_hto_transfer_function
+    display_name: Root-zone HTO transfer function for D3 chamber conditions
+    category: [UNRESOLVED_NO_SOURCE]
+    manual_reference: NO_MANUAL_AUTHORITY
+    manual_term: NOT_APPLICABLE
+    manual_unit: unresolved
+    d3_field: root_zone_hto_transfer_function
+    d3_unit: unresolved
+    requirement: defer_unresolved
+    controlled_chamber_mapping: unresolved
+    existing_template_location: 'requested_file_contract.yaml: unresolved_items'
+    action: DEFER_UNRESOLVED
+    value_status: SOURCE_NOT_AVAILABLE
+    notes: Record pathway status and measurements; do not invent a transfer function.
+
+summary_contract:
+  primary_endpoint_semantics: >-
+    The legacy classifier label total plant-body TFWT is mapped for this handoff
+    to the explicit measured combined stem-and-leaf TFWT sample definition.
+  excluded_from_primary_endpoint: [roots, pods, seeds]
+  manual_example_values_not_d3_requirements:
+    - 'LAI = 3 m2/m2'
+    - 'daytime resistance = 4 s/cm'
+    - 'nighttime resistance = 60 s/cm'
+    - 'soil water content = 20%'
+  source_ambiguity_policy: SOURCE_TEXT_AMBIGUOUS_OR_OCR_REVIEW_REQUIRED
+  unresolved_policy: DO_NOT_CONVERT_TO_PROJECT_ASSUMPTION
+  future_lab_status: AWAITING_LAB_CONFIRMATION
