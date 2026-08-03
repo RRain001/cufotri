@@ -29,6 +29,16 @@ EMPIRICAL_VALIDATION_CLAIM = FALSE
 - Biological replicate recommendation: at least 3 independent plants
   or chamber-equivalent biological replicates per time. This is a Monte Carlo
   design recommendation, not a formal power proof.
+
+The three-replicate sentence above is preserved historical design text. It is
+not the current D3 operational recommendation: the planned design uses five
+independent biological replicates per primary time point. A result with fewer
+than five is a deviation; three is only the minimum uncensored count for a
+preregistered limited-deviation analysis, does not reduce the allocated plant
+count, and does not automatically receive the same evidence grade. The
+unqualified `5270 Bq/mL water` above means `5270 Bq/mL air-moisture water` in
+the `HTO_IN_CHAMBER_AIR_MOISTURE` medium, not liquid culture, irrigation or
+reservoir water.
 - Primary measurement: total plant-body TFWT, Bq/L tissue water. Record
   combined stem+leaf result; leaf and stem separation is recommended as an
   additional diagnostic. Roots and pods are optional secondary matrices and

@@ -86,7 +86,7 @@ V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 | `plant_obt_observation`; `obt_transfer_rates` | §2.2.6；§3.3.3 Eq. (65)-(66) | `MANUAL_EXPLICIT` / `MANUAL_DERIVED` | OBT 可作独立诊断，不进入 H2/H3 主分类 | requested contract |
 | `air_ht_observation`; `soil_ht_observation`; `soil_ht_deposited_inventory` | §5.2.3 Figures 21-24 | `MANUAL_EXPLICIT` | 当前 HTO 箱体不适用，不移植野外 HT 释放证据 | 无 |
 | `plant_atmosphere_total_resistance`; `aerodynamic_and_boundary_layer_resistance`; `actual_evapotranspiration_and_soil_evaporation` | §2.2.2 Eq. (8)-(24)；§2.2.4 Eq. (38)-(43) | `MANUAL_DERIVED` | 保留接口/诊断边界；不进行未授权 D3 参数反演 | requested contract |
-| `root_hto_uptake_flux`; `calculated_reemission_rate` | §2.2.4-2.2.5 Eq. (37)/(44-2) | `MANUAL_DERIVED` | 需要真实实验室测量或批准算法；当前不计算 | root pathway |
+| `root_hto_uptake_flux`; `calculated_reemission_rate` | §2.2.3 Eq. (37)；§2.2.4-§2.2.5 Eq. (44-2) | `MANUAL_DERIVED` | 需要真实实验室测量或批准算法；当前不计算 | root pathway |
 | `d3_air_moisture_hto_setpoint`; `d3_exposure_duration`; `d3_post_exposure_followup` | 当前 D3 preregistration/commission package | `D3_DESIGN_SPECIFIC` | 5270 Bq/mL air-moisture water；24 h；120 h | checklist/QC/contract |
 | `d3_primary_sampling_times`; `d3_diagnostic_sampling_times`; `d3_biological_replicates` | 当前 D3 preregistration/commission package | `D3_DESIGN_SPECIFIC` | 主采样 0.2/48/120 h；五个独立生物重复；诊断点不可替代主点 | checklist/QC |
 | `d3_exposed_group`; `d3_pre_exposure_baseline_group`; `d3_zero_hto_control_group`; `d3_reserve_group` | 当前 D3 commission/checklist | `D3_DESIGN_SPECIFIC` | 四类组独立编号、随机化并保留损耗规则 | TFWT/biomass/contract |

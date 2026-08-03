@@ -155,7 +155,7 @@ fields:
   - field_id: release_rate
     display_name: Release rate
     category: [MANUAL_EXPLICIT, NOT_APPLICABLE_CONTROLLED_CHAMBER]
-    manual_reference: '5.2.2 Table 3; 5.3 Appendix B §1'
+    manual_reference: '5.2.2 Table 3'
     manual_term: release rate
     manual_unit: Bq/s in the Canada case
     d3_field: null
@@ -500,7 +500,7 @@ fields:
   - field_id: soil_layer_depths
     display_name: Soil layer depths
     category: [MANUAL_EXPLICIT]
-    manual_reference: '2.2.4; 2.2.5; 3.3.3 Figure 13'
+    manual_reference: '2.2.3; 2.2.4; 2.2.5'
     manual_term: top 5 cm and root layers up to 30 cm
     manual_unit: cm
     d3_field: substrate_layer_depths_cm
@@ -770,7 +770,7 @@ fields:
   - field_id: root_hto_uptake_flux
     display_name: Root uptake HTO flux
     category: [MANUAL_DERIVED]
-    manual_reference: '2.2.4; 2.2.5; Equation (37)'
+    manual_reference: '2.2.3; Equation (37); 2.2.5'
     manual_term: root uptake coupled to transpiration
     manual_unit: water/tritium flux with time basis
     d3_field: root_pathway_status_and_uptake_if_measured

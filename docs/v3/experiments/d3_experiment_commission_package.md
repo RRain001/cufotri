@@ -156,6 +156,11 @@ replicates did not meet both 90% positive-control targets. Five is therefore
 the minimum synthetic planning count that meets the frozen rule, while still
 not constituting empirical power validation.
 
+Three uncensored biological replicates are a minimum analytical criterion only
+for a preregistered limited-deviation analysis. They are not the recommended
+or normal design, do not reduce the plant allocation, and do not automatically
+inherit the evidence grade of the planned five-replicate design.
+
 The laboratory should provide the uncertainty budget and confirm whether total
 relative uncertainty at or below 20% is feasible. The planning detection limit
 of 250 Bq/L and fresh/dry mass resolution of 0.01 g are project assumptions;

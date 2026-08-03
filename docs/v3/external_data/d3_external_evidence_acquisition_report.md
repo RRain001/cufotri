@@ -167,6 +167,15 @@ the minimum prospective experiment as:
 - target total uncertainty at or below 20%;
 - air HTO and temperature/RH/mixing at 5-minute resolution or finer.
 
+Terminology and replicate boundary clarification: the historical shorthand
+`5270 Bq/mL water` above means `5270 Bq/mL air-moisture water` in the
+`HTO_IN_CHAMBER_AIR_MOISTURE` medium, not liquid culture, irrigation or
+reservoir water. The earlier “at least three” wording is a minimum uncensored
+criterion for a preregistered limited-deviation analysis, not the current D3
+recommended design. The normal plan remains five independent biological
+replicates, and a count below five cannot reduce plant allocation or inherit
+the same evidence grade automatically.
+
 `EXTENDED_120_DAY_FOLLOWUP=OPTIONAL`; it is not a minimum requirement.
 
 ## Fail-closed tests

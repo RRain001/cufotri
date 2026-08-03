@@ -72,6 +72,11 @@ maximum 0.2821% of the setpoint, below the 0.5% target maximum. A separate
 strict-zero background scenario is
 sensitivity-only. Both files regenerate byte-for-byte.
 
+Terminology note for this historical synthetic record: its unqualified
+`5270 Bq/mL water` means `5270 Bq/mL air-moisture water` in the
+`HTO_IN_CHAMBER_AIR_MOISTURE` medium, not liquid culture, irrigation or
+reservoir water.
+
 ## Blinded datasets and boundary
 
 Each tracked A/B/C file contains seven time points and five biological
@@ -123,6 +128,12 @@ CV20. All four counts meet the challenge false-confident maximum of 10%.
 Five remains the minimum operational planning default that meets the synthetic
 target, but it is not empirical power proof.
 
+The rows for three and four replicates are sensitivity analysis only. They do
+not replace the current D3 plan of five independent biological replicates. A
+count below five is a deviation; three is only a minimum uncensored count for
+a preregistered limited-deviation analysis and cannot automatically receive
+the same evidence grade.
+
 ## Intake dry run
 
 The intake workflow copied each blinded file to a local ignored read-only
@@ -152,6 +163,10 @@ The logistics package now separates:
 The plant counts, 250 Bq/L detection limit, mass resolution and chamber control
 bands are project assumptions requiring laboratory confirmation. Operation at
 5270 Bq/mL water requires facility-specific radiation-safety review.
+
+The safety sentence uses the same historical shorthand: the concentration
+basis is air-moisture water in the controlled chamber, not liquid culture,
+irrigation or reservoir water.
 
 The package is ready for laboratory feasibility and commissioning review,
 subject to facility-specific radiation safety, achievable background,

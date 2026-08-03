@@ -148,14 +148,49 @@ def test_review_new_hashes_differ_from_v1_v2() -> None:
         assert file_sha256(path) == item["sha256"]
 
 
-def test_review_secret_is_untracked_and_commitment_matches() -> None:
+def test_review_public_secret_integrity_is_portable() -> None:
     relative = PRIVATE_SECRET_PATH.relative_to(ROOT).as_posix()
     assert (
         git("ls-files", "--error-unmatch", relative, check=False).returncode
         != 0
     )
     assert git("check-ignore", "--quiet", relative, check=False).returncode == 0
-    assert PRIVATE_SECRET_PATH.is_file()
+    committed_paths = git(
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "HEAD",
+        "--",
+        "validation/external_local",
+    ).stdout.splitlines()
+    assert relative not in committed_paths
+    commitment = SECRET_COMMITMENT_PATH.read_text(encoding="utf-8").strip()
+    assert re.fullmatch(r"[0-9a-f]{64}", commitment)
+    assert GENERATION["sealed_generation_secret_sha256"] == commitment
+    assert CLASSIFICATION["sealed_generation_secret_sha256"] == commitment
+    assert UNBLINDING["sealed_generation_secret_sha256_verified"] is True
+    assert UNBLINDING["truth_key_matches_sealed_secret"] is True
+    assert CLASSIFICATION["truth_key_accessed"] is False
+    assert CLASSIFICATION["secret_accessed"] is False
+    assert GENERATION["generation_attempt"] == 1
+    assert GENERATION["regeneration_permitted"] is False
+    assert CLASSIFICATION["classification_attempt"] == 1
+    assert CLASSIFICATION["retry_permitted"] is False
+    assert UNBLINDING["generation_attempt"] == GENERATION["generation_attempt"]
+    assert UNBLINDING["classification_attempt"] == CLASSIFICATION[
+        "classification_attempt"
+    ]
+
+
+def test_review_private_secret_matches_commitment_when_available() -> None:
+    if not PRIVATE_SECRET_PATH.is_file():
+        pytest.skip("SKIP_PRIVATE_SECRET_NOT_AVAILABLE")
+    relative = PRIVATE_SECRET_PATH.relative_to(ROOT).as_posix()
+    assert (
+        git("ls-files", "--error-unmatch", relative, check=False).returncode
+        != 0
+    )
+    assert git("check-ignore", "--quiet", relative, check=False).returncode == 0
     assert file_sha256(PRIVATE_SECRET_PATH) == (
         SECRET_COMMITMENT_PATH.read_text(encoding="utf-8").strip()
     )

@@ -118,3 +118,41 @@ intake_boundary:
   v3_physics_start_gate: BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 
 missing_value_tokens: [UNKNOWN, NOT_REPORTED, NOT_AVAILABLE]
+
+unresolved_items:
+  - field_id: cultivar_specific_resistance_parameter
+    category: UNRESOLVED_NO_SOURCE
+    action: DEFER_UNRESOLVED
+    requirement: defer_unresolved
+    optional: true
+    default: null
+    model_use_authorized: false
+    acceptance_use_authorized: false
+    trusted_registry_use_authorized: false
+    future_resolution:
+      allowed_sources: [LABORATORY_DEFINITION, APPROVED_ALTERNATIVE]
+      approval_required: true
+  - field_id: chamber_mixing_to_outdoor_wind_transform
+    category: UNRESOLVED_NO_SOURCE
+    action: DEFER_UNRESOLVED
+    requirement: defer_unresolved
+    optional: true
+    default: null
+    model_use_authorized: false
+    acceptance_use_authorized: false
+    trusted_registry_use_authorized: false
+    future_resolution:
+      allowed_sources: [LABORATORY_DEFINITION, APPROVED_ALTERNATIVE]
+      approval_required: true
+  - field_id: root_zone_hto_transfer_function
+    category: UNRESOLVED_NO_SOURCE
+    action: DEFER_UNRESOLVED
+    requirement: defer_unresolved
+    optional: true
+    default: null
+    model_use_authorized: false
+    acceptance_use_authorized: false
+    trusted_registry_use_authorized: false
+    future_resolution:
+      allowed_sources: [LABORATORY_DEFINITION, APPROVED_ALTERNATIVE]
+      approval_required: true
