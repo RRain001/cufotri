@@ -96,7 +96,10 @@ README and `.gitignore`; no secret fixture was copied or generated.
 The repository-wide failures are outside this D3 remediation scope. They
 include missing SB1 PDF/forcing and SB4 generated forcing under
 `validation/external_local/`; no raw or generated external input was copied to
-make the suite appear green.
+make the suite appear green. Because the R1 plan treats any repository-wide
+failure as a stop condition, this prevents the overall remediation from being
+marked ready even though the D3-scoped self-check passes. No out-of-scope
+SB1/SB4 test changes were made to hide the missing external inputs.
 
 ## Acceptance and portability status
 
@@ -129,7 +132,8 @@ failure. The external-evidence and V3 physics gates remain fail-closed.
 ## Final status
 
 ```text
-D3_UFOTRI_MANUAL_DATA_MAPPING_REMEDIATION_R1 = PASS_SELF_CHECK
+D3_UFOTRI_MANUAL_DATA_MAPPING_REMEDIATION_R1 = HOLD_UNRESOLVED
+D3_SCOPED_REMEDIATION_SELF_CHECK = PASS_SELF_CHECK
 MANUAL_EXPLICIT_ANCHORS = PASS_36_OF_36
 MANUAL_DERIVED_ANCHORS = PASS_10_OF_10
 UNRESOLVED_CONTRACT_LINKAGE = PASS_3_OF_3
@@ -140,8 +144,10 @@ PRIVATE_SECRET_AUDIT = SKIP_PRIVATE_SECRET_NOT_AVAILABLE
 PORTABLE_RECOMPUTE_STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_ERA5_INPUT
 MODEL_OR_PARAMETER_CHANGE = NONE
 INDEPENDENT_REREVIEW = NOT_STARTED
-MERGE_RECOMMENDATION = HOLD_PENDING_INDEPENDENT_REREVIEW
+MERGE_RECOMMENDATION = DO_NOT_MERGE
 ```
 
-The next action is a new session with a fresh independent-review worktree.
-This remediation session stops before creating or running that re-review.
+The next action requires the missing external-local benchmark inputs to become
+available, or an explicitly authorized change to the out-of-scope SB1/SB4
+test boundary. This remediation session stops before creating or running an
+independent re-review.

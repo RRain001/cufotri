@@ -178,7 +178,8 @@ def test_remediation_keeps_external_gate_closed_and_does_not_claim_portability()
         ROOT / "docs" / "v3" / "experiments"
         / "d3_ufotri_manual_data_mapping_remediation_r1.md"
     ).read_text(encoding="utf-8")
-    assert "D3_UFOTRI_MANUAL_DATA_MAPPING_REMEDIATION_R1 = PASS_SELF_CHECK" in report
+    assert "D3_UFOTRI_MANUAL_DATA_MAPPING_REMEDIATION_R1 = HOLD_UNRESOLVED" in report
+    assert "D3_SCOPED_REMEDIATION_SELF_CHECK = PASS_SELF_CHECK" in report
     assert "PORTABLE_RECOMPUTE_STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_ERA5_INPUT" in report
     assert "INDEPENDENT_REREVIEW = NOT_STARTED" in report
-    assert "MERGE_RECOMMENDATION = HOLD_PENDING_INDEPENDENT_REREVIEW" in report
+    assert "MERGE_RECOMMENDATION = DO_NOT_MERGE" in report
