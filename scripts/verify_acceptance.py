@@ -27,6 +27,16 @@ from cteas_ufotri.outputs.diagnostics import (
 )
 from cteas_ufotri.outputs.writer import write_results
 
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPOSITORY_ROOT))
+
+from validation.external_input_requirements import (
+    InputStatus,
+    check_dataset,
+    resolve_dataset_file,
+)
+
 
 REQUIRED_COLUMNS = {
     "air_hto_concentration",
@@ -229,13 +239,32 @@ def main() -> int:
     parser.add_argument("--recompute", action="store_true")
     parser.add_argument(
         "--era5",
-        default="data/era5/era5_surface_2025-06-01_2025-06-02.csv",
+        default=None,
     )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
+    if args.recompute:
+        if args.era5 is None:
+            input_check = check_dataset(root, "ERA5_ACCEPTANCE")
+            era5_path = resolve_dataset_file(root, "ERA5_ACCEPTANCE")
+        else:
+            era5_path = Path(args.era5)
+            if not era5_path.is_absolute():
+                era5_path = root / era5_path
+            input_check = None
+            if not era5_path.is_file():
+                print("STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_INPUT")
+                print("DATASET = ERA5_ACCEPTANCE")
+                print(f"MISSING_FILES = [{str(era5_path)!r}]")
+                return 2
+        if input_check is not None and input_check.status is not InputStatus.AVAILABLE:
+            print("STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_INPUT")
+            print("DATASET = ERA5_ACCEPTANCE")
+            print(f"MISSING_FILES = {list(input_check.missing_files)!r}")
+            return 2
     try:
         if args.recompute:
-            summaries = recompute(root, root / args.era5)
+            summaries = recompute(root, era5_path)
         else:
             output_root = root / "outputs"
             summaries = [

@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.verify_v3_compatibility import verify_compatibility
+from validation.external_input_requirements import InputStatus, check_dataset
 from validation.adapters.soybean_emras_adapter import inspect_local_package
 
 
@@ -245,6 +246,12 @@ def _check_external_fail_closed() -> None:
 
 
 def main() -> int:
+    input_check = check_dataset(ROOT, "ERA5_ACCEPTANCE")
+    if input_check.status is not InputStatus.AVAILABLE:
+        print("STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_INPUT")
+        print("DATASET = ERA5_ACCEPTANCE")
+        print(f"MISSING_FILES = {list(input_check.missing_files)!r}")
+        return 2
     try:
         _check_required_files()
         schema_count = _check_schemas()

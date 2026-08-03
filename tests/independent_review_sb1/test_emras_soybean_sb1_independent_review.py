@@ -18,11 +18,13 @@ import pytest
 import xarray as xr
 import yaml
 
+from validation.external_input_requirements import dataset_root
+
 
 ROOT = Path(__file__).resolve().parents[2]
 BENCHMARK = ROOT / "validation" / "benchmarks" / "emras_soybean_sb1"
 TABLES = BENCHMARK / "published_tables"
-LOCAL = ROOT / "validation" / "external_local" / "emras_soybean_sb1"
+LOCAL = dataset_root(ROOT, "SB1")
 GENERATED = LOCAL / "generated_forcing"
 PROCESSED = LOCAL / "era5_processed"
 OUTPUTS = LOCAL / "outputs"
@@ -78,6 +80,7 @@ def table_section(text: str, start: str, end: str | None) -> str:
     return section.split(end, 1)[0] if end else section
 
 
+@pytest.mark.external_sb1_data
 def test_independent_pdf_tfwt_values() -> None:
     assert sha256(PDF) == PDF_SHA256
     text = table_section(pdf_page_text(105), "Table 5.1.", "Table 5.2.")
@@ -103,6 +106,7 @@ def test_independent_pdf_tfwt_values() -> None:
     assert pdf_pods == pods
 
 
+@pytest.mark.external_sb1_data
 def test_independent_pdf_obt_values() -> None:
     text = table_section(pdf_page_text(105), "Table 5.3.", None)
     line = re.search(r"(?m)^SB1\s+(.+)$", text).group(1)
@@ -125,6 +129,7 @@ def test_independent_pdf_obt_values() -> None:
     assert normalized.tolist() == pytest.approx([2.06e-4, 8.63e-6])
 
 
+@pytest.mark.external_sb1_data
 def test_independent_pdf_chamber_values() -> None:
     text = table_section(pdf_page_text(289), "Table I.4.6.", "Table I.4.7.")
     pattern = re.compile(
@@ -162,6 +167,7 @@ def test_independent_pdf_chamber_values() -> None:
     )
 
 
+@pytest.mark.external_sb1_data
 def test_independent_pdf_biomass_values() -> None:
     text = pdf_page_text(287)
     expected: dict[tuple[str, str], list[float]] = {}
@@ -189,6 +195,7 @@ def test_independent_pdf_biomass_values() -> None:
         assert selected["value"].tolist() == pytest.approx(values)
 
 
+@pytest.mark.external_sb1_data
 def test_unreported_chamber_hto_not_claimed_observed_zero() -> None:
     text = table_section(pdf_page_text(289), "Table I.4.6.", "Table I.4.7.")
     assert re.search(r"09:30 \(start\).+–\s*$", text, re.MULTILINE)
@@ -219,6 +226,7 @@ def test_independent_sampling_datetime_mapping() -> None:
     assert actual == expected_local
 
 
+@pytest.mark.external_sb1_data
 def test_independent_elapsed_hours_mapping() -> None:
     text = table_section(pdf_page_text(289), "Table I.4.9.", None)
     elapsed = [
@@ -253,6 +261,7 @@ def test_independent_local_utc_round_trip() -> None:
     assert utc.tz_convert("Asia/Seoul") == pd.Timestamp(local)
 
 
+@pytest.mark.external_sb1_data
 def test_independent_chamber_era5_boundary_alignment() -> None:
     forcing = pd.read_csv(GENERATED / "sb1_forcing_primary.csv")
     local = pd.to_datetime(forcing["time_local"], utc=True).dt.tz_convert("Asia/Seoul")
@@ -294,6 +303,7 @@ def test_independent_mean_constrained_scale() -> None:
     )
 
 
+@pytest.mark.external_sb1_data
 def test_1035_value_excluded_from_exposure_mean() -> None:
     assert independent_chamber_mean(include_1035=True) != pytest.approx(75612.5)
     summary = json.loads(
@@ -311,6 +321,7 @@ def independent_vapour_density(temperature_c: float, rh_percent: float) -> float
     return saturation_g_m3 * rh_percent / 100.0
 
 
+@pytest.mark.external_sb1_data
 def test_independent_vapour_density_reference_points() -> None:
     generated = pd.read_csv(GENERATED / "sb1_chamber_profiles.csv")
     for minute in (10, 30, 60):
@@ -323,6 +334,7 @@ def test_independent_vapour_density_reference_points() -> None:
         assert row["actual_vapour_density_g_m3"] == pytest.approx(expected)
 
 
+@pytest.mark.external_sb1_data
 def test_independent_air_hto_unit_conversion() -> None:
     generated = pd.read_csv(GENERATED / "sb1_chamber_profiles.csv")
     for minute in (10, 30, 60):
@@ -353,6 +365,7 @@ def aligned_raw(dataset: xr.Dataset, frame: pd.DataFrame, variable: str) -> np.n
     return series.loc[pd.DatetimeIndex(frame["time_utc"])].to_numpy(float)
 
 
+@pytest.mark.external_sb1_data
 def test_independent_era5_interval_semantics() -> None:
     dataset, frame = raw_and_processed("CENTRE")
     try:
@@ -368,6 +381,7 @@ def test_independent_era5_interval_semantics() -> None:
         dataset.close()
 
 
+@pytest.mark.external_sb1_data
 def test_independent_precipitation_total() -> None:
     dataset, frame = raw_and_processed("CENTRE")
     try:
@@ -382,6 +396,7 @@ def test_independent_precipitation_total() -> None:
         dataset.close()
 
 
+@pytest.mark.external_sb1_data
 def test_independent_shortwave_conversion() -> None:
     dataset, frame = raw_and_processed("CENTRE")
     try:
@@ -391,6 +406,7 @@ def test_independent_shortwave_conversion() -> None:
         dataset.close()
 
 
+@pytest.mark.external_sb1_data
 def test_independent_longwave_conversion() -> None:
     dataset, frame = raw_and_processed("CENTRE")
     try:
@@ -400,6 +416,7 @@ def test_independent_longwave_conversion() -> None:
         dataset.close()
 
 
+@pytest.mark.external_sb1_data
 def test_independent_five_point_time_coverage() -> None:
     for point in ("CENTRE", "NORTH_0P25", "SOUTH_0P25", "EAST_0P25", "WEST_0P25"):
         _, frame = raw_and_processed(point)
@@ -425,6 +442,7 @@ def test_independent_calibration_holdout_disjoint() -> None:
     assert calibration.isdisjoint(holdout_b)
 
 
+@pytest.mark.external_sb1_data
 def test_independent_parameter_grid_7_by_7() -> None:
     grid = pd.read_csv(OUTPUTS / "calibration_grid.csv")
     assert len(grid) == 49
@@ -446,6 +464,7 @@ def independent_log_metrics(frame: pd.DataFrame) -> dict[str, float]:
     }
 
 
+@pytest.mark.external_sb1_data
 def test_independent_optimum_selected_from_calibration_only() -> None:
     grid = pd.read_csv(OUTPUTS / "calibration_grid.csv")
     optimum = grid.loc[grid["log10_rmse"].idxmin()]

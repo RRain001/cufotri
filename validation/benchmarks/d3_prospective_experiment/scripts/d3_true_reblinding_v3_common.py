@@ -9,14 +9,21 @@ import math
 from pathlib import Path
 import re
 import subprocess
+import sys
 from typing import Any
 
 import numpy as np
 import pandas as pd
 import yaml
 
+_REPOSITORY_ROOT = Path(__file__).resolve().parents[4]
+if str(_REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPOSITORY_ROOT))
 
-ROOT = Path(__file__).resolve().parents[4]
+from validation.external_input_requirements import dataset_root
+
+
+ROOT = _REPOSITORY_ROOT
 BENCHMARK = ROOT / "validation" / "benchmarks" / "d3_prospective_experiment"
 PROTOCOL_PATH = (
     BENCHMARK
@@ -44,9 +51,7 @@ UNBLINDING_COMPARISON_PATH = (
 UNBLINDING_MANIFEST_PATH = (
     UNBLINDING_ROOT / "unblinding_manifest_v3.yaml"
 )
-PRIVATE_ROOT = (
-    ROOT / "validation" / "external_local" / "d3_prospective_reblind_v3"
-)
+PRIVATE_ROOT = dataset_root(ROOT, "D3_PRIVATE_REBLIND_SECRET")
 SECRET_PATH = PRIVATE_ROOT / "sealed_generation_secret.json"
 TRUTH_KEY_PATH = PRIVATE_ROOT / "truth_key_v3.json"
 PRIMARY_TIMES = (0.2, 48.0, 120.0)

@@ -96,6 +96,7 @@ def test_generation_secret_not_tracked() -> None:
         assert git("check-ignore", "--quiet", relative, check=False).returncode == 0
 
 
+@pytest.mark.private_reblinding_secret
 def test_generation_secret_commitment_matches_when_available() -> None:
     if not common.SECRET_PATH.exists():
         pytest.skip("Private secret intentionally absent in this worktree")

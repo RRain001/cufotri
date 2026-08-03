@@ -6,6 +6,7 @@ import pytest
 
 from cteas_ufotri.case import run_short_case
 from cteas_ufotri.config import load_configuration
+from validation.external_input_requirements import resolve_dataset_file
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -53,8 +54,9 @@ def _assert_interface_closure(frame) -> None:
     )
 
 
+@pytest.mark.external_era5_data
 def test_audited_72h_case_repairs_dry_ratio_from_8_94_to_one():
-    era5_path = ROOT / "data/era5/era5_surface_2025-06-01_2025-06-02.csv"
+    era5_path = resolve_dataset_file(ROOT, "ERA5_ACCEPTANCE")
     if not era5_path.is_file():
         pytest.skip("Local read-only ERA5 audit forcing is not available")
     from scripts.run_v2_end_to_end import hybrid_era5_forcing

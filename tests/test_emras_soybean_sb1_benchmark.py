@@ -12,11 +12,13 @@ import pandas as pd
 import pytest
 import yaml
 
+from validation.external_input_requirements import dataset_root
+
 
 ROOT = Path(__file__).resolve().parents[1]
 BENCHMARK = ROOT / "validation" / "benchmarks" / "emras_soybean_sb1"
 TABLES = BENCHMARK / "published_tables"
-LOCAL = ROOT / "validation" / "external_local" / "emras_soybean_sb1"
+LOCAL = dataset_root(ROOT, "SB1")
 GENERATED = LOCAL / "generated_forcing"
 SCRIPT_DIR = BENCHMARK / "scripts"
 sys.path.insert(0, str(SCRIPT_DIR))
@@ -76,6 +78,7 @@ def test_sb1_chamber_timestamp_order() -> None:
     assert frame["minutes_from_exposure_start"].tolist() == list(range(-5, 66, 5))
 
 
+@pytest.mark.external_sb1_data
 def test_sb1_chamber_profile_mean() -> None:
     summary = build.chamber_profiles()
     assert summary["raw_profile_mean_bq_ml_water"] == pytest.approx(75612.5)
@@ -83,6 +86,7 @@ def test_sb1_chamber_profile_mean() -> None:
     assert abs(summary["relative_difference"]) < 0.05
 
 
+@pytest.mark.external_sb1_data
 def test_sb1_air_moisture_to_air_volume_conversion() -> None:
     profile = pd.read_csv(GENERATED / "sb1_chamber_profiles.csv")
     row = profile.loc[profile["minutes_from_exposure_start"] == 30].iloc[0]
@@ -97,6 +101,7 @@ def test_sb1_bq_ml_to_bq_l_conversion() -> None:
     assert np.allclose(tfwt["tfwt_bq_l_water"], tfwt["tfwt_bq_ml_water"] * 1000)
 
 
+@pytest.mark.external_sb1_data
 def test_sb1_forcing_phase_continuity() -> None:
     frame = forcing()
     differences = frame["time_utc"].diff().dropna().dt.total_seconds()
@@ -144,6 +149,7 @@ def test_sb1_manifest_checksum_reproducible() -> None:
         assert sha256(TABLES / name) == expected
 
 
+@pytest.mark.external_sb1_data
 def test_sb1_model_run_finite_nonnegative() -> None:
     path = GENERATED / "sb1_forcing_primary.csv"
     if not path.is_file():

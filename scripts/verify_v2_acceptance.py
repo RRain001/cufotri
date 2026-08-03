@@ -34,6 +34,15 @@ from cteas_ufotri.crop.phenology import (
 from cteas_ufotri.plant.leaf_exchange import bidirectional_leaf_exchange
 from cteas_ufotri.provenance import validate_v2_named_provenance
 
+if str(Path(__file__).resolve().parents[1]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from validation.external_input_requirements import (
+    InputStatus,
+    check_dataset,
+    resolve_dataset_file,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -547,12 +556,18 @@ def _expanded_rc2_checks(end_to_end_root: Path) -> dict:
     }
 
 
-def recompute() -> list[str]:
+def recompute(era5_path: Path) -> list[str]:
     started = datetime.now(timezone.utc)
     with tempfile.TemporaryDirectory(prefix="cteas_ufotri_v2_acceptance_") as tmp:
         output_root = Path(tmp)
         v1 = subprocess.run(
-            [sys.executable, "scripts/verify_acceptance.py", "--recompute"],
+            [
+                sys.executable,
+                "scripts/verify_acceptance.py",
+                "--recompute",
+                "--era5",
+                str(era5_path),
+            ],
             cwd=ROOT,
             check=True,
             capture_output=True,
@@ -578,6 +593,8 @@ def recompute() -> list[str]:
                 "scripts/run_v2_end_to_end.py",
                 "--output",
                 str(end_to_end_root),
+                "--era5",
+                str(era5_path),
             ],
             cwd=ROOT,
             check=True,
@@ -680,7 +697,7 @@ def recompute() -> list[str]:
             "config_hashes": {path.name: sha256(path) for path in config_paths},
             "input_hashes": {
                 "era5": sha256(
-                    ROOT / "data/era5/era5_surface_2025-06-01_2025-06-02.csv"
+                    era5_path
                 )
             },
             "random_seed": 20260724,
@@ -746,7 +763,13 @@ def recompute() -> list[str]:
 
 
 def main() -> int:
-    for line in recompute():
+    input_check = check_dataset(ROOT, "ERA5_ACCEPTANCE")
+    if input_check.status is not InputStatus.AVAILABLE:
+        print("STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_INPUT")
+        print("DATASET = ERA5_ACCEPTANCE")
+        print(f"MISSING_FILES = {list(input_check.missing_files)!r}")
+        return 2
+    for line in recompute(resolve_dataset_file(ROOT, "ERA5_ACCEPTANCE")):
         print(line)
     return 0
 

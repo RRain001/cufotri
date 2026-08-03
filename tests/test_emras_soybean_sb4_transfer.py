@@ -12,6 +12,8 @@ import pandas as pd
 import pytest
 import yaml
 
+from validation.external_input_requirements import dataset_root
+
 
 ROOT = Path(__file__).resolve().parents[1]
 BENCHMARK = (
@@ -19,9 +21,7 @@ BENCHMARK = (
 )
 TABLES = BENCHMARK / "published_tables"
 REPORTS = BENCHMARK / "reports"
-LOCAL = (
-    ROOT / "validation" / "external_local" / "emras_soybean_sb4"
-)
+LOCAL = dataset_root(ROOT, "SB4")
 GENERATED = LOCAL / "generated_forcing"
 PROTOCOL = yaml.safe_load(
     (
@@ -212,6 +212,7 @@ def test_sb4_sampling_schedule() -> None:
         )
 
 
+@pytest.mark.external_sb4_data
 def test_sb4_constant_profile_mean() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     constant = profiles[
@@ -224,6 +225,7 @@ def test_sb4_constant_profile_mean() -> None:
     assert math.isclose(mean, 52700.0, abs_tol=1.0e-9)
 
 
+@pytest.mark.external_sb4_data
 def test_sb4_scaled_sb1_profile_mean() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     scaled = profiles[
@@ -237,12 +239,14 @@ def test_sb4_scaled_sb1_profile_mean() -> None:
     assert scaled.iloc[0]["air_moisture_hto_bq_ml_water"] == 0.0
 
 
+@pytest.mark.external_sb4_data
 def test_sb4_profile_marked_reconstructed() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     assert set(profiles["profile_evidence_class"]) == {"RECONSTRUCTED"}
     assert not profiles["sb4_observed_curve_claim"].astype(bool).any()
 
 
+@pytest.mark.external_sb4_data
 def test_sb4_era5_time_coverage() -> None:
     manifest = json.loads(
         (GENERATED / "sb4_forcing_manifest.json").read_text(encoding="utf-8")
@@ -252,7 +256,7 @@ def test_sb4_era5_time_coverage() -> None:
     )
     assert len(manifest["era5_raw_checksums"]) == 5
     for item in manifest["scenarios"].values():
-        frame = pd.read_csv(ROOT / item["path"], usecols=["time_utc"])
+        frame = pd.read_csv(GENERATED / Path(item["path"]).name, usecols=["time_utc"])
         time = pd.to_datetime(frame["time_utc"], utc=True)
         assert time.iloc[0] == pd.Timestamp("2001-08-09T00:25:00Z")
         assert time.iloc[-1] == pd.Timestamp("2001-10-05T14:00:00Z")
@@ -427,6 +431,7 @@ def test_sb4_attack_selected_from_sb4_fails() -> None:
         runner.validate_parameter_contract(forged)
 
 
+@pytest.mark.external_sb4_data
 def test_sb4_attack_observed_profile_spoof_fails(
     tmp_path: Path,
 ) -> None:

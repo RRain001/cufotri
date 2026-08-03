@@ -30,3 +30,9 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = [
+  "external_sb1_data: requires the declared external SB1 input dataset",
+  "external_sb4_data: requires the declared external SB4 input dataset",
+  "external_era5_data: requires the declared external ERA5 acceptance input",
+  "private_reblinding_secret: requires the private D3 reblinding secret",
+]

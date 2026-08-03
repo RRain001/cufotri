@@ -19,6 +19,8 @@ import pytest
 import xarray as xr
 import yaml
 
+from validation.external_input_requirements import dataset_root
+
 
 ROOT = Path(__file__).resolve().parents[2]
 BENCHMARK = ROOT / "validation" / "benchmarks" / "emras_soybean_sb4"
@@ -28,8 +30,8 @@ SB1_MECHANISMS = (
 )
 TABLES = BENCHMARK / "published_tables"
 REPORTS = BENCHMARK / "reports"
-LOCAL = ROOT / "validation" / "external_local" / "emras_soybean_sb4"
-SB1_LOCAL = ROOT / "validation" / "external_local" / "emras_soybean_sb1"
+LOCAL = dataset_root(ROOT, "SB4")
+SB1_LOCAL = dataset_root(ROOT, "SB1")
 GENERATED = LOCAL / "generated_forcing"
 PROCESSED = LOCAL / "era5_processed"
 PDF = SB1_LOCAL / "references" / "IAEA-emras-tritium-wg.pdf"
@@ -463,7 +465,7 @@ def independently_recomputed_runs() -> pd.DataFrame:
     for profile_id in PROFILE_IDS:
         for run_id in RUN_IDS:
             item = manifest["scenarios"][f"{profile_id}:{run_id}"]
-            forcing = _load_review_forcing(ROOT / item["path"])
+            forcing = _load_review_forcing(GENERATED / Path(item["path"]).name)
             for mechanism_id in MECHANISMS:
                 source_id = SOURCE_MECHANISMS[mechanism_id]
                 parameters = PROTOCOL["mechanisms"][mechanism_id]["parameters"]
@@ -573,6 +575,7 @@ def _assert_selection_claims(
         raise AssertionError("forged transfer selection")
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_tfwt_values_from_pdf() -> None:
     extracted = _pdf_tfwt()
     tracked = pd.read_csv(TABLES / "sb4_tfwt_observations.csv")
@@ -593,6 +596,7 @@ def test_review_sb4_tfwt_values_from_pdf() -> None:
         )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_obt_values_from_pdf() -> None:
     tracked = pd.read_csv(TABLES / "sb4_obt_harvest.csv")
     np.testing.assert_array_equal(
@@ -601,6 +605,7 @@ def test_review_sb4_obt_values_from_pdf() -> None:
     )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_biomass_values_from_pdf() -> None:
     tracked = pd.read_csv(TABLES / "sb4_biomass.csv")
     extracted = _pdf_biomass_values()
@@ -614,6 +619,7 @@ def test_review_sb4_biomass_values_from_pdf() -> None:
         np.testing.assert_array_equal(actual, values)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_sampling_schedule_from_pdf() -> None:
     text = _pdf_page_text(290).split("I.4.3.4.", 1)[0]
     expected_hours = [0.2, 1.0, 24.0, 120.0, 336.0, 768.0, 1368.0]
@@ -626,6 +632,7 @@ def test_review_sb4_sampling_schedule_from_pdf() -> None:
     assert "Aug 9" in text and "Oct 5" in text
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_mean_chamber_hto_from_pdf() -> None:
     text = _pdf_page_text(105)
     assert "5.27×104 Bq/mL for SB4" in text.replace(" ", " ", 0)
@@ -637,6 +644,7 @@ def test_review_sb4_mean_chamber_hto_from_pdf() -> None:
     assert str(metadata["harvest_date"]) == "2001-10-05"
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_units_from_pdf() -> None:
     tfwt = pd.read_csv(TABLES / "sb4_tfwt_observations.csv")
     obt = pd.read_csv(TABLES / "sb4_obt_harvest.csv")
@@ -650,6 +658,7 @@ def test_review_sb4_units_from_pdf() -> None:
     assert "TFWT (Bq/mL)" in _pdf_page_text(105)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_constant_profile_mean() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     constant = profiles[
@@ -666,6 +675,7 @@ def test_review_sb4_constant_profile_mean() -> None:
     assert math.isclose(mean, 52700.0, abs_tol=1.0e-9)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_scaled_profile_mean() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     scaled = profiles[
@@ -681,6 +691,7 @@ def test_review_sb4_scaled_profile_mean() -> None:
     assert math.isclose(mean, 52700.0, abs_tol=1.0e-9)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_scaled_profile_shape_preserved() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     scaled = profiles[
@@ -705,6 +716,7 @@ def test_review_sb4_scaled_profile_shape_preserved() -> None:
     assert actual[0] == 0.0
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_profiles_marked_reconstructed() -> None:
     profiles = pd.read_csv(GENERATED / "sb4_chamber_profiles.csv")
     manifest = json.loads(
@@ -715,6 +727,7 @@ def test_review_sb4_profiles_marked_reconstructed() -> None:
     _validate_forcing_manifest_contract(manifest)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_input_snapshot_read_only() -> None:
     files = [PDF, *sorted(RAW.rglob("*.nc"))]
     assert len(files) == 6
@@ -724,6 +737,7 @@ def test_review_sb4_input_snapshot_read_only() -> None:
             assert mode & (stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH) == 0
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_era5_raw_checksums() -> None:
     sb1_manifest = json.loads(
         (SB1_BENCHMARK / "sb1_case_manifest.json").read_text(encoding="utf-8")
@@ -733,9 +747,14 @@ def test_review_sb4_era5_raw_checksums() -> None:
     for relative, checksum in sb1_manifest[
         "era5_raw_file_checksums"
     ].items():
-        assert _sha256(ROOT / relative) == checksum
+        declared = Path(relative)
+        prefix = Path("validation/external_local/emras_soybean_sb1")
+        assert tuple(declared.parts[: len(prefix.parts)]) == prefix.parts
+        local = SB1_LOCAL / Path(*declared.parts[len(prefix.parts) :])
+        assert _sha256(local) == checksum
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_era5_time_coverage() -> None:
     for point in sorted(path.name for path in PROCESSED.iterdir()):
         qa = json.loads(
@@ -751,6 +770,7 @@ def test_review_sb4_era5_time_coverage() -> None:
         assert qa["inf_count"] == 0
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_era5_interval_semantics() -> None:
     for point in sorted(path.name for path in PROCESSED.iterdir()):
         with xr.open_dataset(
@@ -792,6 +812,7 @@ def test_review_sb4_era5_interval_semantics() -> None:
         }
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_five_point_forcing_generated() -> None:
     expected_points = {
         "CENTRE",
@@ -933,6 +954,7 @@ def test_review_sb4_run01_metrics_match_frozen_targets() -> None:
         )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_selection_recomputed(
     independently_recomputed_runs: pd.DataFrame,
 ) -> None:
@@ -960,6 +982,7 @@ def test_review_sb4_pods_and_obt_are_veto_only() -> None:
     )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_mass_balance_42_runs(
     independently_recomputed_runs: pd.DataFrame,
 ) -> None:
@@ -974,6 +997,7 @@ def test_review_sb4_mass_balance_42_runs(
     )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_internal_transfer_ledger_zero(
     independently_recomputed_runs: pd.DataFrame,
 ) -> None:
@@ -985,6 +1009,7 @@ def test_review_sb4_internal_transfer_ledger_zero(
     )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_roundoff_not_used_to_relax_tolerance(
     independently_recomputed_runs: pd.DataFrame,
 ) -> None:
@@ -1004,6 +1029,7 @@ def test_review_sb4_roundoff_not_used_to_relax_tolerance(
     )
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_all_states_finite_nonnegative(
     independently_recomputed_runs: pd.DataFrame,
 ) -> None:
@@ -1032,6 +1058,7 @@ def test_review_sb4_attack_selected_from_sb4_fails() -> None:
         _validate_parameter_contract(forged)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_attack_observed_profile_spoof_fails() -> None:
     manifest = json.loads(
         (GENERATED / "sb4_forcing_manifest.json").read_text(encoding="utf-8")
@@ -1043,6 +1070,7 @@ def test_review_sb4_attack_observed_profile_spoof_fails() -> None:
         _validate_forcing_manifest_contract(forged)
 
 
+@pytest.mark.external_sb4_data
 def test_review_sb4_attack_forged_forcing_count_fails(
     independently_recomputed_runs: pd.DataFrame,
 ) -> None:

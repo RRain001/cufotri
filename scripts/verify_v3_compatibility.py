@@ -25,6 +25,11 @@ from scripts.migrate_v2_config_to_v3 import (
     resolve_v2_frozen_config,
 )
 from scripts.run_v2_end_to_end import hybrid_era5_forcing
+from validation.external_input_requirements import (
+    InputStatus,
+    check_dataset,
+    resolve_dataset_file,
+)
 
 
 V2_CASE_FILES = (
@@ -90,12 +95,15 @@ def _assert_bitwise_case(
     }
 
 
-def _v1_cases() -> list[tuple[str, dict[str, Any], pd.DataFrame | None]]:
+def _v1_cases(
+    era5_path: Path | None = None,
+) -> list[tuple[str, dict[str, Any], pd.DataFrame | None]]:
     default = ROOT / "configs/default_parameters.yaml"
     basic = load_configuration(default, ROOT / "configs/test_case.yaml")
     advanced = load_configuration(default, ROOT / "configs/advanced_test_case.yaml")
     mapping = load_yaml(ROOT / "configs/era5_mapping.yaml")
-    era5_path = ROOT / "data/era5/era5_surface_2025-06-01_2025-06-02.csv"
+    if era5_path is None:
+        era5_path = resolve_dataset_file(ROOT, "ERA5_ACCEPTANCE")
     raw = read_era5(era5_path, mapping)
     forcing = prepare_hourly_forcing(
         raw,
@@ -126,13 +134,16 @@ def _v1_cases() -> list[tuple[str, dict[str, Any], pd.DataFrame | None]]:
     ]
 
 
-def verify_compatibility() -> dict[str, Any]:
+def verify_compatibility(era5_path: Path | None = None) -> dict[str, Any]:
     records: list[dict[str, Any]] = []
-    for name, config, forcing in _v1_cases():
+    for name, config, forcing in _v1_cases(era5_path):
         records.append(_assert_bitwise_case(name, config, forcing))
 
     default = ROOT / "configs/default_parameters.yaml"
-    baseline_era5 = ROOT / "data/era5/era5_surface_2025-06-01_2025-06-02.csv"
+    if era5_path is None:
+        baseline_era5 = resolve_dataset_file(ROOT, "ERA5_ACCEPTANCE")
+    else:
+        baseline_era5 = era5_path
     for filename in V2_CASE_FILES:
         config = load_configuration(default, ROOT / "configs/v2" / filename)
         forcing = (
@@ -197,8 +208,16 @@ def verify_compatibility() -> dict[str, Any]:
 
 
 def main() -> int:
+    input_check = check_dataset(ROOT, "ERA5_ACCEPTANCE")
+    if input_check.status is not InputStatus.AVAILABLE:
+        print("STATUS = BLOCKED_MISSING_REQUIRED_EXTERNAL_INPUT")
+        print("DATASET = ERA5_ACCEPTANCE")
+        print(f"MISSING_FILES = {list(input_check.missing_files)!r}")
+        return 2
     try:
-        result = verify_compatibility()
+        result = verify_compatibility(
+            resolve_dataset_file(ROOT, "ERA5_ACCEPTANCE")
+        )
     except (FileNotFoundError, ValueError, yaml.YAMLError) as exc:
         print(f"V2_TO_V3_COMPATIBILITY_STATUS = FAIL; reason={exc}", file=sys.stderr)
         return 1
