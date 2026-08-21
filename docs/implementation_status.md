@@ -2,6 +2,34 @@
 
 Updated: 2026-08-21
 
+## V3-P5.1 Parameter Migration Layer
+
+The P5.1 migration layer extends the existing P0 parameter interface with a
+versioned migration document, source metadata registry, ordered lifecycle,
+explicit migration records, semantic fail-closed validation, deterministic
+audit reporting, and package hashing over status/provenance/registry data. The
+layer is not connected to V1/V2 physics or configuration and imports no UFOTRI
+numerical values.
+
+```text
+V3-P5.1_STATUS = FRAMEWORK_COMPLETE
+V3-P5.1_PARAMETER_SCHEMA = PASS
+V3-P5.1_SOURCE_REGISTRY = PASS
+V3-P5.1_LIFECYCLE = PASS
+V3-P5.1_MIGRATION_AUDIT = PASS
+V3-P5.1_HASH_REPRODUCIBILITY = PASS
+V3-P5.1_TARGETED_UNIT_TESTS = PASS
+V3-P5.1_UFOTRI_PARAMETER_ACTIVATION = NOT_CLAIMED
+V3-P5.1_PHYSICS_CHANGE_COUNT = 0
+V3-P5.1_CONFIG_SEMANTIC_CHANGE_COUNT = 0
+PHYSICS_CHANGE_COUNT = 0
+CONFIG_SEMANTIC_CHANGE_COUNT = 0
+```
+
+The implementation is in `src/cteas_ufotri/parameters/`; the executable
+contract is covered by `tests/unit/test_parameter_migration.py`. P5.2 is the
+separately controlled Leaf Exchange physics migration stage.
+
 ## V3-P1 Leaf Exchange Module
 
 The P1 framework is implemented as an isolated module under

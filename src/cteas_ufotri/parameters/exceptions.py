@@ -29,3 +29,11 @@ class ParameterUnavailableError(ParameterDatabaseError):
 
 class ParameterUseNotAllowedError(ParameterDatabaseError):
     """A parameter cannot be used in the requested production context."""
+
+
+class ParameterValidationError(ParameterDatabaseError):
+    """A P5.1 parameter fails semantic validation."""
+
+
+class ParameterMigrationError(ParameterDatabaseError):
+    """A parameter lifecycle transition or audit record is invalid."""

@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/parameter_migration.schema.json",
+  "title": "CTEAS UFOTRI V3-P5.1 parameter migration document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "parameters"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "parameters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/parameter"}
+    },
+    "migration_records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/migration_record"}
+    }
+  },
+  "$defs": {
+    "parameter_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+$"
+    },
+    "valid_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lower", "upper", "lower_inclusive", "upper_inclusive"],
+      "properties": {
+        "lower": {"type": "number"},
+        "upper": {"type": "number"},
+        "lower_inclusive": {"type": "boolean"},
+        "upper_inclusive": {"type": "boolean"}
+      }
+    },
+    "uncertainty": {
+      "anyOf": [
+        {"type": "number"},
+        {
+          "type": "object",
+          "additionalProperties": true
+        },
+        {"type": "null"}
+      ]
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parameter_id",
+        "value",
+        "unit",
+        "description",
+        "module",
+        "status",
+        "source",
+        "source_type",
+        "reference",
+        "uncertainty",
+        "valid_range",
+        "notes"
+      ],
+      "properties": {
+        "parameter_id": {"$ref": "#/$defs/parameter_id"},
+        "value": {"type": ["number", "null"]},
+        "unit": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "module": {
+          "enum": ["leaf_exchange", "soil", "food_chain", "dose"]
+        },
+        "status": {
+          "enum": ["PLACEHOLDER", "CANDIDATE", "REVIEWED", "VALIDATED", "ACTIVE"]
+        },
+        "source": {"type": "string", "minLength": 1},
+        "source_type": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "uncertainty": {"$ref": "#/$defs/uncertainty"},
+        "valid_range": {
+          "anyOf": [
+            {"$ref": "#/$defs/valid_range"},
+            {"type": "null"}
+          ]
+        },
+        "notes": {"type": "string"}
+      }
+    },
+    "migration_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parameter_id",
+        "old_status",
+        "new_status",
+        "changed_by",
+        "timestamp",
+        "reason"
+      ],
+      "properties": {
+        "parameter_id": {"$ref": "#/$defs/parameter_id"},
+        "old_status": {
+          "enum": ["PLACEHOLDER", "CANDIDATE", "REVIEWED", "VALIDATED", "ACTIVE"]
+        },
+        "new_status": {
+          "enum": ["PLACEHOLDER", "CANDIDATE", "REVIEWED", "VALIDATED", "ACTIVE"]
+        },
+        "changed_by": {"type": "string", "minLength": 1},
+        "timestamp": {"type": "string", "format": "date-time"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

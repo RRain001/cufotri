@@ -36,9 +36,13 @@ class ParameterProvenance:
     confidence: str
     applicability: Mapping[str, Any]
     production_allowed: bool
+    status: str | None = None
+    source_type: str | None = None
+    module: str | None = None
+    uncertainty: Any = None
 
     def to_mapping(self) -> dict[str, Any]:
-        return {
+        result = {
             "source": self.source,
             "source_status": self.source_status,
             "reference": self.reference,
@@ -46,3 +50,13 @@ class ParameterProvenance:
             "applicability": dict(self.applicability),
             "production_allowed": self.production_allowed,
         }
+        if self.status is not None:
+            result.update(
+                {
+                    "status": self.status,
+                    "source_type": self.source_type,
+                    "module": self.module,
+                    "uncertainty": self.uncertainty,
+                }
+            )
+        return result

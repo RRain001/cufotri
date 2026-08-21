@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/parameter_sources_migration.schema.json",
+  "title": "CTEAS UFOTRI V3-P5.1 parameter source registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "citation",
+          "organization",
+          "year",
+          "document",
+          "location",
+          "accessibility"
+        ],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "citation": {"type": "string", "minLength": 1},
+          "organization": {"type": "string", "minLength": 1},
+          "year": {"type": ["integer", "null"]},
+          "document": {"type": "string", "minLength": 1},
+          "location": {"type": "string", "minLength": 1},
+          "accessibility": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "minLength": 1},
+          "production_allowed": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}
