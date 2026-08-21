@@ -2,6 +2,25 @@
 
 Updated: 2026-08-03
 
+## V3-P6.2A Leaf-exchange physics specification freeze
+
+The P6.2A specification branch is based on `origin/main@6671f579`. The
+UFOTRI manual source audit, future PlantState/AtmosphericHTOForcing boundary,
+symbolic leaf-exchange equations, parameter-acquisition requirements, and
+future P6.2B regression contract are documentation-only. Existing V1/V2 plant
+paths and the default configuration are unchanged. P6.1 remains a separate,
+pushed, unmerged branch and no P6.1 parameter is imported here.
+
+```text
+P6_2A_STATUS = IN_PROGRESS_SPECIFICATION_ONLY
+LEAF_EXCHANGE_IMPLEMENTATION = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+DEFAULT_MODEL_BEHAVIOR_CHANGED = FALSE
+P6_2A_TARGETED_TESTS = PENDING
+NEXT_PHASE = P6_2B
+```
+
 ## D3 UFOTRI manual data mapping and laboratory handoff
 
 The working branch `codex/v3-d3-ufotri-manual-data-mapping` was created from

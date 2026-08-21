@@ -1,0 +1,157 @@
+schema_version: "1.0"
+stage: V3-P6.2A
+status: SPECIFICATION_ONLY
+
+database:
+  name: UFOTRI
+  lifecycle: PLACEHOLDER
+  imported: false
+  active: false
+  validated: false
+  source_status: EXTERNAL_EVIDENCE_REQUIRED
+  note: >-
+    This file declares future acquisition requirements only. It is not a
+    parameter package and contains no usable numerical value.
+
+parameter_contract:
+  required_dimensions:
+    - crop
+    - growth_stage
+    - temperature
+    - humidity
+  required_provenance:
+    - source_database
+    - source_document
+    - source_section_or_equation
+    - source_artifact_sha256
+    - source_access_date
+    - applicability_domain
+    - uncertainty_model
+    - validation_record
+  lifecycle_maximum_for_p6_2a: REVIEWED
+  active_transition_allowed: false
+
+parameters:
+  leaf_exchange_resistance:
+    type: table
+    dimensions: [crop, growth_stage, temperature, humidity]
+    unit: s m^-1
+    value: null
+    status: REQUIRED
+    required: true
+    imported: false
+    validated: false
+    lifecycle: PLACEHOLDER
+    uncertainty: REQUIRED
+    source:
+      database: UFOTRI
+      status: NOT_VALIDATED
+      document: ufotri_manual.md
+      section_or_equation: "§2.2.2, Eqs. 8–14, 26–27"
+      artifact_sha256: null
+    notes: Aggregate future resistance; must not double-count its component paths.
+
+  stomatal_resistance:
+    type: table
+    dimensions: [crop, growth_stage, temperature, humidity]
+    unit: s m^-1
+    value: null
+    status: REQUIRED
+    required: true
+    imported: false
+    validated: false
+    lifecycle: PLACEHOLDER
+    uncertainty: REQUIRED
+    source:
+      database: UFOTRI
+      status: NOT_VALIDATED
+      document: ufotri_manual.md
+      section_or_equation: "§2.2.2, Eqs. 9, 11, 14"
+      artifact_sha256: null
+    notes: Day/night and soil-water response must be explicit; no manual value is imported.
+
+  boundary_layer_resistance:
+    type: table
+    dimensions: [crop, growth_stage, temperature, humidity]
+    unit: s m^-1
+    value: null
+    status: REQUIRED
+    required: true
+    imported: false
+    validated: false
+    lifecycle: PLACEHOLDER
+    uncertainty: REQUIRED
+    source:
+      database: UFOTRI
+      status: NOT_VALIDATED
+      document: ufotri_manual.md
+      section_or_equation: "§2.2.2, Eqs. 19–21"
+      artifact_sha256: null
+    notes: Wind, roughness, canopy geometry, and out-of-domain policy are required.
+
+  exchange_coefficient:
+    type: table
+    dimensions: [crop, growth_stage, temperature, humidity]
+    unit: m s^-1
+    value: null
+    status: REQUIRED
+    required: true
+    imported: false
+    validated: false
+    lifecycle: PLACEHOLDER
+    uncertainty: REQUIRED
+    source:
+      database: UFOTRI
+      status: NOT_VALIDATED
+      document: ufotri_manual.md
+      section_or_equation: "§2.2.2, Eqs. 8 and 26"
+      artifact_sha256: null
+    notes: Must be derived from a declared resistance chain or independently supplied, never both.
+
+  obt_formation_rate:
+    type: table
+    dimensions: [crop, growth_stage, temperature, humidity, period]
+    unit: s^-1
+    value: null
+    status: REQUIRED
+    required: true
+    imported: false
+    validated: false
+    lifecycle: PLACEHOLDER
+    uncertainty: REQUIRED
+    source:
+      database: UFOTRI
+      status: NOT_VALIDATED
+      document: ufotri_manual.md
+      section_or_equation: "§2.2.6, p. 29"
+      artifact_sha256: null
+    notes: Day/night formation split is required; the manual daily-average assumption is not imported.
+
+  obt_loss_rate:
+    type: table
+    dimensions: [crop, growth_stage, temperature, humidity, period]
+    unit: s^-1
+    value: null
+    status: REQUIRED
+    required: true
+    imported: false
+    validated: false
+    lifecycle: PLACEHOLDER
+    uncertainty: REQUIRED
+    source:
+      database: UFOTRI
+      status: NOT_VALIDATED
+      document: ufotri_manual.md
+      section_or_equation: "§2.2.6, p. 29"
+      artifact_sha256: null
+    notes: Manual loss-rate range and representative value require independent applicability review.
+
+validation_gate:
+  numerical_values_present: false
+  imported_parameters_present: false
+  active_parameters_present: false
+  manual_values_are_validated: false
+  interpolation_defined: false
+  extrapolation_defined: false
+  missing_cell_policy_defined: false
+  out_of_domain_policy_defined: false
