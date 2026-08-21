@@ -2,6 +2,41 @@
 
 Updated: 2026-08-21
 
+## V3-P6.2C OBT solver
+
+The P6.2C branch adds an isolated inventory-based TFWT-to-OBT solver at
+`plant/obt_v3/`. It consumes only the public `TFWTState.inventory()` and
+`TFWTState.activity_concentration()` methods. `OBTState` keeps OBT inventory as
+the authoritative quantity and derives a checked fresh-mass concentration;
+TFWT/OBT ratios are not stored. The biological forcing boundary currently uses
+only `is_daylight`; temperature, photosynthetic activity, and growth stage are
+reserved extension fields.
+
+The solver accepts explicit provisional test rates and does not read the
+UFOTRI parameter database, configs, or the trusted external-evidence registry.
+It is not connected to the existing V1/V2 runtime, foodchain, dose, soil, or
+the P6.2B plant facade. The P6.2B public pathway remains a TFWT-only pathway.
+
+```text
+P6_2C_STATUS = PASS_OBT_SOLVER_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = TRUE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V1_V2_DEFAULT_PATH_CHANGED = FALSE
+P6_2C_TARGETED_TESTS = PASS_34_OF_34
+P6_2C_BOUNDARY_REVIEW = PASS_4_OF_4
+FULL_REPOSITORY_PYTEST = NOT_GREEN_17_ENVIRONMENT_OR_STAGE_INCOMPATIBLE_FAILURES
+NEXT_PHASE = P6.3_SOIL_HTO
+```
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_2c_obt_solver_implementation_report.md`,
+`docs/v3/reports/v3_p6_2c_obt_solver_test_report.md`, and
+`docs/v3/reports/v3_p6_2c_independent_review.md`.
+
 ## V3-P6.2B integration and P6.2B-2.5 public interface freeze
 
 The P6.2B integration branch preserves the P6.2B-1 resistance subsystem and
