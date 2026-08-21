@@ -2,6 +2,53 @@
 
 Updated: 2026-08-21
 
+## V3-P6.4 Root uptake and Soil-Plant coupling
+
+The P6.4 branch adds the first isolated Soil -> Root -> TFWT transfer
+interface. The new plant/root_v3 package reads SoilState only through its
+public inventory() and concentration() methods. RootUptakeSolver evaluates the
+minimal provisional interface equation and emits a typed RootFlux record; it
+does not mutate SoilState or create any plant compartment.
+
+The effective coefficient is explicit and provisional:
+
+    J_root = k_root * C_soil
+
+where C_soil is in Bq m^-3 water, k_root is in m s^-1, and J_root is in
+Bq m^-2 s^-1. The interval transfer is recorded in Bq m^-2. No value is read
+from the UFOTRI parameter database, configs, parameters, or trusted registry.
+The TFWT storage solver accepts the optional RootFlux and records its integrated
+input in the existing storage balance. The previous leaf-only call path
+remains valid.
+
+The root source-inventory ledger verifies:
+
+    initial soil inventory
+      = root transfer + remaining soil inventory + other loss + residual
+
+The ledger is a transfer boundary audit; P6.4 does not implement soil
+hydrology, root geometry, root competition, or a production soil-state mutation
+from uptake.
+
+    P6_4_STATUS = PASS_ROOT_UPTAKE_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    ROOT_TO_TFWT_INTERFACE = TRUE
+    ROOT_UPTAKE_COEFFICIENT = PROVISIONAL_EXPLICIT
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.5_FOODCHAIN
+
+The implementation, test, and independent boundary-review records are in
+docs/v3/reports/v3_p6_4_root_uptake_implementation_report.md,
+docs/v3/reports/v3_p6_4_root_uptake_test_report.md, and
+docs/v3/reports/v3_p6_4_independent_review.md.
+
 ## V3-P6.3 Soil HTO transport
 
 The P6.3 branch adds an isolated inventory-based soil HTO pathway at

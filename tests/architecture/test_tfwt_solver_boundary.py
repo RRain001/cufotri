@@ -77,6 +77,8 @@ def test_solver_consumes_flux_without_recomputing_resistance_or_activation() -> 
         for path in PACKAGE.glob("*.py")
     )
     assert "LeafExchangeFlux" in solver_text
+    assert "RootFlux" in solver_text
+    assert "root_uptake_flux" in solver_text
     assert "production=False" not in (
         PACKAGE / "tfwt_solver.py"
     ).read_text(encoding="utf-8")
@@ -92,7 +94,7 @@ def test_solver_consumes_flux_without_recomputing_resistance_or_activation() -> 
         if re.match(r"^\s*(from|import)\s+", line)
     ]
     assert not any(
-        re.search(r"obt|root|soil|dose|foodchain|cteas[-_]atmos", line, re.IGNORECASE)
+        re.search(r"obt|soil|dose|foodchain|cteas[-_]atmos", line, re.IGNORECASE)
         for line in imports
     )
 

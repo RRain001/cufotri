@@ -128,3 +128,18 @@ def validate_leaf_exchange_flux(flux: Any) -> float:
         flux.air_to_leaf_flux_bq_m2_s,
         field="leaf_exchange_flux.air_to_leaf_flux_bq_m2_s",
     )
+
+
+def validate_root_uptake_flux(root_flux: Any) -> float:
+    """Consume only the public non-negative RootFlux value."""
+
+    if not hasattr(root_flux, "uptake_flux_bq_m2_s"):
+        raise TFWTFluxError("root_uptake_flux must be a RootFlux")
+    require_unit(root_flux.flux_unit, FLUX_UNIT, field="root_uptake_flux")
+    value = require_finite(
+        root_flux.uptake_flux_bq_m2_s,
+        field="root_uptake_flux.uptake_flux_bq_m2_s",
+    )
+    if value < 0.0:
+        raise TFWTFluxError("root uptake flux must be non-negative")
+    return value

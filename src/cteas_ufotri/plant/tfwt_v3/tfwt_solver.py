@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 
 from ..leaf_exchange_resistance import LeafExchangeFlux
+from ..root_v3 import RootFlux
 from .tfwt_state import TFWTState
 from .validation import (
     INTEGRATED_FLUX_UNIT,
@@ -15,6 +16,7 @@ from .validation import (
     validate_interval,
     validate_leaf_exchange_flux,
     validate_nonnegative_flux,
+    validate_root_uptake_flux,
     validate_state,
 )
 
@@ -29,6 +31,7 @@ class TFWTStorageBalance:
     storage_change_bq_m2: float
     residual_bq_m2: float
     unit: str = INTEGRATED_FLUX_UNIT
+    root_uptake_input_bq_m2: float = 0.0
 
     def __post_init__(self) -> None:
         require_unit(self.unit, INTEGRATED_FLUX_UNIT, field="storage_balance")
@@ -38,8 +41,11 @@ class TFWTStorageBalance:
             "transformation_bq_m2",
             "storage_change_bq_m2",
             "residual_bq_m2",
+            "root_uptake_input_bq_m2",
         ):
             require_finite(getattr(self, field), field=field)
+        if self.root_uptake_input_bq_m2 < 0.0:
+            raise TFWTFluxError("root_uptake_input_bq_m2 must be non-negative")
 
 
 @dataclass(frozen=True)
@@ -65,12 +71,18 @@ class TFWTStorageSolver:
         leaf_exchange_flux: LeafExchangeFlux,
         interval_seconds: float,
         *,
+        root_uptake_flux: RootFlux | None = None,
         water_loss_flux_bq_m2_s: float = 0.0,
         transformation_flux_bq_m2_s: float = 0.0,
     ) -> TFWTStepResult:
         validate_state(state)
         interval = validate_interval(interval_seconds)
         leaf_flux = validate_leaf_exchange_flux(leaf_exchange_flux)
+        root_flux = (
+            0.0
+            if root_uptake_flux is None
+            else validate_root_uptake_flux(root_uptake_flux)
+        )
         water_loss = validate_nonnegative_flux(
             water_loss_flux_bq_m2_s,
             field="water_loss_flux_bq_m2_s",
@@ -80,10 +92,14 @@ class TFWTStorageSolver:
             field="transformation_flux_bq_m2_s",
         )
         leaf_transfer = leaf_flux * interval
+        root_transfer = root_flux * interval
         water_loss_inventory = water_loss * interval
         transformation_inventory = transformation * interval
         storage_change = (
-            leaf_transfer - water_loss_inventory - transformation_inventory
+            leaf_transfer
+            + root_transfer
+            - water_loss_inventory
+            - transformation_inventory
         )
         new_inventory = state.tfwt_inventory_bq_m2 + storage_change
         if new_inventory < 0.0:
@@ -102,9 +118,11 @@ class TFWTStorageSolver:
             residual_bq_m2=(
                 storage_change
                 - leaf_transfer
+                - root_transfer
                 + water_loss_inventory
                 + transformation_inventory
             ),
+            root_uptake_input_bq_m2=root_transfer,
         )
         return TFWTStepResult(state=next_state, balance=balance)
 
@@ -114,6 +132,7 @@ class TFWTStorageSolver:
         leaf_exchange_flux: LeafExchangeFlux,
         interval_seconds: float,
         *,
+        root_uptake_flux: RootFlux | None = None,
         water_loss_flux_bq_m2_s: float = 0.0,
         transformation_flux_bq_m2_s: float = 0.0,
     ) -> TFWTState:
@@ -123,6 +142,7 @@ class TFWTStorageSolver:
             state,
             leaf_exchange_flux,
             interval_seconds,
+            root_uptake_flux=root_uptake_flux,
             water_loss_flux_bq_m2_s=water_loss_flux_bq_m2_s,
             transformation_flux_bq_m2_s=transformation_flux_bq_m2_s,
         ).state

@@ -18,6 +18,7 @@ from .validation import (
 
 if TYPE_CHECKING:
     from ..leaf_exchange_resistance import LeafExchangeFlux
+    from ..root_v3 import RootFlux
 
 
 @dataclass(frozen=True)
@@ -113,6 +114,7 @@ class TFWTState:
         dt: float,
         forcing: "LeafExchangeFlux",
         *,
+        root_uptake_flux: "RootFlux | None" = None,
         water_loss_flux_bq_m2_s: float = 0.0,
         transformation_flux_bq_m2_s: float = 0.0,
     ) -> "TFWTState":
@@ -129,6 +131,7 @@ class TFWTState:
             self,
             forcing,
             dt,
+            root_uptake_flux=root_uptake_flux,
             water_loss_flux_bq_m2_s=water_loss_flux_bq_m2_s,
             transformation_flux_bq_m2_s=transformation_flux_bq_m2_s,
         )
