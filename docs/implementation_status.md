@@ -344,6 +344,31 @@ V3_PHYSICS_IMPLEMENTATION_STATUS = NOT_STARTED
 V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 ```
 
+## V3-P6.1 UFOTRI parameter database integration preparation
+
+P6.1 adds the typed table contract to the existing fail-closed
+`ParameterDatabase`. A table may declare crop, growth-stage, temperature, and
+humidity axes, explicit axis units, lookup cells, multilinear interpolation,
+and reject-on-extrapolation behavior. Scalar documents and the existing
+PLACEHOLDER/CANDIDATE/REVIEWED/VALIDATED/ACTIVE migration contract remain
+backward-compatible. Table lookup is read-only; `production=True` requires a
+validated source, validated parameter metadata, applicable scope, and an
+ACTIVE migration record.
+
+The UFOTRI source audit is in
+`docs/v3/ufotri_database/ufotri_database_source_audit.md`. It records manual
+values and relations as explicit, derived, assumed, or missing source facts;
+no numerical UFOTRI table has been added. The test table is synthetic and
+marked `TEST_ONLY`.
+
+```text
+P6_1_STATUS = PASS_DATABASE_READY
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_IMPLEMENTATION = FALSE
+NEXT_PHASE = P6_2_LEAF_EXCHANGE_PHYSICS
+```
+
 The repository baseline was run with `PYTHONPATH=.
 .venv/bin/python -m pytest -q`; its 12 failures are the pre-existing
 external-input portability tests observing Git-ignored local SB1/ERA5/private

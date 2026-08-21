@@ -140,6 +140,10 @@ class ParameterDatabase:
         """
 
         entry = self.get_entry(name)
+        if entry.value_type != "scalar":
+            raise ParameterUnavailableError(
+                f"Parameter {name!r} is a table; use lookup() with explicit coordinates"
+            )
         if entry.value is None:
             raise ParameterUnavailableError(
                 f"Parameter {name!r} has no value: {entry.confidence}"
@@ -158,6 +162,34 @@ class ParameterDatabase:
                 f"Parameter {name!r} is not approved for production use"
             )
         return entry.value
+
+    def lookup(
+        self,
+        name: str,
+        coordinates: Mapping[str, Any],
+        *,
+        production: bool = False,
+    ) -> float:
+        """Resolve a table parameter, failing closed for unapproved production use."""
+
+        entry = self.get_entry(name)
+        if entry.value_type != "table" or entry.table is None:
+            raise ParameterUnavailableError(
+                f"Parameter {name!r} is scalar; use get() for scalar parameters"
+            )
+        source = self._source_registry.get(entry.source)
+        production_blocked = (
+            not source.production_allowed
+            or source.status != "validated"
+            or entry.confidence != "validated"
+            or entry.applicability.status != "applicable"
+            or entry.status != "ACTIVE"
+        )
+        if production and production_blocked:
+            raise ParameterUseNotAllowedError(
+                f"Table parameter {name!r} is not approved for production use"
+            )
+        return entry.table.lookup(coordinates)
 
     def list_parameters(self) -> list[str]:
         """Return parameter names in deterministic order."""

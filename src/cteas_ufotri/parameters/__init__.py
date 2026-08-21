@@ -25,6 +25,8 @@ from .schema import (
     ParameterApplicability,
     ParameterBounds,
     ParameterEntry,
+    ParameterTable,
+    ParameterTableCell,
     ParameterStatus,
     validate_parameter_document,
 )
@@ -38,6 +40,8 @@ __all__ = [
     "ParameterDatabase",
     "ParameterDatabaseError",
     "ParameterEntry",
+    "ParameterTable",
+    "ParameterTableCell",
     "ParameterNotFoundError",
     "ParameterProvenance",
     "ParameterSchemaError",

@@ -43,6 +43,56 @@
         {"type": "null"}
       ]
     },
+    "table_axis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "values"],
+      "properties": {
+        "unit": {"type": "string", "minLength": 1},
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": ["number", "string"]}
+        }
+      }
+    },
+    "table_cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coordinates", "value"],
+      "properties": {
+        "coordinates": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"type": ["number", "string"]}
+        },
+        "value": {"type": "number"}
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimensions", "axes", "interpolation", "extrapolation", "lookup_table"],
+      "properties": {
+        "dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "axes": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/table_axis"}
+        },
+        "interpolation": {"enum": ["exact", "linear"]},
+        "extrapolation": {"const": "reject"},
+        "lookup_table": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/table_cell"}
+        }
+      }
+    },
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -81,7 +131,13 @@
             {"type": "null"}
           ]
         },
-        "notes": {"type": "string"}
+        "notes": {"type": "string"},
+        "type": {"enum": ["scalar", "table"]},
+        "dimensions": {"type": "array"},
+        "axes": {"type": "object"},
+        "interpolation": {"enum": ["exact", "linear"]},
+        "extrapolation": {"const": "reject"},
+        "lookup_table": {"type": "array"}
       }
     },
     "migration_record": {

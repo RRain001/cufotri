@@ -88,9 +88,18 @@ def validate_parameter(
             raise ParameterValidationError(f"{parameter_id}.uncertainty must be non-negative")
 
     if status == ParameterStatus.PLACEHOLDER.value:
-        if parameter.value is not None or parameter.valid_range is not None:
+        if (
+            parameter.value is not None
+            or parameter.valid_range is not None
+            or parameter.table is not None
+        ):
             raise ParameterValidationError(
-                f"Placeholder parameter {parameter_id!r} must not carry value or valid_range"
+                f"Placeholder parameter {parameter_id!r} must not carry value, valid_range, or table"
+            )
+    elif parameter.value_type == "table":
+        if parameter.table is None or parameter.value is not None:
+            raise ParameterValidationError(
+                f"Table parameter {parameter_id!r} requires a table and no scalar value"
             )
     else:
         if parameter.value is None or parameter.valid_range is None:

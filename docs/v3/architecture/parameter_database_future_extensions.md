@@ -1,45 +1,51 @@
-# Parameter Database Future Extensions
+# Parameter Database Extensions: P5.2 audit and P6.1 preparation
 
-This document records the P5.2 capability audit of the P5.1 migration layer.
-It is an architecture decision boundary, not a schema change. The existing
-schema and validator are unchanged.
+P5.2 identified the gap between scalar parameter metadata and the typed values
+needed by UFOTRI. P6.1 now prepares that boundary without importing UFOTRI
+values or connecting the database to physics.
 
 ## Capability matrix
 
-| Parameter form | Current P5.1 support | Readiness disposition |
-| --- | --- | --- |
-| Scalar | `value` with unit and lifecycle metadata | Supported |
-| Range or bounds | `valid_range`/bounds with semantic validation | Supported |
-| Unit | Required or checked against a module expectation | Supported |
-| Source | Source type, reference, and registry metadata | Supported |
-| Provenance | Migration audit, source metadata, and package hash | Supported |
-| Table | No typed array/table value contract | Not supported |
-| Time dependent | No time-indexed value or interpolation contract | Not supported |
-| Crop dependent | No crop-keyed parameter dimension | Not supported |
-| Growth-stage dependent | No growth-stage dimension or transition contract | Not supported |
-| Function parameter | No serializable function/formula contract | Not supported |
+| Parameter form | P6.1 disposition |
+| --- | --- |
+| Scalar | Existing P0/P5.1 support retained |
+| Range or bounds | Existing `valid_range`/bounds support retained |
+| Unit, source, provenance, uncertainty | Existing required metadata retained |
+| Table | Typed `type: table` metadata, axes, and lookup cells supported |
+| Crop dependent | Categorical `crop` dimension supported |
+| Growth-stage dependent | Categorical `growth_stage` dimension supported |
+| Temperature dependent | Numeric axis with explicit unit, e.g. `K`, supported |
+| Humidity dependent | Numeric axis with explicit unit, e.g. `1` for RH, supported |
+| Interpolation | `exact` or multilinear `linear` supported |
+| Extrapolation | Reject only; no hidden clamp or nearest repair |
+| Function parameter | No serializable function/formula contract |
 
 ## UFOTRI form audit
 
-Potential future UFOTRI inputs include daytime/nighttime stomatal resistance,
+Potential UFOTRI inputs include daytime/nighttime stomatal resistance,
 boundary-layer or exchange coefficients, OBT formation rates, and soil
 transfer coefficients. Their likely shapes are not all scalar:
 
 ```yaml
 type: table
-dimensions: [crop, growth_stage, temperature]
+dimensions: [crop, growth_stage, temperature, humidity]
 ```
 
-This is an example of a future value shape, not a parameter value or a change
-to the current schema. The current database can carry a scalar declaration
-and provenance seam, but cannot safely represent the table dimensions,
-interpolation policy, missing-cell policy, or function dependencies needed for
-such a parameter.
+The P6.1 contract adds explicit `dimensions`, per-axis `unit` and `values`,
+`lookup_table` cells, and interpolation/extrapolation metadata. Categorical
+axes require exact matches. Numeric axes use multilinear interpolation only
+when the rectangular grid is complete. Out-of-domain coordinates fail closed.
 
-## Recommendation
+## Lifecycle and boundary
 
-Before importing any UFOTRI parameter set, introduce a versioned typed-value
-extension or a separate validated table/function package. That extension must
-define dimensions, units per axis, interpolation/extrapolation, applicability,
-provenance, and fail-closed behavior. P5.2 deliberately creates no such
-schema, no table, and no numerical UFOTRI entry.
+```text
+PLACEHOLDER -> CANDIDATE -> REVIEWED -> VALIDATED -> ACTIVE
+```
+
+P6.1 permits preparation and review only. Runtime lookup with `production=True`
+requires the existing validated source and parameter checks plus an `ACTIVE`
+migration record. The UFOTRI source identifier remains reserved and
+`production_allowed: false`; no UFOTRI numerical table is present.
+
+The source classification and missing-input inventory are recorded in
+`docs/v3/ufotri_database/ufotri_database_source_audit.md`.

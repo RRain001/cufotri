@@ -225,5 +225,7 @@ def transition_parameter(
         uncertainty=parameter.uncertainty,
         valid_range=parameter.valid_range,
         notes=parameter.notes,
+        value_type=parameter.value_type,
+        table=parameter.table,
     )
     return updated, record
