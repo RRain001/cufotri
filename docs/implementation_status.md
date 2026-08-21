@@ -2,6 +2,32 @@
 
 Updated: 2026-08-21
 
+## V3-P5.4 UFOTRI Physics Migration Readiness Independent Review
+
+P5.4 independently reviews the P5.1-P5.3 architecture closure. The review
+does not implement UFOTRI equations, import UFOTRI parameters, modify schema
+or production configuration, or change V2 behavior. It records the adapter
+boundary for raw atmospheric products, confirms leaf/root ownership, stress
+tests ParameterDatabase capability, and checks the P6 physics/validation
+boundary.
+
+```text
+V3_P5_4_STATUS = PASS_INDEPENDENT_ARCHITECTURE_REVIEW
+UFOTRI_PHYSICS_IMPLEMENTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+V3_FORMAL_PHYSICS = NOT_STARTED
+SCHEMA_CHANGE = 0
+SRC_CHANGE = 0
+CONFIG_CHANGE = 0
+TRUSTED_REGISTRY_CHANGE = 0
+V2_BEHAVIOR_CHANGE = 0
+```
+
+The independent findings and P6 entry conditions are in
+`docs/v3/reports/v3_p5_4_independent_architecture_review.md`; detailed review
+notes are under `docs/v3/reviews/`. The architecture test is
+`tests/architecture/test_v3_p5_4_independent_review.py`.
+
 ## V3-P5.3 UFOTRI Interface Freeze
 
 P5.3 freezes the atmospheric forcing payload, independent leaf/root plant
