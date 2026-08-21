@@ -2,6 +2,43 @@
 
 Updated: 2026-08-21
 
+## V3-P1 Leaf Exchange Module
+
+The P1 framework is implemented as an isolated module under
+`src/cteas_ufotri/leaf_exchange/`. It provides explicit TFWT/OBT state,
+meteorological forcing, a ParameterDatabase-only parameter seam, a
+replaceable physics protocol, deterministic test-only kernels, provenance,
+and a fail-closed activity ledger. It does not connect to the V2 plant path,
+modify V3-P0 placeholder data, import UFOTRI numerical values, or implement
+soil, food-chain, dose, calibration, or field validation.
+
+```text
+V3-P1_STATUS = FRAMEWORK_COMPLETE
+V3-P1_PARAMETER_DATABASE_STATUS = PASS_SYNTHETIC_TEST_ONLY_FAIL_CLOSED_PLACEHOLDER
+V3-P1_LEAF_EXCHANGE_INTERFACE = PASS
+V3-P1_MASS_BALANCE = PASS
+V3-P1_UFOTRI_NUMERICAL_EQUIVALENCE = NOT_CLAIMED
+V3-P1_PHYSICS_STATUS = PENDING_UFOTRI_PARAMETER_AND_FORMULA_MIGRATION
+V3-P1_PHYSICS_CHANGE_COUNT = 0
+V3-P1_CONFIG_SEMANTIC_CHANGE_COUNT = 0
+V3-P1_TARGETED_UNIT_TESTS = PASS_14_OF_14
+V3-P1_RELEVANT_V1_V2_REGRESSION = PASS
+V3-P1_FULL_REPOSITORY_TESTS = 17_PRE_EXISTING_ENVIRONMENT_OR_BRANCH_BASELINE_FAILURES
+PHYSICS_CHANGE_COUNT = 0
+CONFIG_SEMANTIC_CHANGE_COUNT = 0
+```
+
+The targeted P1 unit test file is
+`tests/unit/test_leaf_exchange.py`. The detailed contract is documented in
+`docs/v3/architecture/leaf_exchange_module.md`. Full regression status is
+partially environment-dependent: `tests/unit` passed, and the directly
+relevant V1/V2 leaf and regression tests passed. The full `tests/` run returned
+17 failures in existing external-input portability/private-payload assertions
+and branch-baseline checks; no P1 assertion failed. The local environment has
+Git-ignored SB1/ERA5/private inputs available, while those tests assert the
+missing-input path, and the current P0 branch is intentionally ahead of
+`main` in protected `src/` paths.
+
 ## V3-P0 Parameter Database Layer
 
 The architecture-only parameter database layer is implemented on branch
