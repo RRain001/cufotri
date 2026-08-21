@@ -1,6 +1,30 @@
 # Implementation status
 
-Updated: 2026-08-03
+Updated: 2026-08-21
+
+## V3-P6.2B-1 Leaf-exchange resistance subsystem
+
+The resistance-only subsystem is implemented on a branch based on the latest
+`origin/main@6671f579`. It is isolated from the existing V1/V2
+`plant/leaf_exchange.py` import path. The subsystem validates the atmospheric
+forcing boundary, computes `r_a + r_b + r_c` and `g_ex`, and emits one signed
+`LeafExchangeFlux` placeholder. The P6.1 ParameterDatabase is consumed only by
+a structural `lookup(..., production=False)` seam because its implementation
+remains on an unmerged branch. No parameter value, default, trusted registry,
+or production path is changed.
+
+```text
+P6_2B_1_STATUS = PASS_RESISTANCE_SUBSYSTEM_IMPLEMENTED
+LEAF_EXCHANGE_RESISTANCE_IMPLEMENTED = TRUE
+LEAF_EXCHANGE_SOLVER = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+TFWT_SOLVER = FALSE
+OBT_SOLVER = FALSE
+V3_PHYSICS_READY = FALSE
+NEXT_PHASE = P6_2B_2
+```
 
 ## D3 UFOTRI manual data mapping and laboratory handoff
 
