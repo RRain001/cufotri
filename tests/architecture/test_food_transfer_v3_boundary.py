@@ -29,10 +29,14 @@ def changed_paths() -> set[str]:
     )
 
 
-def test_source_scope_is_new_food_v3_only() -> None:
+def test_source_scope_is_food_and_later_typed_v3_only() -> None:
     changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
     assert changed_source
-    assert all(path.startswith("src/cteas_ufotri/plant/food_v3/") for path in changed_source)
+    allowed = (
+        "src/cteas_ufotri/plant/food_v3/",
+        "src/cteas_ufotri/exposure/intake_v3/",
+    )
+    assert all(path.startswith(allowed) for path in changed_source)
 
 
 def test_protected_paths_and_dose_boundary_are_clean() -> None:

@@ -2,6 +2,47 @@
 
 Updated: 2026-08-22
 
+## V3-P6.6A Food consumption and intake pathway
+
+The P6.6A branch adds an isolated food-to-human inventory boundary at
+`exposure/intake_v3/`. `FoodIntakeSolver` consumes a typed `FoodInventory`
+through its public `inventory()` and `product()` methods and emits an
+immutable annual `IntakeState`. The state records consumer, age-group,
+product, consumption rate, annual intake inventory, UTC time, and provenance;
+it does not contain any downstream radiological-result or regulatory fields.
+
+The dimensional calculation is explicit:
+
+    C_food [Bq kg^-1]
+      = M_food [Bq] / m_food [kg]
+
+    I_food [Bq year^-1]
+      = C_food [Bq kg^-1] * R_consumption [kg year^-1]
+
+The food mass basis `m_food` is an explicit `ConsumptionParameters` input;
+there is no hidden mass or unit conversion. Consumption parameters remain
+provisional and are not loaded from the UFOTRI database or any regulatory
+database. Adult and child records remain separate immutable states.
+
+    P6_6A_STATUS = PASS_INTAKE_PATHWAY_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.6B_DOSE_ASSESSMENT
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_6a_intake_pathway_implementation_report.md`,
+`docs/v3/reports/v3_p6_6a_intake_pathway_test_report.md`, and
+`docs/v3/reports/v3_p6_6a_independent_review.md`.
+
 ## V3-P6.5 Plant harvest and food transfer
 
 The P6.5 branch adds an isolated plant-to-food inventory boundary at
