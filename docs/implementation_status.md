@@ -2,6 +2,32 @@
 
 Updated: 2026-08-21
 
+## V3-P5.5 UFOTRI Physics Boundary Audit
+
+The P5.5 repository audit distinguishes the clean P5.4 delta from the
+accumulated P1-P5 source tree. No reviewed UFOTRI physics or validated UFOTRI
+database is present, but test-only numerical kernels, numerical unit tests,
+and inherited experimental soil code mean that a strict repository-wide
+"interface freeze only" label requires reclassification.
+
+```text
+V3_P5_5_STATUS = REQUIRES_PHASE_RECLASSIFICATION
+P5_5_RESULT = REQUIRES_PHASE_RECLASSIFICATION
+UFOTRI_PHYSICS_IMPLEMENTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+V3_FORMAL_PHYSICS = NOT_STARTED
+SRC_CHANGE = 0
+CONFIG_CHANGE = 0
+SCHEMA_CHANGE = 0
+TRUSTED_REGISTRY_CHANGE = 0
+NEXT = UPDATE_ROADMAP
+```
+
+The evidence is recorded in
+`docs/v3/reports/v3_p5_5_boundary_audit_report.md` and
+`docs/v3/audit/`; this conclusion is based on source contents and Git diffs,
+not on the prior status text.
+
 ## V3-P5.4 UFOTRI Physics Migration Readiness Independent Review
 
 P5.4 independently reviews the P5.1-P5.3 architecture closure. The review
