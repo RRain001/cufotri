@@ -39,6 +39,44 @@ Git-ignored SB1/ERA5/private inputs available, while those tests assert the
 missing-input path, and the current P0 branch is intentionally ahead of
 `main` in protected `src/` paths.
 
+## V3-P2 Soil Layer Framework
+
+The P2 framework is implemented under `src/cteas_ufotri/soil/` as an isolated
+three-layer state, atmospheric-input seam, root-zone read-only seam,
+ParameterDatabase adapter, replaceable transport physics seam, provenance
+record, and activity ledger. It does not replace the existing V2 soil path,
+enable V3 physics, import UFOTRI soil equations or values, perform root
+uptake, or add food-chain/dose coupling.
+
+```text
+V3-P2_STATUS = FRAMEWORK_COMPLETE
+V3-P2_SOIL_STATE = PASS
+V3-P2_THREE_LAYER_REPRESENTATION = PASS
+V3-P2_ATMOSPHERIC_INPUT_SEAM = PASS
+V3-P2_ROOT_ZONE_SEAM = PASS_NO_UPTAKE
+V3-P2_MASS_BALANCE = PASS
+V3-P2_PARAMETER_INTEGRATION = PASS_SYNTHETIC_TEST_ONLY_FAIL_CLOSED_PLACEHOLDER
+V3-P2_UFOTRI_SOIL_PHYSICS = NOT_IMPLEMENTED
+V3-P2_UFOTRI_NUMERICAL_EQUIVALENCE = NOT_CLAIMED
+V3-P2_PHYSICS_CHANGE_COUNT = 0
+V3-P2_CONFIG_SEMANTIC_CHANGE_COUNT = 0
+V3-P2_TARGETED_UNIT_TESTS = PASS_17_OF_17
+V3-P2_UNIT_SUITE = PASS
+V3-P2_RELEVANT_V1_V2_REGRESSION = PASS
+V3-P2_FULL_REPOSITORY_TESTS = 17_PRE_EXISTING_ENVIRONMENT_OR_BRANCH_BASELINE_FAILURES
+PHYSICS_CHANGE_COUNT = 0
+CONFIG_SEMANTIC_CHANGE_COUNT = 0
+```
+
+The targeted P2 tests are in `tests/unit/test_soil_layer.py`; the detailed
+contract is in `docs/v3/architecture/soil_layer_module.md`. Unit, regression,
+and relevant V1/V2 integration tests passed. The full `tests/` run returned 17
+existing external-input/private-payload and branch-baseline failures; no P2
+assertion failed. The failures are the same environment-dependent class
+recorded for P1: local Git-ignored external inputs are available while
+fail-closed tests assert their absence, and the current branch contains the
+already-delivered P0/P1 source changes relative to `main`.
+
 ## V3-P0 Parameter Database Layer
 
 The architecture-only parameter database layer is implemented on branch
