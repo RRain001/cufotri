@@ -2,6 +2,32 @@
 
 Updated: 2026-08-21
 
+## V3-P5.2 UFOTRI Physics Migration Readiness Audit
+
+P5.2 audits the V3 Leaf Exchange, parameter, atmospheric forcing, and
+soil-plant coupling seams before formal UFOTRI physics migration. It adds only
+architecture documents, a future-extension ADR, a regression contract, and
+architecture tests. It does not import UFOTRI parameters, implement formal
+physics, change V1/V2 behavior, or modify production configuration or the
+trusted evidence registry.
+
+```text
+V3-P5.2_STATUS = PASS_ARCHITECTURE_READY
+UFOTRI_PARAMETERS_IMPORTED = FALSE (V3 migration layer)
+UFOTRI_PHYSICS_IMPLEMENTED = FALSE (V3 formal physics)
+V3_FORMAL_PHYSICS = NOT_STARTED
+MAIN_BEHAVIOR_CHANGED = FALSE
+SRC_DIFF = 0
+CONFIG_DIFF = 0
+TRUSTED_REGISTRY_DIFF = 0
+```
+
+The audit branch is based on the current P5.1 layer because `main` predates
+the already-delivered V3 framework. The branch/base distinction and the legacy
+V2 UFOTRI boundary are recorded in
+`docs/v3/reports/v3_p5_2_physics_readiness_report.md`. Architecture checks are
+in `tests/architecture/test_ufotri_physics_readiness.py`.
+
 ## V3-P5.1 Parameter Migration Layer
 
 The P5.1 migration layer extends the existing P0 parameter interface with a
