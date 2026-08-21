@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-08-03
+Updated: 2026-08-21
 
 ## V3-P6.2A Leaf-exchange physics specification freeze
 
@@ -12,12 +12,13 @@ paths and the default configuration are unchanged. P6.1 remains a separate,
 pushed, unmerged branch and no P6.1 parameter is imported here.
 
 ```text
-P6_2A_STATUS = IN_PROGRESS_SPECIFICATION_ONLY
+P6_2A_STATUS = PASS_PHYSICS_SPECIFICATION_READY
 LEAF_EXCHANGE_IMPLEMENTATION = FALSE
 UFOTRI_PARAMETER_IMPORTED = FALSE
 UFOTRI_ACTIVE_DATABASE = FALSE
 DEFAULT_MODEL_BEHAVIOR_CHANGED = FALSE
-P6_2A_TARGETED_TESTS = PENDING
+P6_2A_TARGETED_TESTS = PASS_9_OF_9
+P6_2A_INDEPENDENT_REVIEW = PASS
 NEXT_PHASE = P6_2B
 ```
 
