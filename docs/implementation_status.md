@@ -77,6 +77,47 @@ recorded for P1: local Git-ignored external inputs are available while
 fail-closed tests assert their absence, and the current branch contains the
 already-delivered P0/P1 source changes relative to `main`.
 
+## V3-P3 Food Chain Framework
+
+The P3 framework is implemented as the isolated
+`src/cteas_ufotri/food_chain/` package. It establishes immutable plant state,
+crop compartments, leaf and root-zone coupling seams, a ParameterDatabase
+adapter, replaceable test-only transfer kernels, edible-product output, and an
+explicit activity ledger. It does not modify the existing V2 `foodchain/`
+path, import UFOTRI food-chain equations or transfer factors, perform root
+uptake, connect human consumption, calculate dose, or claim regulatory or
+physical validation.
+
+```text
+V3-P3_STATUS = FRAMEWORK_COMPLETE
+V3-P3_PLANT_STATE = PASS
+V3-P3_CROP_ABSTRACTION = PASS
+V3-P3_LEAF_COUPLING_SEAM = PASS
+V3-P3_SOIL_COUPLING_SEAM = PASS_NO_ROOT_UPTAKE
+V3-P3_HARVEST_INTERFACE = PASS
+V3-P3_MASS_BALANCE = PASS
+V3-P3_PARAMETER_INTEGRATION = PASS_SYNTHETIC_TEST_ONLY_FAIL_CLOSED_PLACEHOLDER
+V3-P3_UFOTRI_FOOD_CHAIN_PHYSICS = NOT_IMPLEMENTED
+V3-P3_UFOTRI_NUMERICAL_EQUIVALENCE = NOT_CLAIMED
+V3-P3_PHYSICS_CHANGE_COUNT = 0
+V3-P3_CONFIG_SEMANTIC_CHANGE_COUNT = 0
+V3-P3_TARGETED_UNIT_TESTS = PASS_16_OF_16
+V3-P3_RELEVANT_V1_V2_REGRESSION = PASS
+V3-P3_FULL_REPOSITORY_TESTS = 17_PRE_EXISTING_ENVIRONMENT_OR_BRANCH_BASELINE_FAILURES
+PHYSICS_CHANGE_COUNT = 0
+CONFIG_SEMANTIC_CHANGE_COUNT = 0
+```
+
+The detailed P3 contract is documented in
+`docs/v3/architecture/food_chain_module.md`; deterministic tests are in
+`tests/unit/test_food_chain.py`. The synthetic kernels and parameter records
+are software-contract fixtures only. Root-zone values are retained as seam
+inputs but `soil_input` remains zero until reviewed root uptake is implemented.
+The full `tests/unit` suite and `tests/regression` plus `tests/integration`
+passed. The full `tests/` run retained 17 existing failures in external-input
+portability/private-payload and branch-protection assertions; no P3 test or
+relevant V1/V2 regression failed.
+
 ## V3-P0 Parameter Database Layer
 
 The architecture-only parameter database layer is implemented on branch
