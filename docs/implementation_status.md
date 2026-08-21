@@ -118,6 +118,46 @@ passed. The full `tests/` run retained 17 existing failures in external-input
 portability/private-payload and branch-protection assertions; no P3 test or
 relevant V1/V2 regression failed.
 
+## V3-P4 Dose Interface Framework
+
+The P4 framework is implemented alongside the existing V2 dose path under
+`src/cteas_ufotri/dose/`. It adds typed consumption pathways, an interface-only
+age-group enum, provenance-bearing dose coefficients, a replaceable dose seam,
+an auditable dose ledger, and a `DoseState` result. The existing V2
+`dose/public.py` calculation and its callers are retained unchanged. P4 does
+not import UFOTRI dose equations, ICRP coefficients, GB/T 18871 parameters,
+Chinese dietary survey data, public-dose compliance rules, or regulatory
+assessment logic.
+
+```text
+V3-P4_STATUS = FRAMEWORK_COMPLETE
+V3-P4_DOSE_STATE = PASS
+V3-P4_CONSUMPTION_PATHWAY = PASS
+V3-P4_AGE_GROUP_INTERFACE = PASS
+V3-P4_COEFFICIENT_INTERFACE = PASS
+V3-P4_DOSE_LEDGER = PASS
+V3-P4_PARAMETER_INTEGRATION = PASS_SYNTHETIC_TEST_ONLY_FAIL_CLOSED_PLACEHOLDER
+V3-P4_UFOTRI_DOSE_PHYSICS = NOT_IMPLEMENTED
+V3-P4_UFOTRI_NUMERICAL_EQUIVALENCE = NOT_CLAIMED
+V3-P4_PHYSICS_CHANGE_COUNT = 0
+V3-P4_CONFIG_SEMANTIC_CHANGE_COUNT = 0
+V3-P4_TARGETED_UNIT_TESTS = PASS_18_OF_18
+V3-P4_RELEVANT_V1_V2_REGRESSION = PASS
+V3-P4_FULL_REPOSITORY_TESTS = 17_PRE_EXISTING_ENVIRONMENT_OR_BRANCH_BASELINE_FAILURES
+PHYSICS_CHANGE_COUNT = 0
+CONFIG_SEMANTIC_CHANGE_COUNT = 0
+```
+
+The detailed P4 contract is documented in
+`docs/v3/architecture/dose_module.md`; deterministic tests are in
+`tests/unit/test_dose.py`. P4 coefficients remain `PLACEHOLDER`; the zero and
+synthetic kernels are software-contract fixtures only and do not produce
+regulatory dose results. The full `tests/unit` suite and
+`tests/regression` plus `tests/integration` passed. The full `tests/` run
+retained 17 existing external-input portability/private-payload and
+branch-protection failures; no P4, V2 public-dose, or relevant V1/V2
+regression failed.
+
 ## V3-P0 Parameter Database Layer
 
 The architecture-only parameter database layer is implemented on branch
