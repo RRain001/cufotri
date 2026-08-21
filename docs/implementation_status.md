@@ -2,6 +2,35 @@
 
 Updated: 2026-08-21
 
+## V3-P5.3 UFOTRI Interface Freeze
+
+P5.3 freezes the atmospheric forcing payload, independent leaf/root plant
+pathways, future LeafExchangeFlux design, parameter-database capability
+boundary, and the physics regression format. It is documentation and
+architecture-test work only: no UFOTRI physics or parameter values are
+imported, and no production path is changed.
+
+```text
+V3-P5.3_STATUS = PASS_INTERFACE_FREEZE
+ATMOSPHERIC_HTO_FORCING = FROZEN
+PLANT_DUAL_PATHWAY = FROZEN
+LEAF_EXCHANGE_FLUX = DESIGN_ONLY_NOT_IMPLEMENTED
+PARAMETER_DATABASE = CAPABILITY_AUDITED
+UFOTRI_PARAMETERS_IMPORTED = FALSE
+UFOTRI_PHYSICS_IMPLEMENTED = FALSE
+V3_FORMAL_PHYSICS = NOT_STARTED
+PARAMETER_SCHEMA_CHANGED = FALSE
+MAIN_BEHAVIOR_CHANGED = FALSE
+SRC_DIFF = 0
+CONFIG_DIFF = 0
+TRUSTED_REGISTRY_DIFF = 0
+```
+
+The branch/base SHA boundary and P6 entry gate are recorded in
+`docs/v3/reports/v3_p5_3_interface_freeze_report.md`. The contract-level
+tests are `tests/architecture/test_atmospheric_hto_forcing_contract.py` and
+`tests/architecture/test_v3_p5_3_interface_freeze.py`.
+
 ## V3-P5.2 UFOTRI Physics Migration Readiness Audit
 
 P5.2 audits the V3 Leaf Exchange, parameter, atmospheric forcing, and

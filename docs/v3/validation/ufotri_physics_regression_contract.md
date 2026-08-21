@@ -1,67 +1,103 @@
 # UFOTRI Physics Regression Contract
 
-Status: architecture-only contract for V3-P6 preparation.
+Status: `V3-P5.3_VALIDATION_CONTRACT_FROZEN`; architecture and benchmark
+format only.
 
-P5.2 defines regression cases and evidence requirements without importing
-reference numerical values or freezing concrete tolerances. Therefore this
-document cannot be read as UFOTRI equivalence or physical validation.
+P5.3 freezes the future validation inputs, outputs, provenance, and ledger
+format without importing reference values or assigning numerical tolerances.
+This document is not UFOTRI equivalence or physical validation.
 
-## Common case requirements
+## Common benchmark envelope
 
-Each case must record the input artifact identity, source/provenance, units,
-UTC time basis, time step, initial inventories, parameter package hash, and
-model version. The required trajectories are `TFWT(t)` and `OBT(t)`, with
-inventory units and reference area stated explicitly.
+Each benchmark records:
 
-Every case must also report a mass-balance residual with separately identified
-atmospheric input, internal TFWT-to-OBT transfer, decay/turnover loss, and
-final inventory. Internal transfers must not be counted as external input.
+- the `AtmosphericHTOForcing` payload and its UTC time sequence;
+- source, adapter, spatial reference, temporal resolution, artifact hash, and
+  parameter package hash;
+- units, area basis, time step, initial inventories, and model version;
+- `TFWT(t)` and `OBT(t)` trajectories;
+- pathway-resolved input/output terms and a mass-balance residual.
 
-The numerical tolerance is intentionally left as
-`TO_BE_FROZEN_IN_P6`; no concrete value is introduced here.
+The ledger separates atmospheric/soil boundary inputs, leaf and root pathway
+terms, internal TFWT-to-OBT transfer, decay/turnover, and final inventory.
+Internal transfers must not be counted as external input. Missing required
+forcing fields, non-contiguous time, invalid units, or a required-but-absent
+optional field are `FAIL_CLOSED`.
 
-## Case A: constant air HTO
+The numerical tolerance remains `TO_BE_FROZEN_IN_P6`. No concrete tolerance is
+introduced here.
 
-Input: constant `C_air` with fixed meteorological conditions and a declared
-initial plant state.
+## Benchmark A: constant HTO
 
-Required comparison:
+Input:
 
 ```text
-reference UFOTRI TFWT(t)  <->  CTEAS-UFOTRI TFWT(t)
-reference UFOTRI OBT(t)   <->  CTEAS-UFOTRI OBT(t)
+C_air = constant
 ```
 
-The report must include trajectory comparison, final inventory comparison,
-mass-balance residual, parameter/provenance identity, and the disposition of
-any mismatch. Tolerance remains `TO_BE_FROZEN_IN_P6`.
+Outputs:
 
-## Case B: step or pulse release
+```text
+TFWT(t)
+OBT(t)
+```
 
-Input: an HTO step or finite-duration pulse followed by background forcing.
+The comparison package must include the two trajectories, final inventories,
+pathway ledger, mass-balance residual, and all provenance hashes. Any future
+reference comparison must identify whether a discrepancy is interface,
+parameter, numerical, or physical.
 
-The case must expose atmospheric uptake, post-release decay or turnover, and
-OBT formation. It must check that the forcing discontinuity is represented at
-the declared time resolution and that no hidden reset or missing-to-zero rule
-creates inventory.
+## Benchmark B: step release / HTO pulse
 
-## Case C: diurnal forcing
+Input:
 
-Input: a declared diurnal cycle in temperature, humidity, and radiation, with
-HTO concentration and time resolution specified independently.
+```text
+HTO pulse or step release followed by declared background forcing
+```
 
-The case must test time-varying exchange behavior, optional-field handling,
-day/night applicability, and trajectory/mass-balance reproducibility. It must
-not infer a resistance or response law until that law is reviewed and frozen.
+Outputs:
+
+```text
+uptake
+release
+decay
+TFWT(t)
+OBT(t)
+```
+
+The benchmark checks the release discontinuity, post-release decline, and OBT
+formation without hidden reset, nearest-time repair, or missing-to-zero
+behavior.
+
+## Benchmark C: diurnal cycle
+
+Input:
+
+```text
+temperature
+humidity
+radiation
+```
+
+Outputs:
+
+```text
+day/night response
+TFWT(t)
+OBT(t)
+```
+
+The benchmark checks time-varying response, optional-field requirements, and
+reproducible day/night pathway behavior. It does not prescribe a resistance or
+response equation.
 
 ## Validation layers
 
-P6 should separate the following outcomes:
+P6 must report these separately:
 
-1. interface and dimensional contract checks;
-2. conservation and ledger checks;
+1. payload, units, time-continuity, and provenance checks;
+2. pathway and mass-balance checks;
 3. trajectory regression against a frozen reference artifact;
 4. independent physical/equivalence assessment.
 
 Passing the first two layers is not evidence of UFOTRI numerical equivalence.
-P5.2 claims none of the four physical/equivalence layers.

@@ -82,22 +82,21 @@ def test_atmospheric_contract_declares_required_boundary() -> None:
     contract = ATMOSPHERIC_CONTRACT.read_text(encoding="utf-8")
     for field in (
         "`time`",
-        "`air_concentration_bq_m3`",
-        "`temperature_k`",
+        "`air_hto_concentration`",
+        "`air_temperature`",
         "`relative_humidity`",
-        "`precipitation_m_s`",
-        "`radiation_w_m2`",
-        "`boundary_layer_height_m`",
-        "`deposition_flux_bq_m2_s`",
+        "`precipitation`",
+        "`shortwave_radiation`",
+        "`longwave_radiation`",
+        "`wind_speed`",
+        "`boundary_layer_height`",
+        "`surface_deposition_flux`",
     ):
         assert field in contract
     assert "`AtmosphericHTOForcing`" in contract
-    assert "Gaussian model" not in contract.split("## Proposed record", 1)[1].split(
-        "## Current implementation comparison", 1
-    )[0]
-    assert "CALPUFF" not in contract.split("## Proposed record", 1)[1].split(
-        "## Current implementation comparison", 1
-    )[0]
+    canonical_boundary = contract.split("## Producer independence", 1)[0]
+    assert "Gaussian" not in canonical_boundary
+    assert "CALPUFF" not in canonical_boundary
 
 
 def test_p52_does_not_change_source_config_or_trusted_registry() -> None:
