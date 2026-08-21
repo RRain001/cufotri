@@ -1,6 +1,49 @@
 # Implementation status
 
-Updated: 2026-08-21
+Updated: 2026-08-22
+
+## V3-P6.5 Plant harvest and food transfer
+
+The P6.5 branch adds an isolated plant-to-food inventory boundary at
+plant/food_v3/. FoodTransferSolver consumes only the public inventory()
+methods of OBTState and TFWTState. It emits an immutable HarvestState and a
+FoodInventory record; it does not mutate plant states and does not create dose,
+ingestion, population, regulatory, or CTEAS-Atmos state.
+
+The OBT transfer equation is:
+
+    M_food,OBT [Bq]
+      = f_h [1] * M_OBT [Bq m^-2] * A_h [m^2]
+
+The optional TFWT branch is:
+
+    M_food,TFWT [Bq]
+      = f_w [1] * M_TFWT [Bq m^-2] * A_h [m^2]
+
+The harvest area A_h is explicit in HarvestParameters; no hidden area or
+parameter default is used. Both transfer fractions remain provisional. The
+FoodTransferBalance verifies:
+
+    plant inventory
+      = harvest transfer + remaining plant inventory + residual
+
+    P6_5_STATUS = PASS_FOOD_TRANSFER_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.6_DOSE_ASSESSMENT
+
+The implementation, test, and independent boundary-review records are in
+docs/v3/reports/v3_p6_5_food_transfer_implementation_report.md,
+docs/v3/reports/v3_p6_5_food_transfer_test_report.md, and
+docs/v3/reports/v3_p6_5_independent_review.md.
 
 ## V3-P6.4 Root uptake and Soil-Plant coupling
 

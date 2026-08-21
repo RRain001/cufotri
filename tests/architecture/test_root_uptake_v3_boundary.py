@@ -36,6 +36,7 @@ def test_source_scope_is_root_and_existing_tfwt_v3_only() -> None:
     allowed = (
         "src/cteas_ufotri/plant/root_v3/",
         "src/cteas_ufotri/plant/tfwt_v3/",
+        "src/cteas_ufotri/plant/food_v3/",
     )
     assert all(path.startswith(allowed) for path in changed_source)
 
