@@ -2,6 +2,27 @@
 
 Updated: 2026-08-21
 
+## V3-P6.2B-2 TFWT dynamic solver
+
+The V3 TFWT storage-only solver consumes the signed P6.2B-1
+`LeafExchangeFlux` and updates `TFWTState` at fixed water content. It does not
+recompute resistance, create OBT, perform root or soil coupling, connect dose,
+foodchain, CTEAS-Atmos, or alter the V1/V2 default path. The existing
+`plant/tfwt.py` file remains unchanged; the V3 package is isolated at
+`plant/tfwt_v3/`.
+
+```text
+P6_2B_2_STATUS = PASS_TFWT_SOLVER_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = FALSE
+UFOTRI_DATABASE_ACTIVE = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+V3_PHYSICS_READY = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+NEXT_PHASE = P6_2B_3
+```
+
 ## V3-P6.2B-1 Leaf-exchange resistance subsystem
 
 The resistance-only subsystem is implemented on a branch based on the latest
