@@ -1,0 +1,69 @@
+schema_version: "1.0"
+
+# Interface-only declarations. No UFOTRI numerical value is imported here.
+# PENDING_VALIDATION is an explicit sentinel and cannot be returned by get().
+parameters:
+  - name: leaf.boundary_layer_resistance
+    value: null
+    unit: PENDING_VALIDATION
+    category: leaf_exchange
+    source: UFOTRI_VALIDATED
+    reference: "ufotri_manual.md: leaf-exchange boundary-layer relation; parameter mapping not frozen."
+    confidence: placeholder_pending_validation
+    applicability:
+      status: pending_validation
+      scope: future_leaf_exchange_module
+    transform: IDENTITY
+    bounds: null
+
+  - name: leaf.stomatal_resistance_day
+    value: null
+    unit: PENDING_VALIDATION
+    category: leaf_exchange
+    source: UFOTRI_VALIDATED
+    reference: "ufotri_manual.md: daytime stomatal resistance relation; parameter mapping not frozen."
+    confidence: placeholder_pending_validation
+    applicability:
+      status: pending_validation
+      scope: future_leaf_exchange_module
+    transform: IDENTITY
+    bounds: null
+
+  - name: leaf.stomatal_resistance_night
+    value: null
+    unit: PENDING_VALIDATION
+    category: leaf_exchange
+    source: UFOTRI_VALIDATED
+    reference: "ufotri_manual.md: nighttime stomatal resistance relation; parameter mapping not frozen."
+    confidence: placeholder_pending_validation
+    applicability:
+      status: pending_validation
+      scope: future_leaf_exchange_module
+    transform: IDENTITY
+    bounds: null
+
+  - name: leaf.humidity_response
+    value: null
+    unit: PENDING_VALIDATION
+    category: leaf_exchange
+    source: UFOTRI_VALIDATED
+    reference: "ufotri_manual.md: humidity response relation; parameter mapping not frozen."
+    confidence: placeholder_pending_validation
+    applicability:
+      status: pending_validation
+      scope: future_leaf_exchange_module
+    transform: IDENTITY
+    bounds: null
+
+  - name: leaf.temperature_response
+    value: null
+    unit: PENDING_VALIDATION
+    category: leaf_exchange
+    source: UFOTRI_VALIDATED
+    reference: "ufotri_manual.md: temperature response relation; parameter mapping not frozen."
+    confidence: placeholder_pending_validation
+    applicability:
+      status: pending_validation
+      scope: future_leaf_exchange_module
+    transform: IDENTITY
+    bounds: null

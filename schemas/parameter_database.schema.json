@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/parameter_database.schema.json",
+  "title": "CTEAS UFOTRI parameter database",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "parameters"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "parameters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/parameter"}
+    }
+  },
+  "$defs": {
+    "parameter_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+$"
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lower", "upper", "lower_inclusive", "upper_inclusive"],
+      "properties": {
+        "lower": {"type": "number"},
+        "upper": {"type": "number"},
+        "lower_inclusive": {"type": "boolean"},
+        "upper_inclusive": {"type": "boolean"}
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "scope"],
+      "properties": {
+        "status": {
+          "enum": ["applicable", "conditional", "pending_validation"]
+        },
+        "scope": {"type": "string", "minLength": 1},
+        "conditions": {"type": "object"}
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "value",
+        "unit",
+        "category",
+        "source",
+        "reference",
+        "confidence",
+        "applicability",
+        "transform",
+        "bounds"
+      ],
+      "properties": {
+        "name": {"$ref": "#/$defs/parameter_name"},
+        "value": {"type": ["number", "null"]},
+        "unit": {"type": "string", "minLength": 1},
+        "category": {"type": "string", "minLength": 1},
+        "source": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "reference": {"type": "string", "minLength": 1},
+        "confidence": {
+          "enum": [
+            "validated",
+            "provisional",
+            "internal_default",
+            "placeholder_pending_validation"
+          ]
+        },
+        "applicability": {"$ref": "#/$defs/applicability"},
+        "transform": {
+          "enum": ["IDENTITY", "LOG", "LOG10", "LOGIT"]
+        },
+        "bounds": {
+          "anyOf": [
+            {"$ref": "#/$defs/bounds"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["confidence"],
+            "properties": {
+              "confidence": {"const": "placeholder_pending_validation"}
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {"type": "null"},
+              "bounds": {"type": "null"},
+              "applicability": {
+                "properties": {
+                  "status": {"const": "pending_validation"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["confidence"],
+            "properties": {
+              "confidence": {
+                "enum": ["validated", "provisional", "internal_default"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {"type": "number"},
+              "bounds": {"$ref": "#/$defs/bounds"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

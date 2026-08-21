@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/parameter_sources.schema.json",
+  "title": "CTEAS UFOTRI parameter source registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "description",
+          "reference",
+          "production_allowed"
+        ],
+        "properties": {
+          "status": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "reference": {"type": "string", "minLength": 1},
+          "production_allowed": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,38 @@
 # Implementation status
 
-Updated: 2026-08-03
+Updated: 2026-08-21
+
+## V3-P0 Parameter Database Layer
+
+The architecture-only parameter database layer is implemented on branch
+`codex/v3-parameter-database-layer` from main HEAD
+`6671f5793d04842bf2ceae4904f3c0cf30a0d7e`. It adds typed parameter entries,
+strict JSON Schema validation, source provenance, deterministic package
+hashing, an opt-in legacy adapter, and Leaf Exchange interface placeholders.
+It does not connect to the V2 configuration or physics paths and imports no
+UFOTRI numerical parameter values.
+
+```text
+V3_PARAMETER_DATABASE_STATUS = ARCHITECTURE_IMPLEMENTED
+V3_PARAMETER_DATABASE_UNIT_TEST_STATUS = PASS_11_OF_11
+DEFAULT_CASE_REGRESSION = PASS
+V1_REGRESSION = PASS_5_OF_5
+V2_REGRESSION = PASS_6_OF_6
+V3_PARAMETER_DATABASE_PHYSICS_PATH_CHANGE_COUNT = 0
+V3_PARAMETER_DATABASE_DEFAULT_CONFIG_CHANGE_COUNT = 0
+V3_PARAMETER_DATABASE_TRUSTED_REGISTRY_CHANGE_COUNT = 0
+PHYSICS_CHANGE_COUNT = 0
+CONFIG_SEMANTIC_CHANGE_COUNT = 0
+V3_PHYSICS_IMPLEMENTATION_STATUS = NOT_STARTED
+V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+```
+
+The repository baseline was run with `PYTHONPATH=.
+.venv/bin/python -m pytest -q`; its 12 failures are the pre-existing
+external-input portability tests observing Git-ignored local SB1/ERA5/private
+inputs. The targeted parameter database tests pass independently. Acceptance,
+V2 acceptance, V3 compatibility, and V3 architecture readiness remain
+passing; no baseline failure is attributed to the new layer.
 
 ## D3 UFOTRI manual data mapping and laboratory handoff
 

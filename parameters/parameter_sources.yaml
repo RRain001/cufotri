@@ -1,0 +1,17 @@
+schema_version: "1.0"
+sources:
+  CTEAS_DEFAULT:
+    status: internal_default
+    description: Existing CTEAS configuration defaults exposed through an opt-in compatibility adapter.
+    reference: configs/default_parameters.yaml
+    production_allowed: false
+  PROJECT_CUSTOM:
+    status: project_custom_requires_review
+    description: Project-specific values requiring an explicit review record before any production use.
+    reference: project-controlled parameter record; no value is approved by this registry alone.
+    production_allowed: false
+  UFOTRI_VALIDATED:
+    status: external_reference_required
+    description: Reserved UFOTRI source identifier; external evidence and parameter review are still required.
+    reference: ufotri_manual.md and the external-evidence review record.
+    production_allowed: false
