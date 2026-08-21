@@ -2,6 +2,36 @@
 
 Updated: 2026-08-21
 
+## V3-P6.2B integration and P6.2B-2.5 public interface freeze
+
+The P6.2B integration branch preserves the P6.2B-1 resistance subsystem and
+P6.2B-2 TFWT storage solver as separate V3 packages. The new `plant/v3`
+facade only connects atmospheric forcing to a precomputed resistance state,
+one signed leaf-exchange flux, and the public TFWT state API. OBT remains a
+reserved future interface; no OBT, root, soil, dose, atmosphere, parameter
+activation, or default-runtime connection was added.
+
+```text
+P6_2B_INTEGRATION_STATUS = PASS
+P6_2B_INTERFACE_FREEZE = PASS
+P6_2B_2_5_STATUS = PASS_PUBLIC_PATHWAY_INTERFACE_FREEZE
+LEAF_EXCHANGE_RESISTANCE_IMPLEMENTED = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+V3_PHYSICS_READY = FALSE
+NEXT_PHASE = P6_2C
+```
+
+The default V1/V2 configuration remains unchanged, including
+`leaf_exchange_mode: off` and `direct_leaf_uptake_enabled: false`. The
+implementation and boundary reports are in
+`docs/v3/reports/v3_p6_2b_2_5_interface_implementation_report.md`,
+`docs/v3/reports/v3_p6_2b_integration_review.md`, and
+`docs/v3/reports/v3_p6_2b_2_5_boundary_audit.md`.
+
 ## V3-P6.2B-2 TFWT dynamic solver
 
 The V3 TFWT storage-only solver consumes the signed P6.2B-1

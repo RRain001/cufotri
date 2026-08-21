@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from ..leaf_exchange_resistance import ForcingProvenance
 from .validation import (
@@ -14,6 +15,9 @@ from .validation import (
     require_finite,
     validate_state,
 )
+
+if TYPE_CHECKING:
+    from ..leaf_exchange_resistance import LeafExchangeFlux
 
 
 @dataclass(frozen=True)
@@ -92,6 +96,41 @@ class TFWTState:
             ),
             tfwt_inventory_bq_m2=tfwt_inventory_bq_m2,
             time=time,
+        )
+
+    def inventory(self) -> float:
+        """Return the public TFWT inventory in ``Bq m^-2``."""
+
+        return self.tfwt_inventory_bq_m2
+
+    def activity_concentration(self) -> float:
+        """Return the public TFWT concentration in ``Bq kg^-1 water``."""
+
+        return self.tfwt_concentration_bq_kg_water
+
+    def advance(
+        self,
+        dt: float,
+        forcing: "LeafExchangeFlux",
+        *,
+        water_loss_flux_bq_m2_s: float = 0.0,
+        transformation_flux_bq_m2_s: float = 0.0,
+    ) -> "TFWTState":
+        """Advance through the frozen public flux interface.
+
+        ``forcing`` is the signed P6.2B-1 ``LeafExchangeFlux``. The method
+        intentionally delegates to the storage solver and never exposes its
+        internal bookkeeping to downstream modules.
+        """
+
+        from .tfwt_solver import TFWTStorageSolver
+
+        return TFWTStorageSolver().step(
+            self,
+            forcing,
+            dt,
+            water_loss_flux_bq_m2_s=water_loss_flux_bq_m2_s,
+            transformation_flux_bq_m2_s=transformation_flux_bq_m2_s,
         )
 
 
