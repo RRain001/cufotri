@@ -2,6 +2,47 @@
 
 Updated: 2026-08-21
 
+## V3-P6.3 Soil HTO transport
+
+The P6.3 branch adds an isolated inventory-based soil HTO pathway at
+`plant/soil_v3/`. `SoilState` stores one immutable layer inventory and a
+checked soil-water concentration derived from the explicit water-content
+basis. `SoilStorageSolver` consumes only deposition and signed layer-transport
+fluxes. A positive transport flux enters the current layer; a negative flux
+leaves it. It does not calculate atmospheric dispersion or hydrology.
+
+The first step uses the constant-flux linear storage equation with explicit
+tritium half-life:
+
+```text
+dM_soil/dt = deposition_flux + transport_flux - lambda_T * M_soil
+lambda_T = ln(2) / tritium_half_life_s
+```
+
+The state and balance ledger do not contain root, plant, foodchain, dose, or
+CTEAS-Atmos state. The old V1/V2 `soil/` and `coupling/` paths remain
+untouched; no default runtime or configuration is connected.
+
+```text
+P6_3_STATUS = PASS_SOIL_HTO_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = TRUE
+SOIL_SOLVER = TRUE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V1_V2_DEFAULT_PATH_CHANGED = FALSE
+P6_3_TARGETED_TESTS = PASS_14_OF_14
+P6_3_REGRESSION_TESTS = PASS_1_OF_1
+NEXT_PHASE = P6.4_ROOT_UPTAKE_FOODCHAIN
+```
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_3_soil_hto_implementation_report.md`,
+`docs/v3/reports/v3_p6_3_soil_hto_test_report.md`, and
+`docs/v3/reports/v3_p6_3_independent_review.md`.
+
 ## V3-P6.2C OBT solver
 
 The P6.2C branch adds an isolated inventory-based TFWT-to-OBT solver at

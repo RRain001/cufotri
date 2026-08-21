@@ -29,11 +29,15 @@ def changed_paths() -> set[str]:
     )
 
 
-def test_source_is_isolated_to_new_obt_v3_package() -> None:
+def test_source_isolated_to_existing_obt_and_new_soil_v3_packages() -> None:
     changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
 
     assert changed_source
-    assert all(path.startswith("src/cteas_ufotri/plant/obt_v3/") for path in changed_source)
+    allowed = (
+        "src/cteas_ufotri/plant/obt_v3/",
+        "src/cteas_ufotri/plant/soil_v3/",
+    )
+    assert all(path.startswith(allowed) for path in changed_source)
 
 
 def test_configs_parameters_registry_and_legacy_v1_v2_paths_are_unchanged() -> None:
