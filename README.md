@@ -1,9 +1,43 @@
 # CTEAS_UFOTRI
 
-Runnable Python 3.12+ minimal HTO model coupling rural Gaussian dispersion,
-topsoil water/HTO, plant TFWT/OBT, re-emission feedback, and mass balance.
-It is a tested engineering baseline, not a full reproduction of every UFOTRI
-equation.
+CTEAS_UFOTRI is an HTO research framework. The runnable Python 3.12+ V1/V2
+baseline couples rural Gaussian dispersion, topsoil water/HTO, plant TFWT/OBT,
+re-emission feedback, and mass balance. It is not a validated UFOTRI model or
+a full reproduction of every UFOTRI equation.
+
+## Current V3 architecture status
+
+The repository contains framework components and explicit synthetic numerical
+harnesses. Those harnesses are test-only and do not establish UFOTRI physics,
+validated parameters, regulatory dose assessment, or field validation.
+
+| Area | Repository reality | Boundary |
+|---|---|---|
+| Atmosphere | Research prototype with Gaussian HTO transport | Not a V3 UFOTRI physics claim |
+| Soil | Experimental numerical framework | Non-UFOTRI; root uptake is not started in V3 |
+| Leaf exchange | Numerical TFWT/OBT harness | Non-UFOTRI; synthetic kernels are test-only |
+| Food chain | Computational framework | Non-UFOTRI transfer and harvest harness |
+| Dose | Computational framework | Non-regulatory; synthetic dose arithmetic only |
+| Parameter DB | Governance layer | No validated UFOTRI values are active |
+| UFOTRI physics | Absent | Formal V3 physics has not started |
+
+Current phase disposition:
+
+```text
+P5_STATUS = COMPLETE_WITH_RECLASSIFICATION
+V3_FORMAL_PHYSICS = NOT_STARTED
+UFOTRI_VALIDATED_DATABASE = ABSENT
+UFOTRI_PHYSICS_IMPLEMENTATION = NOT_STARTED
+NUMERICAL_FRAMEWORKS_PRESENT = TRUE
+FRAMEWORK_READY = TRUE
+PHYSICS_READY = FALSE
+NEXT_PHASE = UFOTRI_PARAMETER_AND_PHYSICS_IMPLEMENTATION
+```
+
+The authoritative reconciliation is in
+`docs/v3/reports/v3_p5_6_architecture_reconciliation_report.md`; terminology
+and activation criteria are frozen in
+`docs/v3/architecture/framework_vs_physics_boundary.md`.
 
 ## Install and verify
 

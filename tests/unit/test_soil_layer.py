@@ -1,3 +1,5 @@
+"""Framework-only tests for the non-UFOTRI soil numerical harness."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -26,6 +28,8 @@ from cteas_ufotri.soil.physics import advance as advance_physics
 
 
 ROOT = Path(__file__).resolve().parents[2]
+TEST_CLASSIFICATION = "FRAMEWORK_TEST_ONLY"
+SYNTHETIC_KERNEL_STATUS = "NOT_VALIDATED_UFOTRI_PHYSICS"
 
 
 PARAMETER_ROLES = {

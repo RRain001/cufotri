@@ -2,6 +2,32 @@
 
 Updated: 2026-08-21
 
+## V3-P5.6 Architecture Reconciliation (current)
+
+P5 is now classified as architecture preparation rather than an interface-only
+freeze. The P5.3 interface freeze remains a historical substage; the current
+repository also contains non-UFOTRI numerical frameworks and test-only
+harnesses. No validated UFOTRI parameter value or formal UFOTRI physics is
+active.
+
+```text
+P5_STATUS = COMPLETE_WITH_RECLASSIFICATION
+V3_FORMAL_PHYSICS = NOT_STARTED
+UFOTRI_VALIDATED_DATABASE = ABSENT
+UFOTRI_PHYSICS_IMPLEMENTATION = NOT_STARTED
+UFOTRI_PHYSICS_IMPLEMENTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+NUMERICAL_FRAMEWORKS_PRESENT = TRUE
+FRAMEWORK_READY = TRUE
+PHYSICS_READY = FALSE
+NEXT_PHASE = UFOTRI_PARAMETER_AND_PHYSICS_IMPLEMENTATION
+```
+
+The repository-wide classification and evidence boundary are recorded in
+`docs/v3/reports/v3_p5_6_architecture_reconciliation_report.md` and
+`docs/v3/architecture/framework_vs_physics_boundary.md`. The frozen sequence
+for later physics work is in `docs/v3/roadmap/v3_physics_roadmap.md`.
+
 ## V3-P5.5 UFOTRI Physics Boundary Audit
 
 The P5.5 repository audit distinguishes the clean P5.4 delta from the
