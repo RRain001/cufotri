@@ -1,12 +1,12 @@
 schema_version: v1
 stage: P7.6B-1
 inventory_manifest: docs/v3/parameter_evidence/parameter_inventory.yaml
-inventory_revision: ff75826c0da9773c7297b592bcb66ea35951329c
+inventory_revision: cdaa6320cc3c8f17c585af12cc7501201b4b2047
 scope: One applicability assessment for every P7.6A inventory record; no value import,
   calibration, activation, or solver coupling.
 reviewed_parameter_count: 76
 validation_candidates_identified: true
-candidate_count: 0
+candidate_count: 1
 calibration_started: false
 active_database: false
 parameters:
@@ -612,32 +612,30 @@ parameters:
   reviewer_status: INTERNAL_REVIEWED
   validation_candidate: false
 - parameter_id: soil.tritium_half_life
-  evidence_status: PROVISIONAL
+  evidence_status: EVIDENCE_FOUND
   parameter_class: PHYSICAL_CONSTANT
   source_type: PHYSICAL_CONSTANT_SOURCE
   canonical_unit: s
-  assessment_status: UNKNOWN
-  applicability: UNKNOWN
+  assessment_status: DIRECT_MATCH
+  applicability: DIRECT_MATCH
   radionuclide: H-3
-  chemical_form: UNRESOLVED_SOURCE_FORM
-  pathway: soil_transport_decay
-  model_component: V3 soil HTO interface
-  environment_type: SOIL_PROFILE
+  chemical_form: ANY_CHEMICAL_FORM
+  pathway: radioactive_decay
+  model_component: V3 soil radioactive-decay term
+  environment_type: ANY_ENVIRONMENT
   crop_type: NOT_APPLICABLE
   growth_stage: NOT_APPLICABLE
-  soil_condition: UNSPECIFIED_SOIL_CONDITION
-  time_scale: UNRESOLVED_SOURCE_TIMESCALE
-  spatial_scale: UNRESOLVED_SOURCE_SCALE
-  source_context: UNRESOLVED_SOURCE_REQUIRED
-  model_equation_match: UNKNOWN
-  unit_match: UNKNOWN
-  uncertainty_available: false
-  review_notes: Review requires soil depth, water-content basis, transport mechanism,
-    and decay convention; source context is unresolved.
-  required_action: Screen primary/secondary literature or standards for the V3 component
-    and formulation; retain the value unresolved and do not import it.
+  soil_condition: NOT_APPLICABLE
+  time_scale: RADIOACTIVE_DECAY
+  spatial_scale: NOT_APPLICABLE
+  source_context: doi:10.6028/jres.105.043
+  model_equation_match: DIRECT_MATCH
+  unit_match: DIRECT_MATCH
+  uncertainty_available: true
+  review_notes: Universal H-3 nuclear half-life mapped only to the V3 radioactive-decay term; it is not evidence for soil transport, water content, or retention. The source reports 4500 +/- 8 d and the inventory records the explicit conversion to seconds.
+  required_action: Admit as a future validation candidate for the decay term only; confirm the decay convention and carry the stated source uncertainty through a later benchmark and sensitivity protocol. Do not activate or import the value in this stage.
   reviewer_status: INTERNAL_REVIEWED
-  validation_candidate: false
+  validation_candidate: true
 - parameter_id: soil.transport_flux
   evidence_status: PROVISIONAL
   parameter_class: SOIL_PARAMETER

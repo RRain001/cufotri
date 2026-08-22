@@ -30,14 +30,15 @@ def test_all_76_inventory_parameters_have_complete_applicability_reviews() -> No
     assert len(inventory.records) == 76
     assert len(matrix.entries) == 76
     assert matrix.counts_by_assessment() == {
-        "DIRECT_MATCH": 0,
+        "DIRECT_MATCH": 1,
         "PARTIAL_MATCH": 0,
         "TRANSFER_REQUIRED": 0,
         "NOT_APPLICABLE": 50,
-        "UNKNOWN": 26,
+        "UNKNOWN": 25,
     }
     assert matrix.validation_candidates_identified is True
-    assert matrix.candidate_count == 0
+    assert matrix.candidate_count == 1
+    assert matrix.validation_candidate_ids == ("soil.tritium_half_life",)
     for entry in matrix.entries:
         record = entry.applicability
         assert record.parameter_id
@@ -46,20 +47,22 @@ def test_all_76_inventory_parameters_have_complete_applicability_reviews() -> No
         assert record.review_notes
         assert entry.required_action
         assert record.reviewer_status.value == "INTERNAL_REVIEWED"
-        assert entry.validation_candidate is False
+        assert entry.validation_candidate is (
+            entry.parameter_id == "soil.tritium_half_life"
+        )
 
 
 def test_matrix_round_trip_and_gate_are_deterministic_and_fail_closed() -> None:
     inventory, matrix = load_pair()
     restored = ParameterReviewMatrix.from_mapping(matrix.to_mapping())
     assert restored == matrix
-    assert restored.candidate_count == 0
+    assert restored.candidate_count == 1
 
     gate = evaluate_validation_gate(inventory, matrix)
     assert gate.validation_candidates_identified is True
-    assert gate.candidate_ids == ()
-    assert gate.candidate_count == 0
-    assert len(gate.blocked_reasons) == 76
+    assert gate.candidate_ids == ("soil.tritium_half_life",)
+    assert gate.candidate_count == 1
+    assert len(gate.blocked_reasons) == 75
     assert gate.calibration_started is False
     assert gate.active_database is False
     assert gate.to_mapping()["active_database"] is False

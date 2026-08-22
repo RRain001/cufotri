@@ -178,6 +178,88 @@ class EvidenceProvenance:
         }
 
 
+@dataclass(frozen=True)
+class EvidenceSourceMetadata:
+    """Bibliographic and unit-conversion metadata for recovered evidence.
+
+    The metadata is deliberately kept in the control plane.  It describes the
+    source quantity and its auditable normalization path; it is not a runtime
+    parameter value and is never imported by a solver.
+    """
+
+    title: str
+    authors: tuple[str, ...]
+    year: int
+    journal_or_publisher: str
+    identifier: str
+    locator: str
+    stable_url: str
+    reported_quantity: str
+    reported_uncertainty: str
+    conversion_path: str
+    volume: str | None = None
+    issue: str | None = None
+    pages: str | None = None
+
+    def __post_init__(self) -> None:
+        for field in (
+            "title",
+            "journal_or_publisher",
+            "identifier",
+            "locator",
+            "stable_url",
+            "reported_quantity",
+            "reported_uncertainty",
+            "conversion_path",
+        ):
+            require_text(getattr(self, field), field=f"source_metadata.{field}")
+        if not isinstance(self.authors, (list, tuple)) or not self.authors:
+            raise ParameterSchemaError(
+                "source_metadata.authors must be a non-empty list or tuple"
+            )
+        authors = tuple(self.authors)
+        for index, author in enumerate(authors):
+            require_text(author, field=f"source_metadata.authors[{index}]")
+        object.__setattr__(self, "authors", authors)
+        if not isinstance(self.year, int) or isinstance(self.year, bool) or self.year <= 0:
+            raise ParameterSchemaError("source_metadata.year must be a positive integer")
+        if not self.stable_url.startswith(("http://", "https://")):
+            raise ParameterSchemaError(
+                "source_metadata.stable_url must be an HTTP(S) URL"
+            )
+        for field in ("volume", "issue", "pages"):
+            value = getattr(self, field)
+            if value is not None:
+                require_text(value, field=f"source_metadata.{field}")
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, Any]) -> "EvidenceSourceMetadata":
+        payload = dict(require_mapping(value, field="source_metadata"))
+        try:
+            return cls(**payload)
+        except TypeError as exc:
+            raise ParameterSchemaError(
+                f"invalid source metadata mapping: {exc}"
+            ) from exc
+
+    def to_mapping(self) -> dict[str, Any]:
+        return {
+            "title": self.title,
+            "authors": list(self.authors),
+            "year": self.year,
+            "journal_or_publisher": self.journal_or_publisher,
+            "identifier": self.identifier,
+            "locator": self.locator,
+            "stable_url": self.stable_url,
+            "reported_quantity": self.reported_quantity,
+            "reported_uncertainty": self.reported_uncertainty,
+            "conversion_path": self.conversion_path,
+            "volume": self.volume,
+            "issue": self.issue,
+            "pages": self.pages,
+        }
+
+
 def _derived_gap_category(
     parameter_class: ParameterClass,
     source_type: SourceType,
@@ -221,6 +303,8 @@ class ParameterEvidenceRecord:
     provenance: EvidenceProvenance
     review_status: ReviewStatus
     gap_category: GapCategory | None = None
+    equation_role: str = "UNRESOLVED_EQUATION_ROLE"
+    source_metadata: EvidenceSourceMetadata | None = None
 
     def __post_init__(self) -> None:
         require_identifier(self.parameter_id, field="parameter_id")
@@ -233,6 +317,7 @@ class ParameterEvidenceRecord:
         require_unit(self.reported_unit, field="reported_unit")
         require_unit(self.normalized_unit, field="normalized_unit")
         require_text(self.evidence_notes, field="evidence_notes")
+        require_text(self.equation_role, field="equation_role")
 
         for field, enum_type in (
             ("parameter_class", ParameterClass),
@@ -258,6 +343,14 @@ class ParameterEvidenceRecord:
                 "provenance",
                 EvidenceProvenance.from_mapping(self.provenance),
             )
+        if self.source_metadata is not None and not isinstance(
+            self.source_metadata, EvidenceSourceMetadata
+        ):
+            object.__setattr__(
+                self,
+                "source_metadata",
+                EvidenceSourceMetadata.from_mapping(self.source_metadata),
+            )
         validate_scalar(self.reported_value, field="reported_value")
         validate_scalar(self.normalized_value, field="normalized_value")
         if self.normalized_value is not None and self.normalized_unit != self.canonical_unit:
@@ -276,6 +369,26 @@ class ParameterEvidenceRecord:
             raise ParameterSchemaError(
                 "TEST_ONLY_PARAMETER class requires TEST_ONLY source_type"
             )
+        if (
+            self.status is EvidenceStatus.EVIDENCE_FOUND
+            and self.source_type is not SourceType.TEST_ONLY
+        ):
+            if self.source_identifier == UNRESOLVED_SOURCE:
+                raise ParameterSchemaError(
+                    "EVIDENCE_FOUND physical records require a resolved source_identifier"
+                )
+            if self.source_metadata is None:
+                raise ParameterSchemaError(
+                    "EVIDENCE_FOUND physical records require complete source_metadata"
+                )
+            if self.source_metadata.identifier != self.source_identifier:
+                raise ParameterSchemaError(
+                    "source_metadata.identifier must equal source_identifier"
+                )
+            if self.equation_role == "UNRESOLVED_EQUATION_ROLE":
+                raise ParameterSchemaError(
+                    "EVIDENCE_FOUND physical records require equation_role"
+                )
 
         derived = _derived_gap_category(
             self.parameter_class,
@@ -323,6 +436,12 @@ class ParameterEvidenceRecord:
             "provenance": self.provenance.to_mapping(),
             "review_status": self.review_status.value,
             "gap_category": self.gap_category.value,
+            "equation_role": self.equation_role,
+            "source_metadata": (
+                self.source_metadata.to_mapping()
+                if self.source_metadata is not None
+                else None
+            ),
         }
 
     def transition_to(self, target: EvidenceStatus) -> "ParameterEvidenceRecord":
@@ -336,6 +455,7 @@ __all__ = [
     "Applicability",
     "ApplicabilityStatus",
     "EvidenceProvenance",
+    "EvidenceSourceMetadata",
     "EvidenceStatus",
     "GapCategory",
     "ParameterClass",

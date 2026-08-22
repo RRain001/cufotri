@@ -11,6 +11,7 @@ from cteas_ufotri.parameters_v3 import (
     CandidateScreeningDisposition,
     CandidateStatus,
     EvidenceProvenance,
+    EvidenceSourceMetadata,
     ParameterCandidateError,
     ParameterCandidateRecord,
     ParameterClass,
@@ -33,9 +34,19 @@ from cteas_ufotri.parameters_v3.review import ParameterReviewEntry
 def make_applicability(
     status: ApplicabilityAssessmentStatus = ApplicabilityAssessmentStatus.DIRECT_MATCH,
 ) -> ApplicabilityRecord:
-    match = (
+    equation_match = (
         ApplicabilityAssessmentStatus.DIRECT_MATCH
         if status is ApplicabilityAssessmentStatus.DIRECT_MATCH
+        else ApplicabilityAssessmentStatus.PARTIAL_MATCH
+        if status is ApplicabilityAssessmentStatus.PARTIAL_MATCH
+        else status
+    )
+    unit_match = (
+        ApplicabilityAssessmentStatus.DIRECT_MATCH
+        if status in {
+            ApplicabilityAssessmentStatus.DIRECT_MATCH,
+            ApplicabilityAssessmentStatus.PARTIAL_MATCH,
+        }
         else status
     )
     return ApplicabilityRecord(
@@ -52,8 +63,8 @@ def make_applicability(
         time_scale="SOURCE_DEFINED",
         spatial_scale="SOURCE_DEFINED",
         source_context="doi:10.0000/example",
-        model_equation_match=match,
-        unit_match=match,
+        model_equation_match=equation_match,
+        unit_match=unit_match,
         uncertainty_available=True,
         review_notes="A source-specific applicability review is available.",
         reviewer_status=ReviewStatus.INTERNAL_REVIEWED,
@@ -117,6 +128,19 @@ def make_external_evidence() -> ParameterEvidenceRecord:
             status=ApplicabilityStatus.RESOLVED,
         ),
         evidence_notes="Synthetic test fixture; not project evidence.",
+        equation_role="Synthetic source equation role.",
+        source_metadata=EvidenceSourceMetadata(
+            title="Synthetic source",
+            authors=("Test Author",),
+            year=2026,
+            journal_or_publisher="Synthetic Journal",
+            identifier="doi:10.0000/example",
+            locator="Equation 1",
+            stable_url="https://doi.org/10.0000/example",
+            reported_quantity="Synthetic quantity",
+            reported_uncertainty="Not quantified",
+            conversion_path="No conversion; reported and canonical units are s.",
+        ),
         provenance=EvidenceProvenance(
             repository="CTEAS_ufotri",
             revision="test",
@@ -147,7 +171,6 @@ def make_review(
     [
         ApplicabilityAssessmentStatus.DIRECT_MATCH,
         ApplicabilityAssessmentStatus.PARTIAL_MATCH,
-        ApplicabilityAssessmentStatus.TRANSFER_REQUIRED,
     ],
 )
 def test_resolved_applicability_constructs_validation_candidate(
@@ -160,6 +183,15 @@ def test_resolved_applicability_constructs_validation_candidate(
     assert record.candidate_screening is CandidateScreeningDisposition.CANDIDATE
     assert record.validation_required is True
     assert can_enter_validation(record)
+
+
+def test_transfer_required_is_deferred_until_transfer_is_resolved() -> None:
+    record = construct_candidate_record(
+        make_external_evidence(), make_review(ApplicabilityAssessmentStatus.TRANSFER_REQUIRED)
+    )
+    assert record.candidate_status is CandidateStatus.APPLICABILITY_REVIEWED
+    assert record.candidate_screening is CandidateScreeningDisposition.DEFERRED
+    assert not can_enter_validation(record)
 
 
 @pytest.mark.parametrize(

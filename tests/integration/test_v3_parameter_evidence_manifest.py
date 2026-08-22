@@ -22,13 +22,13 @@ def test_parameter_manifest_is_loadable_deterministic_and_stage_safe() -> None:
         record.parameter_id for record in registry.records
     )
     assert registry.counts_by_status() == {
-        "PROVISIONAL": 56,
-        "EVIDENCE_FOUND": 20,
+        "PROVISIONAL": 55,
+        "EVIDENCE_FOUND": 21,
         "VALIDATED": 0,
         "ACTIVE": 0,
         "REJECTED": 0,
     }
-    assert registry.counts_by_gap() == {"A": 0, "B": 0, "C": 0, "D": 28, "E": 28, "F": 20}
+    assert registry.counts_by_gap() == {"A": 1, "B": 0, "C": 0, "D": 27, "E": 28, "F": 20}
     registry.assert_no_activation()
 
 
@@ -45,6 +45,12 @@ def test_manifest_covers_all_required_classes_and_explicit_traceability() -> Non
         assert record.source_identifier
         assert record.provenance.file
         assert record.provenance.location
+
+    recovered = registry.get("soil.tritium_half_life")
+    assert recovered.status is EvidenceStatus.EVIDENCE_FOUND
+    assert recovered.source_metadata is not None
+    assert recovered.equation_role.startswith("Derives lambda_T")
+    assert recovered.source_metadata.identifier == recovered.source_identifier
 
 
 def test_manifest_round_trip_keeps_record_identity_and_no_activation() -> None:

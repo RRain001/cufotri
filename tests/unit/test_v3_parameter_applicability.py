@@ -8,6 +8,7 @@ from cteas_ufotri.parameters_v3 import (
     ApplicabilityAssessmentStatus,
     ApplicabilityRecord,
     EvidenceProvenance,
+    EvidenceSourceMetadata,
     EvidenceStatus,
     ParameterClass,
     ParameterEvidenceRecord,
@@ -61,6 +62,19 @@ def make_evidence(**overrides: object) -> ParameterEvidenceRecord:
         "normalized_unit": "s",
         "applicability": {"status": "RESOLVED"},
         "evidence_notes": "A source is available for review.",
+        "equation_role": "Test source equation role.",
+        "source_metadata": EvidenceSourceMetadata(
+            title="Synthetic source",
+            authors=("Test Author",),
+            year=2026,
+            journal_or_publisher="Synthetic Journal",
+            identifier="doi:10.0000/example",
+            locator="Equation 1",
+            stable_url="https://doi.org/10.0000/example",
+            reported_quantity="Synthetic quantity",
+            reported_uncertainty="Not quantified",
+            conversion_path="No conversion; reported and canonical units are s.",
+        ),
         "provenance": EvidenceProvenance(
             repository="CTEAS_ufotri",
             revision="test",
@@ -117,6 +131,24 @@ def test_candidate_rule_requires_direct_match_or_resolved_partial_match() -> Non
     assert is_validation_candidate(evidence, direct)
     assert not is_validation_candidate(evidence, partial_unresolved)
     assert is_validation_candidate(evidence, partial_resolved)
+    assert not is_validation_candidate(
+        evidence,
+        make_applicability(
+            assessment_status="PARTIAL_MATCH",
+            model_equation_match="UNKNOWN",
+            unit_match="DIRECT_MATCH",
+            uncertainty_available=True,
+        ),
+    )
+    assert not is_validation_candidate(
+        evidence,
+        make_applicability(
+            assessment_status="PARTIAL_MATCH",
+            model_equation_match="PARTIAL_MATCH",
+            unit_match="UNKNOWN",
+            uncertainty_available=True,
+        ),
+    )
     assert not is_validation_candidate(
         evidence, make_applicability(assessment_status="UNKNOWN")
     )

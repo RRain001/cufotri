@@ -1,4 +1,4 @@
-"""V3 parameter-candidate construction and registry for P7.6B-2A.
+"""V3 parameter-candidate construction and registry for P7.6B-2B.
 
 The candidate layer is a preparation control plane.  It records which
 parameter records may be handed to a future validation protocol, but it never
@@ -50,7 +50,7 @@ class CandidateStatus(str, Enum):
 
 
 class CandidateScreeningDisposition(str, Enum):
-    """P7.6B-2A screening outcome for every reviewed inventory record."""
+    """P7.6B-2B screening outcome for every reviewed inventory record."""
 
     CANDIDATE = "CANDIDATE"
     DEFERRED = "DEFERRED"
@@ -109,7 +109,7 @@ transition_candidate_status = candidate_transition
 
 
 class ParameterCandidateError(ParameterRegistryError):
-    """A candidate record or registry violates the P7.6B-2A contract."""
+    """A candidate record or registry violates the P7.6B-2B contract."""
 
 
 def _coerce_string_tuple(value: Any, *, field: str) -> tuple[str, ...]:
@@ -144,6 +144,12 @@ class ParameterCandidateRecord:
     provenance: EvidenceProvenance
     candidate_screening: CandidateScreeningDisposition | None = None
     priority_tier: int | None = None
+    applicability_record_id: str | None = None
+    equation_compatible: bool | None = None
+    unit_compatible: bool | None = None
+    remaining_questions: tuple[str, ...] = (
+        "Future validation protocol and uncertainty resolution remain required.",
+    )
 
     def __post_init__(self) -> None:
         require_identifier(self.parameter_id, field="parameter_id")
@@ -179,6 +185,39 @@ class ParameterCandidateRecord:
         require_text(self.candidate_reason, field="candidate_reason")
         require_text(self.uncertainty_source, field="uncertainty_source")
         require_text(self.review_notes, field="review_notes")
+        applicability_record_id = self.applicability_record_id
+        if applicability_record_id is None:
+            applicability_record_id = f"applicability:{self.parameter_id}"
+        require_text(applicability_record_id, field="applicability_record_id")
+        if applicability_record_id != f"applicability:{self.parameter_id}":
+            raise ParameterCandidateError(
+                "applicability_record_id must be the deterministic parameter review ID"
+            )
+        object.__setattr__(self, "applicability_record_id", applicability_record_id)
+        equation_compatible = self.equation_compatible
+        if equation_compatible is None:
+            equation_compatible = self.applicability_status not in {
+                ApplicabilityAssessmentStatus.UNKNOWN,
+                ApplicabilityAssessmentStatus.NOT_APPLICABLE,
+                ApplicabilityAssessmentStatus.TRANSFER_REQUIRED,
+            }
+        if not isinstance(equation_compatible, bool):
+            raise ParameterSchemaError("equation_compatible must be a boolean")
+        object.__setattr__(self, "equation_compatible", equation_compatible)
+        unit_compatible = self.unit_compatible
+        if unit_compatible is None:
+            unit_compatible = equation_compatible
+        if not isinstance(unit_compatible, bool):
+            raise ParameterSchemaError("unit_compatible must be a boolean")
+        object.__setattr__(self, "unit_compatible", unit_compatible)
+        object.__setattr__(
+            self,
+            "remaining_questions",
+            _coerce_string_tuple(
+                self.remaining_questions,
+                field="remaining_questions",
+            ),
+        )
         if not isinstance(self.provenance, EvidenceProvenance):
             object.__setattr__(
                 self,
@@ -234,6 +273,18 @@ class ParameterCandidateRecord:
                 raise ParameterCandidateError(
                     "VALIDATION_CANDIDATE requires a validation plan"
                 )
+            if not self.equation_compatible:
+                raise ParameterCandidateError(
+                    "VALIDATION_CANDIDATE requires equation_compatible=true"
+                )
+            if not self.unit_compatible:
+                raise ParameterCandidateError(
+                    "VALIDATION_CANDIDATE requires unit_compatible=true"
+                )
+            if not self.remaining_questions:
+                raise ParameterCandidateError(
+                    "VALIDATION_CANDIDATE requires remaining_questions"
+                )
         if self.candidate_status is CandidateStatus.PROVISIONAL and (
             screening is not CandidateScreeningDisposition.DEFERRED
         ):
@@ -287,6 +338,15 @@ class ParameterCandidateRecord:
                 provenance=payload["provenance"],
                 candidate_screening=payload.get("candidate_screening"),
                 priority_tier=payload.get("priority_tier"),
+                applicability_record_id=payload.get("applicability_record_id"),
+                equation_compatible=payload.get("equation_compatible"),
+                unit_compatible=payload.get("unit_compatible"),
+                remaining_questions=payload.get(
+                    "remaining_questions",
+                    (
+                        "Future validation protocol and uncertainty resolution remain required.",
+                    ),
+                ),
             )
         except TypeError as exc:
             raise ParameterSchemaError(f"invalid parameter candidate: {exc}") from exc
@@ -307,6 +367,10 @@ class ParameterCandidateRecord:
             "uncertainty_source": self.uncertainty_source,
             "review_notes": self.review_notes,
             "priority_tier": self.priority_tier,
+            "applicability_record_id": self.applicability_record_id,
+            "equation_compatible": self.equation_compatible,
+            "unit_compatible": self.unit_compatible,
+            "remaining_questions": list(self.remaining_questions),
             "provenance": self.provenance.to_mapping(),
         }
 
@@ -324,6 +388,9 @@ class ParameterCandidateRecord:
                 ApplicabilityAssessmentStatus.UNKNOWN,
                 ApplicabilityAssessmentStatus.NOT_APPLICABLE,
             }
+            and self.equation_compatible
+            and self.unit_compatible
+            and bool(self.remaining_questions)
         )
 
     def transition_to(self, target: CandidateStatus) -> "ParameterCandidateRecord":
@@ -410,18 +477,22 @@ def construct_candidate_record(
     if review.parameter_id != evidence.parameter_id:
         raise ParameterCandidateError("evidence and applicability IDs do not match")
     applicability = review.applicability.assessment_status
+    equation_compatible = review.applicability.equation_compatible
+    unit_compatible = review.applicability.unit_compatible
     has_evidence = (
         evidence.status is EvidenceStatus.EVIDENCE_FOUND
         and evidence.source_identifier != UNRESOLVED_SOURCE
         and evidence.source_type is not SourceType.PROJECT_ASSUMPTION
         and evidence.source_type is not SourceType.TEST_ONLY
         and evidence.parameter_class is not ParameterClass.TEST_ONLY_PARAMETER
+        and evidence.source_metadata is not None
     )
     evidence_ids = (
         (evidence.source_identifier,)
         if evidence.source_identifier != UNRESOLVED_SOURCE
         else ()
     )
+    remaining_questions: tuple[str, ...]
     if applicability is ApplicabilityAssessmentStatus.NOT_APPLICABLE:
         status = CandidateStatus.REJECTED
         disposition = CandidateScreeningDisposition.REJECTED
@@ -432,6 +503,9 @@ def construct_candidate_record(
         validation_required = False
         plan = ()
         uncertainty_source = "NOT_APPLICABLE"
+        remaining_questions = (
+            "This record is outside the physical-parameter validation scope.",
+        )
     elif applicability is ApplicabilityAssessmentStatus.UNKNOWN or not has_evidence:
         status = CandidateStatus.PROVISIONAL
         disposition = CandidateScreeningDisposition.DEFERRED
@@ -446,20 +520,59 @@ def construct_candidate_record(
             if evidence.source_identifier != UNRESOLVED_SOURCE
             else UNRESOLVED_SOURCE
         )
+        remaining_questions = (
+            "Recover a non-test source with complete bibliographic metadata.",
+            "Resolve the source-to-V3 applicability coordinates and equation role.",
+            "Confirm a compatible canonical unit and explicit conversion path.",
+        )
+    elif (
+        applicability in {
+            ApplicabilityAssessmentStatus.DIRECT_MATCH,
+            ApplicabilityAssessmentStatus.PARTIAL_MATCH,
+        }
+        and has_evidence
+        and review.applicability.is_validation_shape
+        and equation_compatible
+        and unit_compatible
+    ):
+        status = CandidateStatus.VALIDATION_CANDIDATE
+        disposition = CandidateScreeningDisposition.CANDIDATE
+        reason = (
+            f"Candidate: complete evidence is linked and applicability is {applicability.value}; "
+            "equation and unit compatibility are explicit, but future validation is "
+            "required before any scientific or production use."
+        )
+        validation_required = True
+        plan = _validation_plan_for(evidence.subsystem, deferred=False)
+        uncertainty_source = evidence.source_identifier
+        remaining_questions = (
+            "Confirm the source uncertainty and representativeness for the intended V3 case.",
+            "Run the declared benchmark, literature comparison, and sensitivity protocol.",
+        )
     elif applicability in {
         ApplicabilityAssessmentStatus.DIRECT_MATCH,
         ApplicabilityAssessmentStatus.PARTIAL_MATCH,
         ApplicabilityAssessmentStatus.TRANSFER_REQUIRED,
     } and has_evidence:
-        status = CandidateStatus.VALIDATION_CANDIDATE
-        disposition = CandidateScreeningDisposition.CANDIDATE
+        status = CandidateStatus.APPLICABILITY_REVIEWED
+        disposition = CandidateScreeningDisposition.DEFERRED
         reason = (
-            f"Candidate: evidence exists and applicability is {applicability.value}; "
-            "future validation is required before any scientific or production use."
+            f"Deferred: evidence exists and applicability is {applicability.value}, but "
+            "the current V3 equation/unit compatibility gate is not satisfied."
         )
         validation_required = True
-        plan = _validation_plan_for(evidence.subsystem, deferred=False)
+        plan = _validation_plan_for(evidence.subsystem, deferred=True)
         uncertainty_source = evidence.source_identifier
+        questions = []
+        if not equation_compatible:
+            questions.append("Obtain a source equation compatible with the current V3 equation role.")
+        if not unit_compatible:
+            questions.append("Resolve the source-to-canonical unit conversion without an implicit assumption.")
+        if not review.applicability.uncertainty_available:
+            questions.append("Attach an explicit uncertainty or applicability-boundary record.")
+        remaining_questions = tuple(questions) or (
+            "Resolve the remaining source-to-model applicability questions.",
+        )
     else:
         status = CandidateStatus.PROVISIONAL
         disposition = CandidateScreeningDisposition.DEFERRED
@@ -467,6 +580,9 @@ def construct_candidate_record(
         validation_required = True
         plan = _validation_plan_for(evidence.subsystem, deferred=True)
         uncertainty_source = UNRESOLVED_SOURCE
+        remaining_questions = (
+            "Resolve the candidate eligibility prerequisites before validation planning.",
+        )
 
     return ParameterCandidateRecord(
         parameter_id=evidence.parameter_id,
@@ -484,6 +600,10 @@ def construct_candidate_record(
         review_notes=review.applicability.review_notes,
         provenance=evidence.provenance,
         priority_tier=_priority_for_subsystem(evidence.subsystem),
+        applicability_record_id=f"applicability:{evidence.parameter_id}",
+        equation_compatible=equation_compatible,
+        unit_compatible=unit_compatible,
+        remaining_questions=remaining_questions,
     )
 
 
@@ -492,7 +612,7 @@ class ParameterCandidateRegistry:
     """Deterministic candidate-screening records for all reviewed parameters."""
 
     records: tuple[ParameterCandidateRecord, ...]
-    stage: str = "P7.6B-2A"
+    stage: str = "P7.6B-2B"
     schema_version: str = "v1"
 
     def __post_init__(self) -> None:
@@ -520,7 +640,7 @@ class ParameterCandidateRegistry:
         cls,
         records: Iterable[ParameterCandidateRecord],
         *,
-        stage: str = "P7.6B-2A",
+        stage: str = "P7.6B-2B",
         schema_version: str = "v1",
     ) -> "ParameterCandidateRegistry":
         return cls(tuple(records), stage=stage, schema_version=schema_version)
@@ -538,7 +658,7 @@ class ParameterCandidateRegistry:
         )
         registry = cls.from_records(
             records,
-            stage=str(payload.get("stage", "P7.6B-2A")),
+            stage=str(payload.get("stage", "P7.6B-2B")),
             schema_version=str(payload.get("schema_version", "v1")),
         )
         checks = {
@@ -550,11 +670,14 @@ class ParameterCandidateRegistry:
         for field, expected in checks.items():
             if payload.get(field, expected) is not expected:
                 raise ParameterCandidateError(
-                    f"{field} must remain {expected!r} during P7.6B-2A"
+                    f"{field} must remain {expected!r} during P7.6B-2B"
                 )
         for field in ("validated_parameters", "active_parameters"):
             if payload.get(field, 0) != 0:
                 raise ParameterCandidateError(f"{field} must remain zero")
+        for field in ("physics_changed", "numerical_coupling_changed"):
+            if payload.get(field, False) is not False:
+                raise ParameterCandidateError(f"{field} must remain false in P7.6B-2B")
         declared = {
             "reviewed_parameter_count": len(registry.records),
             "candidate_count": registry.candidate_count,
@@ -592,7 +715,7 @@ class ParameterCandidateRegistry:
                 CandidateStatus.ACTIVE,
             }:
                 raise ParameterCandidateError(
-                    "P7.6B-2A cannot validate or activate candidate records"
+                    "P7.6B-2B cannot validate or activate candidate records"
                 )
 
     def validate_references(
@@ -630,6 +753,27 @@ class ParameterCandidateRegistry:
             if record.applicability_status is not review.applicability.assessment_status:
                 raise ParameterCandidateError(
                     f"{record.parameter_id}: applicability reference mismatch"
+                )
+            if record.applicability_record_id != f"applicability:{record.parameter_id}":
+                raise ParameterCandidateError(
+                    f"{record.parameter_id}: applicability_record_id reference mismatch"
+                )
+            expected_equation = review.applicability.equation_compatible
+            expected_unit = review.applicability.unit_compatible
+            if record.equation_compatible is not expected_equation:
+                raise ParameterCandidateError(
+                    f"{record.parameter_id}: equation compatibility reference mismatch"
+                )
+            if record.unit_compatible is not expected_unit:
+                raise ParameterCandidateError(
+                    f"{record.parameter_id}: unit compatibility reference mismatch"
+                )
+            expected_candidate = (
+                record.candidate_status is CandidateStatus.VALIDATION_CANDIDATE
+            )
+            if review.validation_candidate is not expected_candidate:
+                raise ParameterCandidateError(
+                    f"{record.parameter_id}: validation_candidate review flag mismatch"
                 )
             expected_evidence = (
                 ()
@@ -739,6 +883,8 @@ class ParameterCandidateRegistry:
             "calibration_started": False,
             "ufotri_active_database": False,
             "v3_physics_ready": False,
+            "physics_changed": False,
+            "numerical_coupling_changed": False,
             "parameters": [record.to_mapping() for record in self.records],
         }
 

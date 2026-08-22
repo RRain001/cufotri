@@ -1,4 +1,4 @@
-"""Fail-closed validation-candidate gates for P7.6B-1 and P7.6B-2A.
+"""Fail-closed validation-candidate gates for P7.6B-1 and P7.6B-2B.
 
 The gate identifies records that may be considered by the later validation
 protocol.  It does not validate, calibrate, activate, or expose a runtime
@@ -47,6 +47,10 @@ def can_enter_validation(candidate: ParameterCandidateRecord) -> bool:
         ApplicabilityAssessmentStatus.NOT_APPLICABLE,
     }:
         return False
+    if not candidate.equation_compatible or not candidate.unit_compatible:
+        return False
+    if not candidate.remaining_questions:
+        return False
     return candidate.can_enter_validation
 
 
@@ -67,6 +71,8 @@ def is_validation_candidate(
     if evidence.source_type is SourceType.TEST_ONLY:
         return False
     if evidence.parameter_class is ParameterClass.TEST_ONLY_PARAMETER:
+        return False
+    if evidence.source_metadata is None:
         return False
     return applicability.is_validation_shape
 
@@ -170,11 +176,11 @@ def evaluate_validation_gate(
 
 @dataclass(frozen=True)
 class CandidateValidationGateResult:
-    """P7.6B-2A gate result; candidate admission is still not activation."""
+    """P7.6B-2B gate result; candidate admission is still not activation."""
 
     candidate_ids: tuple[str, ...]
     blocked_reasons: tuple[tuple[str, str], ...]
-    stage: str = "P7.6B-2A"
+    stage: str = "P7.6B-2B"
     validated_parameters: int = 0
     active_parameters: int = 0
     calibration_started: bool = False
@@ -189,7 +195,7 @@ class CandidateValidationGateResult:
         ):
             value = getattr(self, field)
             if not isinstance(value, int) or isinstance(value, bool) or value != 0:
-                raise ValidationGateError(f"{field} must remain zero in P7.6B-2A")
+                raise ValidationGateError(f"{field} must remain zero in P7.6B-2B")
         for field in (
             "calibration_started",
             "ufotri_active_database",
@@ -198,7 +204,7 @@ class CandidateValidationGateResult:
             value = getattr(self, field)
             if not isinstance(value, bool) or value:
                 raise ValidationGateError(
-                    f"{field} must remain false in P7.6B-2A"
+                    f"{field} must remain false in P7.6B-2B"
                 )
         candidates = tuple(sorted(set(self.candidate_ids)))
         blocked = tuple(sorted(self.blocked_reasons, key=lambda item: item[0]))
@@ -228,7 +234,7 @@ class CandidateValidationGateResult:
             or self.ufotri_active_database
             or self.v3_physics_ready
         ):
-            raise ValidationGateError("unsafe P7.6B-2A gate state")
+            raise ValidationGateError("unsafe P7.6B-2B gate state")
 
     def to_mapping(self) -> dict[str, Any]:
         self.assert_safe()
