@@ -42,6 +42,7 @@ def test_public_pathway_source_scope_is_isolated() -> None:
         "src/cteas_ufotri/exposure/intake_v3/",
         "src/cteas_ufotri/exposure/dose_v3/",
         "src/cteas_ufotri/coupling/atmos_v3/",
+        "src/cteas_ufotri/v3_pipeline/",
     )
     assert changed_source
     assert all(path.startswith(allowed) for path in changed_source)

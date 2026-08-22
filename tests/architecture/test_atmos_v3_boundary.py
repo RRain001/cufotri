@@ -32,7 +32,11 @@ def changed_paths() -> set[str]:
 def test_p7_source_scope_is_atmospheric_interface_only() -> None:
     changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
     assert changed_source
-    assert all(path.startswith("src/cteas_ufotri/coupling/atmos_v3/") for path in changed_source)
+    allowed = (
+        "src/cteas_ufotri/coupling/atmos_v3/",
+        "src/cteas_ufotri/v3_pipeline/",
+    )
+    assert all(path.startswith(allowed) for path in changed_source)
 
 
 def test_protected_runtime_paths_and_default_activation_are_unchanged() -> None:

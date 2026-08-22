@@ -41,6 +41,7 @@ def test_source_is_isolated_to_soil_and_later_typed_v3_packages() -> None:
         "src/cteas_ufotri/exposure/intake_v3/",
         "src/cteas_ufotri/exposure/dose_v3/",
         "src/cteas_ufotri/coupling/atmos_v3/",
+        "src/cteas_ufotri/v3_pipeline/",
     )
     assert all(path.startswith(allowed) for path in changed_source)
 

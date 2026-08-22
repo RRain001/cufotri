@@ -2,6 +2,50 @@
 
 Updated: 2026-08-22
 
+## V3-P7.5 End-to-end pipeline integration
+
+The P7.5 branch adds `v3_pipeline/` as a stateless orchestration layer over
+the existing typed V3 modules. `V3PipelineParameters` requires every
+interval, resistance, soil, root, OBT, biological, harvest, consumption,
+dose, root-zone, and consumer input explicitly. `V3PipelineRunner` retains
+no mutable inventory and returns a new frozen `V3SimulationState` for each
+step.
+
+The controlled order is atmospheric forcing and soil deposition, leaf
+exchange into TFWT, OBT formation, root uptake, root/OBT balance application
+back to TFWT and soil, food transfer, intake, and dose. Existing solver
+balances are preserved in `V3PipelineLedger`; the orchestration layer adds
+only state wiring and cross-module consistency checks. `V3SimulationState`
+also supports validated mapping/JSON round-trips for an explicit restart
+boundary.
+
+The root solver is called against the step-start soil snapshot because its
+public contract advances the supplied soil timestamp by the interval. Its
+typed transfer balance is then applied to the post-deposition soil state at
+the same endpoint timestamp. Similarly, the OBT solver's reported TFWT loss
+is consumed before the root transfer is applied to the final TFWT state.
+These are state-boundary operations; P7.5 does not reimplement either
+solver's equation.
+
+    P7_5_STATUS = PASS_PIPELINE_INTEGRATION
+    V3_PIPELINE_AVAILABLE = TRUE
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p7_5_pipeline_integration_report.md`,
+`docs/v3/reports/v3_p7_5_pipeline_test_report.md`, and
+`docs/v3/reports/v3_p7_5_independent_review.md`.
+
 ## V3-P7 Atmospheric forcing coupling interface
 
 The P7 branch adds a typed atmospheric forcing boundary at
