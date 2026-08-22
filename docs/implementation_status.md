@@ -2,6 +2,47 @@
 
 Updated: 2026-08-22
 
+## V3-P6.6B Intake-to-dose assessment
+
+The P6.6B branch adds an isolated downstream dose boundary at
+`exposure/dose_v3/`. `DoseSolver` consumes only the public `IntakeState`
+methods `inventory()`, `consumer()`, `age_group()`, `period()`, and `time()`.
+It emits an immutable `DoseState` containing the intake inventory, explicit
+dose coefficient, committed-dose result, pathway, age group, time, and
+provenance. No environmental, plant, food, or assessment-policy state is
+created.
+
+The frozen conversion equation is:
+
+    D [Sv]
+      = I [Bq] * e [Sv Bq^-1]
+
+The P6.6A annual intake is consumed as one explicit annual exposure-period
+inventory at this boundary; no hidden time, coefficient, or database default
+is introduced. `DoseParameters` requires an explicit `Sv/Bq` coefficient and
+`parameter_status = provisional`. The coefficient is an interface input, not
+a validated UFOTRI or regulatory value.
+
+    P6_6B_STATUS = PASS_DOSE_ASSESSMENT_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P7_CTEAS_ATMOS_COUPLING
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_6b_dose_assessment_implementation_report.md`,
+`docs/v3/reports/v3_p6_6b_dose_assessment_test_report.md`, and
+`docs/v3/reports/v3_p6_6b_independent_review.md`.
+
 ## V3-P6.6A Food consumption and intake pathway
 
 The P6.6A branch adds an isolated food-to-human inventory boundary at

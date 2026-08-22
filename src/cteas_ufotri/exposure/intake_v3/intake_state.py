@@ -82,5 +82,20 @@ class IntakeState:
 
         return self.food_product_identifier
 
+    def age_group(self) -> str:
+        """Return the stable age-group identifier."""
+
+        return self.age_group_identifier
+
+    def period(self) -> str:
+        """Return the explicit intake time-period identifier."""
+
+        return self.time_period
+
+    def time(self) -> datetime:
+        """Return the UTC timestamp of the intake record."""
+
+        return self.timestamp
+
 
 __all__ = ["IntakeState"]

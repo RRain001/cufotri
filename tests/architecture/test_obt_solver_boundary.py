@@ -40,6 +40,7 @@ def test_source_isolated_to_existing_and_new_typed_v3_packages() -> None:
         "src/cteas_ufotri/plant/tfwt_v3/",
         "src/cteas_ufotri/plant/food_v3/",
         "src/cteas_ufotri/exposure/intake_v3/",
+        "src/cteas_ufotri/exposure/dose_v3/",
     )
     assert all(path.startswith(allowed) for path in changed_source)
 
