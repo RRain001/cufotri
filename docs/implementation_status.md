@@ -74,6 +74,52 @@ matrix, gate, and independent boundary reports are in
 `docs/v3/reports/v3_p7_6b1_test_report.md`. The formal decision is in
 `docs/adr/011-v3-parameter-applicability-review.md`.
 
+## V3-P7.6B-2A Parameter candidate construction
+
+P7.6B-2A adds a deterministic candidate-preparation control plane over the
+P7.6A evidence inventory and P7.6B-1 applicability matrix. Each candidate
+record carries explicit evidence links, applicability disposition, candidate
+lifecycle status, screening disposition, reason, uncertainty source,
+validation plan, priority tier, and provenance. The registry contains exactly
+the 76 reviewed inventory records and does not contain reported or normalized
+parameter values.
+
+Candidate admission requires an evidence record with `EVIDENCE_FOUND`, a
+non-test-only source, and an applicability disposition other than `UNKNOWN`
+or `NOT_APPLICABLE`. `DIRECT_MATCH`, `PARTIAL_MATCH`, and
+`TRANSFER_REQUIRED` are admissible shapes for a future validation candidate,
+but every such record remains `validation_required = true`. The current
+reviewed inputs produce no admitted candidates: 26 records remain
+`PROVISIONAL`/`DEFERRED`, while 50 scenario, numerical-control, or test-only
+records are `REJECTED` for this physical-validation screen.
+
+    P7_6B2A_STATUS = PASS_PARAMETER_CANDIDATE_CONSTRUCTION
+    PARAMETER_CANDIDATE_REGISTRY = TRUE
+    VALIDATION_CANDIDATES_IDENTIFIED = TRUE
+    VALIDATION_CANDIDATE_COUNT = 0
+    VALIDATED_PARAMETERS = 0
+    ACTIVE_PARAMETERS = 0
+    CALIBRATION_STARTED = FALSE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    PHYSICS_MODULE_CHANGED = FALSE
+
+`can_enter_validation()` admits only the explicit
+`VALIDATION_CANDIDATE` lifecycle state; the P7.6B-2A registry rejects
+`VALIDATED` and `ACTIVE` records, so candidate construction cannot activate a
+parameter or start calibration. The candidate layer is not imported by any
+solver, coupling, or pipeline module.
+
+The canonical registry is in
+`docs/v3/parameter_evidence/parameter_candidate_registry.yaml`. The
+construction, registry, gate, and independent review records are in
+`docs/v3/reports/v3_p7_6b2a_candidate_construction_report.md`,
+`docs/v3/reports/v3_p7_6b2a_candidate_registry_report.md`,
+`docs/v3/reports/v3_p7_6b2a_validation_gate_report.md`, and
+`docs/v3/reports/v3_p7_6b2a_independent_review.md`. The formal decision is in
+`docs/adr/012-v3-parameter-candidate-construction.md`.
+
 ## V3-P7.5B Numerical coupling semantics freeze
 
 P7.5B freezes the actual one-interval operator split used by the P7.5

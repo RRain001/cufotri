@@ -1,0 +1,1763 @@
+schema_version: v1
+stage: P7.6B-2A
+candidate_registry: true
+reviewed_parameter_count: 76
+candidate_count: 0
+deferred_count: 26
+rejected_count: 50
+validation_candidates_identified: true
+validated_parameters: 0
+active_parameters: 0
+calibration_started: false
+ufotri_active_database: false
+v3_physics_ready: false
+parameters:
+- parameter_id: atmos.air_hto_concentration
+  parameter_name: atmospheric HTO concentration
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.air_hto_concentration
+- parameter_id: atmos.deposition_flux
+  parameter_name: atmospheric deposition flux
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.deposition_flux
+- parameter_id: atmos.humidity
+  parameter_name: atmospheric relative humidity
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.humidity
+- parameter_id: atmos.location
+  parameter_name: forcing location
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.location
+- parameter_id: atmos.precipitation
+  parameter_name: precipitation rate
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.precipitation
+- parameter_id: atmos.source_identifier
+  parameter_name: forcing source identifier
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.source
+- parameter_id: atmos.temperature
+  parameter_name: atmospheric temperature
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.temperature
+- parameter_id: atmos.time_resolution
+  parameter_name: forcing time resolution
+  subsystem: atmos_v3
+  parameter_class: NUMERICAL_CONTROL
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/metadata.py
+    location: AtmosphericForcingMetadata.time_resolution
+- parameter_id: atmos.wind_speed
+  parameter_name: atmospheric wind speed
+  subsystem: atmos_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    location: AtmosphericHTOForcing.wind_speed
+- parameter_id: dose.age_group
+  parameter_name: dose age group
+  subsystem: dose_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py
+    location: DoseParameters.age_group_identifier
+- parameter_id: dose.dose_coefficient
+  parameter_name: ingestion dose coefficient
+  subsystem: dose_v3
+  parameter_class: DOSE_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires radionuclide, age group, pathway, coefficient source,
+    and unit match; source context is unresolved.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py
+    location: DoseParameters.dose_coefficient
+- parameter_id: dose.pathway
+  parameter_name: dose pathway identifier
+  subsystem: dose_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py
+    location: DoseParameters.pathway_identifier
+- parameter_id: dose.radionuclide
+  parameter_name: dose radionuclide identifier
+  subsystem: dose_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py
+    location: DoseParameters.radionuclide_identifier
+- parameter_id: food.crop
+  parameter_name: food transfer crop
+  subsystem: food_v3
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
+    specificity, and harvest timing; source context is unresolved.
+  priority_tier: 2
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    location: HarvestParameters.crop_identifier
+- parameter_id: food.harvest_area
+  parameter_name: harvest area
+  subsystem: food_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 2
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    location: HarvestParameters.harvest_area_m2
+- parameter_id: food.harvest_fraction
+  parameter_name: OBT harvest fraction
+  subsystem: food_v3
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
+    specificity, and harvest timing; source context is unresolved.
+  priority_tier: 2
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    location: HarvestParameters.harvest_fraction
+- parameter_id: food.product
+  parameter_name: food product identifier
+  subsystem: food_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 2
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    location: HarvestParameters.food_product_identifier
+- parameter_id: food.tfwt_harvest_fraction
+  parameter_name: TFWT harvest fraction
+  subsystem: food_v3
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
+    specificity, and harvest timing; source context is unresolved.
+  priority_tier: 2
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    location: HarvestParameters.tfwt_harvest_fraction
+- parameter_id: intake.age_group
+  parameter_name: intake age group
+  subsystem: intake_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    location: ConsumptionParameters.age_group_identifier
+- parameter_id: intake.annual_consumption_amount
+  parameter_name: annual food consumption amount
+  subsystem: intake_v3
+  parameter_class: EXPOSURE_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must classify consumption as a demographic scenario input or
+    an evidence-backed exposure parameter; source context is unresolved.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    location: ConsumptionParameters.annual_consumption_amount
+- parameter_id: intake.consumer
+  parameter_name: intake consumer identifier
+  subsystem: intake_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    location: FoodIntakeSolver.consumer_identifier
+- parameter_id: intake.food_product
+  parameter_name: intake food product identifier
+  subsystem: intake_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    location: ConsumptionParameters.food_product_identifier
+- parameter_id: intake.food_product_mass
+  parameter_name: food product mass basis
+  subsystem: intake_v3
+  parameter_class: EXPOSURE_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must classify consumption as a demographic scenario input or
+    an evidence-backed exposure parameter; source context is unresolved.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    location: ConsumptionParameters.food_product_mass_kg
+- parameter_id: intake.time_period
+  parameter_name: intake time period
+  subsystem: intake_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 3
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    location: ConsumptionParameters.time_period
+- parameter_id: leaf.crop
+  parameter_name: leaf lookup crop
+  subsystem: leaf_exchange_resistance
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceCoordinates.crop
+- parameter_id: leaf.day_night
+  parameter_name: leaf day night coordinate
+  subsystem: leaf_exchange_resistance
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceCoordinates.day_night
+- parameter_id: leaf.equilibrium_air_concentration
+  parameter_name: equilibrium air concentration
+  subsystem: leaf_exchange_resistance
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    location: signed_leaf_exchange_flux.equilibrium_air_concentration_bq_m3
+- parameter_id: leaf.growth_stage
+  parameter_name: leaf lookup growth stage
+  subsystem: leaf_exchange_resistance
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceCoordinates.growth_stage
+- parameter_id: leaf.r_a
+  parameter_name: aerodynamic resistance
+  subsystem: leaf_exchange_resistance
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceState.aerodynamic_resistance
+- parameter_id: leaf.r_b
+  parameter_name: boundary layer resistance
+  subsystem: leaf_exchange_resistance
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceState.boundary_layer_resistance
+- parameter_id: leaf.r_c
+  parameter_name: canopy resistance
+  subsystem: leaf_exchange_resistance
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceState.canopy_resistance
+- parameter_id: leaf.relative_humidity
+  parameter_name: leaf lookup relative humidity
+  subsystem: leaf_exchange_resistance
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceCoordinates.relative_humidity
+- parameter_id: leaf.temperature
+  parameter_name: leaf lookup temperature
+  subsystem: leaf_exchange_resistance
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py
+    location: ResistanceCoordinates.temperature_k
+- parameter_id: obt.daylight_multiplier
+  parameter_name: OBT daylight multiplier
+  subsystem: obt_v3
+  parameter_class: BIOLOGICAL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: OBTParameters.daylight_multiplier
+- parameter_id: obt.initial_inventory
+  parameter_name: initial OBT inventory
+  subsystem: obt_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_state.py
+    location: OBTState.from_inventory.obt_inventory_bq_m2
+- parameter_id: obt.is_daylight
+  parameter_name: OBT daylight state
+  subsystem: obt_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: PlantBiologicalForcing.is_daylight
+- parameter_id: obt.kf
+  parameter_name: OBT formation rate
+  subsystem: obt_v3
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: OBTParameters.kf_s
+- parameter_id: obt.kr
+  parameter_name: OBT turnover rate
+  subsystem: obt_v3
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: OBTParameters.kr_s
+- parameter_id: obt.nighttime_multiplier
+  parameter_name: OBT nighttime multiplier
+  subsystem: obt_v3
+  parameter_class: BIOLOGICAL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: OBTParameters.nighttime_multiplier
+- parameter_id: obt.photosynthetic_activity
+  parameter_name: photosynthetic activity
+  subsystem: obt_v3
+  parameter_class: BIOLOGICAL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: PlantBiologicalForcing.photosynthetic_activity
+- parameter_id: obt.plant_mass
+  parameter_name: fresh plant mass basis
+  subsystem: obt_v3
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_state.py
+    location: OBTState.plant_mass_kg_m2
+- parameter_id: obt.temperature
+  parameter_name: biological forcing temperature
+  subsystem: obt_v3
+  parameter_class: BIOLOGICAL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    location: PlantBiologicalForcing.temperature_k
+- parameter_id: pipeline.consumer_identifier
+  parameter_name: pipeline consumer identifier
+  subsystem: v3_pipeline
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/v3_pipeline/pipeline_runner.py
+    location: V3PipelineParameters.consumer_identifier
+- parameter_id: pipeline.equilibrium_air_concentration
+  parameter_name: pipeline equilibrium air concentration
+  subsystem: v3_pipeline
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/v3_pipeline/pipeline_runner.py
+    location: V3PipelineParameters.equilibrium_air_concentration_bq_m3
+- parameter_id: pipeline.interval_seconds
+  parameter_name: pipeline integration interval
+  subsystem: v3_pipeline
+  parameter_class: NUMERICAL_CONTROL
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/v3_pipeline/pipeline_runner.py
+    location: V3PipelineParameters.interval_seconds
+- parameter_id: root.k_root
+  parameter_name: root uptake coefficient
+  subsystem: root_v3
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review must distinguish soil-water concentration from total soil inventory
+    and resolve root-zone conditions; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: docs/v3/reports/v3_p6_4_root_uptake_implementation_report.md
+    location: equation-and-unit-table
+- parameter_id: root.root_zone_identifier
+  parameter_name: root zone identifier
+  subsystem: root_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/root_v3/root_solver.py
+    location: RootUptakeForcing.root_zone_identifier
+- parameter_id: soil.initial_inventory
+  parameter_name: initial soil water inventory
+  subsystem: soil_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/soil_v3/soil_state.py
+    location: SoilState.from_inventory.soil_water_inventory_bq_m2
+- parameter_id: soil.layer_depth
+  parameter_name: soil layer depth
+  subsystem: soil_v3
+  parameter_class: SOIL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/soil_v3/soil_state.py
+    location: SoilState.layer_depth_m
+- parameter_id: soil.transport_flux
+  parameter_name: signed soil layer transport flux
+  subsystem: soil_v3
+  parameter_class: SOIL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/soil_v3/soil_solver.py
+    location: SoilForcing.transport_flux_bq_m2_s
+- parameter_id: soil.tritium_half_life
+  parameter_name: tritium physical half-life
+  subsystem: soil_v3
+  parameter_class: PHYSICAL_CONSTANT
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/soil_v3/soil_solver.py
+    location: SoilParameters.tritium_half_life_s
+- parameter_id: soil.water_content
+  parameter_name: soil water content
+  subsystem: soil_v3
+  parameter_class: SOIL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/soil_v3/soil_state.py
+    location: SoilState.soil_water_content
+- parameter_id: test.pipeline.air_hto_concentration
+  parameter_name: synthetic atmospheric HTO concentration
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_forcing
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_forcing.air_hto
+- parameter_id: test.pipeline.deposition_flux
+  parameter_name: synthetic deposition flux
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_forcing
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_forcing.deposition
+- parameter_id: test.pipeline.dose_coefficient
+  parameter_name: synthetic dose coefficient
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.DoseParameters.dose_coefficient
+- parameter_id: test.pipeline.food_consumption
+  parameter_name: synthetic annual food consumption
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.ConsumptionParameters.annual_consumption_amount
+- parameter_id: test.pipeline.food_mass
+  parameter_name: synthetic food mass basis
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.ConsumptionParameters.food_product_mass_kg
+- parameter_id: test.pipeline.harvest_area
+  parameter_name: synthetic harvest area
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.HarvestParameters.harvest_area_m2
+- parameter_id: test.pipeline.harvest_fraction
+  parameter_name: synthetic harvest fraction
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.HarvestParameters.harvest_fraction
+- parameter_id: test.pipeline.initial_obt_inventory
+  parameter_name: synthetic initial OBT inventory
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_obt
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_obt.inventory
+- parameter_id: test.pipeline.initial_soil_inventory
+  parameter_name: synthetic initial soil inventory
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_soil
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_soil.inventory
+- parameter_id: test.pipeline.initial_tfwt_inventory
+  parameter_name: synthetic initial TFWT inventory
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_tfwt
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_tfwt.inventory
+- parameter_id: test.pipeline.interval_seconds
+  parameter_name: synthetic pipeline interval
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.interval_seconds
+- parameter_id: test.pipeline.k_root
+  parameter_name: synthetic root uptake coefficient
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.RootParameters.k_root_m_s
+- parameter_id: test.pipeline.kf
+  parameter_name: synthetic OBT formation rate
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.OBTParameters.kf_s
+- parameter_id: test.pipeline.kr
+  parameter_name: synthetic OBT turnover rate
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.OBTParameters.kr_s
+- parameter_id: test.pipeline.refinement_intervals
+  parameter_name: synthetic timestep refinement schedule
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline_numerical_semantics.py::test_timestep_refinement_converges_continuous_states
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline_numerical_semantics.py
+    location: refinement interval tuple
+- parameter_id: test.pipeline.resistance_a
+  parameter_name: synthetic aerodynamic resistance
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.ResistanceChain.from_components[0]
+- parameter_id: test.pipeline.resistance_b
+  parameter_name: synthetic boundary layer resistance
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.ResistanceChain.from_components[1]
+- parameter_id: test.pipeline.resistance_c
+  parameter_name: synthetic canopy resistance
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.ResistanceChain.from_components[2]
+- parameter_id: test.pipeline.soil_half_life
+  parameter_name: synthetic soil tritium half-life
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::make_parameters
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: make_parameters.SoilParameters.tritium_half_life_s
+- parameter_id: test.pipeline.zero_forcing
+  parameter_name: synthetic zero forcing
+  subsystem: tests
+  parameter_class: TEST_ONLY_PARAMETER
+  evidence_ids:
+  - tests/integration/test_v3_pipeline.py::test_zero_atmospheric_forcing_does_not_generate_inventory
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: null
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: tests/integration/test_v3_pipeline.py
+    location: zero atmospheric forcing test
+- parameter_id: tfwt.initial_inventory
+  parameter_name: initial TFWT inventory
+  subsystem: tfwt_v3
+  parameter_class: SCENARIO_INPUT
+  evidence_ids: []
+  applicability_status: NOT_APPLICABLE
+  candidate_status: REJECTED
+  candidate_screening: REJECTED
+  candidate_reason: 'Rejected: NOT_APPLICABLE is a scenario input, numerical control,
+    or test-only record and cannot enter physical validation.'
+  validation_required: false
+  validation_plan: []
+  uncertainty_source: NOT_APPLICABLE
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/tfwt_v3/tfwt_state.py
+    location: TFWTState.from_inventory.tfwt_inventory_bq_m2
+- parameter_id: tfwt.transformation_flux
+  parameter_name: TFWT transformation flux
+  subsystem: tfwt_v3
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires a plant-water pool definition, water-loss/transformation
+    timescale, and crop dependence; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
+    location: TFWTStorageSolver.advance.transformation_flux_bq_m2_s
+- parameter_id: tfwt.water_content
+  parameter_name: TFWT water content
+  subsystem: tfwt_v3
+  parameter_class: CROP_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires a plant-water pool definition, water-loss/transformation
+    timescale, and crop dependence; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/tfwt_v3/tfwt_state.py
+    location: TFWTState.water_content_kg_m2
+- parameter_id: tfwt.water_loss_flux
+  parameter_name: TFWT water loss flux
+  subsystem: tfwt_v3
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  evidence_ids: []
+  applicability_status: UNKNOWN
+  candidate_status: PROVISIONAL
+  candidate_screening: DEFERRED
+  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
+    resolved; retain the P7.6A provisional boundary.'
+  validation_required: true
+  validation_plan:
+  - LITERATURE_COMPARISON
+  - SENSITIVITY_ANALYSIS
+  - EXPERIMENTAL_DATA_REQUIRED
+  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
+  review_notes: Review requires a plant-water pool definition, water-loss/transformation
+    timescale, and crop dependence; source context is unresolved.
+  priority_tier: 1
+  provenance:
+    repository: CTEAS_ufotri
+    revision: 61effab
+    file: src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
+    location: TFWTStorageSolver.advance.water_loss_flux_bq_m2_s
+inventory_manifest: docs/v3/parameter_evidence/parameter_inventory.yaml
+applicability_matrix: docs/v3/parameter_evidence/parameter_applicability_matrix.yaml
+source_revision: 838634f3af85e205fb15e10cbf15ee298ad4f017
+scope: One candidate-screening record for every P7.6A parameter; no value import,
+  calibration, validation, activation, or solver coupling.
