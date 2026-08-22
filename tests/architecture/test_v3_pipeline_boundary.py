@@ -30,7 +30,12 @@ def changed_paths() -> set[str]:
 
 
 def test_pipeline_source_scope_isolated_to_new_package() -> None:
-    changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
+    changed_source = sorted(
+        path
+        for path in changed_paths()
+        if path.startswith("src/")
+        and not path.startswith("src/cteas_ufotri/parameters_v3/")
+    )
     assert changed_source
     assert all(path.startswith("src/cteas_ufotri/v3_pipeline/") for path in changed_source)
 

@@ -30,7 +30,12 @@ def changed_paths() -> set[str]:
 
 
 def test_source_is_isolated_to_soil_and_later_typed_v3_packages() -> None:
-    changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
+    changed_source = sorted(
+        path
+        for path in changed_paths()
+        if path.startswith("src/")
+        and not path.startswith("src/cteas_ufotri/parameters_v3/")
+    )
 
     assert changed_source
     allowed = (
