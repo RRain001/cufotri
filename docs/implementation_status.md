@@ -2,6 +2,48 @@
 
 Updated: 2026-08-22
 
+## V3-P7 Atmospheric forcing coupling interface
+
+The P7 branch adds a typed atmospheric forcing boundary at
+`coupling/atmos_v3/`. `AtmosphericHTOForcing` is immutable and fail-closed:
+timestamp, location, air HTO concentration, deposition flux, temperature,
+humidity, wind speed, precipitation, source, and provenance are explicit
+inputs. Concentration, flux, temperature, humidity, wind-speed,
+precipitation, and metadata time-resolution units are checked exactly; no
+unit conversion or missing-value repair is performed. The `air_ht0_concentration`
+spelling is retained as an explicit alias of the canonical
+`air_hto_concentration` field.
+
+`AtmosphericForcingMetadata` records model name, version, grid definition,
+time resolution, source dataset, UTC creation time, and quality flag. The
+interface has two adapters only: atmospheric forcing can produce the
+existing leaf-resistance forcing input or the existing soil deposition
+forcing input. It does not import or call TFWT, OBT, root-uptake,
+food-transfer, intake, or dose solvers, and it has no CALMET/CALPUFF,
+ERA5/WRF file-reader, dispersion, hydrology, or UFOTRI parameter-loader
+dependency.
+
+    P7_ATMOS_INTERFACE_STATUS = PASS
+    ATMOS_FORCING_INTERFACE = TRUE
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P8_CTEAS_ATMOS_DATA_EXCHANGE
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p7_atmos_interface_implementation_report.md`,
+`docs/v3/reports/v3_p7_atmos_interface_test_report.md`, and
+`docs/v3/reports/v3_p7_independent_review.md`.
+
 ## V3-P6.6B Intake-to-dose assessment
 
 The P6.6B branch adds an isolated downstream dose boundary at

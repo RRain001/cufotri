@@ -35,6 +35,7 @@ def test_source_scope_is_intake_and_new_dose_v3_only() -> None:
     allowed = (
         "src/cteas_ufotri/exposure/intake_v3/",
         "src/cteas_ufotri/exposure/dose_v3/",
+        "src/cteas_ufotri/coupling/atmos_v3/",
     )
     assert all(path.startswith(allowed) for path in changed_source)
 
@@ -53,7 +54,10 @@ def test_protected_paths_and_assessment_boundary_are_clean() -> None:
         "src/cteas_ufotri/soil",
         "src/cteas_ufotri/foodchain",
         "src/cteas_ufotri/atmosphere",
-        "src/cteas_ufotri/coupling",
+        "src/cteas_ufotri/coupling/integrator.py",
+        "src/cteas_ufotri/coupling/mass_balance.py",
+        "src/cteas_ufotri/coupling/reference_solver.py",
+        "src/cteas_ufotri/coupling/state.py",
         "src/cteas_ufotri/dose",
         "src/cteas_ufotri/case.py",
         "src/cteas_ufotri/config.py",

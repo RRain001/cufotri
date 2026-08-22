@@ -35,6 +35,7 @@ def test_source_scope_is_intake_and_later_typed_v3_only() -> None:
     allowed = (
         "src/cteas_ufotri/exposure/intake_v3/",
         "src/cteas_ufotri/exposure/dose_v3/",
+        "src/cteas_ufotri/coupling/atmos_v3/",
     )
     assert all(path.startswith(allowed) for path in changed_source)
 
