@@ -38,6 +38,42 @@ gap matrix, test report, and independent review are in
 `docs/v3/reports/v3_p7_6a_independent_review.md`. The formal decision is in
 `docs/adr/010-v3-parameter-evidence-lifecycle.md`.
 
+## V3-P7.6B-1 Parameter applicability review
+
+P7.6B-1 adds an immutable source-to-model `ApplicabilityRecord`, a
+one-to-one deterministic review matrix for all 76 P7.6A records, and a
+fail-closed validation-candidate gate. The five applicability dispositions are
+`DIRECT_MATCH`, `PARTIAL_MATCH`, `TRANSFER_REQUIRED`, `NOT_APPLICABLE`, and
+`UNKNOWN`. The matrix records 26 unresolved model/evidence reviews as
+`UNKNOWN` and 50 scenario/control/test records as `NOT_APPLICABLE`; there are
+no direct, partial, or transfer dispositions and no admitted candidates.
+
+`EVIDENCE_FOUND` test fixtures remain software evidence only. The candidate
+gate requires a non-test-only `EVIDENCE_FOUND` record plus a direct match, or
+a partial match with resolved uncertainty and a direct unit match. It only
+identifies candidates for a future protocol; it cannot validate, calibrate,
+activate, replace a value, or provide a runtime lookup.
+
+    P7_6B1_STATUS = PASS_PARAMETER_APPLICABILITY_REVIEW
+    PARAMETER_APPLICABILITY_SCHEMA = TRUE
+    PARAMETER_REVIEW_MATRIX = TRUE
+    VALIDATION_CANDIDATES_IDENTIFIED = TRUE
+    VALIDATION_CANDIDATE_COUNT = 0
+    CALIBRATION_STARTED = FALSE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The canonical matrix is in
+`docs/v3/parameter_evidence/parameter_applicability_matrix.yaml`. The review,
+matrix, gate, and independent boundary reports are in
+`docs/v3/reports/v3_p7_6b1_applicability_review.md`,
+`docs/v3/reports/v3_p7_6b1_parameter_review_matrix.md`,
+`docs/v3/reports/v3_p7_6b1_validation_gate_report.md`, and
+`docs/v3/reports/v3_p7_6b1_independent_review.md`; the test report is in
+`docs/v3/reports/v3_p7_6b1_test_report.md`. The formal decision is in
+`docs/adr/011-v3-parameter-applicability-review.md`.
+
 ## V3-P7.5B Numerical coupling semantics freeze
 
 P7.5B freezes the actual one-interval operator split used by the P7.5
