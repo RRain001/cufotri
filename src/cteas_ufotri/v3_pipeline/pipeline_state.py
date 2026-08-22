@@ -1,4 +1,9 @@
-"""Immutable V3 P7.5 pipeline state, ledgers, and restart serialization."""
+"""Immutable V3 P7.5B state, ledgers, and restart serialization.
+
+Continuous soil, TFWT, and OBT states advance to the interval endpoint.  The
+root and food/intake/dose records are interval transfer or endpoint readout
+records; they do not turn food assessment into a mutating harvest process.
+"""
 
 from __future__ import annotations
 

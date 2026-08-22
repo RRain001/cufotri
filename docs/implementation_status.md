@@ -2,6 +2,43 @@
 
 Updated: 2026-08-22
 
+## V3-P7.5B Numerical coupling semantics freeze
+
+P7.5B freezes the actual one-interval operator split used by the P7.5
+pipeline.  Atmospheric forcing is representative of the complete interval
+`[t_n, t_{n+1}]` and carries the interval-start label `t_n`; all emitted
+continuous states and downstream records use `t_{n+1}`.  The frozen order is
+soil deposition, leaf exchange into a TFWT intermediate, OBT transformation,
+root uptake from the step-start soil snapshot, post-deposition soil/root
+reconciliation, OBT-loss then root-input TFWT reconciliation, and finally
+food/intake/dose endpoint readout.
+
+Soil, TFWT, and OBT remain continuous reservoirs.  Root fluxes and ledgers are
+interval transfer records.  Harvest, food, intake, and dose are non-mutating
+endpoint assessment/readout records; P7.5B does not model continuous harvest
+or cumulative food consumption.
+
+The coupling is an explicit sequential/operator-split composition, not a
+fully implicit solution.  Timestep refinement is therefore required and is
+checked over a fixed synthetic horizon without introducing an unvalidated
+accuracy threshold.
+
+    P7_5B_STATUS = PASS_NUMERICAL_COUPLING_SEMANTICS_FROZEN
+    V3_PIPELINE_AVAILABLE = TRUE
+    NUMERICAL_COUPLING_FROZEN = TRUE
+    TIMESTEP_REFINEMENT = PASS
+    RESTART_EQUIVALENCE = PASS
+    PIPELINE_CONSERVATION = PASS
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The implementation, numerical test, and independent review records are in
+`docs/v3/reports/v3_p7_5b_numerical_coupling_implementation_report.md`,
+`docs/v3/reports/v3_p7_5b_numerical_coupling_test_report.md`, and
+`docs/v3/reports/v3_p7_5b_independent_review.md`.  The formal decision is in
+`docs/adr/009-v3-pipeline-numerical-coupling-semantics.md`.
+
 ## V3-P7.5 End-to-end pipeline integration
 
 The P7.5 branch adds `v3_pipeline/` as a stateless orchestration layer over
