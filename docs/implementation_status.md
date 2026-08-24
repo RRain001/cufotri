@@ -2,6 +2,49 @@
 
 Updated: 2026-08-24
 
+## V3 P7.7A Baseline validation framework
+
+P7.7A adds an isolated validation control plane at
+`src/cteas_ufotri/validation_v3/`. `ValidationCase` requires named forcing,
+initial state, explicit parameter snapshots, model outputs, reference data,
+expected metrics, acceptance criteria, and complete artifact provenance.
+`ValidationResult` records the metric value, threshold, pass/fail decision,
+uncertainty, execution hash, solver version, and parameter snapshot. The
+metric layer supports RMSE, MAE, relative error, bias, conservation residual,
+trajectory comparison, decay error, and state difference; it audits existing
+ledgers without replacing them.
+
+Five synthetic benchmark definitions are stored in
+`configs/v3/validation/p7_7a_baseline_benchmarks.yaml`. They are interface
+fixtures only: values are test-only, no production solver is called by the
+loader, and no physical parameter truth is inferred. `can_enter_validation()`
+admits only synthetic/software/analytical baseline cases with explicit
+`TEST_ONLY` parameters and rejects active parameters, calibration, physical or
+empirical validation classes, UFOTRI database activation, and V3 readiness.
+
+```text
+P7_7A_STATUS = PASS_VALIDATION_FRAMEWORK
+VALIDATION_SCHEMA = TRUE
+VALIDATION_METRICS = TRUE
+BASELINE_BENCHMARKS_DEFINED = TRUE
+SOLVER_CHANGES = FALSE
+NUMERICAL_COUPLING_CHANGES = FALSE
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The machine-readable schema is
+`schemas/v3/validation_case.schema.json`; policy and review artifacts are
+`docs/adr/ADR-017-v3-validation-framework-policy.md`,
+`docs/v3/validation/`, `docs/v3/reports/v3_p7_7a_validation_framework_report.md`,
+and `docs/v3/reports/v3_p7_7a_independent_review.md`. Focused schema, metric,
+result, gate, benchmark, and source-isolation tests pass. No P7.6D redesign,
+solver equation, numerical coupling, pipeline semantic, active parameter, or
+calibration path was changed.
+
 ## V3-P7.6A Parameter evidence and provenance freeze
 
 P7.6A adds a control-plane-only parameter evidence layer at
