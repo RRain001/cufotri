@@ -2075,3 +2075,47 @@ priority states, coupling coverage, direct-activation rejection, required
 artifacts, and runtime isolation. The compatibility command completed with
 `32 passed`; `git diff --check` passed. No plant, soil, exposure, coupling,
 pipeline, or parameter-runtime source was changed.
+
+## V3 P7.8B-1 physics redesign specification
+
+P7.8B-1 converts the P7.8A redesign priorities into candidate scientific
+specifications without implementing them. The specification registry covers
+the nine redesign records and two deferred extensions, including current
+equations, equation gaps, candidate formulations, state variables, symbolic
+parameters, interface changes, validation data, coupling impact, backward
+compatibility, and migration strategy.
+
+```text
+P7_8B1_STATUS = PASS_REDESIGN_SPECIFICATION
+HIGH_PRIORITY_ITEMS_SPECIFIED = TRUE
+EQUATION_GAPS_DOCUMENTED = TRUE
+VALIDATION_REQUIREMENTS_DEFINED = TRUE
+COUPLING_IMPACTS_DEFINED = TRUE
+IMPLEMENTATION_STARTED = FALSE
+SOLVER_CHANGES = FALSE
+NUMERICAL_COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The primary outputs are
+`docs/v3/physics/p7_8b1_redesign_specification.yaml`,
+`docs/v3/reports/v3_p7_8b1_redesign_specification_report.md`,
+`docs/v3/reports/v3_p7_8b1_equation_gap_analysis.md`,
+`docs/v3/reports/v3_p7_8b1_coupling_impact_report.md`,
+`docs/v3/reports/v3_p7_8b1_independent_review.md`, and
+`docs/v3/adr/ADR-020-v3-redesign-specification-policy.md`.
+
+The current `v3_frozen_baseline` remains runnable and unchanged. Candidate
+equations and parameters are control-plane-only, value-free, and not runtime
+admissible. Root, layered soil, and food event/continuous candidates are
+explicit `NUMERICAL_COUPLING_CHANGE` designs; OBT/leaf candidates are
+interface extensions; TFWT dynamic water turnover is a pipeline change.
+
+The P7.8B-1 specification test validates schema completeness, candidate
+options, dimensional markers, conservation-boundary markers, activation
+governance, baseline compatibility, required artifacts, and runtime
+isolation. The focused suite completed with `12 passed`; `git diff --check`
+passed. No production source was changed.
