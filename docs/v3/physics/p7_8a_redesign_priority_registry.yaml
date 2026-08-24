@@ -1,0 +1,609 @@
+schema_version: v1
+stage: P7.8A
+status: PASS_PHYSICS_REDESIGN_PRIORITIZATION
+current_v3_model: FROZEN
+source_documents:
+  p7_6c3_physics_gap_analysis: docs/v3/reports/v3_p7_6c3_physics_gap_analysis.md
+  p7_6c3_validation_feasibility: docs/v3/reports/v3_p7_6c3_validation_feasibility_report.md
+  p7_6d_decision_registry: docs/v3/physics/p7_6d_physics_adoption_decision.yaml
+  p7_6d_priority_matrix: docs/v3/physics/p7_6d_redesign_priority_matrix.yaml
+  p7_7a_validation_framework: docs/v3/reports/v3_p7_7a_validation_framework_report.md
+  p7_7b_synthetic_benchmark: docs/v3/reports/v3_p7_7b_synthetic_benchmark_report.md
+
+priority_states:
+  - CRITICAL
+  - HIGH
+  - MEDIUM
+  - LOW
+  - DEFERRED
+  - REJECTED
+
+item_decision_states:
+  - REDESIGN_REQUIRED
+  - DEFERRED
+  - REJECTED
+
+subsystem_decision_states:
+  - KEEP_CURRENT_V3
+  - EXTEND_V3_PHYSICS
+  - REDESIGN_REQUIRED
+  - KEEP_EXTERNAL_LAYER
+
+redesign_items_reviewed: true
+priority_matrix_complete: true
+implementation_started: false
+solver_changes: false
+coupling_changes: false
+active_parameters: 0
+validated_parameters: 1
+calibration_started: false
+ufotri_active_database: false
+v3_physics_ready: false
+redesign_item_count: 9
+deferred_item_count: 2
+rejected_item_count: 4
+decision_counts:
+  REDESIGN_REQUIRED: 9
+  DEFERRED: 2
+  REJECTED: 4
+priority_counts:
+  CRITICAL: 4
+  HIGH: 4
+  MEDIUM: 1
+  DEFERRED: 2
+  REJECTED: 4
+
+admission_gate:
+  implementation_authorized: false
+  redesign_required_can_enter_validation: false
+  redesign_required_can_activate: false
+  direct_transition_to_active: false
+  forbidden_direct_transitions:
+    - [REDESIGN_REQUIRED, ACTIVE]
+    - [REDESIGN_REQUIRED, VALIDATED]
+    - [DEFERRED, ACTIVE]
+    - [DEFERRED, VALIDATED]
+  required_intermediate_artifacts:
+    - equation_decision
+    - state_and_unit_contract
+    - conservation_tests
+    - validation_data_contract
+    - independent_review
+    - explicit_implementation_authorization
+
+subsystem_reviews:
+  leaf_exchange:
+    current_v3_model: 'Resistance chain r_a + r_b + r_c with derived g_ex = 1 / (r_a + r_b + r_c)'
+    decision: KEEP_CURRENT_V3
+    future_extension: EXTEND_V3_PHYSICS
+    rationale: >-
+      The resistance component roles and units are sufficiently defined for
+      a future matched validation path. Growth stage remains a separate
+      redesign because the current equation has no reproducible
+      stage-dependent relation.
+  tfwt:
+    current_v3_model: 'Storage equation with explicit leaf exchange, root input, water-loss, and transformation fluxes'
+    decision: KEEP_CURRENT_V3
+    future_extension: EXTEND_V3_PHYSICS
+    rationale: >-
+      The current storage boundary is testable with declared water basis,
+      timing, area, and loss semantics. Dynamic water turnover, growth, and
+      dilution are deferred until matched water-balance data and a boundary
+      decision are available.
+  obt:
+    current_v3_model: 'First-order TFWT-to-OBT storage equation dOBT/dt = kf * TFWT - kr * OBT with a daylight selector'
+    decision: REDESIGN_REQUIRED
+    future_extension: EXTEND_V3_PHYSICS
+    rationale: >-
+      kf and kr remain a scoped reduced baseline, but the missing biological
+      state, day/night normalization, photosynthetic forcing, mass basis, and
+      temperature response prevent a full mechanism claim.
+  soil:
+    current_v3_model: 'One-layer activity storage dM/dt = deposition + signed transport - radioactive decay'
+    decision: KEEP_CURRENT_V3
+    future_extension: EXTEND_V3_PHYSICS
+    rationale: >-
+      The signed transport interface and decay ledger are retained for
+      scoped validation. Hydraulic transport, evaporation, and multi-layer
+      water coupling remain deferred rather than being inferred from the
+      UFOTRI source.
+  root_uptake:
+    current_v3_model: 'One-layer effective-velocity boundary J_root = k_root * C_soil'
+    decision: REDESIGN_REQUIRED
+    future_extension: EXTEND_V3_PHYSICS
+    rationale: >-
+      The current velocity abstraction cannot represent a layer-distributed
+      rate tied to transpiration and soil hydrogen without choosing an
+      unsupported storage length and aggregation rule.
+  food_transfer:
+    current_v3_model: 'Harvest event transfers configured OBT and optional TFWT fractions into a product inventory'
+    decision: REDESIGN_REQUIRED
+    future_extension: EXTEND_V3_PHYSICS
+    rationale: >-
+      Environmental plant-to-product transfer must remain separate from
+      consumption. The continuous-versus-event and product-basis boundary
+      is not defined well enough to import a continuous UFOTRI rate.
+  consumption:
+    current_v3_model: 'Annual consumption amount and product mass convert food inventory to intake'
+    decision: KEEP_EXTERNAL_LAYER
+    future_extension: KEEP_EXTERNAL_LAYER
+    rationale: >-
+      Consumption is an exposure scenario input. It must not be used to
+      justify a redesign of environmental transfer physics.
+  dose:
+    current_v3_model: 'External dose assessment D = I_food * e'
+    decision: KEEP_EXTERNAL_LAYER
+    future_extension: KEEP_EXTERNAL_LAYER
+    rationale: >-
+      Dose coefficients remain an external dosimetry or regulatory input and
+      are outside the UFOTRI environmental-physics redesign path.
+
+items:
+  - item_id: R1_OBT_DAYLIGHT_FORMATION_STATE
+    item_class: REDESIGN
+    subsystem: plant.obt_v3
+    p7_6d_parameter_ids: [obt.daylight_multiplier]
+    current_v3_model: 'Boolean daylight selector multiplies the reduced first-order kf source term'
+    ufotri_gap: 'Recovered day/night material does not define a normalized V3 daylight formation state or multiplier contract'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: CRITICAL
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: LIMITED_MATCHED_DAY_NIGHT_PLANT_DATA_REQUIRED
+    implementation_complexity: HIGH
+    coupling_impact: NO_IMPACT
+    priority: CRITICAL
+    recommended_stage: V3.2
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      Daylight formation directly controls the central plant OBT pathway and
+      therefore the OBT component entering food and dose. It is the highest
+      scientific priority, but no value or normalized relation is admissible
+      until the state and data basis are frozen.
+    required_validation_data:
+      - time-resolved plant TFWT and OBT observations
+      - timestamped daylight or light-state record
+      - matched temperature, humidity, and crop-stage metadata
+      - plant mass and hydrogen/water basis for each observation
+    prerequisites:
+      - authoritative TFWT, exchangeable OBT, and non-exchangeable OBT scope
+      - day/night time convention and transition rule
+      - equation and unit contract for any normalized forcing
+    forbidden_shortcut: 'Do not treat daylight_multiplier = 1 or a plausible literature value as an admitted UFOTRI parameter'
+    expected_exit_evidence: 'Reviewed equation decision, state/unit contract, matched dataset protocol, conservation test, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R2_OBT_NIGHTTIME_FORMATION_STATE
+    item_class: REDESIGN
+    subsystem: plant.obt_v3
+    p7_6d_parameter_ids: [obt.nighttime_multiplier]
+    current_v3_model: 'Boolean nighttime selector supplies a provisional reduced-model multiplier'
+    ufotri_gap: 'Recovered nighttime statements do not define a normalized nighttime formation relation or residual biological activity state'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: CRITICAL
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: LIMITED_MATCHED_NIGHTTIME_PLANT_DATA_REQUIRED
+    implementation_complexity: HIGH
+    coupling_impact: NO_IMPACT
+    priority: CRITICAL
+    recommended_stage: V3.2
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      Nighttime treatment changes integrated OBT formation over the full
+      exposure period. It must be decided together with daylight treatment;
+      otherwise day/night contrast becomes an untraceable calibration degree
+      of freedom.
+    required_validation_data:
+      - paired day and night TFWT/OBT trajectories
+      - continuous or declared-resolution light-state forcing
+      - plant stage, temperature, and sampling-time metadata
+      - independent biological replicate identifiers
+    prerequisites:
+      - common day/night state definition with R1
+      - documented lower-bound or residual-activity semantics
+      - prospective validation case separating day and night intervals
+    forbidden_shortcut: 'Do not set nighttime formation to zero or copy a daylight value without a reviewed biological decision'
+    expected_exit_evidence: 'Joint R1/R2 state equation, day/night benchmark, matched observations, conservation evidence, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R3_OBT_PHOTOSYNTHETIC_FORCING_STATE
+    item_class: REDESIGN
+    subsystem: plant.obt_v3
+    p7_6d_parameter_ids: [obt.photosynthetic_activity]
+    current_v3_model: 'Photosynthetic activity is an explicit forcing field but does not alter the current OBT equation'
+    ufotri_gap: 'No V3 photosynthesis equation or measured-forcing/state contract connects activity to OBT formation'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: CRITICAL
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: LIMITED_ACTIVITY_FORCING_AND_OBT_DATA_REQUIRED
+    implementation_complexity: HIGH
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    priority: CRITICAL
+    recommended_stage: V3.2
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      Photosynthetic activity is a plausible process control for organic
+      binding, but the current interface only stores the field. The redesign
+      must decide whether it is an observed forcing or a new state before it
+      can influence dose-relevant OBT.
+    required_validation_data:
+      - plant TFWT and OBT time series
+      - measured PAR/light or a documented activity proxy
+      - temperature, humidity, CO2 or chamber forcing where applicable
+      - crop stage, biomass, and biological replicate metadata
+    prerequisites:
+      - forcing-versus-state decision
+      - activity units, temporal resolution, and missing-data policy
+      - independent activity-to-OBT benchmark definition
+    forbidden_shortcut: 'Do not multiply kf by an unvalidated activity scalar or relabel PAR as photosynthetic rate'
+    expected_exit_evidence: 'Forcing/state contract, dimensional audit, discriminating benchmark, validation dataset, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R4_OBT_PLANT_MASS_BASIS
+    item_class: REDESIGN
+    subsystem: plant.obt_v3
+    p7_6d_parameter_ids: [obt.plant_mass]
+    current_v3_model: 'OBT concentration is inventory divided by a declared fresh-plant mass basis'
+    ufotri_gap: 'Fresh, dry, water, and hydrogen mass bases are not linked by a reviewed relation for OBT interpretation'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: HIGH
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: LIMITED_MASS_BASIS_AND_OBT_DATA_REQUIRED
+    implementation_complexity: MEDIUM
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    priority: HIGH
+    recommended_stage: V3.1
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      The mass basis determines whether an OBT concentration and its transfer
+      to food are comparable across observations. This is a lower-cost
+      contract prerequisite, but it remains a physics redesign item because
+      basis conversion cannot be guessed from a field name.
+    required_validation_data:
+      - paired fresh, dry, water, and hydrogen mass measurements where used
+      - plant OBT inventory or concentration with explicit basis
+      - harvested product mass and basis
+      - crop-stage and tissue-scope metadata
+    prerequisites:
+      - authoritative concentration and inventory basis
+      - explicit plant-to-product mass mapping
+      - unit and area conversion audit
+    forbidden_shortcut: 'Do not convert fresh/dry or water/hydrogen bases using an unrecorded moisture assumption'
+    expected_exit_evidence: 'Mass-basis contract, dimensional reconciliation, matched observations, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R5_OBT_TEMPERATURE_RESPONSE
+    item_class: REDESIGN
+    subsystem: plant.obt_v3
+    p7_6d_parameter_ids: [obt.temperature]
+    current_v3_model: 'Temperature is optional biological forcing but has no OBT-specific response in the equation'
+    ufotri_gap: 'No reviewed OBT formation or turnover temperature relation, domain, or unit contract is defined'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: HIGH
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: LIMITED_TEMPERATURE_SERIES_AND_OBT_DATA_REQUIRED
+    implementation_complexity: HIGH
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    priority: HIGH
+    recommended_stage: V3.2
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      Temperature may change both formation and turnover, so an undocumented
+      response can be confounded with kf or kr. The relation must be selected
+      and validated as a biological model rather than added as a multiplier.
+    required_validation_data:
+      - time-resolved temperature and plant TFWT/OBT observations
+      - controlled or sufficiently contrasting temperature conditions
+      - crop stage, light, humidity, and biomass metadata
+      - independent replicate and uncertainty records
+    prerequisites:
+      - choose formation, turnover, or both as affected processes
+      - define temperature domain and reference basis
+      - pre-register discriminating temperature cases
+    forbidden_shortcut: 'Do not apply a generic Q10 or empirical temperature factor without an explicit OBT decision and evidence'
+    expected_exit_evidence: 'Temperature-response equation, domain/unit contract, controlled validation case, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R6_ROOT_LAYERED_UPTAKE_STATE
+    item_class: REDESIGN
+    subsystem: plant.root_v3
+    p7_6d_parameter_ids: [root.k_root]
+    current_v3_model: 'One-layer effective velocity maps soil-water concentration to root flux as J_root = k_root * C_soil'
+    ufotri_gap: 'UFOTRI layer-distributed first-order transfer tied to transpiration and soil hydrogen cannot be mapped to the V3 velocity without a storage length and aggregation model'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: CRITICAL
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: BLOCKED_UNTIL_LAYER_PROFILE_DATA
+    implementation_complexity: HIGH
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    priority: CRITICAL
+    recommended_stage: V4
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      Root uptake is the soil-to-plant bridge. A wrong layer, water-flux, or
+      aggregation interpretation propagates directly into TFWT, OBT, food,
+      and dose, and cannot be repaired by renaming a coefficient.
+    required_validation_data:
+      - layer-resolved soil water content and HTO concentration
+      - root distribution or active-root profile
+      - transpiration or plant water-uptake observations
+      - plant TFWT time series and soil/plant boundary conditions
+      - layer geometry, signs, and drainage metadata
+    prerequisites:
+      - soil and root state ownership by layer
+      - rate, velocity, concentration, and storage-length unit contract
+      - soil-to-root conservation and aggregation contract
+      - separate P7.5/P7.5B numerical-coupling review
+    forbidden_shortcut: 'Do not convert a UFOTRI rate to m s^-1 using an assumed layer depth or fit an effective velocity to hide the mismatch'
+    expected_exit_evidence: 'Layered state diagram, dimensional audit, coupling proposal, conservation tests, validation data package, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R7_FOOD_OBT_EVENT_CONTINUOUS_BOUNDARY
+    item_class: REDESIGN
+    subsystem: plant.food_v3
+    p7_6d_parameter_ids: [food.harvest_fraction]
+    current_v3_model: 'A harvest event transfers harvest_fraction times plant OBT inventory to a product inventory'
+    ufotri_gap: 'Recovered UFOTRI plant/cow/product representation is continuous and is not equivalent to the V3 event fraction'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: HIGH
+    dose_pathway_importance: CRITICAL
+    uncertainty_impact: HIGH
+    validation_availability: PROSPECTIVE_HARVEST_AND_PRODUCT_OBT_DATA_REQUIRED
+    implementation_complexity: HIGH
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    priority: HIGH
+    recommended_stage: V4
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      This is the direct environmental transfer boundary into food OBT and
+      therefore has immediate dose relevance. Event and continuous semantics
+      must be selected before a product inventory can be interpreted.
+    required_validation_data:
+      - plant and product OBT observations at declared harvest times
+      - plant inventory, product mass, and remaining biomass
+      - harvest timing, loss, and repeated-harvest metadata
+      - tissue and product identity with independent replicates
+    prerequisites:
+      - event, continuous, or hybrid product state decision
+      - OBT product basis and plant-product inventory conservation
+      - harvest-time and loss contract
+      - separate intake/dose boundary retained as scenario/external layer
+    forbidden_shortcut: 'Do not derive a continuous transfer rate by dividing a harvest fraction by a time interval'
+    expected_exit_evidence: 'Plant-product state contract, event/continuous equation decision, conservation cases, matched harvest data, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R8_FOOD_TFWT_EVENT_CONTINUOUS_BOUNDARY
+    item_class: REDESIGN
+    subsystem: plant.food_v3
+    p7_6d_parameter_ids: [food.tfwt_harvest_fraction]
+    current_v3_model: 'An optional TFWT harvest fraction transfers plant TFWT inventory at a harvest event'
+    ufotri_gap: 'The continuous plant-water/product-water transfer basis and event timing are not defined by the recovered source'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: HIGH
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: PROSPECTIVE_HARVEST_AND_PRODUCT_TFWT_DATA_REQUIRED
+    implementation_complexity: HIGH
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    priority: HIGH
+    recommended_stage: V4
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      TFWT transfer is a distinct product-water pathway and cannot inherit
+      OBT semantics. Its event/continuous boundary affects product
+      concentration, water basis, and downstream intake.
+    required_validation_data:
+      - plant TFWT and product-water HTO observations
+      - plant and product water mass or concentration basis
+      - harvest timing, product mass, and remaining-plant data
+      - paired OBT measurements to keep the two product components separate
+    prerequisites:
+      - separate TFWT product state and water-basis contract
+      - plant-product timing and loss semantics
+      - conservation test for TFWT and total product inventory
+      - P7.5/P7.5B coupling impact review
+    forbidden_shortcut: 'Do not copy the OBT harvest fraction into TFWT or infer TFWT transfer from total food activity'
+    expected_exit_evidence: 'TFWT product equation, water-basis audit, conservation cases, matched data, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: R9_LEAF_PHENOLOGY_RESISTANCE
+    item_class: REDESIGN
+    subsystem: plant.leaf_exchange_resistance
+    p7_6d_parameter_ids: [leaf.growth_stage]
+    current_v3_model: 'Growth stage is metadata in the resistance coordinates; component resistance remains r_a + r_b + r_c'
+    ufotri_gap: 'No reproducible stage ontology, transition rule, or stage-dependent resistance relation is defined'
+    decision_from_p7_6d: REDESIGN_REQUIRED
+    scientific_importance: MEDIUM
+    dose_pathway_importance: MEDIUM
+    uncertainty_impact: MEDIUM
+    validation_availability: FEASIBLE_WITH_STAGE_AND_METEOROLOGY_METADATA
+    implementation_complexity: MEDIUM
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    priority: MEDIUM
+    recommended_stage: V3.1
+    decision: REDESIGN_REQUIRED
+    rationale: >-
+      Growth stage affects applicability and possibly resistance, but the
+      current resistance chain is already a usable frozen baseline. This can
+      be addressed as a typed interface and evidence-stratification problem
+      before any larger biological redesign.
+    required_validation_data:
+      - crop-specific stage ontology and transition timestamps
+      - canopy geometry, LAI, and physiology descriptors by stage
+      - matched meteorology and r_a/r_b/r_c observations
+      - crop identity and independent case provenance
+    prerequisites:
+      - decide stage metadata-only versus stage-dependent equation
+      - preserve component ownership and s m^-1 units
+      - align stage transitions with forcing timestamps
+    forbidden_shortcut: 'Do not import a vegetation-period label as a numerical resistance parameter'
+    expected_exit_evidence: 'Stage schema, equation decision, matched resistance cases, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: D1_TFWT_WATER_TURNOVER_GROWTH_DILUTION
+    item_class: DEFERRED_EXTENSION
+    subsystem: plant.tfwt_v3
+    current_v3_model: 'Fixed water-content storage with explicit water-loss and transformation flux inputs'
+    ufotri_gap: 'Growth, water turnover, and dilution effects are not represented as a selected dynamic plant-water model'
+    decision_from_p7_6d: VALIDATE_CURRENT_MODEL
+    scientific_importance: HIGH
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: REQUIRES_MATCHED_PLANT_WATER_BALANCE_DATA
+    implementation_complexity: HIGH
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    priority: DEFERRED
+    recommended_stage: V3.2
+    decision: DEFERRED
+    rationale: >-
+      The question is scientifically relevant, but P7.6D classified the
+      existing TFWT storage/flux quantities as validation-feasible with
+      limitations. Dynamic turnover should wait for a water-balance dataset
+      and a decision about whether water state is owned inside or outside
+      the current pathway.
+    required_validation_data:
+      - plant water content and biomass trajectories
+      - transpiration, irrigation, precipitation, and water-loss observations
+      - time-resolved TFWT concentration/inventory
+      - stage and area-basis metadata
+    prerequisites:
+      - close current TFWT basis, timing, and loss semantics
+      - decide whether dilution is a state update or external forcing
+      - assess pipeline and atmospheric forcing implications
+    forbidden_shortcut: 'Do not add an implicit dilution factor to the current storage solver'
+    expected_exit_evidence: 'Water-balance design decision, interface contract, validation feasibility update, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: D2_SOIL_HYDRAULIC_TRANSPORT_EVAPORATION
+    item_class: DEFERRED_EXTENSION
+    subsystem: plant.soil_v3
+    current_v3_model: 'One-layer storage accepts signed transport as an external flux and does not derive hydrology'
+    ufotri_gap: 'Hydraulic transport, evaporation, and multi-layer water coupling are not represented in the current soil boundary'
+    decision_from_p7_6d: VALIDATE_CURRENT_MODEL
+    scientific_importance: HIGH
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: REQUIRES_LAYER_HYDROLOGY_AND_HTO_DATA
+    implementation_complexity: HIGH
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    priority: DEFERRED
+    recommended_stage: V4
+    decision: DEFERRED
+    rationale: >-
+      A hydrologic redesign may improve environmental realism, but it would
+      reopen soil-root and possibly atmosphere-soil numerical boundaries.
+      P7.8A records the need without turning a missing observation package
+      into an implementation mandate.
+    required_validation_data:
+      - layer-resolved soil water content and HTO concentration
+      - infiltration, drainage, evaporation, and runoff observations
+      - layer geometry and hydraulic boundary conditions
+      - root-zone and plant-water observations for coupled cases
+    prerequisites:
+      - complete current signed-flux validation contract
+      - define layer ownership, signs, and water-basis conservation
+      - separate hydraulic data availability from UFOTRI equation adoption
+    forbidden_shortcut: 'Do not infer a hydraulic model from the signed transport interface or a synthetic benchmark'
+    expected_exit_evidence: 'Hydrology design, soil-root coupling review, conservation tests, external data package, and independent review'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: X1_IMPORT_UNREVIEWED_UFOTRI_VALUES
+    item_class: REJECTED_NON_GOAL
+    subsystem: parameters_v3
+    current_v3_model: 'Parameter lifecycle and evidence gates keep candidates separate from runtime values'
+    ufotri_gap: 'An evidence gap is not permission to select or import a plausible UFOTRI number'
+    decision_from_p7_6d: SCOPE_BOUNDARY
+    scientific_importance: LOW
+    dose_pathway_importance: LOW
+    uncertainty_impact: HIGH
+    validation_availability: NOT_APPLICABLE_REJECTED
+    implementation_complexity: HIGH
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    priority: REJECTED
+    recommended_stage: NEVER
+    decision: REJECTED
+    rationale: 'Importing an unreviewed value would bypass provenance, applicability, unit, and validation gates and would invalidate the roadmap boundary.'
+    required_validation_data:
+      - 'Not applicable; a complete source/equation/unit/applicability/validation record is a prerequisite to any future candidate stage'
+    prerequisites:
+      - 'No P7.8A action; use the separate parameter evidence governance process if evidence is recovered'
+    forbidden_shortcut: 'Never promote reconstructed, synthetic, or reference values to UFOTRI parameters'
+    expected_exit_evidence: 'Permanent exclusion from the P7.8A implementation path'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: X2_ROOT_RATE_TO_VELOCITY_SCALING
+    item_class: REJECTED_NON_GOAL
+    subsystem: plant.root_v3
+    current_v3_model: 'Root flux uses an explicit effective velocity and one-layer soil concentration'
+    ufotri_gap: 'Rate/velocity, layer, and storage semantics are unresolved'
+    decision_from_p7_6d: SCOPE_BOUNDARY
+    scientific_importance: HIGH
+    dose_pathway_importance: HIGH
+    uncertainty_impact: HIGH
+    validation_availability: NOT_APPLICABLE_REJECTED
+    implementation_complexity: HIGH
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    priority: REJECTED
+    recommended_stage: NEVER
+    decision: REJECTED
+    rationale: 'Unit scaling alone cannot select storage length, layer aggregation, transpiration coupling, or conservation semantics.'
+    required_validation_data:
+      - 'Not applicable to the shortcut; a future layered redesign would require the R6 data contract'
+    prerequisites:
+      - 'R6 layered root design and explicit coupling authorization would be required for any real redesign'
+    forbidden_shortcut: 'Never convert k_root by multiplying or dividing by an assumed layer depth'
+    expected_exit_evidence: 'Shortcut remains rejected; only R6 can reopen the question'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: X3_CONTINUOUS_FOOD_RATE_TO_HARVEST_FRACTION
+    item_class: REJECTED_NON_GOAL
+    subsystem: plant.food_v3
+    current_v3_model: 'Food transfer is an explicit harvest event with separate OBT and TFWT components'
+    ufotri_gap: 'Continuous transfer and event harvest have different state and timing semantics'
+    decision_from_p7_6d: SCOPE_BOUNDARY
+    scientific_importance: HIGH
+    dose_pathway_importance: CRITICAL
+    uncertainty_impact: HIGH
+    validation_availability: NOT_APPLICABLE_REJECTED
+    implementation_complexity: HIGH
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    priority: REJECTED
+    recommended_stage: NEVER
+    decision: REJECTED
+    rationale: 'Dividing or integrating a continuous rate to manufacture an event fraction would conceal the missing product state and conservation boundary.'
+    required_validation_data:
+      - 'Not applicable to the shortcut; a future event/continuous redesign would require the R7/R8 data contracts'
+    prerequisites:
+      - 'R7 and R8 event/continuous design plus independent review would be required for any actual implementation'
+    forbidden_shortcut: 'Never replace a product-state decision with a time-scaled harvest fraction'
+    expected_exit_evidence: 'Shortcut remains rejected; event and continuous representations stay explicitly separated'
+    activation_allowed_in_p7_8a: false
+
+  - item_id: X4_DOSE_DRIVEN_ENVIRONMENTAL_PHYSICS_REDESIGN
+    item_class: REJECTED_NON_GOAL
+    subsystem: exposure.dose_v3
+    current_v3_model: 'External intake-to-dose layer applies D = I_food * e'
+    ufotri_gap: 'Dose requirements do not establish a missing environmental transfer equation'
+    decision_from_p7_6d: DO_NOT_IMPORT
+    scientific_importance: LOW
+    dose_pathway_importance: HIGH
+    uncertainty_impact: LOW
+    validation_availability: NOT_APPLICABLE_REJECTED
+    implementation_complexity: HIGH
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    priority: REJECTED
+    recommended_stage: NEVER
+    decision: REJECTED
+    rationale: 'An external dose coefficient or regulatory pathway must not be moved into plant, soil, or atmospheric physics merely to improve dose reporting.'
+    required_validation_data:
+      - 'Not applicable to environmental physics; dose-coefficient provenance belongs to the external dosimetry layer'
+    prerequisites:
+      - 'Keep intake and dose scenario governance separate from environmental redesign'
+    forbidden_shortcut: 'Never redesign environmental physics to compensate for an external dosimetry input requirement'
+    expected_exit_evidence: 'Dose boundary remains external and no environmental solver is changed'
+    activation_allowed_in_p7_8a: false

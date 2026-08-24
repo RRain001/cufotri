@@ -2035,3 +2035,43 @@ Adoption counts are `KEEP_CURRENT_V3=2`, `VALIDATE_CURRENT_MODEL=9`,
 The P7.6D control-plane loader and focused unit/architecture tests pass. No
 solver, equation, P7.5/P7.5B pipeline, numerical coupling, parameter value,
 calibration routine, runtime lookup, or active database was added.
+
+## V3 P7.8A physics redesign prioritization and planning
+
+P7.8A converts the P7.6C-3 feasibility findings and P7.6D adoption decisions
+into a ranked, evidence-gated physics roadmap. The current V3 model remains
+frozen. The registry covers all nine P7.6D `REDESIGN_REQUIRED` records,
+separates two deferred water/hydrology extensions, and permanently rejects
+four shortcuts or scope expansions. The coupling matrix classifies every
+governed item as `NO_IMPACT`, `INTERFACE_CHANGE_ONLY`,
+`PIPELINE_CHANGE_REQUIRED`, or
+`NUMERICAL_COUPLING_REDESIGN_REQUIRED` without reopening P7.5/P7.5B.
+
+```text
+P7_8A_STATUS = PASS_PHYSICS_REDESIGN_PRIORITIZATION
+REDESIGN_ITEMS_REVIEWED = TRUE
+PRIORITY_MATRIX_COMPLETE = TRUE
+ROADMAP_DEFINED = TRUE
+IMPLEMENTATION_STARTED = FALSE
+SOLVER_CHANGES = FALSE
+COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The primary outputs are
+`docs/v3/physics/p7_8a_redesign_priority_registry.yaml`,
+`docs/v3/physics/p7_8a_coupling_impact_matrix.yaml`,
+`docs/v3/reports/v3_p7_8a_redesign_prioritization_report.md`,
+`docs/v3/reports/v3_p7_8a_physics_evolution_roadmap.md`,
+`docs/v3/reports/v3_p7_8a_coupling_impact_report.md`,
+`docs/v3/reports/v3_p7_8a_independent_review.md`, and
+`docs/v3/adr/ADR-019-v3-physics-redesign-governance.md`.
+
+The P7.8A governance test validates registry completeness, subsystem review,
+priority states, coupling coverage, direct-activation rejection, required
+artifacts, and runtime isolation. The compatibility command completed with
+`32 passed`; `git diff --check` passed. No plant, soil, exposure, coupling,
+pipeline, or parameter-runtime source was changed.

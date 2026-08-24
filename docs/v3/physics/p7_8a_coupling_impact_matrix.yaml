@@ -1,0 +1,158 @@
+schema_version: v1
+stage: P7.8A
+status: COMPLETE_COUPLING_IMPACT_MATRIX
+source_registry: docs/v3/physics/p7_8a_redesign_priority_registry.yaml
+current_v3_model: FROZEN
+current_numerical_coupling_changed: false
+p7_5_reopened: false
+p7_5b_reopened: false
+implementation_authorized: false
+
+impact_states:
+  - NO_IMPACT
+  - INTERFACE_CHANGE_ONLY
+  - PIPELINE_CHANGE_REQUIRED
+  - NUMERICAL_COUPLING_REDESIGN_REQUIRED
+
+impact_counts:
+  NO_IMPACT: 2
+  INTERFACE_CHANGE_ONLY: 4
+  PIPELINE_CHANGE_REQUIRED: 3
+  NUMERICAL_COUPLING_REDESIGN_REQUIRED: 6
+
+matrix_records:
+  - item_id: R1_OBT_DAYLIGHT_FORMATION_STATE
+    item_class: REDESIGN
+    coupling_impact: NO_IMPACT
+    affected_boundary: plant.obt_v3 internal formation decision
+    impact_basis: 'The day/night question is internal until a new state or forcing boundary is approved.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: NO_CHANGE
+  - item_id: R2_OBT_NIGHTTIME_FORMATION_STATE
+    item_class: REDESIGN
+    coupling_impact: NO_IMPACT
+    affected_boundary: plant.obt_v3 internal formation decision
+    impact_basis: 'Nighttime treatment shares the R1 internal OBT design boundary.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: NO_CHANGE
+  - item_id: R3_OBT_PHOTOSYNTHETIC_FORCING_STATE
+    item_class: REDESIGN
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    affected_boundary: plant.obt_v3 biological forcing interface
+    impact_basis: 'A typed activity forcing or plant-state field may be added, but no numerical link is selected here.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: NO_CHANGE
+  - item_id: R4_OBT_PLANT_MASS_BASIS
+    item_class: REDESIGN
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    affected_boundary: plant.obt_v3 state and plant-product basis interface
+    impact_basis: 'The mass basis changes state metadata and interpretation; it does not authorize time-coupled transfer.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: NO_CHANGE
+  - item_id: R5_OBT_TEMPERATURE_RESPONSE
+    item_class: REDESIGN
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    affected_boundary: plant.obt_v3 biological forcing interface
+    impact_basis: 'Temperature is already an optional forcing field; the missing response relation is a future design decision.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: NO_CHANGE
+  - item_id: R6_ROOT_LAYERED_UPTAKE_STATE
+    item_class: REDESIGN
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    affected_boundary: plant.soil_v3 to plant.root_v3 to plant.tfwt_v3
+    impact_basis: 'Layer ownership, water uptake, aggregation, signs, and soil-plant conservation would change the numerical state boundary.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: true
+    p7_5b_reauthorization_required: true
+    current_action: HOLD_UNTIL_COUPLING_REVIEW
+  - item_id: R7_FOOD_OBT_EVENT_CONTINUOUS_BOUNDARY
+    item_class: REDESIGN
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    affected_boundary: plant.obt_v3 to plant.food_v3
+    impact_basis: 'A continuous product state would alter the plant-product time boundary and inventory ownership.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: true
+    p7_5b_reauthorization_required: true
+    current_action: HOLD_UNTIL_COUPLING_REVIEW
+  - item_id: R8_FOOD_TFWT_EVENT_CONTINUOUS_BOUNDARY
+    item_class: REDESIGN
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    affected_boundary: plant.tfwt_v3 to plant.food_v3
+    impact_basis: 'TFWT product transfer requires a distinct water-basis and plant-product time contract.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: true
+    p7_5b_reauthorization_required: true
+    current_action: HOLD_UNTIL_COUPLING_REVIEW
+  - item_id: R9_LEAF_PHENOLOGY_RESISTANCE
+    item_class: REDESIGN
+    coupling_impact: INTERFACE_CHANGE_ONLY
+    affected_boundary: plant.leaf_exchange_resistance forcing/coordinates
+    impact_basis: 'Stage ontology and stage-dependent resistance can be represented at the typed interface before any storage coupling change.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: NO_CHANGE
+  - item_id: D1_TFWT_WATER_TURNOVER_GROWTH_DILUTION
+    item_class: DEFERRED_EXTENSION
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    affected_boundary: meteorology/plant water forcing to plant.tfwt_v3
+    impact_basis: 'A dynamic water balance would require new forcing/state ownership and pipeline semantics.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: true
+    current_action: DEFER
+  - item_id: D2_SOIL_HYDRAULIC_TRANSPORT_EVAPORATION
+    item_class: DEFERRED_EXTENSION
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    affected_boundary: atmosphere/soil/root/plant water system
+    impact_basis: 'Hydraulic transport and evaporation would reopen layer and water-flux state ownership.'
+    future_authorization_required: true
+    p7_5_reauthorization_required: true
+    p7_5b_reauthorization_required: true
+    current_action: DEFER
+  - item_id: X1_IMPORT_UNREVIEWED_UFOTRI_VALUES
+    item_class: REJECTED_NON_GOAL
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    affected_boundary: parameter evidence and runtime lookup control plane
+    impact_basis: 'Importing an unreviewed value would bypass the parameter lifecycle and alter runtime admission.'
+    future_authorization_required: false
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: REJECT_PERMANENTLY
+  - item_id: X2_ROOT_RATE_TO_VELOCITY_SCALING
+    item_class: REJECTED_NON_GOAL
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    affected_boundary: soil-root numerical boundary
+    impact_basis: 'The shortcut would silently change the numerical boundary without the R6 state and conservation design.'
+    future_authorization_required: false
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: REJECT_PERMANENTLY
+  - item_id: X3_CONTINUOUS_FOOD_RATE_TO_HARVEST_FRACTION
+    item_class: REJECTED_NON_GOAL
+    coupling_impact: NUMERICAL_COUPLING_REDESIGN_REQUIRED
+    affected_boundary: plant-product numerical boundary
+    impact_basis: 'The shortcut would manufacture an event value while leaving continuous product state and conservation undefined.'
+    future_authorization_required: false
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: REJECT_PERMANENTLY
+  - item_id: X4_DOSE_DRIVEN_ENVIRONMENTAL_PHYSICS_REDESIGN
+    item_class: REJECTED_NON_GOAL
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    affected_boundary: external intake/dose versus environmental physics boundary
+    impact_basis: 'Dose reporting needs remain external and do not authorize changing plant, soil, or atmospheric physics.'
+    future_authorization_required: false
+    p7_5_reauthorization_required: false
+    p7_5b_reauthorization_required: false
+    current_action: REJECT_PERMANENTLY
