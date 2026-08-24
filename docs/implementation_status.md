@@ -1839,3 +1839,35 @@ EXPERIMENT_SPECIFICATION = READY_FOR_EXTERNAL_DATA_SEARCH_OR_NEW_EXPERIMENT
 FORMAL_V3_PHYSICS = NOT_STARTED
 V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 ```
+
+## V3 integration review and P7.7 validation preparation
+
+The independent `codex/v3-integration-review` branch was created from
+`origin/main` and sequentially integrated P7.5, P7.5B, P7.6A, P7.6B-1,
+P7.6B-2A, P7.6B-2B, P7.6C-1, and P7.6C-2. The review uses new integration
+commits and does not merge `origin/main`. The final tree is unchanged from
+the P7.6C-2 source tree before the review report was added, so this phase
+introduced no physics-module, numerical-coupling, or solver changes.
+
+```text
+V3_INTEGRATION_REVIEW = PASS
+CODE_CONFLICTS = 0
+NEW_TEST_FAILURES = 0
+PHYSICS_MODULE_CHANGES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+CALIBRATION = NOT_STARTED
+REAL_ATMOS_INPUT = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The requested unit, integration, architecture, and regression scopes pass
+with `PYTHONPATH=.`. The only test-suite warning is the existing NumPy/NetCDF
+binary-compatibility warning in the ERA5 reader test. The full integration
+review is recorded in
+`docs/v3/reports/v3_integration_readiness_review.md`. The next stage is
+preparation-only and is defined in
+`docs/v3/physics/p7_7_physics_validation_preparation.md`; it does not start
+calibration or activate any parameter.
