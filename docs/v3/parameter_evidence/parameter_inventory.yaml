@@ -1,0 +1,1464 @@
+schema_version: v1
+stage: P7.6A
+inventory_scope: >-
+  Explicit V3 model parameters, state-initialization inputs, forcing inputs,
+  pipeline controls, and synthetic test values found in the P6/P7 typed
+  interfaces and P7.5/P7.5B tests. Derived balances, unit labels, identifiers
+  used only as metadata, and legacy V1/V2 configuration values are excluded
+  from this V3 control-plane inventory.
+status: PASS_PARAMETER_EVIDENCE_PROVENANCE_FROZEN
+policy:
+  allowed_current_statuses:
+    - PROVISIONAL
+    - EVIDENCE_FOUND
+    - REJECTED
+  validated_allowed: false
+  active_allowed: false
+  calibration_started: false
+  silent_unit_conversion: false
+  runtime_parameter_lookup: false
+parameters:
+  - parameter_id: leaf.r_a
+    parameter_name: aerodynamic resistance
+    subsystem: leaf_exchange_resistance
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: r_a
+    description: Explicit aerodynamic resistance component supplied to the V3 resistance chain.
+    canonical_unit: s m^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s m^-1
+    normalized_value: null
+    normalized_unit: s m^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Internal interface input only; no external evidence is attached and no production value is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceState.aerodynamic_resistance}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: leaf.r_b
+    parameter_name: boundary layer resistance
+    subsystem: leaf_exchange_resistance
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: r_b
+    description: Explicit boundary-layer resistance component supplied to the V3 resistance chain.
+    canonical_unit: s m^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s m^-1
+    normalized_value: null
+    normalized_unit: s m^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Internal interface input only; no external evidence is attached and no production value is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceState.boundary_layer_resistance}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: leaf.r_c
+    parameter_name: canopy resistance
+    subsystem: leaf_exchange_resistance
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: r_c
+    description: Explicit canopy resistance component supplied to the V3 resistance chain.
+    canonical_unit: s m^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s m^-1
+    normalized_value: null
+    normalized_unit: s m^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Internal interface input only; no external evidence is attached and no production value is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceState.canopy_resistance}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: leaf.equilibrium_air_concentration
+    parameter_name: equilibrium air concentration
+    subsystem: leaf_exchange_resistance
+    parameter_class: SCENARIO_INPUT
+    symbol: C_eq
+    description: Atmospheric-equivalent concentration supplied to the signed leaf-exchange interface.
+    canonical_unit: Bq m^-3
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-3
+    normalized_value: null
+    normalized_unit: Bq m^-3
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case input; P7.6A records the required unit and provenance gap but does not choose a value.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py, location: signed_leaf_exchange_flux.equilibrium_air_concentration_bq_m3}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: leaf.crop
+    parameter_name: leaf lookup crop
+    subsystem: leaf_exchange_resistance
+    parameter_class: CROP_PARAMETER
+    symbol: crop
+    description: Crop coordinate used by a future resistance evidence lookup.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Lookup coordinate only; no crop-specific applicability is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceCoordinates.crop}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: leaf.growth_stage
+    parameter_name: leaf lookup growth stage
+    subsystem: leaf_exchange_resistance
+    parameter_class: CROP_PARAMETER
+    symbol: growth_stage
+    description: Growth-stage coordinate used by a future resistance evidence lookup.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Lookup coordinate only; no growth-stage applicability is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceCoordinates.growth_stage}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: leaf.temperature
+    parameter_name: leaf lookup temperature
+    subsystem: leaf_exchange_resistance
+    parameter_class: SCENARIO_INPUT
+    symbol: T
+    description: Temperature coordinate for a future resistance evidence lookup.
+    canonical_unit: K
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: K
+    normalized_value: null
+    normalized_unit: K
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Forcing coordinate; P7.6A does not infer a temperature-dependent parameterization.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceCoordinates.temperature_k}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: leaf.relative_humidity
+    parameter_name: leaf lookup relative humidity
+    subsystem: leaf_exchange_resistance
+    parameter_class: SCENARIO_INPUT
+    symbol: RH
+    description: Relative-humidity coordinate for a future resistance evidence lookup.
+    canonical_unit: '1'
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: '1'
+    normalized_value: null
+    normalized_unit: '1'
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Forcing coordinate; P7.6A does not infer a humidity-dependent parameterization.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceCoordinates.relative_humidity}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: leaf.day_night
+    parameter_name: leaf day night coordinate
+    subsystem: leaf_exchange_resistance
+    parameter_class: SCENARIO_INPUT
+    symbol: period
+    description: Optional day/night coordinate for evidence lookup and forcing context.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Scenario coordinate; no day/night resistance value is activated here.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/leaf_exchange_resistance/types.py, location: ResistanceCoordinates.day_night}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: tfwt.water_content
+    parameter_name: TFWT water content
+    subsystem: tfwt_v3
+    parameter_class: CROP_PARAMETER
+    symbol: W_TFWT
+    description: Explicit plant-water storage basis used to derive TFWT concentration.
+    canonical_unit: kg water m^-2
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: kg water m^-2
+    normalized_value: null
+    normalized_unit: kg water m^-2
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: State-construction input; no crop or growth-stage value is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/tfwt_v3/tfwt_state.py, location: TFWTState.water_content_kg_m2}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: tfwt.water_loss_flux
+    parameter_name: TFWT water loss flux
+    subsystem: tfwt_v3
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: L_TFWT
+    description: Optional external TFWT loss flux accepted by the storage interface.
+    canonical_unit: Bq m^-2 s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2 s^-1
+    normalized_value: null
+    normalized_unit: Bq m^-2 s^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Interface term only; the solver does not derive this rate and the API zero default is not promoted as evidence.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py, location: TFWTStorageSolver.advance.water_loss_flux_bq_m2_s}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: tfwt.transformation_flux
+    parameter_name: TFWT transformation flux
+    subsystem: tfwt_v3
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: R_TFWT
+    description: Optional external TFWT transformation flux accepted by the storage interface.
+    canonical_unit: Bq m^-2 s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2 s^-1
+    normalized_value: null
+    normalized_unit: Bq m^-2 s^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Interface term only; the solver does not derive this rate and the API zero default is not promoted as evidence.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py, location: TFWTStorageSolver.advance.transformation_flux_bq_m2_s}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: tfwt.initial_inventory
+    parameter_name: initial TFWT inventory
+    subsystem: tfwt_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: M_TFWT,0
+    description: Initial TFWT inventory supplied when a V3 state is constructed.
+    canonical_unit: Bq m^-2
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2
+    normalized_value: null
+    normalized_unit: Bq m^-2
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case state input; no initial inventory is assumed by the control plane.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/tfwt_v3/tfwt_state.py, location: TFWTState.from_inventory.tfwt_inventory_bq_m2}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: obt.kf
+    parameter_name: OBT formation rate
+    subsystem: obt_v3
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: k_f
+    description: Provisional first-order TFWT-to-OBT formation coefficient.
+    canonical_unit: s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s^-1
+    normalized_value: null
+    normalized_unit: s^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Explicit solver input; the P6.2C interface report is implementation evidence only, not parameter validation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: OBTParameters.kf_s}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: obt.kr
+    parameter_name: OBT turnover rate
+    subsystem: obt_v3
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: k_r
+    description: Provisional first-order OBT loss coefficient.
+    canonical_unit: s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s^-1
+    normalized_value: null
+    normalized_unit: s^-1
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Explicit solver input; the P6.2C interface report is implementation evidence only, not parameter validation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: OBTParameters.kr_s}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: obt.daylight_multiplier
+    parameter_name: OBT daylight multiplier
+    subsystem: obt_v3
+    parameter_class: BIOLOGICAL_PARAMETER
+    symbol: f_day
+    description: Daylight biological multiplier applied to the provisional OBT formation rate.
+    canonical_unit: '1'
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: '1'
+    normalized_value: null
+    normalized_unit: '1'
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Explicit interface multiplier; no day/night value is selected by P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: OBTParameters.daylight_multiplier}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: obt.nighttime_multiplier
+    parameter_name: OBT nighttime multiplier
+    subsystem: obt_v3
+    parameter_class: BIOLOGICAL_PARAMETER
+    symbol: f_night
+    description: Nighttime biological multiplier applied to the provisional OBT formation rate.
+    canonical_unit: '1'
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: '1'
+    normalized_value: null
+    normalized_unit: '1'
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Explicit interface multiplier; no day/night value is selected by P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: OBTParameters.nighttime_multiplier}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: obt.is_daylight
+    parameter_name: OBT daylight state
+    subsystem: obt_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: daylight
+    description: Boolean biological forcing input selecting the day or night multiplier.
+    canonical_unit: boolean
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: boolean
+    normalized_value: null
+    normalized_unit: boolean
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case forcing input; no biological schedule is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: PlantBiologicalForcing.is_daylight}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: obt.temperature
+    parameter_name: biological forcing temperature
+    subsystem: obt_v3
+    parameter_class: BIOLOGICAL_PARAMETER
+    symbol: T_plant
+    description: Optional temperature field reserved by the biological forcing interface.
+    canonical_unit: K
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: K
+    normalized_value: null
+    normalized_unit: K
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Reserved extension input; it does not participate in the current P6.2C equation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: PlantBiologicalForcing.temperature_k}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: obt.photosynthetic_activity
+    parameter_name: photosynthetic activity
+    subsystem: obt_v3
+    parameter_class: BIOLOGICAL_PARAMETER
+    symbol: P
+    description: Optional photosynthetic-activity field reserved by the biological forcing interface.
+    canonical_unit: PENDING_VALIDATION
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: PENDING_VALIDATION
+    normalized_value: null
+    normalized_unit: PENDING_VALIDATION
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Unit and applicability are unresolved; the field does not participate in the current P6.2C equation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_solver.py, location: PlantBiologicalForcing.photosynthetic_activity}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: obt.initial_inventory
+    parameter_name: initial OBT inventory
+    subsystem: obt_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: M_OBT,0
+    description: Initial OBT inventory supplied when a V3 state is constructed.
+    canonical_unit: Bq m^-2
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2
+    normalized_value: null
+    normalized_unit: Bq m^-2
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case state input; no initial inventory is assumed by the control plane.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_state.py, location: OBTState.from_inventory.obt_inventory_bq_m2}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: obt.plant_mass
+    parameter_name: fresh plant mass basis
+    subsystem: obt_v3
+    parameter_class: CROP_PARAMETER
+    symbol: m_plant
+    description: Plant-mass basis used to derive OBT concentration from inventory.
+    canonical_unit: kg fresh m^-2
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: kg fresh m^-2
+    normalized_value: null
+    normalized_unit: kg fresh m^-2
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: State-construction input; crop and growth-stage applicability remain unresolved.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/obt_v3/obt_state.py, location: OBTState.plant_mass_kg_m2}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: soil.tritium_half_life
+    parameter_name: tritium physical half-life
+    subsystem: soil_v3
+    parameter_class: PHYSICAL_CONSTANT
+    symbol: T_half
+    description: Tritium half-life used to derive the soil first-order decay constant.
+    canonical_unit: s
+    status: PROVISIONAL
+    source_type: PHYSICAL_CONSTANT_SOURCE
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s
+    normalized_value: null
+    normalized_unit: s
+    applicability: {radionuclide: H-3, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Physical constant source is not attached in P7.6A; no remembered or guessed value is entered.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/soil_v3/soil_solver.py, location: SoilParameters.tritium_half_life_s}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: soil.transport_flux
+    parameter_name: signed soil layer transport flux
+    subsystem: soil_v3
+    parameter_class: SOIL_PARAMETER
+    symbol: J_transport
+    description: Signed layer transport flux accepted by the single-layer soil interface.
+    canonical_unit: Bq m^-2 s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2 s^-1
+    normalized_value: null
+    normalized_unit: Bq m^-2 s^-1
+    applicability: {soil_type: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Interface input only; hydrology and transport parameterization are not implemented here.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/soil_v3/soil_solver.py, location: SoilForcing.transport_flux_bq_m2_s}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: soil.layer_depth
+    parameter_name: soil layer depth
+    subsystem: soil_v3
+    parameter_class: SOIL_PARAMETER
+    symbol: z_layer
+    description: Explicit soil-layer geometry input used for the water basis.
+    canonical_unit: m
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: m
+    normalized_value: null
+    normalized_unit: m
+    applicability: {soil_type: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: State-construction input; soil type and layer applicability are unresolved.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/soil_v3/soil_state.py, location: SoilState.layer_depth_m}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: soil.water_content
+    parameter_name: soil water content
+    subsystem: soil_v3
+    parameter_class: SOIL_PARAMETER
+    symbol: theta_w
+    description: Soil water content used to convert inventory to water concentration.
+    canonical_unit: m water
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: m water
+    normalized_value: null
+    normalized_unit: m water
+    applicability: {soil_type: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: State-construction input; no soil hydrology or soil-type value is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/soil_v3/soil_state.py, location: SoilState.soil_water_content}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: soil.initial_inventory
+    parameter_name: initial soil water inventory
+    subsystem: soil_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: M_soil,0
+    description: Initial soil HTO inventory supplied when a V3 state is constructed.
+    canonical_unit: Bq m^-2
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2
+    normalized_value: null
+    normalized_unit: Bq m^-2
+    applicability: {soil_type: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case state input; no initial inventory is assumed by the control plane.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/soil_v3/soil_state.py, location: SoilState.from_inventory.soil_water_inventory_bq_m2}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: root.k_root
+    parameter_name: root uptake coefficient
+    subsystem: root_v3
+    parameter_class: EMPIRICAL_MODEL_PARAMETER
+    symbol: k_root
+    description: Provisional coefficient in J_root = k_root * C_soil.
+    canonical_unit: m s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: m s^-1
+    normalized_value: null
+    normalized_unit: m s^-1
+    applicability: {radionuclide: H-3, chemical_form: HTO, pathway: soil-root, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: The P6.4 equation and unit contract are preserved; no coefficient value or validation claim is entered.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: docs/v3/reports/v3_p6_4_root_uptake_implementation_report.md, location: equation-and-unit-table}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: root.root_zone_identifier
+    parameter_name: root zone identifier
+    subsystem: root_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: root_zone
+    description: Explicit root-zone identity attached to a root transfer record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {soil_type: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case identity input; it does not select a root parameter or soil type.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/root_v3/root_solver.py, location: RootUptakeForcing.root_zone_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: food.harvest_fraction
+    parameter_name: OBT harvest fraction
+    subsystem: food_v3
+    parameter_class: CROP_PARAMETER
+    symbol: f_h
+    description: Provisional fraction transferring OBT plant inventory to food at the endpoint assessment.
+    canonical_unit: '1'
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: '1'
+    normalized_value: null
+    normalized_unit: '1'
+    applicability: {crop: null, growth_stage: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Model input remains provisional; P7.6A does not choose a crop or harvest value.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py, location: HarvestParameters.harvest_fraction}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: food.tfwt_harvest_fraction
+    parameter_name: TFWT harvest fraction
+    subsystem: food_v3
+    parameter_class: CROP_PARAMETER
+    symbol: f_w
+    description: Optional provisional fraction transferring TFWT plant inventory to food.
+    canonical_unit: '1'
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: '1'
+    normalized_value: null
+    normalized_unit: '1'
+    applicability: {crop: null, growth_stage: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Optional model input remains provisional; omission is not evidence for a zero production value.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py, location: HarvestParameters.tfwt_harvest_fraction}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: food.harvest_area
+    parameter_name: harvest area
+    subsystem: food_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: A_h
+    description: Explicit harvest area used by the plant-to-food boundary.
+    canonical_unit: m^2
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: m^2
+    normalized_value: null
+    normalized_unit: m^2
+    applicability: {crop: null, growth_stage: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case input; no area default is introduced by P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py, location: HarvestParameters.harvest_area_m2}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: food.crop
+    parameter_name: food transfer crop
+    subsystem: food_v3
+    parameter_class: CROP_PARAMETER
+    symbol: crop
+    description: Crop identity attached to the plant harvest boundary.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {crop: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Crop identity is explicit but no crop-specific evidence is attached.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py, location: HarvestParameters.crop_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: food.product
+    parameter_name: food product identifier
+    subsystem: food_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: food_product
+    description: Food product identity passed to the intake boundary.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case identity input; it does not select a transfer fraction.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py, location: HarvestParameters.food_product_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: intake.annual_consumption_amount
+    parameter_name: annual food consumption amount
+    subsystem: intake_v3
+    parameter_class: EXPOSURE_PARAMETER
+    symbol: R_consumption
+    description: Explicit annual food consumption amount used to form an intake inventory.
+    canonical_unit: kg/year
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: kg/year
+    normalized_value: null
+    normalized_unit: kg/year
+    applicability: {pathway: food-ingestion, age_group: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Exposure input; no survey value or age-group default is selected.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py, location: ConsumptionParameters.annual_consumption_amount}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: intake.food_product_mass
+    parameter_name: food product mass basis
+    subsystem: intake_v3
+    parameter_class: EXPOSURE_PARAMETER
+    symbol: m_food
+    description: Explicit food mass basis used to derive food activity concentration.
+    canonical_unit: kg
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: kg
+    normalized_value: null
+    normalized_unit: kg
+    applicability: {pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Exposure basis input; no hidden mass basis is introduced.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py, location: ConsumptionParameters.food_product_mass_kg}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: intake.food_product
+    parameter_name: intake food product identifier
+    subsystem: intake_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: food_product
+    description: Food product identity required to match the food inventory.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case identity input; mismatch is rejected rather than repaired.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py, location: ConsumptionParameters.food_product_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: intake.age_group
+    parameter_name: intake age group
+    subsystem: intake_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: age_group
+    description: Age-group identifier carried by the annual intake record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {age_group: null, pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Stratification input; no consumption or dose coefficient is inferred from the label.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py, location: ConsumptionParameters.age_group_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: intake.time_period
+    parameter_name: intake time period
+    subsystem: intake_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: period
+    description: Explicit exposure-period identifier for the intake record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Period label only; no annual default is promoted into a parameter value.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py, location: ConsumptionParameters.time_period}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: intake.consumer
+    parameter_name: intake consumer identifier
+    subsystem: intake_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: consumer
+    description: Stable consumer identity attached to an intake record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {age_group: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case identity input; it is not a population or dose assumption.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/intake_v3/intake_solver.py, location: FoodIntakeSolver.consumer_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: dose.dose_coefficient
+    parameter_name: ingestion dose coefficient
+    subsystem: dose_v3
+    parameter_class: DOSE_PARAMETER
+    symbol: e
+    description: Explicit dose coefficient consumed by the isolated intake-to-dose boundary.
+    canonical_unit: Sv/Bq
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Sv/Bq
+    normalized_value: null
+    normalized_unit: Sv/Bq
+    applicability: {radionuclide: null, pathway: food-ingestion, age_group: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Dose input remains provisional; no regulatory or UFOTRI value is imported.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py, location: DoseParameters.dose_coefficient}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: dose.radionuclide
+    parameter_name: dose radionuclide identifier
+    subsystem: dose_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: radionuclide
+    description: Radionuclide identity attached to the dose coefficient.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {radionuclide: null, pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case metadata; it does not make a coefficient applicable.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py, location: DoseParameters.radionuclide_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: dose.pathway
+    parameter_name: dose pathway identifier
+    subsystem: dose_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: pathway
+    description: Exposure pathway identity attached to the dose record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {pathway: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case metadata; no pathway policy is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py, location: DoseParameters.pathway_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: dose.age_group
+    parameter_name: dose age group
+    subsystem: dose_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: age_group
+    description: Age-group identity required to match the intake record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {age_group: null, pathway: food-ingestion, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Stratification input; no age-group dose value is inferred.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/exposure/dose_v3/dose_solver.py, location: DoseParameters.age_group_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.air_hto_concentration
+    parameter_name: atmospheric HTO concentration
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: C_air
+    description: Atmospheric HTO concentration at the P7 forcing boundary.
+    canonical_unit: Bq m^-3
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-3
+    normalized_value: null
+    normalized_unit: Bq m^-3
+    applicability: {radionuclide: H-3, chemical_form: HTO, environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: External forcing input; real CTEAS-Atmos data are explicitly out of scope for P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.air_hto_concentration}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.deposition_flux
+    parameter_name: atmospheric deposition flux
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: F_dep
+    description: Deposition flux supplied to the P7 soil adapter.
+    canonical_unit: Bq m^-2 s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-2 s^-1
+    normalized_value: null
+    normalized_unit: Bq m^-2 s^-1
+    applicability: {radionuclide: H-3, chemical_form: HTO, environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: External forcing input; no deposition model or real dataset is added.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.deposition_flux}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.temperature
+    parameter_name: atmospheric temperature
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: T_air
+    description: Atmospheric temperature at the forcing boundary.
+    canonical_unit: K
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: K
+    normalized_value: null
+    normalized_unit: K
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Forcing input only; no meteorological reader is coupled in P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.temperature}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.humidity
+    parameter_name: atmospheric relative humidity
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: RH_air
+    description: Relative humidity at the forcing boundary.
+    canonical_unit: '1'
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: '1'
+    normalized_value: null
+    normalized_unit: '1'
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Forcing input only; no meteorological reader is coupled in P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.humidity}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.wind_speed
+    parameter_name: atmospheric wind speed
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: U
+    description: Wind-speed field carried by the P7 forcing boundary.
+    canonical_unit: m s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: m s^-1
+    normalized_value: null
+    normalized_unit: m s^-1
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Forcing metadata/input only; no dispersion calculation is added.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.wind_speed}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.precipitation
+    parameter_name: precipitation rate
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: P
+    description: Precipitation rate carried by the P7 forcing boundary.
+    canonical_unit: m s^-1
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: m s^-1
+    normalized_value: null
+    normalized_unit: m s^-1
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Forcing metadata/input only; wet-deposition behavior is outside P7.6A.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.precipitation}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.location
+    parameter_name: forcing location
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: location
+    description: Spatial identity of the atmospheric forcing record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Case identity input; spatial applicability remains unresolved.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.location}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.source_identifier
+    parameter_name: forcing source identifier
+    subsystem: atmos_v3
+    parameter_class: SCENARIO_INPUT
+    symbol: source
+    description: Source label carried by the atmospheric forcing record.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Provenance label only; it does not establish source quality or physical validity.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/forcing.py, location: AtmosphericHTOForcing.source}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: atmos.time_resolution
+    parameter_name: forcing time resolution
+    subsystem: atmos_v3
+    parameter_class: NUMERICAL_CONTROL
+    symbol: dt_atmos
+    description: Time resolution metadata attached to an atmospheric forcing artifact.
+    canonical_unit: s
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s
+    normalized_value: null
+    normalized_unit: s
+    applicability: {environment: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Metadata/control input; no temporal resampling or default is introduced.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/coupling/atmos_v3/metadata.py, location: AtmosphericForcingMetadata.time_resolution}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: pipeline.interval_seconds
+    parameter_name: pipeline integration interval
+    subsystem: v3_pipeline
+    parameter_class: NUMERICAL_CONTROL
+    symbol: dt
+    description: Explicit one-interval duration supplied to the frozen P7.5B operator split.
+    canonical_unit: s
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: s
+    normalized_value: null
+    normalized_unit: s
+    applicability: {status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Numerical control only; P7.6A does not alter timestep semantics or choose a production value.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/v3_pipeline/pipeline_runner.py, location: V3PipelineParameters.interval_seconds}
+    review_status: PENDING_REVIEW
+    gap_category: D
+  - parameter_id: pipeline.equilibrium_air_concentration
+    parameter_name: pipeline equilibrium air concentration
+    subsystem: v3_pipeline
+    parameter_class: SCENARIO_INPUT
+    symbol: C_eq
+    description: Equilibrium concentration forwarded to the existing leaf boundary.
+    canonical_unit: Bq m^-3
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: Bq m^-3
+    normalized_value: null
+    normalized_unit: Bq m^-3
+    applicability: {radionuclide: H-3, chemical_form: HTO, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Pipeline case input; P7.6A does not modify the existing pipeline API.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/v3_pipeline/pipeline_runner.py, location: V3PipelineParameters.equilibrium_air_concentration_bq_m3}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: pipeline.consumer_identifier
+    parameter_name: pipeline consumer identifier
+    subsystem: v3_pipeline
+    parameter_class: SCENARIO_INPUT
+    symbol: consumer
+    description: Consumer identity required by the intake endpoint.
+    canonical_unit: identifier
+    status: PROVISIONAL
+    source_type: PROJECT_ASSUMPTION
+    source_identifier: UNRESOLVED_SOURCE_REQUIRED
+    reported_value: null
+    reported_unit: identifier
+    normalized_value: null
+    normalized_unit: identifier
+    applicability: {age_group: null, status: APPLICABILITY_UNRESOLVED}
+    evidence_notes: Pipeline identity input; it does not define an exposure population.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: src/cteas_ufotri/v3_pipeline/pipeline_runner.py, location: V3PipelineParameters.consumer_identifier}
+    review_status: PENDING_REVIEW
+    gap_category: E
+  - parameter_id: test.pipeline.air_hto_concentration
+    parameter_name: synthetic atmospheric HTO concentration
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: C_air,test
+    description: Synthetic concentration used only by the P7.5 pipeline fixture.
+    canonical_unit: Bq m^-3
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_forcing
+    reported_value: 60.0
+    reported_unit: Bq m^-3
+    normalized_value: 60.0
+    normalized_unit: Bq m^-3
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not observational evidence and not a production default.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_forcing.air_hto}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.deposition_flux
+    parameter_name: synthetic deposition flux
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: F_dep,test
+    description: Synthetic deposition flux used only by the P7.5 pipeline fixture.
+    canonical_unit: Bq m^-2 s^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_forcing
+    reported_value: 1.0
+    reported_unit: Bq m^-2 s^-1
+    normalized_value: 1.0
+    normalized_unit: Bq m^-2 s^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not observational evidence and not a production default.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_forcing.deposition}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.interval_seconds
+    parameter_name: synthetic pipeline interval
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: dt_test
+    description: Synthetic interval used by the P7.5 pipeline fixture.
+    canonical_unit: s
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 10.0
+    reported_unit: s
+    normalized_value: 10.0
+    normalized_unit: s
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a production numerical recommendation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.interval_seconds}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.resistance_a
+    parameter_name: synthetic aerodynamic resistance
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: r_a,test
+    description: Synthetic resistance fixture value.
+    canonical_unit: s m^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 10.0
+    reported_unit: s m^-1
+    normalized_value: 10.0
+    normalized_unit: s m^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a measured resistance.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: 'make_parameters.ResistanceChain.from_components[0]'}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.resistance_b
+    parameter_name: synthetic boundary layer resistance
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: r_b,test
+    description: Synthetic resistance fixture value.
+    canonical_unit: s m^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 20.0
+    reported_unit: s m^-1
+    normalized_value: 20.0
+    normalized_unit: s m^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a measured resistance.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: 'make_parameters.ResistanceChain.from_components[1]'}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.resistance_c
+    parameter_name: synthetic canopy resistance
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: r_c,test
+    description: Synthetic resistance fixture value.
+    canonical_unit: s m^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 30.0
+    reported_unit: s m^-1
+    normalized_value: 30.0
+    normalized_unit: s m^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a measured resistance.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: 'make_parameters.ResistanceChain.from_components[2]'}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.soil_half_life
+    parameter_name: synthetic soil tritium half-life
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: T_half,test
+    description: Synthetic half-life used only by the P7.5 pipeline fixture.
+    canonical_unit: s
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 1.0e10
+    reported_unit: s
+    normalized_value: 1.0e10
+    normalized_unit: s
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; it is not the sourced physical half-life.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.SoilParameters.tritium_half_life_s}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.k_root
+    parameter_name: synthetic root uptake coefficient
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: k_root,test
+    description: Synthetic root coefficient used only by the P7.5 pipeline fixture.
+    canonical_unit: m s^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 5.0e-4
+    reported_unit: m s^-1
+    normalized_value: 5.0e-4
+    normalized_unit: m s^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not an empirical root parameter.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.RootParameters.k_root_m_s}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.kf
+    parameter_name: synthetic OBT formation rate
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: k_f,test
+    description: Synthetic OBT formation rate used only by the P7.5 pipeline fixture.
+    canonical_unit: s^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 0.01
+    reported_unit: s^-1
+    normalized_value: 0.01
+    normalized_unit: s^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a calibrated formation rate.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.OBTParameters.kf_s}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.kr
+    parameter_name: synthetic OBT turnover rate
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: k_r,test
+    description: Synthetic OBT turnover rate used only by the P7.5 pipeline fixture.
+    canonical_unit: s^-1
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 0.0
+    reported_unit: s^-1
+    normalized_value: 0.0
+    normalized_unit: s^-1
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a calibrated turnover rate.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.OBTParameters.kr_s}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.harvest_fraction
+    parameter_name: synthetic harvest fraction
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: f_h,test
+    description: Synthetic harvest fraction used only by the P7.5 pipeline fixture.
+    canonical_unit: '1'
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 1.0
+    reported_unit: '1'
+    normalized_value: 1.0
+    normalized_unit: '1'
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a crop-specific transfer estimate.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.HarvestParameters.harvest_fraction}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.harvest_area
+    parameter_name: synthetic harvest area
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: A_h,test
+    description: Synthetic harvest area used only by the P7.5 pipeline fixture.
+    canonical_unit: m^2
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 1.0
+    reported_unit: m^2
+    normalized_value: 1.0
+    normalized_unit: m^2
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a site or crop area assumption.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.HarvestParameters.harvest_area_m2}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.food_consumption
+    parameter_name: synthetic annual food consumption
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: R_consumption,test
+    description: Synthetic annual consumption used only by the P7.5 pipeline fixture.
+    canonical_unit: kg/year
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 1.0
+    reported_unit: kg/year
+    normalized_value: 1.0
+    normalized_unit: kg/year
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a dietary survey result.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.ConsumptionParameters.annual_consumption_amount}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.food_mass
+    parameter_name: synthetic food mass basis
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: m_food,test
+    description: Synthetic food mass basis used only by the P7.5 pipeline fixture.
+    canonical_unit: kg
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 1.0
+    reported_unit: kg
+    normalized_value: 1.0
+    normalized_unit: kg
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a food-basis measurement.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.ConsumptionParameters.food_product_mass_kg}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.dose_coefficient
+    parameter_name: synthetic dose coefficient
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: e_test
+    description: Synthetic dose coefficient used only by the P7.5 pipeline fixture.
+    canonical_unit: Sv/Bq
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_parameters
+    reported_value: 0.2
+    reported_unit: Sv/Bq
+    normalized_value: 0.2
+    normalized_unit: Sv/Bq
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a regulatory or UFOTRI dose coefficient.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_parameters.DoseParameters.dose_coefficient}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.initial_soil_inventory
+    parameter_name: synthetic initial soil inventory
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: M_soil,test
+    description: Synthetic initial soil inventory used only by the P7.5 fixture.
+    canonical_unit: Bq m^-2
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_soil
+    reported_value: 40.0
+    reported_unit: Bq m^-2
+    normalized_value: 40.0
+    normalized_unit: Bq m^-2
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a field inventory.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_soil.inventory}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.initial_tfwt_inventory
+    parameter_name: synthetic initial TFWT inventory
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: M_TFWT,test
+    description: Synthetic initial TFWT inventory used only by the P7.5 fixture.
+    canonical_unit: Bq m^-2
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_tfwt
+    reported_value: 0.0
+    reported_unit: Bq m^-2
+    normalized_value: 0.0
+    normalized_unit: Bq m^-2
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a plant observation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_tfwt.inventory}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.initial_obt_inventory
+    parameter_name: synthetic initial OBT inventory
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: M_OBT,test
+    description: Synthetic initial OBT inventory used only by the P7.5 fixture.
+    canonical_unit: Bq m^-2
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::make_obt
+    reported_value: 0.0
+    reported_unit: Bq m^-2
+    normalized_value: 0.0
+    normalized_unit: Bq m^-2
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible synthetic fixture value; not a plant observation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: make_obt.inventory}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.refinement_intervals
+    parameter_name: synthetic timestep refinement schedule
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: dt_refine
+    description: Synthetic interval schedule used by the P7.5B numerical semantics test.
+    canonical_unit: s
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline_numerical_semantics.py::test_timestep_refinement_converges_continuous_states
+    reported_value: '10.0, 5.0, 2.5'
+    reported_unit: s
+    normalized_value: '10.0, 5.0, 2.5'
+    normalized_unit: s
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible numerical test schedule; not a production timestep recommendation.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline_numerical_semantics.py, location: refinement interval tuple}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F
+  - parameter_id: test.pipeline.zero_forcing
+    parameter_name: synthetic zero forcing
+    subsystem: tests
+    parameter_class: TEST_ONLY_PARAMETER
+    symbol: C_air,test,0
+    description: Zero atmospheric concentration used by the no-artificial-inventory regression.
+    canonical_unit: Bq m^-3
+    status: EVIDENCE_FOUND
+    source_type: TEST_ONLY
+    source_identifier: tests/integration/test_v3_pipeline.py::test_zero_atmospheric_forcing_does_not_generate_inventory
+    reported_value: 0.0
+    reported_unit: Bq m^-3
+    normalized_value: 0.0
+    normalized_unit: Bq m^-3
+    applicability: {status: TEST_ONLY_SCOPE}
+    evidence_notes: Reproducible zero-forcing fixture; it is a test invariant, not a physical input default.
+    provenance: {repository: CTEAS_ufotri, revision: 61effab, file: tests/integration/test_v3_pipeline.py, location: zero atmospheric forcing test}
+    review_status: INTERNAL_REVIEWED
+    gap_category: F

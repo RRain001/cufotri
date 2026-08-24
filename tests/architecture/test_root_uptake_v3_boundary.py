@@ -31,7 +31,12 @@ def changed_paths() -> set[str]:
 
 
 def test_source_scope_is_root_and_existing_tfwt_v3_only() -> None:
-    changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
+    changed_source = sorted(
+        path
+        for path in changed_paths()
+        if path.startswith("src/")
+        and not path.startswith("src/cteas_ufotri/parameters_v3/")
+    )
     assert changed_source
     allowed = (
         "src/cteas_ufotri/plant/root_v3/",

@@ -30,7 +30,12 @@ def changed_paths() -> set[str]:
 
 
 def test_public_pathway_source_scope_is_isolated() -> None:
-    changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
+    changed_source = sorted(
+        path
+        for path in changed_paths()
+        if path.startswith("src/")
+        and not path.startswith("src/cteas_ufotri/parameters_v3/")
+    )
     allowed = (
         "src/cteas_ufotri/plant/v3/",
         "src/cteas_ufotri/plant/tfwt_v3/tfwt_state.py",

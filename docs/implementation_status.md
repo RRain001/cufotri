@@ -2,6 +2,42 @@
 
 Updated: 2026-08-22
 
+## V3-P7.6A Parameter evidence and provenance freeze
+
+P7.6A adds a control-plane-only parameter evidence layer at
+`src/cteas_ufotri/parameters_v3/`. The immutable `ParameterEvidenceRecord`
+preserves reported and normalized values separately, requires explicit units,
+source identifiers, applicability, review state, and repository/file/location
+provenance. `ParameterEvidenceRegistry` sorts records deterministically,
+rejects duplicate IDs, and rejects `VALIDATED`/`ACTIVE` records at the P7.6A
+stage gate. It is not imported by any P6/P7 physics module or by the P7.5
+pipeline.
+
+The canonical inventory contains 76 records across the 10 required primary
+classes: 56 provisional records and 20 test-only `EVIDENCE_FOUND` records.
+The test-only status means reproducible software fixture evidence only; it is
+not physical, empirical, calibration, regulatory, or observational evidence.
+No production value is resolved, converted, calibrated, or activated.
+
+    P7_6A_STATUS = PASS_PARAMETER_EVIDENCE_PROVENANCE_FROZEN
+    PARAMETER_INVENTORY_COMPLETE = TRUE
+    PARAMETER_EVIDENCE_SCHEMA_FROZEN = TRUE
+    PARAMETER_STATUS_LIFECYCLE_FROZEN = TRUE
+    PARAMETER_CALIBRATION_STARTED = FALSE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The manifest and stage records are in
+`docs/v3/parameter_evidence/parameter_inventory.yaml`. The implementation,
+gap matrix, test report, and independent review are in
+`docs/v3/reports/v3_p7_6a_parameter_inventory_report.md`,
+`docs/v3/reports/v3_p7_6a_parameter_evidence_report.md`,
+`docs/v3/reports/v3_p7_6a_parameter_gap_analysis.md`,
+`docs/v3/reports/v3_p7_6a_test_report.md`, and
+`docs/v3/reports/v3_p7_6a_independent_review.md`. The formal decision is in
+`docs/adr/010-v3-parameter-evidence-lifecycle.md`.
+
 ## V3-P7.5B Numerical coupling semantics freeze
 
 P7.5B freezes the actual one-interval operator split used by the P7.5
