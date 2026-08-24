@@ -77,6 +77,15 @@ from .validation import (
     transition_status,
     validation_candidate_transition,
 )
+from .validation_feasibility import (
+    ParameterValidationFeasibilityRecord,
+    ParameterValidationFeasibilityRegistry,
+    ValidationFeasibility,
+    admit_for_validation,
+    can_activate,
+    can_enter_validation as can_enter_validation_feasibility,
+    reject_activation,
+)
 
 __all__ = [
     "Applicability",
@@ -110,6 +119,8 @@ __all__ = [
     "ParameterStatus",
     "ParameterValidationRecord",
     "ParameterValidationRegistry",
+    "ParameterValidationFeasibilityRecord",
+    "ParameterValidationFeasibilityRegistry",
     "PhysicalConstantEvidenceRecord",
     "PhysicalConstantSourceKind",
     "ReviewStatus",
@@ -121,11 +132,15 @@ __all__ = [
     "ValidationProvenance",
     "ValidationReviewStatus",
     "ValidationStatus",
+    "ValidationFeasibility",
     "ValidationGateError",
     "ValidationGateResult",
     "build_candidate_registry",
     "build_validation_record",
+    "admit_for_validation",
+    "can_activate",
     "can_enter_validation",
+    "can_enter_validation_feasibility",
     "candidate_transition",
     "construct_candidate_record",
     "evaluate_candidate_gate",
@@ -135,6 +150,7 @@ __all__ = [
     "load_review_matrix",
     "lifecycle_transition",
     "reconcile_evidence",
+    "reject_activation",
     "transition_candidate_status",
     "transition_status",
     "validation_candidate_transition",

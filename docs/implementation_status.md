@@ -1871,3 +1871,42 @@ review is recorded in
 preparation-only and is defined in
 `docs/v3/physics/p7_7_physics_validation_preparation.md`; it does not start
 calibration or activate any parameter.
+
+## V3 P7.6C-3 UFOTRI validation-feasibility assessment
+
+P7.6C-3 evaluates every P7.6C-2 UFOTRI semantic mapping record without
+searching for or importing a parameter value. The decision matrix separates
+future validation pathways from V3 equation gaps, external exposure/dose
+inputs, and unrecovered source definitions. The derived leaf conductance is
+reviewed separately from its three resistance components.
+
+```text
+P7_6C3_STATUS = PASS_VALIDATION_FEASIBILITY_ASSESSMENT
+ALL_PARAMETERS_ASSESSED = TRUE
+MAPPED_PARAMETERS_ASSESSED = 26
+DERIVED_REVIEW_ITEMS = 1
+VALIDATION_FEASIBLE = 4
+VALIDATION_FEASIBLE_WITH_LIMITATIONS = 8
+PHYSICS_REDESIGN_REQUIRED = 9
+NOT_IMPORTABLE = 4
+INSUFFICIENT_INFORMATION = 1
+NEW_VALIDATION_CANDIDATES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+CALIBRATION_STARTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The typed control plane is
+`src/cteas_ufotri/parameters_v3/validation_feasibility.py`; its canonical
+matrix is `docs/v3/parameter_evidence/parameter_validation_feasibility.yaml`.
+ADR-015 freezes the five states and the fail-closed validation gate. Reports
+are `v3_p7_6c3_validation_feasibility_report.md`,
+`v3_p7_6c3_physics_gap_analysis.md`,
+`v3_p7_6c3_parameter_decision_matrix.md`, and
+`v3_p7_6c3_independent_review.md`. No solver, equation, numerical coupling,
+runtime parameter lookup, calibration, or active database was added.
