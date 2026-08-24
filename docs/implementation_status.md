@@ -1,6 +1,416 @@
 # Implementation status
 
-Updated: 2026-08-03
+Updated: 2026-08-22
+
+## V3-P7.5 End-to-end pipeline integration
+
+The P7.5 branch adds `v3_pipeline/` as a stateless orchestration layer over
+the existing typed V3 modules. `V3PipelineParameters` requires every
+interval, resistance, soil, root, OBT, biological, harvest, consumption,
+dose, root-zone, and consumer input explicitly. `V3PipelineRunner` retains
+no mutable inventory and returns a new frozen `V3SimulationState` for each
+step.
+
+The controlled order is atmospheric forcing and soil deposition, leaf
+exchange into TFWT, OBT formation, root uptake, root/OBT balance application
+back to TFWT and soil, food transfer, intake, and dose. Existing solver
+balances are preserved in `V3PipelineLedger`; the orchestration layer adds
+only state wiring and cross-module consistency checks. `V3SimulationState`
+also supports validated mapping/JSON round-trips for an explicit restart
+boundary.
+
+The root solver is called against the step-start soil snapshot because its
+public contract advances the supplied soil timestamp by the interval. Its
+typed transfer balance is then applied to the post-deposition soil state at
+the same endpoint timestamp. Similarly, the OBT solver's reported TFWT loss
+is consumed before the root transfer is applied to the final TFWT state.
+These are state-boundary operations; P7.5 does not reimplement either
+solver's equation.
+
+    P7_5_STATUS = PASS_PIPELINE_INTEGRATION
+    V3_PIPELINE_AVAILABLE = TRUE
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p7_5_pipeline_integration_report.md`,
+`docs/v3/reports/v3_p7_5_pipeline_test_report.md`, and
+`docs/v3/reports/v3_p7_5_independent_review.md`.
+
+## V3-P7 Atmospheric forcing coupling interface
+
+The P7 branch adds a typed atmospheric forcing boundary at
+`coupling/atmos_v3/`. `AtmosphericHTOForcing` is immutable and fail-closed:
+timestamp, location, air HTO concentration, deposition flux, temperature,
+humidity, wind speed, precipitation, source, and provenance are explicit
+inputs. Concentration, flux, temperature, humidity, wind-speed,
+precipitation, and metadata time-resolution units are checked exactly; no
+unit conversion or missing-value repair is performed. The `air_ht0_concentration`
+spelling is retained as an explicit alias of the canonical
+`air_hto_concentration` field.
+
+`AtmosphericForcingMetadata` records model name, version, grid definition,
+time resolution, source dataset, UTC creation time, and quality flag. The
+interface has two adapters only: atmospheric forcing can produce the
+existing leaf-resistance forcing input or the existing soil deposition
+forcing input. It does not import or call TFWT, OBT, root-uptake,
+food-transfer, intake, or dose solvers, and it has no CALMET/CALPUFF,
+ERA5/WRF file-reader, dispersion, hydrology, or UFOTRI parameter-loader
+dependency.
+
+    P7_ATMOS_INTERFACE_STATUS = PASS
+    ATMOS_FORCING_INTERFACE = TRUE
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P8_CTEAS_ATMOS_DATA_EXCHANGE
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p7_atmos_interface_implementation_report.md`,
+`docs/v3/reports/v3_p7_atmos_interface_test_report.md`, and
+`docs/v3/reports/v3_p7_independent_review.md`.
+
+## V3-P6.6B Intake-to-dose assessment
+
+The P6.6B branch adds an isolated downstream dose boundary at
+`exposure/dose_v3/`. `DoseSolver` consumes only the public `IntakeState`
+methods `inventory()`, `consumer()`, `age_group()`, `period()`, and `time()`.
+It emits an immutable `DoseState` containing the intake inventory, explicit
+dose coefficient, committed-dose result, pathway, age group, time, and
+provenance. No environmental, plant, food, or assessment-policy state is
+created.
+
+The frozen conversion equation is:
+
+    D [Sv]
+      = I [Bq] * e [Sv Bq^-1]
+
+The P6.6A annual intake is consumed as one explicit annual exposure-period
+inventory at this boundary; no hidden time, coefficient, or database default
+is introduced. `DoseParameters` requires an explicit `Sv/Bq` coefficient and
+`parameter_status = provisional`. The coefficient is an interface input, not
+a validated UFOTRI or regulatory value.
+
+    P6_6B_STATUS = PASS_DOSE_ASSESSMENT_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P7_CTEAS_ATMOS_COUPLING
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_6b_dose_assessment_implementation_report.md`,
+`docs/v3/reports/v3_p6_6b_dose_assessment_test_report.md`, and
+`docs/v3/reports/v3_p6_6b_independent_review.md`.
+
+## V3-P6.6A Food consumption and intake pathway
+
+The P6.6A branch adds an isolated food-to-human inventory boundary at
+`exposure/intake_v3/`. `FoodIntakeSolver` consumes a typed `FoodInventory`
+through its public `inventory()` and `product()` methods and emits an
+immutable annual `IntakeState`. The state records consumer, age-group,
+product, consumption rate, annual intake inventory, UTC time, and provenance;
+it does not contain any downstream radiological-result or regulatory fields.
+
+The dimensional calculation is explicit:
+
+    C_food [Bq kg^-1]
+      = M_food [Bq] / m_food [kg]
+
+    I_food [Bq year^-1]
+      = C_food [Bq kg^-1] * R_consumption [kg year^-1]
+
+The food mass basis `m_food` is an explicit `ConsumptionParameters` input;
+there is no hidden mass or unit conversion. Consumption parameters remain
+provisional and are not loaded from the UFOTRI database or any regulatory
+database. Adult and child records remain separate immutable states.
+
+    P6_6A_STATUS = PASS_INTAKE_PATHWAY_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.6B_DOSE_ASSESSMENT
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_6a_intake_pathway_implementation_report.md`,
+`docs/v3/reports/v3_p6_6a_intake_pathway_test_report.md`, and
+`docs/v3/reports/v3_p6_6a_independent_review.md`.
+
+## V3-P6.5 Plant harvest and food transfer
+
+The P6.5 branch adds an isolated plant-to-food inventory boundary at
+plant/food_v3/. FoodTransferSolver consumes only the public inventory()
+methods of OBTState and TFWTState. It emits an immutable HarvestState and a
+FoodInventory record; it does not mutate plant states and does not create dose,
+ingestion, population, regulatory, or CTEAS-Atmos state.
+
+The OBT transfer equation is:
+
+    M_food,OBT [Bq]
+      = f_h [1] * M_OBT [Bq m^-2] * A_h [m^2]
+
+The optional TFWT branch is:
+
+    M_food,TFWT [Bq]
+      = f_w [1] * M_TFWT [Bq m^-2] * A_h [m^2]
+
+The harvest area A_h is explicit in HarvestParameters; no hidden area or
+parameter default is used. Both transfer fractions remain provisional. The
+FoodTransferBalance verifies:
+
+    plant inventory
+      = harvest transfer + remaining plant inventory + residual
+
+    P6_5_STATUS = PASS_FOOD_TRANSFER_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.6_DOSE_ASSESSMENT
+
+The implementation, test, and independent boundary-review records are in
+docs/v3/reports/v3_p6_5_food_transfer_implementation_report.md,
+docs/v3/reports/v3_p6_5_food_transfer_test_report.md, and
+docs/v3/reports/v3_p6_5_independent_review.md.
+
+## V3-P6.4 Root uptake and Soil-Plant coupling
+
+The P6.4 branch adds the first isolated Soil -> Root -> TFWT transfer
+interface. The new plant/root_v3 package reads SoilState only through its
+public inventory() and concentration() methods. RootUptakeSolver evaluates the
+minimal provisional interface equation and emits a typed RootFlux record; it
+does not mutate SoilState or create any plant compartment.
+
+The effective coefficient is explicit and provisional:
+
+    J_root = k_root * C_soil
+
+where C_soil is in Bq m^-3 water, k_root is in m s^-1, and J_root is in
+Bq m^-2 s^-1. The interval transfer is recorded in Bq m^-2. No value is read
+from the UFOTRI parameter database, configs, parameters, or trusted registry.
+The TFWT storage solver accepts the optional RootFlux and records its integrated
+input in the existing storage balance. The previous leaf-only call path
+remains valid.
+
+The root source-inventory ledger verifies:
+
+    initial soil inventory
+      = root transfer + remaining soil inventory + other loss + residual
+
+The ledger is a transfer boundary audit; P6.4 does not implement soil
+hydrology, root geometry, root competition, or a production soil-state mutation
+from uptake.
+
+    P6_4_STATUS = PASS_ROOT_UPTAKE_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    ROOT_TO_TFWT_INTERFACE = TRUE
+    ROOT_UPTAKE_COEFFICIENT = PROVISIONAL_EXPLICIT
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.5_FOODCHAIN
+
+The implementation, test, and independent boundary-review records are in
+docs/v3/reports/v3_p6_4_root_uptake_implementation_report.md,
+docs/v3/reports/v3_p6_4_root_uptake_test_report.md, and
+docs/v3/reports/v3_p6_4_independent_review.md.
+
+## V3-P6.3 Soil HTO transport
+
+The P6.3 branch adds an isolated inventory-based soil HTO pathway at
+`plant/soil_v3/`. `SoilState` stores one immutable layer inventory and a
+checked soil-water concentration derived from the explicit water-content
+basis. `SoilStorageSolver` consumes only deposition and signed layer-transport
+fluxes. A positive transport flux enters the current layer; a negative flux
+leaves it. It does not calculate atmospheric dispersion or hydrology.
+
+The first step uses the constant-flux linear storage equation with explicit
+tritium half-life:
+
+```text
+dM_soil/dt = deposition_flux + transport_flux - lambda_T * M_soil
+lambda_T = ln(2) / tritium_half_life_s
+```
+
+The state and balance ledger do not contain root, plant, foodchain, dose, or
+CTEAS-Atmos state. The old V1/V2 `soil/` and `coupling/` paths remain
+untouched; no default runtime or configuration is connected.
+
+```text
+P6_3_STATUS = PASS_SOIL_HTO_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = TRUE
+SOIL_SOLVER = TRUE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V1_V2_DEFAULT_PATH_CHANGED = FALSE
+P6_3_TARGETED_TESTS = PASS_14_OF_14
+P6_3_REGRESSION_TESTS = PASS_1_OF_1
+NEXT_PHASE = P6.4_ROOT_UPTAKE_FOODCHAIN
+```
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_3_soil_hto_implementation_report.md`,
+`docs/v3/reports/v3_p6_3_soil_hto_test_report.md`, and
+`docs/v3/reports/v3_p6_3_independent_review.md`.
+
+## V3-P6.2C OBT solver
+
+The P6.2C branch adds an isolated inventory-based TFWT-to-OBT solver at
+`plant/obt_v3/`. It consumes only the public `TFWTState.inventory()` and
+`TFWTState.activity_concentration()` methods. `OBTState` keeps OBT inventory as
+the authoritative quantity and derives a checked fresh-mass concentration;
+TFWT/OBT ratios are not stored. The biological forcing boundary currently uses
+only `is_daylight`; temperature, photosynthetic activity, and growth stage are
+reserved extension fields.
+
+The solver accepts explicit provisional test rates and does not read the
+UFOTRI parameter database, configs, or the trusted external-evidence registry.
+It is not connected to the existing V1/V2 runtime, foodchain, dose, soil, or
+the P6.2B plant facade. The P6.2B public pathway remains a TFWT-only pathway.
+
+```text
+P6_2C_STATUS = PASS_OBT_SOLVER_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = TRUE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V1_V2_DEFAULT_PATH_CHANGED = FALSE
+P6_2C_TARGETED_TESTS = PASS_34_OF_34
+P6_2C_BOUNDARY_REVIEW = PASS_4_OF_4
+FULL_REPOSITORY_PYTEST = NOT_GREEN_17_ENVIRONMENT_OR_STAGE_INCOMPATIBLE_FAILURES
+NEXT_PHASE = P6.3_SOIL_HTO
+```
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_2c_obt_solver_implementation_report.md`,
+`docs/v3/reports/v3_p6_2c_obt_solver_test_report.md`, and
+`docs/v3/reports/v3_p6_2c_independent_review.md`.
+
+## V3-P6.2B integration and P6.2B-2.5 public interface freeze
+
+The P6.2B integration branch preserves the P6.2B-1 resistance subsystem and
+P6.2B-2 TFWT storage solver as separate V3 packages. The new `plant/v3`
+facade only connects atmospheric forcing to a precomputed resistance state,
+one signed leaf-exchange flux, and the public TFWT state API. OBT remains a
+reserved future interface; no OBT, root, soil, dose, atmosphere, parameter
+activation, or default-runtime connection was added.
+
+```text
+P6_2B_INTEGRATION_STATUS = PASS
+P6_2B_INTERFACE_FREEZE = PASS
+P6_2B_2_5_STATUS = PASS_PUBLIC_PATHWAY_INTERFACE_FREEZE
+LEAF_EXCHANGE_RESISTANCE_IMPLEMENTED = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+V3_PHYSICS_READY = FALSE
+NEXT_PHASE = P6_2C
+```
+
+The default V1/V2 configuration remains unchanged, including
+`leaf_exchange_mode: off` and `direct_leaf_uptake_enabled: false`. The
+implementation and boundary reports are in
+`docs/v3/reports/v3_p6_2b_2_5_interface_implementation_report.md`,
+`docs/v3/reports/v3_p6_2b_integration_review.md`, and
+`docs/v3/reports/v3_p6_2b_2_5_boundary_audit.md`.
+
+## V3-P6.2B-2 TFWT dynamic solver
+
+The V3 TFWT storage-only solver consumes the signed P6.2B-1
+`LeafExchangeFlux` and updates `TFWTState` at fixed water content. It does not
+recompute resistance, create OBT, perform root or soil coupling, connect dose,
+foodchain, CTEAS-Atmos, or alter the V1/V2 default path. The existing
+`plant/tfwt.py` file remains unchanged; the V3 package is isolated at
+`plant/tfwt_v3/`.
+
+```text
+P6_2B_2_STATUS = PASS_TFWT_SOLVER_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = FALSE
+UFOTRI_DATABASE_ACTIVE = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+V3_PHYSICS_READY = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+P6_2B_2_INDEPENDENT_REVIEW = PASS
+NEXT_PHASE = P6_2B_3
+```
+
+## V3-P6.2B-1 Leaf-exchange resistance subsystem
+
+The resistance-only subsystem is implemented on a branch based on the latest
+`origin/main@6671f579`. It is isolated from the existing V1/V2
+`plant/leaf_exchange.py` import path. The subsystem validates the atmospheric
+forcing boundary, computes `r_a + r_b + r_c` and `g_ex`, and emits one signed
+`LeafExchangeFlux` placeholder. The P6.1 ParameterDatabase is consumed only by
+a structural `lookup(..., production=False)` seam because its implementation
+remains on an unmerged branch. No parameter value, default, trusted registry,
+or production path is changed.
+
+```text
+P6_2B_1_STATUS = PASS_RESISTANCE_SUBSYSTEM_IMPLEMENTED
+LEAF_EXCHANGE_RESISTANCE_IMPLEMENTED = TRUE
+LEAF_EXCHANGE_SOLVER = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+TFWT_SOLVER = FALSE
+OBT_SOLVER = FALSE
+V3_PHYSICS_READY = FALSE
+NEXT_PHASE = P6_2B_2
+```
 
 ## D3 UFOTRI manual data mapping and laboratory handoff
 
