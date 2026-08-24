@@ -37,6 +37,10 @@
       },
       "additionalProperties": true
     },
+    "execution_definition": {
+      "type": "object",
+      "additionalProperties": true
+    },
     "initial_state": {
       "type": "object",
       "required": ["state_id"],

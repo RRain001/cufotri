@@ -1,0 +1,404 @@
+schema_version: v1
+stage: P7.7B
+status: PASS_SYNTHETIC_BENCHMARK_VALIDATION
+results:
+- benchmark_id: v3-p7-7b-end-to-end-pathway
+  execution_id: exec-d8cf326207a2f4951062b76feed3cfdc3c07a442cb65e07b38f7c08d54f6809d
+  solver_version: v3-p7-7b-existing-solvers-v1
+  input_hash: 657831e69729152036c51bbe2eedbf0ca5197cc5864c05890e0867afd9488520
+  parameter_snapshot:
+  - parameter_id: kf_s
+    value: 0.01
+    unit: s^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-kf-fixture
+      artifact_sha256: '7777777777777777777777777777777777777777777777777777777777777777'
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+  - parameter_id: kr_s
+    value: 0.02
+    unit: s^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-kr-fixture
+      artifact_sha256: '8888888888888888888888888888888888888888888888888888888888888888'
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+  - parameter_id: root_coefficient
+    value: 0.001
+    unit: m s^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-root-fixture
+      artifact_sha256: '9999999999999999999999999999999999999999999999999999999999999999'
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+  - parameter_id: harvest_fraction
+    value: 0.1
+    unit: '1'
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-harvest-fixture
+      artifact_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+  - parameter_id: consumption_rate
+    value: 1.0
+    unit: kg year^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-consumption-fixture
+      artifact_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+  - parameter_id: dose_coefficient
+    value: 1.0e-10
+    unit: Sv Bq^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-dose-fixture
+      artifact_sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+  metrics:
+  - metric_name: trajectory_comparison
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: Bq m^-2
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: conservation_residual
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: Bq m^-2
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: state_difference
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: Bq m^-2
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: numerical_stability
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details:
+      expected_leaf_exchange_flux: 1.0
+      actual_leaf_exchange_flux: 1.0
+      leaf_flux_match: true
+      refinement_differences:
+      - 1.0240590275390566
+      - 0.5002245510404428
+      trend: non-increasing
+      tolerance: 1.0e-12
+  - metric_name: deterministic
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details: {}
+  conservation_result:
+    passed: true
+    max_abs_residual: 0.0
+    tolerance: 1.0e-12
+    residuals:
+      soil: 0.0
+      root: 0.0
+      tfwt: 0.0
+      obt: 0.0
+      food: 0.0
+  restart_result:
+    passed: true
+    max_abs_difference: 0.0
+    tolerance: 1.0e-12
+    differences:
+      soil_inventory: 0.0
+      tfwt_inventory: 0.0
+      obt_inventory: 0.0
+      food_inventory: 0.0
+      intake_inventory: 0.0
+      dose: 0.0
+  status: PASS_SYNTHETIC_BENCHMARK_VALIDATION
+  provenance:
+    source_kind: SYNTHETIC_FIXTURE
+    source_identifier: p7.7a-end-to-end-pathway-case
+    artifact_sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    license_or_access_basis: repository_controlled_test_fixture
+    locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+- benchmark_id: v3-p7-7b-leaf-exchange
+  execution_id: exec-e6b2214fbeb8b9aac2f44cb2ade3380e74550de668cb306677b8490f299d204b
+  solver_version: v3-p7-7b-existing-solvers-v1
+  input_hash: 816974b48b30294824c7a7ade56b6f601387ef1964619af6ec2f3eb9aebac507
+  parameter_snapshot: []
+  metrics:
+  - metric_name: state_difference
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: Bq m^-2
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: numerical_stability
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details:
+      zero_input_invariant: true
+      refinement_differences:
+      - 0.0
+      - 0.0
+      trend: non-increasing
+      tolerance: 1.0e-12
+  - metric_name: deterministic
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details: {}
+  conservation_result:
+    passed: true
+    max_abs_residual: 0.0
+    tolerance: 1.0e-12
+    residuals:
+      step_0: 0.0
+      step_1: 0.0
+      step_2: 0.0
+      step_3: 0.0
+  restart_result:
+    passed: true
+    max_abs_difference: 0.0
+    tolerance: 1.0e-12
+    differences:
+      tfwt_inventory: 0.0
+  status: PASS_SYNTHETIC_BENCHMARK_VALIDATION
+  provenance:
+    source_kind: SYNTHETIC_FIXTURE
+    source_identifier: p7.7a-leaf-exchange-case
+    artifact_sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+    license_or_access_basis: repository_controlled_test_fixture
+    locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#leaf-exchange
+- benchmark_id: v3-p7-7b-radioactive-decay
+  execution_id: exec-fbfa2c4c0fd3966a5f7d148b28e5902bef47fa631c1467460177c3545318fbb0
+  solver_version: v3-p7-7b-existing-solvers-v1
+  input_hash: 3f338d6ac0a6fa1c75ae45ae821225baeace38da1cd5003b1252cb9f48c4d21a
+  parameter_snapshot:
+  - parameter_id: half_life
+    value: 10.0
+    unit: s
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-radioactive-decay-half-life-fixture
+      artifact_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#radioactive-decay
+  metrics:
+  - metric_name: decay_error
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: Bq m^-2
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: numerical_stability
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details:
+      dt_seconds:
+      - 10.0
+      - 5.0
+      - 2.5
+      refinement_differences:
+      - 4.440892098500626e-15
+      - 7.105427357601002e-15
+      trend: non-increasing
+      tolerance: 1.0e-12
+  - metric_name: deterministic
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details: {}
+  conservation_result:
+    passed: true
+    max_abs_residual: 0.0
+    tolerance: 1.0e-12
+    residuals:
+      step_0: 0.0
+      step_1: 0.0
+      step_2: 0.0
+      step_3: 0.0
+  restart_result:
+    passed: true
+    max_abs_difference: 0.0
+    tolerance: 1.0e-12
+    differences:
+      inventory: 0.0
+  status: PASS_SYNTHETIC_BENCHMARK_VALIDATION
+  provenance:
+    source_kind: SYNTHETIC_FIXTURE
+    source_identifier: p7.7a-radioactive-decay-case
+    artifact_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    license_or_access_basis: repository_controlled_test_fixture
+    locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#radioactive-decay
+- benchmark_id: v3-p7-7b-soil-root
+  execution_id: exec-d90f14c6559a44eeee4b09a5ea889d8d252f233946af2649c1bcd3300d232a5f
+  solver_version: v3-p7-7b-existing-solvers-v1
+  input_hash: 195489b30f2c3c4f438117549201a5857b90dc65b004ea04072c68a8f6a57e2a
+  parameter_snapshot:
+  - parameter_id: root_coefficient
+    value: 0.001
+    unit: m s^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-soil-root-coefficient-fixture
+      artifact_sha256: '4444444444444444444444444444444444444444444444444444444444444444'
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#soil-root
+  metrics:
+  - metric_name: relative_error
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: numerical_stability
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details:
+      final_soil_inventories:
+      - 99.6004
+      - 99.60059960010001
+      - 99.60069930043733
+      refinement_differences:
+      - 0.00019960010001796036
+      - 9.970033731576677e-05
+      trend: non-increasing
+      tolerance: 1.0e-12
+  - metric_name: deterministic
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details: {}
+  conservation_result:
+    passed: true
+    max_abs_residual: 0.0
+    tolerance: 1.0e-12
+    residuals:
+      step_0: 0.0
+      step_1: 0.0
+  restart_result:
+    passed: true
+    max_abs_difference: 0.0
+    tolerance: 1.0e-12
+    differences:
+      soil_inventory: 0.0
+  status: PASS_SYNTHETIC_BENCHMARK_VALIDATION
+  provenance:
+    source_kind: SYNTHETIC_FIXTURE
+    source_identifier: p7.7a-soil-root-case
+    artifact_sha256: '6666666666666666666666666666666666666666666666666666666666666666'
+    license_or_access_basis: repository_controlled_test_fixture
+    locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#soil-root
+- benchmark_id: v3-p7-7b-tfwt-obt
+  execution_id: exec-abe5e850336cee72edac2d46088619b0b0a278d433cd4ad86acf08b4a621aa40
+  solver_version: v3-p7-7b-existing-solvers-v1
+  input_hash: f1d13b7a834893a1da40b1d1e7f6fc79501c85a11e6aa743063d1cdca028e44c
+  parameter_snapshot:
+  - parameter_id: kf_s
+    value: 0.01
+    unit: s^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-tfwt-obt-kf-fixture
+      artifact_sha256: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt-kf
+  - parameter_id: kr_s
+    value: 0.02
+    unit: s^-1
+    status: TEST_ONLY
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-tfwt-obt-kr-fixture
+      artifact_sha256: '1111111111111111111111111111111111111111111111111111111111111111'
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt-kr
+  metrics:
+  - metric_name: trajectory_comparison
+    value: 0.0
+    threshold: 1.0e-12
+    pass_fail: true
+    unit: Bq m^-2
+    comparison: ABSOLUTE_LTE
+    details: {}
+  - metric_name: numerical_stability
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details:
+      refinement_differences:
+      - 3.552713678800501e-15
+      - 5.329070518200751e-15
+      trend: non-increasing
+      tolerance: 1.0e-12
+  - metric_name: deterministic
+    value: 0.0
+    threshold: 0.0
+    pass_fail: true
+    unit: '1'
+    comparison: ABSOLUTE_LTE
+    details: {}
+  conservation_result:
+    passed: true
+    max_abs_residual: 0.0
+    tolerance: 1.0e-12
+    residuals:
+      step_0: 0.0
+      step_1: 0.0
+      step_2: 0.0
+      step_3: 0.0
+  restart_result:
+    passed: true
+    max_abs_difference: 0.0
+    tolerance: 1.0e-12
+    differences:
+      obt_inventory: 0.0
+  status: PASS_SYNTHETIC_BENCHMARK_VALIDATION
+  provenance:
+    source_kind: SYNTHETIC_FIXTURE
+    source_identifier: p7.7a-tfwt-obt-case
+    artifact_sha256: '3333333333333333333333333333333333333333333333333333333333333333'
+    license_or_access_basis: repository_controlled_test_fixture
+    locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt

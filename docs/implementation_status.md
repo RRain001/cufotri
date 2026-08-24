@@ -2,6 +2,49 @@
 
 Updated: 2026-08-24
 
+## V3 P7.7B Baseline synthetic benchmark execution
+
+P7.7B executes all five P7.7A synthetic cases through the existing public V3
+solver and `V3PipelineRunner` APIs. `validation_v3/benchmark_runner.py` reads
+the explicit YAML `execution_definition`, runs `dt`, `dt/2`, and `dt/4`
+refinements, checks existing conservation ledgers, repeats each case for
+determinism, and checks component/pipeline restart equivalence. Results are
+serialized in
+`validation/results/v3/p7_7b_synthetic_benchmark_results.yaml` with input
+hashes, execution IDs, solver version, test-only snapshots, and provenance.
+
+```text
+P7_7B_STATUS = PASS_SYNTHETIC_BENCHMARK_VALIDATION
+BENCHMARKS_EXECUTED = TRUE
+DECAY_TEST = PASS
+LEAF_TFWT_TEST = PASS
+TFWT_OBT_TEST = PASS
+SOIL_ROOT_TEST = PASS
+END_TO_END_TEST = PASS
+CONSERVATION = PASS
+RESTART_EQUIVALENCE = PASS
+SOLVER_CHANGES = FALSE
+NUMERICAL_COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+This is synthetic software/interface evidence only. It does not validate
+environmental realism, parameter accuracy, field observations, calibration,
+regulatory dose coefficients, UFOTRI equivalence, or V3 physical readiness.
+The execution policy and independent review are recorded in
+`docs/adr/ADR-018-v3-synthetic-benchmark-validation-policy.md` and
+`docs/v3/reports/v3_p7_7b_*.md`.
+
+The historical full pytest collection is not used as the P7.7B gate because
+its stage-specific architecture baselines intentionally reject follow-on
+validation additions. With `--maxfail=1`, the first failure was
+`tests/architecture/test_atmos_v3_boundary.py::test_p7_source_scope_is_atmospheric_interface_only`,
+which only permits earlier atmospheric/pipeline source paths. The focused
+P7.7B/P7.7A and parameter compatibility suites are the recorded stage checks.
+
 ## V3 P7.7A Baseline validation framework
 
 P7.7A adds an isolated validation control plane at

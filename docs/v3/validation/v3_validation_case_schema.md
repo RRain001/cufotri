@@ -13,6 +13,7 @@ The machine-readable schema is
 | `scenario_type` | Synthetic/software/analytical case or a later physical/empirical class |
 | `forcing_definition` | Named forcing block containing `forcing_id`, variables, units, and time basis |
 | `initial_state` | Named state block containing `state_id`, variables, units, and basis |
+| `execution_definition` | Optional explicit execution adapter inputs such as benchmark kind, timestep refinement, restart split, and synthetic fixture construction values |
 | `parameter_context` | List of explicit parameter snapshots; an empty list is valid when no parameter is under test |
 | `model_outputs` | Named output observables with quantity, unit, time basis, and output reference |
 | `reference_data` | Independent reference definition or values with method and provenance |
@@ -44,3 +45,9 @@ computed `value`, `threshold`, `pass_fail`, optional `uncertainty`,
 boolean decision is checked against the value, threshold, and comparison
 operator during construction, so a manually inconsistent pass/fail record is
 rejected.
+
+P7.7B adds `BenchmarkResult` and `BenchmarkRegistry` as execution records. A
+benchmark result also carries a deterministic input hash and execution ID,
+conservation and restart audits, a deterministic-repeatability metric, and a
+synthetic-only status. `execution_definition` is configuration data, not a
+physical parameter source; active parameter snapshots are rejected.

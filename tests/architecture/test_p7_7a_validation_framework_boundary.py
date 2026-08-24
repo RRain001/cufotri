@@ -70,6 +70,24 @@ def test_validation_package_does_not_import_runtime_owners() -> None:
     assert offenders == []
 
 
+def test_p7_7b_runner_is_the_only_explicit_runtime_caller() -> None:
+    """Execution is isolated to the additive benchmark adapter, not owners."""
+
+    runner = (VALIDATION_SOURCE / "benchmark_runner.py").read_text(encoding="utf-8")
+    registry = (VALIDATION_SOURCE / "benchmark_registry.py").read_text(encoding="utf-8")
+    writer = (VALIDATION_SOURCE / "benchmark_result_writer.py").read_text(encoding="utf-8")
+
+    assert "V3PipelineRunner" in runner
+    assert "SoilStorageSolver" in runner
+    assert "TFWTStorageSolver" in runner
+    assert "OBTSolver" in runner
+    assert "RootUptakeSolver" in runner
+    assert "ParameterDatabase" not in runner
+    assert "UFOTRI_ACTIVE_DATABASE" not in runner
+    assert "ParameterDatabase" not in registry
+    assert "ParameterDatabase" not in writer
+
+
 def test_case_values_are_declared_in_yaml_not_benchmark_loader() -> None:
     loader = (VALIDATION_SOURCE / "benchmarks.py").read_text(encoding="utf-8")
     manifest = ROOT / "configs/v3/validation/p7_7a_baseline_benchmarks.yaml"

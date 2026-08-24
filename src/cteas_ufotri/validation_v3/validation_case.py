@@ -449,6 +449,7 @@ class ValidationCase:
     expected_metric: ExpectedMetric | Mapping[str, Any]
     acceptance_criteria: tuple[AcceptanceCriterion, ...] | Sequence[AcceptanceCriterion]
     provenance: Provenance | Mapping[str, Any]
+    execution_definition: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
         _require_identifier(self.case_id, field="case_id")
@@ -472,6 +473,20 @@ class ValidationCase:
         _require_identifier(initial["state_id"], field="initial_state.state_id")
         object.__setattr__(self, "forcing_definition", forcing)
         object.__setattr__(self, "initial_state", initial)
+
+        execution = self.execution_definition
+        if execution is None:
+            execution = MappingProxyType({})
+        else:
+            execution = _freeze_value(
+                execution,
+                field="execution_definition",
+            )
+            if not isinstance(execution, Mapping):
+                raise ValidationCaseError(
+                    "execution_definition must be a mapping"
+                )
+        object.__setattr__(self, "execution_definition", execution)
 
         parameters = tuple(self.parameter_context)
         converted_parameters = tuple(
@@ -581,6 +596,7 @@ class ValidationCase:
             "scenario_type": self.scenario_type.value,
             "forcing_definition": _thaw_value(self.forcing_definition),
             "initial_state": _thaw_value(self.initial_state),
+            "execution_definition": _thaw_value(self.execution_definition),
             "parameter_context": [item.to_mapping() for item in self.parameter_context],
             "model_outputs": [item.to_mapping() for item in self.model_outputs],
             "reference_data": [item.to_mapping() for item in self.reference_data],

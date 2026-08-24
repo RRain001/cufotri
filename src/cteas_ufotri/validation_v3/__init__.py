@@ -11,6 +11,24 @@ from .benchmarks import (
     DEFAULT_BENCHMARK_CONFIG,
     load_baseline_benchmark_cases,
 )
+from .benchmark_registry import (
+    BenchmarkMetricResult,
+    BenchmarkRegistry,
+    BenchmarkResult,
+    BenchmarkResultError,
+    can_accept_synthetic_benchmark,
+)
+from .benchmark_result_writer import (
+    BenchmarkResultWriterError,
+    read_benchmark_registry,
+    write_benchmark_registry,
+)
+from .benchmark_runner import (
+    SOLVER_VERSION,
+    BenchmarkRunnerError,
+    SyntheticBenchmarkRunner,
+    run_baseline_synthetic_benchmarks,
+)
 from .validation_case import (
     AcceptanceCriterion,
     ExpectedMetric,
@@ -48,6 +66,12 @@ from .validation_result import ValidationResult, ValidationResultError
 __all__ = [
     "AcceptanceCriterion",
     "BenchmarkSchemaError",
+    "BenchmarkMetricResult",
+    "BenchmarkRegistry",
+    "BenchmarkResult",
+    "BenchmarkResultError",
+    "BenchmarkResultWriterError",
+    "BenchmarkRunnerError",
     "ConservationLedger",
     "DEFAULT_BENCHMARK_CONFIG",
     "ExpectedMetric",
@@ -58,6 +82,8 @@ __all__ = [
     "Provenance",
     "ReferenceDataSpec",
     "ScenarioType",
+    "SOLVER_VERSION",
+    "SyntheticBenchmarkRunner",
     "ValidationCase",
     "ValidationCaseError",
     "ValidationGateError",
@@ -67,6 +93,7 @@ __all__ = [
     "ValidationResultError",
     "bias",
     "can_enter_validation",
+    "can_accept_synthetic_benchmark",
     "compute_metric",
     "conservation_residual",
     "decay_error",
@@ -77,4 +104,7 @@ __all__ = [
     "rmse",
     "state_difference",
     "trajectory_comparison",
+    "read_benchmark_registry",
+    "run_baseline_synthetic_benchmarks",
+    "write_benchmark_registry",
 ]
