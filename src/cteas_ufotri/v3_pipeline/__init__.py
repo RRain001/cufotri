@@ -1,9 +1,10 @@
-"""V3 P7.5 controlled end-to-end orchestration boundary.
+"""V3 P7.5B controlled end-to-end orchestration boundary.
 
 The pipeline calls existing typed module APIs in one explicit interval. It
 does not contain transport, storage, biological, transfer, intake, or dose
 equations, and it does not load external parameter databases or atmospheric
-executables.
+executables.  Forcing is interval-representative at the interval-start
+timestamp; all emitted endpoint records use the interval-end timestamp.
 """
 
 from .pipeline_runner import (

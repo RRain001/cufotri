@@ -1,4 +1,9 @@
-"""V3 P7.5 orchestration over the existing typed subsystem APIs."""
+"""V3 P7.5B orchestration over existing typed subsystem APIs.
+
+The atmospheric forcing timestamp is the interval-start label ``t_n`` for
+forcing representative of the complete ``[t_n, t_{n+1}]`` interval.  The
+runner emits all continuous states and downstream readouts at ``t_{n+1}``.
+"""
 
 from __future__ import annotations
 
@@ -122,6 +127,10 @@ class V3PipelineRunner:
             )
 
         interval = self.parameters.interval_seconds
+
+        # The explicit operator split is frozen as:
+        # soil deposition -> leaf/TFWT intermediate -> OBT -> root transfer.
+        # Root deliberately reads the original step-start soil_state.
         soil_result = SoilStorageSolver(
             parameters=self.parameters.soil_parameters
         ).advance(
@@ -137,6 +146,8 @@ class V3PipelineRunner:
             self.parameters.equilibrium_air_concentration_bq_m3,
         )
 
+        # TFWT here contains leaf exchange only; OBT must see this intermediate
+        # before root input is reconciled into the final TFWT endpoint.
         tfwt_result = TFWTStorageSolver().advance(
             tfwt_state,
             leaf_flux,
@@ -163,6 +174,8 @@ class V3PipelineRunner:
             ),
         )
         root_transfer = root_result.root_flux.inventory()
+        # Reconcile the independent root ledger against post-deposition soil,
+        # then apply OBT loss followed by root input to final TFWT.
         soil_after_deposition = soil_result.state
         remaining_soil = soil_after_deposition.inventory() - root_transfer
         if remaining_soil < 0.0:
