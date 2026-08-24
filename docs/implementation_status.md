@@ -2119,3 +2119,48 @@ options, dimensional markers, conservation-boundary markers, activation
 governance, baseline compatibility, required artifacts, and runtime
 isolation. The focused suite completed with `12 passed`; `git diff --check`
 passed. No production source was changed.
+
+## V3 P7.8B-2 physics selection and architecture decision
+
+P7.8B-2 selects the future physics direction after the P7.8A prioritization
+and P7.8B-1 specification review. V3.1 is limited to a typed plant/product
+mass-basis contract. V4 selects the OBT precursor and exchangeable/non-
+exchangeable pool direction, dynamic stomatal response at the existing leaf
+resistance boundary, and water-flux-coupled layered root uptake. The current
+one-layer soil signed-transport interface, fixed TFWT storage, food harvest
+event, external consumption, and external dose layers remain unchanged.
+
+```text
+P7_8B2_STATUS = PASS_PHYSICS_SELECTION
+FINAL_MODEL_CHOICES_DEFINED = TRUE
+V3_1_ROADMAP_DEFINED = TRUE
+V4_ITEMS_DEFINED = TRUE
+VALIDATION_DEPENDENCY_DEFINED = TRUE
+IMPLEMENTATION_ORDER_FROZEN = TRUE
+IMPLEMENTATION_STARTED = FALSE
+SOLVER_CHANGES = FALSE
+COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The primary outputs are
+`docs/v3/physics/p7_8b2_physics_selection.yaml`,
+`docs/v3/physics/p7_8b2_architecture_roadmap.yaml`,
+`docs/v3/physics/p7_8b2_coupling_decision.yaml`,
+`docs/v3/physics/p7_8b2_validation_dependency.yaml`,
+`docs/v3/reports/v3_p7_8b2_physics_selection_report.md`,
+`docs/v3/reports/v3_p7_8b2_architecture_roadmap.md`,
+`docs/v3/reports/v3_p7_8b2_validation_dependency_report.md`,
+`docs/v3/reports/v3_p7_8b2_independent_review.md`, and
+`docs/v3/adr/ADR-021-v3-physics-selection-policy.md`.
+
+The registry remains control-plane-only. Selected equations are not
+implemented, candidate parameters have no values, no calibration is started,
+and the root candidate is explicitly gated by a future P7.5/P7.5B numerical-
+coupling review. Soil hydrology, TFWT water turnover, and continuous/hybrid
+food transfer remain `INSUFFICIENT_EVIDENCE`; unreviewed values, guessed
+conversions, continuous-only food transfer, and dose-driven environmental
+redesign remain rejected.

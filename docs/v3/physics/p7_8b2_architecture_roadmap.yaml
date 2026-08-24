@@ -1,0 +1,129 @@
+schema_version: v1
+stage: P7.8B-2
+status: PASS_PHYSICS_SELECTION
+source_selection_registry: docs/v3/physics/p7_8b2_physics_selection.yaml
+current_profile: v3_frozen_baseline
+
+roadmap_invariants:
+  v3_1_is_not_a_new_solver: true
+  v4_is_opt_in: true
+  missing_future_fields_fail_closed: true
+  current_baseline_is_rollback_target: true
+  implementation_started: false
+  solver_changes: false
+  numerical_coupling_changes: false
+  active_parameters: 0
+  calibration_started: false
+  v3_physics_ready: false
+
+V3_1:
+  purpose: 'Prepare auditable basis and interface contracts while leaving the current equations, state serialization, and numerical coupling unchanged.'
+  entry_profile: v3_frozen_baseline
+  exit_gate: 'Contract review, dimensional audit, and independent review pass; no runtime activation is implied.'
+  items:
+    - item_id: V3_1_MASS_BASIS_CONTRACT
+      source_selection_item: OBT_PLANT_MASS_BASIS_CONTRACT
+      scope: 'Typed mass-basis, tissue-scope, area-basis, and provenance metadata.'
+      rationale: 'Mass basis is a high-priority comparability prerequisite and can be specified without guessing a conversion.'
+      validation_required:
+        - 'Paired basis metadata and measurements where conversion is proposed.'
+        - 'Dimensional reconciliation and missing-basis fail-closed test.'
+      forbidden_in_v3_1:
+        - 'No fresh/dry/water/hydrogen conversion value without evidence.'
+        - 'No change to dB/dt = k_f T - k_r B.'
+        - 'No parameter activation or calibration.'
+    - item_id: V3_1_BASELINE_GOVERNANCE
+      source_selection_item: v3_frozen_baseline
+      scope: 'Preserve existing plant, soil, food, exposure, parameter, pipeline, solver, and coupling contracts.'
+      rationale: 'The current profile is the only runnable V3 profile and remains the rollback target.'
+      validation_required:
+        - 'Existing baseline tests and P7.7B synthetic evidence remain green.'
+        - 'No production source path changes.'
+
+V4:
+  purpose: 'Implement only the selected future models after evidence, state ownership, conservation, coupling, and explicit authorization gates pass.'
+  entry_gate: 'P7.8C authorization plus per-item equation/unit contract, validation dataset, independent review, and compatibility tests.'
+  implementation_order:
+    - order: 1
+      item_id: V4_DATA_AND_STATE_CONTRACTS
+      selected_model: 'Typed state ownership and validation-case contracts for OBT, leaf, and root candidates.'
+      dependencies:
+        - V3_1_MASS_BASIS_CONTRACT
+        - v3_frozen_baseline
+      rationale: 'Freeze units, state scope, forcing provenance, and ownership before changing any equation.'
+      coupling_gate: 'No numerical coupling change at this order; only control-plane contracts and tests.'
+      validation_required:
+        - 'Dimensional checks, state ownership review, and restart schema design.'
+    - order: 2
+      item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+      selected_model: LEAF_DYNAMIC_STOMATAL_RESPONSE
+      dependencies:
+        - V4_DATA_AND_STATE_CONTRACTS
+      rationale: 'Add a bounded conductance response at the existing resistance boundary before using it as a plant forcing.'
+      coupling_gate: 'INTERFACE_EXTENSION review; current r_a + r_b + r_c path remains the default.'
+      validation_required:
+        - 'Matched radiation, VPD, leaf-temperature, stage, conductance, and TFWT data.'
+        - 'Reciprocal resistance/conductance and stratified trajectory tests.'
+    - order: 3
+      item_id: V4_OBT_FORMATION_PACKAGE
+      selected_model: OBT_FORMATION_PACKAGE
+      dependencies:
+        - V3_1_MASS_BASIS_CONTRACT
+        - V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+        - v3_frozen_baseline
+      rationale: 'Introduce precursor and exchangeable/non-exchangeable pools only after the forcing and basis contracts are explicit.'
+      coupling_gate: 'INTERFACE_EXTENSION review; aggregate OBT readout must remain explicit and compatible.'
+      validation_required:
+        - 'Matched time-resolved TFWT and OBT pools with day/night, activity, temperature, stage, and replicate metadata.'
+        - 'Component/total conservation, restart, and out-of-sample validation.'
+    - order: 4
+      item_id: V4_ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+      selected_model: ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+      dependencies:
+        - V4_DATA_AND_STATE_CONTRACTS
+        - v3_frozen_baseline
+      rationale: 'Replace scalar uptake abstraction only when a layer water-flux contract is observed or separately modelled.'
+      coupling_gate: 'NUMERICAL_COUPLING_CHANGE_REQUIRED; P7.5/P7.5B review is a hard gate.'
+      validation_required:
+        - 'Layer/global conservation, restart, refinement, and failure-behavior tests.'
+        - 'Independent soil-water, root-zone, transpiration, and plant-TFWT observations.'
+  not_in_v4_until_reopened:
+    - item_id: SOIL_FULL_HYDROLOGY
+      status: INSUFFICIENT_EVIDENCE
+      rationale: 'Layered hydraulic transport, evaporation, drainage, and water/HTO ownership are not evidenced.'
+    - item_id: TFWT_DYNAMIC_WATER_TURNOVER
+      status: INSUFFICIENT_EVIDENCE
+      rationale: 'A measured water balance and pipeline ownership are missing.'
+    - item_id: FOOD_CONTINUOUS_OR_HYBRID_TRANSFER
+      status: INSUFFICIENT_EVIDENCE
+      rationale: 'The environmental transfer boundary remains the current harvest event; product kinetics are not selected.'
+    - item_id: OBT_ORGAN_SPECIFIC_GROWTH
+      status: REJECTED
+      rationale: 'Not the first future target because organ/allocation observations are insufficient.'
+
+unchanged_modules:
+  - module: plant.soil_v3
+    decision: KEEP_CURRENT
+    contract: 'One-layer storage plus signed transport input; no inferred hydrology.'
+  - module: plant.tfwt_v3
+    decision: KEEP_CURRENT
+    contract: 'Fixed current water-basis activity storage and explicit flux ledger.'
+  - module: plant.food_transfer_v3
+    decision: KEEP_CURRENT
+    contract: 'Separate OBT/TFWT harvest-event product inventories.'
+  - module: exposure.consumption
+    decision: KEEP_CURRENT
+    contract: 'External scenario input.'
+  - module: exposure.dose
+    decision: KEEP_CURRENT
+    contract: 'External dosimetry/regulatory layer.'
+  - module: P7.5/P7.5B_numerical_coupling
+    decision: KEEP_CURRENT
+    contract: 'No current interval ordering, endpoint, ledger, or restart semantics change.'
+
+compatibility_plan:
+  default_profile: v3_frozen_baseline
+  future_profiles: 'Opt-in only; required fields and units are explicit.'
+  missing_fields: FAIL_CLOSED
+  rollback: 'Return to v3_frozen_baseline without converting candidate states or parameters.'
+  comparison: 'Every future candidate is compared against the unchanged baseline and independent observations; synthetic benchmarks are not empirical validation.'
