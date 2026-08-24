@@ -1,8 +1,9 @@
-"""P7.6A/P7.6B-2B parameter evidence, applicability, and candidate control plane.
+"""P7.6A/P7.6B/P7.6C-1 parameter evidence and validation control plane.
 
 This package is intentionally not imported by any V3 physics or pipeline
 module. It records evidence, applicability, and candidate-gate state; it never
-resolves a runtime parameter and never activates a solver value.
+resolves a runtime parameter and never activates a solver value. P7.6C-1 adds
+physical-constant source reconciliation while preserving that isolation.
 """
 
 from .applicability import (
@@ -54,12 +55,27 @@ from .validation_gate import (
     is_validation_candidate,
 )
 from .validation import (
+    BenchmarkStatus,
+    EvidenceIndependence,
     ParameterEvidenceError,
     ParameterLifecycleError,
     ParameterRegistryError,
     ParameterSchemaError,
+    ParameterStatus,
+    ParameterValidationRecord,
+    ParameterValidationRegistry,
+    PhysicalConstantEvidenceRecord,
+    PhysicalConstantSourceKind,
+    SourceAgreementAssessment,
+    SourceAgreementStatus,
+    ValidationProvenance,
+    ValidationReviewStatus,
+    ValidationStatus,
+    build_validation_record,
     lifecycle_transition,
+    reconcile_evidence,
     transition_status,
+    validation_candidate_transition,
 )
 
 __all__ = [
@@ -67,12 +83,14 @@ __all__ = [
     "ApplicabilityAssessmentStatus",
     "ApplicabilityStatus",
     "ApplicabilityRecord",
+    "BenchmarkStatus",
     "CandidateDisposition",
     "CandidateLifecycleStatus",
     "CandidateScreeningDisposition",
     "CandidateStatus",
     "CandidateValidationGateResult",
     "EvidenceProvenance",
+    "EvidenceIndependence",
     "EvidenceSourceMetadata",
     "EvidenceStatus",
     "GapCategory",
@@ -89,13 +107,24 @@ __all__ = [
     "ParameterReviewError",
     "ParameterReviewMatrix",
     "ParameterSchemaError",
+    "ParameterStatus",
+    "ParameterValidationRecord",
+    "ParameterValidationRegistry",
+    "PhysicalConstantEvidenceRecord",
+    "PhysicalConstantSourceKind",
     "ReviewStatus",
     "SourceType",
+    "SourceAgreementAssessment",
+    "SourceAgreementStatus",
     "UNRESOLVED_SOURCE",
     "ValidationPlan",
+    "ValidationProvenance",
+    "ValidationReviewStatus",
+    "ValidationStatus",
     "ValidationGateError",
     "ValidationGateResult",
     "build_candidate_registry",
+    "build_validation_record",
     "can_enter_validation",
     "candidate_transition",
     "construct_candidate_record",
@@ -105,6 +134,8 @@ __all__ = [
     "is_validation_candidate",
     "load_review_matrix",
     "lifecycle_transition",
+    "reconcile_evidence",
     "transition_candidate_status",
     "transition_status",
+    "validation_candidate_transition",
 ]

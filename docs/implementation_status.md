@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-08-22
+Updated: 2026-08-24
 
 ## V3-P7.6A Parameter evidence and provenance freeze
 
@@ -169,6 +169,58 @@ The stage artifacts are
 
 The control plane remains isolated from all V3 physics, numerical-coupling,
 pipeline, and runtime parameter modules.
+
+## V3-P7.6C-1 Physical-constant validation and evidence reconciliation
+
+P7.6C-1 closes the first formal validation loop for the only current physical
+candidate, `soil.tritium_half_life`. The new immutable
+`PhysicalConstantEvidenceRecord` preserves each evaluation's reported value,
+uncertainty, unit, explicit SI conversion, evaluation basis, and source
+lineage. `ParameterValidationRecord` keeps source records separate from the
+selected value and enforces equation, unit, applicability, reconciliation,
+uncertainty, review, and benchmark gates. Derived or duplicate evidence never
+counts as an independent evidence stream, and source conflicts fail closed to
+`HOLD` without averaging.
+
+The NIST evaluation reports `4500 +/- 8 d`. The later DDEP/BIPM evaluation
+reports `4497 +/- 9 d` and explicitly derives its 3H evidence table from the
+Lucas--Unterweger evaluation. The sources are consistent after explicit
+normalization; DDEP is selected unchanged under the recorded
+`LATEST_RECOGNIZED_EVALUATED_RECOMMENDATION_WITH_EXPLICIT_LINEAGE` policy.
+This validates only the universal H-3 radioactive-decay half-life for
+`lambda_T = ln(2) / T_half`; it does not validate soil retention, transport,
+plant transfer, OBT, exposure, dose, or chemical-form corrections.
+
+```text
+P7_6C1_STATUS = PASS_PHYSICAL_CONSTANT_VALIDATION
+PHYSICAL_CONSTANT_VALIDATION_COMPLETE = TRUE
+SOIL_TRITIUM_HALF_LIFE = VALIDATED
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+EVIDENCE_RECONCILIATION = PASS
+UNCERTAINTY_PROVENANCE = PASS
+DECAY_SEMANTIC_BENCHMARK = PASS
+CALIBRATION_STARTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+```
+
+The canonical validation manifest is
+`docs/v3/parameter_evidence/physical_constant_validation_registry.yaml`. The
+formal policy is in
+`docs/v3/adr/ADR-013-v3-physical-constant-validation-policy.md`; stage reports
+are in `docs/v3/reports/v3_p7_6c1_physical_constant_validation_report.md`,
+`docs/v3/reports/v3_p7_6c1_evidence_reconciliation_report.md`,
+`docs/v3/reports/v3_p7_6c1_test_report.md`, and
+`docs/v3/reports/v3_p7_6c1_independent_review.md`.
+
+The validation registry is not imported by any solver, coupling, pipeline, or
+runtime parameter module. P7.6C-1 does not set `ACTIVE`, start calibration,
+modify physics equations, modify numerical coupling, or promote
+`V3_PHYSICS_READY`.
 
 ## V3-P7.5B Numerical coupling semantics freeze
 
