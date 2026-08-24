@@ -1,0 +1,2114 @@
+schema_version: v1
+stage: P7.6B-1
+inventory_manifest: docs/v3/parameter_evidence/parameter_inventory.yaml
+inventory_revision: ff75826c0da9773c7297b592bcb66ea35951329c
+scope: One applicability assessment for every P7.6A inventory record; no value import,
+  calibration, activation, or solver coupling.
+reviewed_parameter_count: 76
+validation_candidates_identified: true
+candidate_count: 0
+calibration_started: false
+active_database: false
+parameters:
+- parameter_id: leaf.r_a
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s m^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.r_b
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s m^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.r_c
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s m^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.equilibrium_air_concentration
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-3
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.crop
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.growth_stage
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
+    boundary, and canopy resistance formulation; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.temperature
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: K
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.relative_humidity
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: '1'
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: leaf.day_night
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: leaf_exchange
+  model_component: V3 leaf exchange resistance chain
+  environment_type: CROP_CANOPY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: tfwt.water_content
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: kg water m^-2
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: tfwt_storage
+  model_component: V3 TFWT storage interface
+  environment_type: PLANT_WATER_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires a plant-water pool definition, water-loss/transformation
+    timescale, and crop dependence; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: tfwt.water_loss_flux
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2 s^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: tfwt_storage
+  model_component: V3 TFWT storage interface
+  environment_type: PLANT_WATER_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires a plant-water pool definition, water-loss/transformation
+    timescale, and crop dependence; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: tfwt.transformation_flux
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2 s^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: tfwt_storage
+  model_component: V3 TFWT storage interface
+  environment_type: PLANT_WATER_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires a plant-water pool definition, water-loss/transformation
+    timescale, and crop dependence; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: tfwt.initial_inventory
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: tfwt_storage
+  model_component: V3 TFWT storage interface
+  environment_type: PLANT_WATER_POOL
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.kf
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.kr
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.daylight_multiplier
+  evidence_status: PROVISIONAL
+  parameter_class: BIOLOGICAL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: '1'
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.nighttime_multiplier
+  evidence_status: PROVISIONAL
+  parameter_class: BIOLOGICAL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: '1'
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.is_daylight
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: boolean
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.temperature
+  evidence_status: PROVISIONAL
+  parameter_class: BIOLOGICAL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: K
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.photosynthetic_activity
+  evidence_status: PROVISIONAL
+  parameter_class: BIOLOGICAL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: PENDING_VALIDATION
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.initial_inventory
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: obt.plant_mass
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: kg fresh m^-2
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: obt_formation
+  model_component: V3 OBT formation and turnover interface
+  environment_type: PLANT_ORGANIC_POOL
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
+    exchange and resolve day/night conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: soil.tritium_half_life
+  evidence_status: PROVISIONAL
+  parameter_class: PHYSICAL_CONSTANT
+  source_type: PHYSICAL_CONSTANT_SOURCE
+  canonical_unit: s
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: soil_transport_decay
+  model_component: V3 soil HTO interface
+  environment_type: SOIL_PROFILE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: UNSPECIFIED_SOIL_CONDITION
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: soil.transport_flux
+  evidence_status: PROVISIONAL
+  parameter_class: SOIL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2 s^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: soil_transport_decay
+  model_component: V3 soil HTO interface
+  environment_type: SOIL_PROFILE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: UNSPECIFIED_SOIL_CONDITION
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: soil.layer_depth
+  evidence_status: PROVISIONAL
+  parameter_class: SOIL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: m
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: soil_transport_decay
+  model_component: V3 soil HTO interface
+  environment_type: SOIL_PROFILE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: UNSPECIFIED_SOIL_CONDITION
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: soil.water_content
+  evidence_status: PROVISIONAL
+  parameter_class: SOIL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: m water
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: soil_transport_decay
+  model_component: V3 soil HTO interface
+  environment_type: SOIL_PROFILE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: UNSPECIFIED_SOIL_CONDITION
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires soil depth, water-content basis, transport mechanism,
+    and decay convention; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: soil.initial_inventory
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: soil_transport_decay
+  model_component: V3 soil HTO interface
+  environment_type: SOIL_PROFILE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: root.k_root
+  evidence_status: PROVISIONAL
+  parameter_class: EMPIRICAL_MODEL_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: m s^-1
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: root_uptake
+  model_component: V3 root uptake interface
+  environment_type: ROOT_ZONE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: UNSPECIFIED_SOIL_CONDITION
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must distinguish soil-water concentration from total soil inventory
+    and resolve root-zone conditions; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: root.root_zone_identifier
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: root_uptake
+  model_component: V3 root uptake interface
+  environment_type: ROOT_ZONE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: food.harvest_fraction
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: '1'
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: food_transfer
+  model_component: V3 plant-to-food boundary
+  environment_type: CROP_HARVEST
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
+    specificity, and harvest timing; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: food.tfwt_harvest_fraction
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: '1'
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: food_transfer
+  model_component: V3 plant-to-food boundary
+  environment_type: CROP_HARVEST
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
+    specificity, and harvest timing; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: food.harvest_area
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: m^2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: food_transfer
+  model_component: V3 plant-to-food boundary
+  environment_type: CROP_HARVEST
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: food.crop
+  evidence_status: PROVISIONAL
+  parameter_class: CROP_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: food_transfer
+  model_component: V3 plant-to-food boundary
+  environment_type: CROP_HARVEST
+  crop_type: UNSPECIFIED_CROP
+  growth_stage: UNSPECIFIED_GROWTH_STAGE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
+    specificity, and harvest timing; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: food.product
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: food_transfer
+  model_component: V3 plant-to-food boundary
+  environment_type: CROP_HARVEST
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: intake.annual_consumption_amount
+  evidence_status: PROVISIONAL
+  parameter_class: EXPOSURE_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: kg/year
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: ingestion
+  model_component: V3 intake boundary
+  environment_type: HUMAN_CONSUMER
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must classify consumption as a demographic scenario input or
+    an evidence-backed exposure parameter; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: intake.food_product_mass
+  evidence_status: PROVISIONAL
+  parameter_class: EXPOSURE_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: kg
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: ingestion
+  model_component: V3 intake boundary
+  environment_type: HUMAN_CONSUMER
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review must classify consumption as a demographic scenario input or
+    an evidence-backed exposure parameter; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: intake.food_product
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: ingestion
+  model_component: V3 intake boundary
+  environment_type: HUMAN_CONSUMER
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: intake.age_group
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: ingestion
+  model_component: V3 intake boundary
+  environment_type: HUMAN_CONSUMER
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: intake.time_period
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: ingestion
+  model_component: V3 intake boundary
+  environment_type: HUMAN_CONSUMER
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: intake.consumer
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: ingestion
+  model_component: V3 intake boundary
+  environment_type: HUMAN_CONSUMER
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: dose.dose_coefficient
+  evidence_status: PROVISIONAL
+  parameter_class: DOSE_PARAMETER
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Sv/Bq
+  assessment_status: UNKNOWN
+  applicability: UNKNOWN
+  radionuclide: H-3
+  chemical_form: UNRESOLVED_SOURCE_FORM
+  pathway: dose_assessment
+  model_component: V3 ingestion dose boundary
+  environment_type: EXPOSURE_ASSESSMENT
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: UNRESOLVED_SOURCE_TIMESCALE
+  spatial_scale: UNRESOLVED_SOURCE_SCALE
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: UNKNOWN
+  unit_match: UNKNOWN
+  uncertainty_available: false
+  review_notes: Review requires radionuclide, age group, pathway, coefficient source,
+    and unit match; source context is unresolved.
+  required_action: Screen primary/secondary literature or standards for the V3 component
+    and formulation; retain the value unresolved and do not import it.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: dose.radionuclide
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: dose_assessment
+  model_component: V3 ingestion dose boundary
+  environment_type: EXPOSURE_ASSESSMENT
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: dose.pathway
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: dose_assessment
+  model_component: V3 ingestion dose boundary
+  environment_type: EXPOSURE_ASSESSMENT
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: dose.age_group
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: dose_assessment
+  model_component: V3 ingestion dose boundary
+  environment_type: EXPOSURE_ASSESSMENT
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.air_hto_concentration
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-3
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.deposition_flux
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-2 s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.temperature
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: K
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.humidity
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: '1'
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.wind_speed
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: m s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.precipitation
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: m s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.location
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.source_identifier
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: atmos.time_resolution
+  evidence_status: PROVISIONAL
+  parameter_class: NUMERICAL_CONTROL
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: atmospheric_forcing
+  model_component: V3 atmospheric forcing boundary
+  environment_type: ATMOSPHERIC_BOUNDARY
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: pipeline.interval_seconds
+  evidence_status: PROVISIONAL
+  parameter_class: NUMERICAL_CONTROL
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: s
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: pipeline_coupling
+  model_component: P7.5/P7.5B pipeline coupling
+  environment_type: PIPELINE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: pipeline.equilibrium_air_concentration
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: Bq m^-3
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: pipeline_coupling
+  model_component: P7.5/P7.5B pipeline coupling
+  environment_type: PIPELINE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: pipeline.consumer_identifier
+  evidence_status: PROVISIONAL
+  parameter_class: SCENARIO_INPUT
+  source_type: PROJECT_ASSUMPTION
+  canonical_unit: identifier
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: NOT_APPLICABLE
+  chemical_form: NOT_APPLICABLE
+  pathway: pipeline_coupling
+  model_component: P7.5/P7.5B pipeline coupling
+  environment_type: PIPELINE
+  crop_type: NOT_APPLICABLE
+  growth_stage: NOT_APPLICABLE
+  soil_condition: NOT_APPLICABLE
+  time_scale: SCENARIO_DEFINED
+  spatial_scale: SCENARIO_DEFINED
+  source_context: UNRESOLVED_SOURCE_REQUIRED
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.air_hto_concentration
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Bq m^-3
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.deposition_flux
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Bq m^-2 s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.interval_seconds
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.resistance_a
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s m^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.resistance_b
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s m^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.resistance_c
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s m^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.soil_half_life
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.k_root
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: m s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.kf
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.kr
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s^-1
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.harvest_fraction
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: '1'
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.harvest_area
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: m^2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.food_consumption
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: kg/year
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.food_mass
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: kg
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.dose_coefficient
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Sv/Bq
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.initial_soil_inventory
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Bq m^-2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.initial_tfwt_inventory
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Bq m^-2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.initial_obt_inventory
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Bq m^-2
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.refinement_intervals
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: s
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
+- parameter_id: test.pipeline.zero_forcing
+  evidence_status: EVIDENCE_FOUND
+  parameter_class: TEST_ONLY_PARAMETER
+  source_type: TEST_ONLY
+  canonical_unit: Bq m^-3
+  assessment_status: NOT_APPLICABLE
+  applicability: NOT_APPLICABLE
+  radionuclide: TEST_ONLY
+  chemical_form: TEST_ONLY
+  pathway: synthetic_fixture
+  model_component: P7.5/P7.5B synthetic test fixture
+  environment_type: TEST_ONLY
+  crop_type: TEST_ONLY
+  growth_stage: TEST_ONLY
+  soil_condition: TEST_ONLY
+  time_scale: FIXTURE_DEFINED
+  spatial_scale: FIXTURE_DEFINED
+  source_context: TEST_ONLY_SOURCE_CONTEXT
+  model_equation_match: NOT_APPLICABLE
+  unit_match: NOT_APPLICABLE
+  uncertainty_available: false
+  review_notes: This record is a scenario input, numerical control, or synthetic fixture
+    rather than a literature-derived model parameter; it is excluded from validation-candidate
+    admission.
+  required_action: Retain as an explicit scenario/control/fixture input; do not use
+    it as parameter evidence.
+  reviewer_status: INTERNAL_REVIEWED
+  validation_candidate: false
