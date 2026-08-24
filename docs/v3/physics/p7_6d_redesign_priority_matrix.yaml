@@ -1,0 +1,116 @@
+schema_version: v1
+stage: P7.6D
+status: COMPLETE_REDESIGN_PRIORITY_MATRIX
+implementation_authorized: false
+redesign_item_count: 9
+priority_counts:
+  HIGH: 8
+  MEDIUM: 1
+  LOW: 0
+coupling_impact_counts:
+  NO_IMPACT: 2
+  INTERFACE_ONLY: 4
+  NUMERICAL_COUPLING_CHANGE_REQUIRED: 3
+source_decision_registry: docs/v3/physics/p7_6d_physics_adoption_decision.yaml
+roadmap_order:
+  - R1_OBT_FORMATION_SCOPE_AND_STATE
+  - R2_ROOT_UPTAKE_LAYERED_STATE
+  - R3_FOOD_CHAIN_EVENT_CONTINUOUS_BOUNDARY
+  - R4_LEAF_PHENOLOGY_RESISTANCE
+priority_records:
+  - redesign_id: R1_OBT_FORMATION_SCOPE_AND_STATE
+    parameter_ids:
+      - obt.daylight_multiplier
+      - obt.nighttime_multiplier
+      - obt.photosynthetic_activity
+      - obt.plant_mass
+      - obt.temperature
+    priority: HIGH
+    scientific_importance: HIGH
+    uncertainty_impact: HIGH
+    pathway_contribution: HIGH
+    coupling_impact: INTERFACE_ONLY
+    implementation_complexity: HIGH
+    rationale: >-
+      OBT is a central plant pathway. Day/night formation, photosynthesis,
+      plant-mass basis, and temperature response define whether a future OBT
+      result represents the intended biological mechanism. The work package
+      may introduce forcing/state interfaces but does not authorize changing
+      the current solver in P7.6D.
+    prerequisites:
+      - Freeze TFWT and OBT compartment definitions.
+      - Freeze mass, hydrogen, time, and daylight/nighttime bases.
+      - Preserve the current first-order kf/kr reduced-model boundary.
+    coupling_scope: >-
+      Interface design may be required for biological forcing. No numerical
+      coupling change is authorized until a separate design review proves it
+      necessary.
+    future_stage: "P7.6E-proposed OBT physics redesign, before full validation"
+
+  - redesign_id: R2_ROOT_UPTAKE_LAYERED_STATE
+    parameter_ids:
+      - root.k_root
+    priority: HIGH
+    scientific_importance: HIGH
+    uncertainty_impact: HIGH
+    pathway_contribution: HIGH
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    implementation_complexity: HIGH
+    rationale: >-
+      Root uptake is the soil-to-plant bridge. A UFOTRI layer-distributed
+      first-order rate cannot be treated as the current one-layer effective
+      velocity by unit conversion or symbol matching.
+    prerequisites:
+      - Define layer-resolved soil/root state ownership.
+      - Define transpiration and water-uptake coupling.
+      - Define storage length, aggregation, sign, and conservation contracts.
+    coupling_scope: >-
+      A future adopted layered root state would change the soil-plant
+      numerical boundary. P7.5/P7.5B remains frozen in this stage.
+    future_stage: "P7.6E-proposed root-state and numerical-coupling redesign"
+
+  - redesign_id: R3_FOOD_CHAIN_EVENT_CONTINUOUS_BOUNDARY
+    parameter_ids:
+      - food.harvest_fraction
+      - food.tfwt_harvest_fraction
+    priority: HIGH
+    scientific_importance: HIGH
+    uncertainty_impact: HIGH
+    pathway_contribution: HIGH
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    implementation_complexity: HIGH
+    rationale: >-
+      Food harvest is the plant-to-product boundary. The current V3 event
+      fractions are not transformable from continuous UFOTRI food-chain rates
+      without selecting a new event, compartment, and conservation model.
+    prerequisites:
+      - Freeze continuous product compartments versus harvest events.
+      - Define OBT and TFWT product-basis transfer separately.
+      - Define harvest timing, loss, and remaining-plant inventory balance.
+    coupling_scope: >-
+      A continuous food-chain redesign may require time-coupled plant-product
+      integration. This is a future numerical-coupling decision, not a change
+      to the current food solver.
+    future_stage: "P7.6E-proposed food-chain event/continuous redesign"
+
+  - redesign_id: R4_LEAF_PHENOLOGY_RESISTANCE
+    parameter_ids:
+      - leaf.growth_stage
+    priority: MEDIUM
+    scientific_importance: MEDIUM
+    uncertainty_impact: MEDIUM
+    pathway_contribution: MEDIUM
+    coupling_impact: INTERFACE_ONLY
+    implementation_complexity: MEDIUM
+    rationale: >-
+      Growth stage affects the applicability and possible parameterization of
+      the resistance chain, but it is not currently a stage-dependent equation.
+      A typed stage ontology and relation are required before validation.
+    prerequisites:
+      - Define stage ontology and transitions.
+      - Define canopy geometry/physiology basis by stage.
+      - Preserve r_a/r_b/r_c component ownership and units.
+    coupling_scope: >-
+      The likely change is to the forcing/parameter interface. No numerical
+      plant-storage coupling change is identified at this decision stage.
+    future_stage: "P7.6E-proposed leaf phenology/resistance redesign"

@@ -1910,3 +1910,42 @@ are `v3_p7_6c3_validation_feasibility_report.md`,
 `v3_p7_6c3_parameter_decision_matrix.md`, and
 `v3_p7_6c3_independent_review.md`. No solver, equation, numerical coupling,
 runtime parameter lookup, calibration, or active database was added.
+
+## V3 P7.6D physics adoption decision and redesign roadmap
+
+P7.6D converts the P7.6C-3 feasibility assessment into an explicit model
+adoption decision. All 26 mapped records and the derived `leaf.g_ex` review
+item are covered exactly once. The current V3 model remains frozen; nine
+records require a future physics redesign, while metadata, exposure, and dose
+records remain outside the UFOTRI environmental-physics path.
+
+```text
+P7_6D_STATUS = PASS_PHYSICS_ADOPTION_DECISION
+ALL_FEASIBILITY_ITEMS_REVIEWED = TRUE
+CURRENT_V3_MODEL = FROZEN
+REDESIGN_ITEMS_IDENTIFIED = TRUE
+IMPLEMENTATION_STARTED = FALSE
+NEW_VALIDATION_CANDIDATES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+Adoption counts are `KEEP_CURRENT_V3=2`, `VALIDATE_CURRENT_MODEL=9`,
+`EXTEND_V3_PHYSICS=2`, `REDESIGN_REQUIRED=9`, `DO_NOT_IMPORT=4`, and
+`WAIT_FOR_EVIDENCE=1`. The canonical registry and priority matrix are
+`docs/v3/physics/p7_6d_physics_adoption_decision.yaml` and
+`docs/v3/physics/p7_6d_redesign_priority_matrix.yaml`. The policy is frozen in
+`docs/v3/adr/ADR-016-v3-physics-adoption-and-redesign-policy.md`; reports are
+`v3_p7_6d_physics_adoption_report.md`,
+`v3_p7_6d_redesign_roadmap.md`,
+`v3_p7_6d_coupling_impact_report.md`, and
+`v3_p7_6d_independent_review.md`.
+
+The P7.6D control-plane loader and focused unit/architecture tests pass. No
+solver, equation, P7.5/P7.5B pipeline, numerical coupling, parameter value,
+calibration routine, runtime lookup, or active database was added.
