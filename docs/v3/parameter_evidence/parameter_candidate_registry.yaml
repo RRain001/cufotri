@@ -1,9 +1,9 @@
 schema_version: v1
-stage: P7.6B-2A
+stage: P7.6B-2B
 candidate_registry: true
 reviewed_parameter_count: 76
-candidate_count: 0
-deferred_count: 26
+candidate_count: 1
+deferred_count: 25
 rejected_count: 50
 validation_candidates_identified: true
 validated_parameters: 0
@@ -11,6 +11,8 @@ active_parameters: 0
 calibration_started: false
 ufotri_active_database: false
 v3_physics_ready: false
+physics_changed: false
+numerical_coupling_changed: false
 parameters:
 - parameter_id: atmos.air_hto_concentration
   parameter_name: atmospheric HTO concentration
@@ -29,6 +31,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.air_hto_concentration
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -51,6 +58,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.deposition_flux
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -73,6 +85,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.humidity
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -95,6 +112,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.location
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -117,6 +139,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.precipitation
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -139,6 +166,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.source_identifier
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -161,6 +193,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.temperature
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -183,6 +220,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.time_resolution
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -205,6 +247,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:atmos.wind_speed
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -227,6 +274,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:dose.age_group
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -251,6 +303,13 @@ parameters:
   review_notes: Review requires radionuclide, age group, pathway, coefficient source,
     and unit match; source context is unresolved.
   priority_tier: 3
+  applicability_record_id: applicability:dose.dose_coefficient
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -273,6 +332,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:dose.pathway
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -295,6 +359,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:dose.radionuclide
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -319,6 +388,13 @@ parameters:
   review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
     specificity, and harvest timing; source context is unresolved.
   priority_tier: 2
+  applicability_record_id: applicability:food.crop
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -341,6 +417,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 2
+  applicability_record_id: applicability:food.harvest_area
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -365,6 +446,13 @@ parameters:
   review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
     specificity, and harvest timing; source context is unresolved.
   priority_tier: 2
+  applicability_record_id: applicability:food.harvest_fraction
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -387,6 +475,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 2
+  applicability_record_id: applicability:food.product
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -411,6 +504,13 @@ parameters:
   review_notes: Review requires edible-part definition, fresh/dry-mass basis, crop
     specificity, and harvest timing; source context is unresolved.
   priority_tier: 2
+  applicability_record_id: applicability:food.tfwt_harvest_fraction
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -433,6 +533,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:intake.age_group
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -457,6 +562,13 @@ parameters:
   review_notes: Review must classify consumption as a demographic scenario input or
     an evidence-backed exposure parameter; source context is unresolved.
   priority_tier: 3
+  applicability_record_id: applicability:intake.annual_consumption_amount
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -479,6 +591,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:intake.consumer
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -501,6 +618,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:intake.food_product
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -525,6 +647,13 @@ parameters:
   review_notes: Review must classify consumption as a demographic scenario input or
     an evidence-backed exposure parameter; source context is unresolved.
   priority_tier: 3
+  applicability_record_id: applicability:intake.food_product_mass
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -547,6 +676,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 3
+  applicability_record_id: applicability:intake.time_period
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -571,6 +705,13 @@ parameters:
   review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
     boundary, and canopy resistance formulation; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.crop
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -593,6 +734,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.day_night
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -615,6 +761,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.equilibrium_air_concentration
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -639,6 +790,13 @@ parameters:
   review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
     boundary, and canopy resistance formulation; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.growth_stage
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -663,6 +821,13 @@ parameters:
   review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
     boundary, and canopy resistance formulation; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.r_a
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -687,6 +852,13 @@ parameters:
   review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
     boundary, and canopy resistance formulation; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.r_b
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -711,6 +883,13 @@ parameters:
   review_notes: Review requires HTO-specific leaf exchange evidence and the same aerodynamic,
     boundary, and canopy resistance formulation; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.r_c
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -733,6 +912,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.relative_humidity
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -755,6 +939,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:leaf.temperature
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -779,6 +968,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.daylight_multiplier
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -801,6 +997,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:obt.initial_inventory
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -823,6 +1024,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:obt.is_daylight
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -847,6 +1053,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.kf
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -871,6 +1084,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.kr
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -895,6 +1115,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.nighttime_multiplier
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -919,6 +1146,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.photosynthetic_activity
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -943,6 +1177,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.plant_mass
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -967,6 +1208,13 @@ parameters:
   review_notes: Review must distinguish HTO-to-OBT formation from general organic-isotope
     exchange and resolve day/night conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:obt.temperature
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -989,6 +1237,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:pipeline.consumer_identifier
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1011,6 +1264,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:pipeline.equilibrium_air_concentration
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1033,6 +1291,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:pipeline.interval_seconds
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1057,6 +1320,13 @@ parameters:
   review_notes: Review must distinguish soil-water concentration from total soil inventory
     and resolve root-zone conditions; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:root.k_root
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1079,6 +1349,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:root.root_zone_identifier
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1101,6 +1376,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:soil.initial_inventory
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1125,6 +1405,13 @@ parameters:
   review_notes: Review requires soil depth, water-content basis, transport mechanism,
     and decay convention; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:soil.layer_depth
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1149,6 +1436,13 @@ parameters:
   review_notes: Review requires soil depth, water-content basis, transport mechanism,
     and decay convention; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:soil.transport_flux
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1158,26 +1452,36 @@ parameters:
   parameter_name: tritium physical half-life
   subsystem: soil_v3
   parameter_class: PHYSICAL_CONSTANT
-  evidence_ids: []
-  applicability_status: UNKNOWN
-  candidate_status: PROVISIONAL
-  candidate_screening: DEFERRED
-  candidate_reason: 'Deferred: source evidence and applicability are not sufficiently
-    resolved; retain the P7.6A provisional boundary.'
+  evidence_ids:
+  - doi:10.6028/jres.105.043
+  applicability_status: DIRECT_MATCH
+  candidate_status: VALIDATION_CANDIDATE
+  candidate_screening: CANDIDATE
+  candidate_reason: 'Candidate: complete evidence is linked and applicability is DIRECT_MATCH;
+    equation and unit compatibility are explicit, but future validation is required
+    before any scientific or production use.'
   validation_required: true
   validation_plan:
   - LITERATURE_COMPARISON
   - SENSITIVITY_ANALYSIS
   - EXPERIMENTAL_DATA_REQUIRED
-  uncertainty_source: UNRESOLVED_SOURCE_REQUIRED
-  review_notes: Review requires soil depth, water-content basis, transport mechanism,
-    and decay convention; source context is unresolved.
+  uncertainty_source: doi:10.6028/jres.105.043
+  review_notes: Universal H-3 nuclear half-life mapped only to the V3 radioactive-decay
+    term; it is not evidence for soil transport, water content, or retention. The
+    source reports 4500 +/- 8 d and the inventory records the explicit conversion
+    to seconds.
   priority_tier: 1
+  applicability_record_id: applicability:soil.tritium_half_life
+  equation_compatible: true
+  unit_compatible: true
+  remaining_questions:
+  - Confirm the source uncertainty and representativeness for the intended V3 case.
+  - Run the declared benchmark, literature comparison, and sensitivity protocol.
   provenance:
     repository: CTEAS_ufotri
-    revision: 61effab
-    file: src/cteas_ufotri/plant/soil_v3/soil_solver.py
-    location: SoilParameters.tritium_half_life_s
+    revision: cdaa6320
+    file: docs/v3/parameter_evidence/parameter_inventory.yaml
+    location: parameters[soil.tritium_half_life]
 - parameter_id: soil.water_content
   parameter_name: soil water content
   subsystem: soil_v3
@@ -1197,6 +1501,13 @@ parameters:
   review_notes: Review requires soil depth, water-content basis, transport mechanism,
     and decay convention; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:soil.water_content
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1220,6 +1531,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.air_hto_concentration
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1243,6 +1559,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.deposition_flux
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1266,6 +1587,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.dose_coefficient
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1289,6 +1615,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.food_consumption
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1312,6 +1643,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.food_mass
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1335,6 +1671,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.harvest_area
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1358,6 +1699,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.harvest_fraction
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1381,6 +1727,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.initial_obt_inventory
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1404,6 +1755,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.initial_soil_inventory
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1427,6 +1783,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.initial_tfwt_inventory
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1450,6 +1811,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.interval_seconds
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1473,6 +1839,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.k_root
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1496,6 +1867,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.kf
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1519,6 +1895,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.kr
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1542,6 +1923,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.refinement_intervals
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1565,6 +1951,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.resistance_a
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1588,6 +1979,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.resistance_b
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1611,6 +2007,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.resistance_c
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1634,6 +2035,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.soil_half_life
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1657,6 +2063,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: null
+  applicability_record_id: applicability:test.pipeline.zero_forcing
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1679,6 +2090,11 @@ parameters:
     rather than a literature-derived model parameter; it is excluded from validation-candidate
     admission.
   priority_tier: 1
+  applicability_record_id: applicability:tfwt.initial_inventory
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - This record is outside the physical-parameter validation scope.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1703,6 +2119,13 @@ parameters:
   review_notes: Review requires a plant-water pool definition, water-loss/transformation
     timescale, and crop dependence; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:tfwt.transformation_flux
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1727,6 +2150,13 @@ parameters:
   review_notes: Review requires a plant-water pool definition, water-loss/transformation
     timescale, and crop dependence; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:tfwt.water_content
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
@@ -1751,13 +2181,15 @@ parameters:
   review_notes: Review requires a plant-water pool definition, water-loss/transformation
     timescale, and crop dependence; source context is unresolved.
   priority_tier: 1
+  applicability_record_id: applicability:tfwt.water_loss_flux
+  equation_compatible: false
+  unit_compatible: false
+  remaining_questions:
+  - Recover a non-test source with complete bibliographic metadata.
+  - Resolve the source-to-V3 applicability coordinates and equation role.
+  - Confirm a compatible canonical unit and explicit conversion path.
   provenance:
     repository: CTEAS_ufotri
     revision: 61effab
     file: src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
     location: TFWTStorageSolver.advance.water_loss_flux_bq_m2_s
-inventory_manifest: docs/v3/parameter_evidence/parameter_inventory.yaml
-applicability_matrix: docs/v3/parameter_evidence/parameter_applicability_matrix.yaml
-source_revision: 838634f3af85e205fb15e10cbf15ee298ad4f017
-scope: One candidate-screening record for every P7.6A parameter; no value import,
-  calibration, validation, activation, or solver coupling.

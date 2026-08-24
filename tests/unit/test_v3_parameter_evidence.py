@@ -7,6 +7,7 @@ import pytest
 from cteas_ufotri.parameters_v3 import (
     Applicability,
     EvidenceProvenance,
+    EvidenceSourceMetadata,
     EvidenceStatus,
     ParameterClass,
     ParameterEvidenceRecord,
@@ -95,6 +96,37 @@ def test_required_traceability_and_units_fail_closed() -> None:
         )
 
 
+def test_recovered_physical_evidence_requires_complete_source_metadata() -> None:
+    with pytest.raises(ParameterSchemaError, match="source_metadata"):
+        make_record(
+            status=EvidenceStatus.EVIDENCE_FOUND,
+            source_type=SourceType.PRIMARY_LITERATURE,
+            source_identifier="doi:10.0000/example",
+            equation_role="Test source equation role.",
+        )
+
+    source = EvidenceSourceMetadata(
+        title="Synthetic source",
+        authors=("Test Author",),
+        year=2026,
+        journal_or_publisher="Synthetic Journal",
+        identifier="doi:10.0000/example",
+        locator="Equation 1",
+        stable_url="https://doi.org/10.0000/example",
+        reported_quantity="Synthetic quantity",
+        reported_uncertainty="Not quantified",
+        conversion_path="No conversion; reported and canonical units are s.",
+    )
+    record = make_record(
+        status=EvidenceStatus.EVIDENCE_FOUND,
+        source_type=SourceType.PRIMARY_LITERATURE,
+        source_identifier=source.identifier,
+        equation_role="Test source equation role.",
+        source_metadata=source,
+    )
+    assert ParameterEvidenceRecord.from_mapping(record.to_mapping()) == record
+
+
 def test_lifecycle_allows_adjacent_transitions_but_rejects_direct_activation() -> None:
     assert lifecycle_transition("PROVISIONAL", "EVIDENCE_FOUND") == (
         "PROVISIONAL",
@@ -113,7 +145,22 @@ def test_lifecycle_allows_adjacent_transitions_but_rejects_direct_activation() -
     with pytest.raises(ParameterLifecycleError):
         lifecycle_transition("EVIDENCE_FOUND", "ACTIVE")
 
-    record = make_record().transition_to(EvidenceStatus.EVIDENCE_FOUND)
+    record = make_record(
+        source_identifier="doi:10.0000/example",
+        equation_role="Test source equation role.",
+        source_metadata=EvidenceSourceMetadata(
+            title="Synthetic source",
+            authors=("Test Author",),
+            year=2026,
+            journal_or_publisher="Synthetic Journal",
+            identifier="doi:10.0000/example",
+            locator="Equation 1",
+            stable_url="https://doi.org/10.0000/example",
+            reported_quantity="Synthetic quantity",
+            reported_uncertainty="Not quantified",
+            conversion_path="No conversion; reported and canonical units are s.",
+        ),
+    ).transition_to(EvidenceStatus.EVIDENCE_FOUND)
     assert record.status is EvidenceStatus.EVIDENCE_FOUND
     with pytest.raises(ParameterLifecycleError):
         record.transition_to(EvidenceStatus.ACTIVE)

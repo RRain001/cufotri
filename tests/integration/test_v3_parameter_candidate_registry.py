@@ -37,24 +37,29 @@ def test_candidate_registry_covers_all_76_and_is_fail_closed() -> None:
 
     assert len(registry.records) == 76
     assert registry.counts_by_screening() == {
-        "CANDIDATE": 0,
-        "DEFERRED": 26,
+        "CANDIDATE": 1,
+        "DEFERRED": 25,
         "REJECTED": 50,
     }
     assert registry.counts_by_status() == {
-        "PROVISIONAL": 26,
+        "PROVISIONAL": 25,
         "EVIDENCE_FOUND": 0,
         "APPLICABILITY_REVIEWED": 0,
-        "VALIDATION_CANDIDATE": 0,
+        "VALIDATION_CANDIDATE": 1,
         "VALIDATED": 0,
         "ACTIVE": 0,
         "REJECTED": 50,
     }
-    assert registry.candidate_ids == ()
-    assert registry.deferred_count == 26
+    assert registry.candidate_ids == ("soil.tritium_half_life",)
+    assert registry.deferred_count == 25
     assert registry.rejected_count == 50
     assert all(
-        record.candidate_status in {CandidateStatus.PROVISIONAL, CandidateStatus.REJECTED}
+        record.candidate_status
+        in {
+            CandidateStatus.PROVISIONAL,
+            CandidateStatus.VALIDATION_CANDIDATE,
+            CandidateStatus.REJECTED,
+        }
         for record in registry.records
     )
 
@@ -69,9 +74,9 @@ def test_constructed_registry_round_trips_and_gate_identifies_empty_set() -> Non
     assert restored == loaded
     gate = evaluate_candidate_gate(loaded)
     assert gate.validation_candidates_identified is True
-    assert gate.candidate_ids == ()
-    assert gate.candidate_count == 0
-    assert len(gate.blocked_reasons) == 76
+    assert gate.candidate_ids == ("soil.tritium_half_life",)
+    assert gate.candidate_count == 1
+    assert len(gate.blocked_reasons) == 75
     assert gate.validated_parameters == 0
     assert gate.active_parameters == 0
     assert gate.calibration_started is False
@@ -122,6 +127,7 @@ def test_screening_dispositions_are_explicit() -> None:
     assert all(
         record.candidate_screening
         in {
+            CandidateScreeningDisposition.CANDIDATE,
             CandidateScreeningDisposition.DEFERRED,
             CandidateScreeningDisposition.REJECTED,
         }

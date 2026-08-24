@@ -1,4 +1,4 @@
-"""P7.6A/P7.6B-2A parameter evidence, applicability, and candidate control plane.
+"""P7.6A/P7.6B-2B parameter evidence, applicability, and candidate control plane.
 
 This package is intentionally not imported by any V3 physics or pipeline
 module. It records evidence, applicability, and candidate-gate state; it never
@@ -27,6 +27,7 @@ from .evidence import (
     Applicability,
     ApplicabilityStatus,
     EvidenceProvenance,
+    EvidenceSourceMetadata,
     EvidenceStatus,
     GapCategory,
     ParameterClass,
@@ -72,6 +73,7 @@ __all__ = [
     "CandidateStatus",
     "CandidateValidationGateResult",
     "EvidenceProvenance",
+    "EvidenceSourceMetadata",
     "EvidenceStatus",
     "GapCategory",
     "ParameterClass",

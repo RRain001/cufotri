@@ -191,6 +191,26 @@ class ApplicabilityRecord:
         return result
 
     @property
+    def equation_compatible(self) -> bool:
+        """Whether the source equation is compatible enough for review.
+
+        ``PARTIAL_MATCH`` means the equation role is identifiable but still
+        requires validation; ``UNKNOWN`` and ``TRANSFER_REQUIRED`` are not
+        equation-compatible at this stage.
+        """
+
+        return self.model_equation_match in {
+            ApplicabilityAssessmentStatus.DIRECT_MATCH,
+            ApplicabilityAssessmentStatus.PARTIAL_MATCH,
+        }
+
+    @property
+    def unit_compatible(self) -> bool:
+        """Whether the source unit is directly compatible with V3."""
+
+        return self.unit_match is ApplicabilityAssessmentStatus.DIRECT_MATCH
+
+    @property
     def is_validation_shape(self) -> bool:
         """Return the applicability-only portion of the P7.6B-2 rule."""
 
@@ -198,17 +218,13 @@ class ApplicabilityRecord:
             return (
                 self.model_equation_match
                 is ApplicabilityAssessmentStatus.DIRECT_MATCH
-                and self.unit_match is ApplicabilityAssessmentStatus.DIRECT_MATCH
+                and self.unit_compatible
             )
         if self.assessment_status is ApplicabilityAssessmentStatus.PARTIAL_MATCH:
             return (
                 self.uncertainty_available
-                and self.model_equation_match
-                in {
-                    ApplicabilityAssessmentStatus.DIRECT_MATCH,
-                    ApplicabilityAssessmentStatus.PARTIAL_MATCH,
-                }
-                and self.unit_match is ApplicabilityAssessmentStatus.DIRECT_MATCH
+                and self.equation_compatible
+                and self.unit_compatible
             )
         return False
 

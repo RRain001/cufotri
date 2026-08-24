@@ -120,6 +120,56 @@ construction, registry, gate, and independent review records are in
 `docs/v3/reports/v3_p7_6b2a_independent_review.md`. The formal decision is in
 `docs/adr/012-v3-parameter-candidate-construction.md`.
 
+## V3-P7.6B-2B Evidence recovery and validation-candidate generation
+
+P7.6B-2B adds a fail-closed evidence-recovery gate to the P7.6A/P7.6B-1
+control plane. Recovered physical evidence must carry complete bibliographic
+metadata, a source identifier match, an explicit equation role, reported and
+canonical units, and a visible conversion path. The candidate layer also
+records deterministic applicability links, equation/unit compatibility, and
+remaining questions.
+
+One external physical-constant record was accepted:
+`soil.tritium_half_life`, from Lucas and Unterweger's NIST review. It is a
+direct match only for the existing H-3 radioactive-decay term. OBT formation/
+turnover, root uptake, leaf resistance, and soil-transport screens remain
+deferred because the reviewed material did not close the current V3 equation,
+compartment, effective-velocity, or resistance-unit requirements. No source
+values were averaged or filled by assumption.
+
+The canonical evidence inventory now contains 55 `PROVISIONAL` records and 21
+`EVIDENCE_FOUND` records, of which 20 remain test-only fixtures. The
+applicability matrix contains one `DIRECT_MATCH`, 25 `UNKNOWN`, and 50
+`NOT_APPLICABLE` records. The candidate registry covers all 76 records and
+contains one `VALIDATION_CANDIDATE`, 25 deferred records, and 50 rejected
+records; it contains no parameter values.
+
+    P7_6B2B_STATUS = PASS_EVIDENCE_RECOVERY
+    EVIDENCE_RECORDS_UPDATED = TRUE
+    PARAMETER_APPLICABILITY_REVIEW_UPDATED = TRUE
+    PARAMETER_CANDIDATE_REGISTRY = TRUE
+    VALIDATION_CANDIDATES_IDENTIFIED = TRUE
+    VALIDATION_CANDIDATE_COUNT = 1
+    VALIDATED = 0
+    ACTIVE = 0
+    CALIBRATION_STARTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    PHYSICS_CHANGED = FALSE
+    NUMERICAL_COUPLING_CHANGED = FALSE
+
+The stage artifacts are
+`docs/v3/parameter_evidence/parameter_inventory.yaml`,
+`docs/v3/parameter_evidence/parameter_applicability_matrix.yaml`,
+`docs/v3/parameter_evidence/parameter_candidate_registry.yaml`,
+`docs/v3/reports/v3_p7_6b2b_evidence_recovery_report.md`,
+`docs/v3/reports/v3_p7_6b2b_candidate_generation_report.md`,
+`docs/v3/reports/v3_p7_6b2b_parameter_review_report.md`, and
+`docs/v3/reports/v3_p7_6b2b_independent_review.md`.
+
+The control plane remains isolated from all V3 physics, numerical-coupling,
+pipeline, and runtime parameter modules.
+
 ## V3-P7.5B Numerical coupling semantics freeze
 
 P7.5B freezes the actual one-interval operator split used by the P7.5
