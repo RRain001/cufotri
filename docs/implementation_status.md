@@ -952,6 +952,49 @@ SB1_V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
 SB1_FORMAL_PHYSICS_CHANGE_COUNT = 0
 SB1_FORMAL_CONFIG_CHANGE_COUNT = 0
 V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+## V3 P7.6C-2 UFOTRI semantic mapping
+
+The P7.6C-2 audit inventories the available KfK 4605 UFOTRI manual and
+separates it from project-derived V3 contracts. No original UFOTRI source code
+or executable was recovered. The read-only mapping control plane records the
+equation, quantity definition, unit, compartment, time/state basis, and
+provenance for every current deferred V3 plant/soil/food/exposure parameter
+covered by this stage. It does not load a value into a solver.
+
+```text
+P7_6C2_STATUS = PASS_SEMANTIC_MAPPING_COMPLETE
+UFOTRI_MAPPING_COMPLETE = TRUE
+UFOTRI_SOURCE_INVENTORY = COMPLETE_FOR_AVAILABLE_MANUAL
+UFOTRI_SOURCE_CODE = SOURCE_UNAVAILABLE
+UFOTRI_SOURCE_ASSETS_INSPECTED = 21
+UFOTRI_V3_PARAMETERS_MAPPED = 26
+UFOTRI_DIRECT_MAPPINGS = 12
+UFOTRI_TRANSFORMABLE_MAPPINGS = 4
+UFOTRI_CONCEPTUAL_ANALOGUES = 6
+UFOTRI_NO_MAPPINGS = 3
+UFOTRI_SOURCE_UNAVAILABLE_MAPPINGS = 1
+NEW_VALIDATION_CANDIDATES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V3_PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+```
+
+The mapping manifest is
+`docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml`. The immutable
+record type is
+`src/cteas_ufotri/parameters_v3/ufotri_mapping.py`; it is not imported by
+production plant, soil, exposure, coupling, or pipeline modules. P7.6C-2
+classifies root rate versus V3 velocity, soil transport versus signed V3 flux,
+continuous UFOTRI food-chain rates versus V3 harvest fractions, and external
+intake/dose assumptions without guessing conversions. The targeted mapping
+suite passes 8/8 tests; no production simulation, calibration, or physics
+activation was run.
 SB1_MERGE_RECOMMENDATION = READY_FOR_INDEPENDENT_BENCHMARK_REVIEW
 ```
 
