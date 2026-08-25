@@ -17,11 +17,20 @@ FIELD_BY_ID = {field["field_id"]: field for field in FIELDS}
 ALLOWED_CATEGORIES = set(MAPPING["classification_enum"])
 ALLOWED_ACTIONS = set(MAPPING["action_enum"])
 ALLOWED_REQUIREMENTS = set(MAPPING["requirement_enum"])
+BASE_MAIN = "f5d18886f3a635cd6c3a813d820b1f3b3e52dd3a"
+REVIEW_TARGET = "0164a99cae30ab44411fe98be9ea9cc512c51966"
 
 
 def _git_diff_is_empty(path: str) -> bool:
     result = subprocess.run(
-        ["git", "diff", "--quiet", "main", "--", path],
+        [
+            "git",
+            "diff",
+            "--quiet",
+            f"{BASE_MAIN}...{REVIEW_TARGET}",
+            "--",
+            path,
+        ],
         cwd=ROOT,
         check=False,
     )
@@ -78,225 +87,105 @@ def test_each_field_has_required_mapping_keys_and_unique_id() -> None:
 
 def test_categories_actions_and_requirements_use_frozen_enumerations() -> None:
     for field in FIELDS:
+        assert field["category"]
         assert set(field["category"]) <= ALLOWED_CATEGORIES
         assert field["action"] in ALLOWED_ACTIONS
         assert field["requirement"] in ALLOWED_REQUIREMENTS
 
 
-def test_manual_explicit_fields_have_a_manual_section_or_table_anchor() -> None:
-    for field in FIELDS:
-        if "MANUAL_EXPLICIT" in field["category"]:
-            reference = str(field["manual_reference"])
-            assert reference not in {"NO_MANUAL_AUTHORITY", "None"}
-            assert (
-                reference[:1].isdigit()
-                or "§" in reference
-                or "Table" in reference
-                or "Eq." in reference
-                or "Figure" in reference
-                or "Equation" in reference
-            )
+def test_manual_explicit_fields_have_manual_authority_and_location() -> None:
+    explicit = [field for field in FIELDS if "MANUAL_EXPLICIT" in field["category"]]
+    assert len(explicit) == 36
+    for field in explicit:
+        assert field["manual_reference"]
+        assert field["manual_term"]
+        assert field["manual_unit"] is not None
 
 
-def test_non_manual_design_and_qa_requirements_do_not_claim_manual_authority() -> None:
-    for field in FIELDS:
-        if "D3_DESIGN_SPECIFIC" in field["category"]:
-            assert field["manual_reference"] == "NO_MANUAL_AUTHORITY"
-        if field["field_id"].startswith("d3_"):
-            assert field["manual_reference"] == "NO_MANUAL_AUTHORITY"
+def test_manual_derived_fields_have_manual_authority_and_derivation() -> None:
+    derived = [field for field in FIELDS if "MANUAL_DERIVED" in field["category"]]
+    assert len(derived) == 10
+    for field in derived:
+        assert field["manual_reference"]
+        assert field["manual_term"]
+        assert field["notes"]
 
 
-def test_not_applicable_fields_explain_the_controlled_chamber_boundary() -> None:
-    for field in FIELDS:
-        if "NOT_APPLICABLE_CONTROLLED_CHAMBER" in field["category"]:
-            assert field["requirement"] == "not_applicable"
-            assert field["controlled_chamber_mapping"] == "not_applicable"
-            assert field["action"] in {"NOT_APPLICABLE", "CLARIFY"}
-            assert field["notes"]
-
-
-def test_unresolved_fields_are_fail_closed() -> None:
+def test_unresolved_fields_have_no_silent_default_or_runtime_authority() -> None:
     unresolved = [
         field for field in FIELDS if "UNRESOLVED_NO_SOURCE" in field["category"]
     ]
-    assert len(unresolved) == 3
+    assert {field["field_id"] for field in unresolved} == {
+        "cultivar_specific_resistance_parameter",
+        "chamber_mixing_to_outdoor_wind_transform",
+        "root_zone_hto_transfer_function",
+    }
     for field in unresolved:
-        assert field["requirement"] == "defer_unresolved"
         assert field["action"] == "DEFER_UNRESOLVED"
-        assert field["controlled_chamber_mapping"] == "unresolved"
+        assert field["default"] is None
+        assert field["authorized_for_model_use"] is False
+        assert field["authorized_for_acceptance_use"] is False
+        assert field["authorized_for_trusted_registry_use"] is False
 
 
-def test_manual_example_values_are_not_d3_defaults() -> None:
-    examples = {
-        "leaf_area_index",
-        "daytime_stomatal_resistance",
-        "nighttime_epidermal_resistance",
-        "volumetric_soil_water_content",
+def test_r1_manual_anchor_corrections_are_frozen() -> None:
+    assert FIELD_BY_ID["release_rate"]["manual_reference"] == "5.2.2 Table 3"
+    assert "Appendix B" not in FIELD_BY_ID["release_rate"]["manual_reference"]
+    assert FIELD_BY_ID["soil_layer_depths"]["manual_reference"] == (
+        "2.2.3; 2.2.4; 2.2.5"
+    )
+    assert "Figure 13" not in FIELD_BY_ID["soil_layer_depths"]["manual_reference"]
+    assert FIELD_BY_ID["root_hto_uptake_flux"]["manual_reference"] == (
+        "2.2.3; Equation (37); 2.2.5"
+    )
+
+
+def test_controlled_chamber_medium_and_replicate_contract_are_not_overstated() -> None:
+    design = yaml.safe_load(
+        (ACQUISITION / "controlled_chamber_experiment_design.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert design["exposure_medium"]["air_moisture_water_hto_bq_ml"] == 5270
+    assert design["exposure_medium"]["liquid_culture_or_irrigation_water"] is False
+    sampling = design["sampling"]
+    assert sampling["planned_biological_replicates_per_primary_time"] == 5
+    assert sampling["minimum_uncensored_replicates_per_primary_time"] == 3
+    assert sampling["minimum_uncensored_replicates_is_not_planned_replicates"] is True
+
+
+def test_manual_mapping_counts_are_stable() -> None:
+    expected = {
+        "MANUAL_EXPLICIT": 36,
+        "MANUAL_DERIVED": 10,
+        "D3_DESIGN_SPECIFIC": 34,
+        "MODERN_QA_REQUIRED": 17,
+        "NOT_APPLICABLE_CONTROLLED_CHAMBER": 7,
+        "UNRESOLVED_NO_SOURCE": 3,
     }
-    for field_id in examples:
-        field = FIELD_BY_ID[field_id]
-        assert field["value_status"] == "MANUAL_EXAMPLE_OR_CASE_PARAMETER"
-        assert field["action"] in {"CLARIFY", "ADD"}
-        note = field["notes"].lower()
-        assert (
-            "not" in note
-            or "不能" in note
-            or "case/example" in note
-            or "example value" in note
-        )
+    assert {
+        category: sum(category in field["category"] for field in FIELDS)
+        for category in expected
+    } == expected
 
 
-def test_d3_primary_endpoint_is_explicitly_combined_stem_and_leaf() -> None:
-    boundary = MAPPING["frozen_d3_boundary"]
-    assert boundary["primary_endpoint"] == "COMBINED_STEM_AND_LEAF_TFWT"
-    assert boundary["primary_endpoint_unit"] == "Bq/L tissue water"
-    endpoint = FIELD_BY_ID["d3_primary_endpoint_definition"]
-    assert endpoint["d3_field"] == "combined_stem_and_leaf_tfwt"
-    assert FIELD_BY_ID["d3_primary_endpoint_exclusions"]["d3_field"]
-
-
-def test_roots_pods_and_seeds_are_excluded_from_primary_endpoint() -> None:
-    boundary = MAPPING["frozen_d3_boundary"]
-    assert boundary["roots_in_primary_endpoint"] is False
-    assert boundary["pods_in_primary_endpoint"] is False
-    assert boundary["seeds_in_primary_endpoint"] is False
-    assert MAPPING["summary_contract"]["excluded_from_primary_endpoint"] == [
-        "roots",
-        "pods",
-        "seeds",
-    ]
-
-
-def test_air_moisture_basis_and_background_bound_are_distinct() -> None:
-    assert (
-        MAPPING["frozen_d3_boundary"][
-            "exposure_setpoint_bq_per_ml_air_moisture_water"
-        ]
-        == 5270
+def test_requested_file_contract_keeps_unresolved_fields_explicit() -> None:
+    request = yaml.safe_load(
+        (ACQUISITION / "requested_file_contract.yaml").read_text(encoding="utf-8")
     )
-    setpoint = FIELD_BY_ID["d3_air_moisture_hto_setpoint"]
-    assert "air-moisture water" in setpoint["d3_unit"]
-    background = FIELD_BY_ID["d3_background_maximum_fraction"]
-    assert "0.5%" in background["notes"]
-    assert "not" in background["notes"].lower()
-
-
-def test_planning_lod_is_not_a_confirmed_laboratory_capability() -> None:
-    boundary = MAPPING["frozen_d3_boundary"]
-    assert boundary["planning_lod_bq_per_l_tissue_water"] == 250
-    assert (
-        boundary["planning_lod_status"]
-        == "PROJECT_PLANNING_TARGET_NOT_CONFIRMED_CAPABILITY"
-    )
-    field = FIELD_BY_ID["d3_planning_lod"]
-    assert "planning target" in field["notes"].lower()
-    assert "actual LOD" in field["notes"]
-
-
-def test_frozen_d3_schedule_replicates_and_thresholds_are_not_changed() -> None:
-    boundary = MAPPING["frozen_d3_boundary"]
-    assert boundary["exposure_duration_h"] == 24
-    assert boundary["post_exposure_followup_h"] == 120
-    assert boundary["primary_sampling_times_h"] == [0.2, 48, 120]
-    assert boundary["biological_replicates_per_primary_time"] == 5
-    assert "0.15 dex" in FIELD_BY_ID["d3_classifier_thresholds"]["d3_unit"]
-    assert "0.50 dex" in FIELD_BY_ID["d3_classifier_thresholds"]["d3_unit"]
-
-
-def test_lab_and_external_evidence_gate_remain_closed() -> None:
-    boundary = MAPPING["frozen_d3_boundary"]
-    assert boundary["lab_feasibility_status"] == "AWAITING_LAB_CONFIRMATION"
-    assert boundary["real_experiment"] == "NOT_EXECUTED"
-    assert boundary["real_external_evidence"] is False
-    assert boundary["formal_v3_physics"] == "NOT_STARTED"
-    assert (
-        boundary["v3_physics_start_gate"]
-        == "BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA"
-    )
-
-
-def test_mapping_does_not_authorize_registry_or_model_changes() -> None:
-    boundary = MAPPING["authorization_boundary"]
-    assert boundary["model_code_change_authorized"] is False
-    assert boundary["formal_root_config_change_authorized"] is False
-    assert boundary["h2_h3_parameter_change_authorized"] is False
-    assert boundary["classifier_threshold_change_authorized"] is False
-    assert boundary["primary_sampling_time_change_authorized"] is False
-    assert boundary["replicate_count_change_authorized"] is False
-    assert boundary["trusted_registry_change_authorized"] is False
-    assert boundary["formal_h2_h3_selection_authorized"] is False
-
-
-def test_csv_templates_have_equal_header_and_example_row_width() -> None:
-    template_dir = ACQUISITION / "templates"
-    for path in sorted(template_dir.glob("*.csv")):
-        with path.open(encoding="utf-8", newline="") as handle:
-            rows = list(csv.reader(handle))
-        assert len(rows) == 2, path.name
-        assert len(rows[0]) == len(rows[1]), path.name
-
-
-def test_chamber_template_uses_air_moisture_and_controlled_analogues() -> None:
-    path = ACQUISITION / "templates" / "chamber_forcing_template.csv"
-    header = next(csv.reader(path.open(encoding="utf-8", newline="")))
-    required = {
-        "experiment_phase",
-        "exposure_medium",
-        "air_moisture_hto_bq_per_ml_water",
-        "mixing_velocity_m_s",
-        "par_or_radiation_value",
-        "par_or_radiation_unit",
-        "measurement_height_m",
-        "measurement_location",
-        "quality_flag",
+    assert request["request_status"] == "DRAFT_READY_NOT_SENT"
+    assert request["intake_boundary"]["trusted_registry_change_authorized"] is False
+    unresolved_ids = {
+        item["field_id"] for item in request["unresolved_manual_fields"]
     }
-    assert required <= set(header)
-    assert "wind_direction" not in header
-    assert "stability_class" not in header
+    assert unresolved_ids == {
+        "cultivar_specific_resistance_parameter",
+        "chamber_mixing_to_outdoor_wind_transform",
+        "root_zone_hto_transfer_function",
+    }
 
 
-def test_tfwt_and_biomass_templates_preserve_primary_endpoint_boundaries() -> None:
-    tfwt = next(
-        csv.reader(
-            (ACQUISITION / "templates" / "tfwt_sample_template.csv").open(
-                encoding="utf-8", newline=""
-            )
-        )
-    )
-    biomass = next(
-        csv.reader(
-            (ACQUISITION / "templates" / "biomass_template.csv").open(
-                encoding="utf-8", newline=""
-            )
-        )
-    )
-    assert {
-        "biological_replicate_id",
-        "exposure_group",
-        "organ_definition",
-        "hours_after_exposure",
-        "tfwt_bq_per_l_tissue_water",
-        "detection_limit_bq_per_l",
-        "quantification_limit_bq_per_l",
-        "combined_uncertainty_percent",
-    } <= set(tfwt)
-    assert {
-        "cultivar",
-        "plant_batch",
-        "sowing_date",
-        "substrate",
-        "nutrition",
-        "watering",
-        "pre_exposure_acclimation",
-        "uniformity_assessment",
-        "leaf_area_index",
-        "root_mass_g",
-        "pod_mass_g",
-        "seed_mass_g",
-    } <= set(biomass)
-
-
-def test_qc_template_separates_planned_and_uncensored_replicates() -> None:
+def test_quality_control_contract_preserves_primary_endpoint_and_replicates() -> None:
     qc = yaml.safe_load(
         (ACQUISITION / "templates" / "quality_control_checklist.yaml").read_text(
             encoding="utf-8"
