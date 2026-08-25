@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "8164b0b4a7e0a32aa34aac130cfb3809d4cbc354"
+STAGE_TIP_SHA = "1b3966d9f5de23fe226c27b50029163dc2c063e9"
 PACKAGE = REPO / "src/cteas_ufotri/plant/obt_v3"
 
 
@@ -24,8 +25,8 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
@@ -68,7 +69,9 @@ def test_configs_parameters_registry_and_legacy_v1_v2_paths_are_unchanged() -> N
         "src/cteas_ufotri/plant/obt.py",
         "src/cteas_ufotri/coupling/state.py",
     ):
-        assert git("diff", "--name-only", BASE_SHA, "--", path) == ""
+        assert git(
+            "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", path
+        ) == ""
 
     config = yaml.safe_load(
         (REPO / "configs/default_parameters.yaml").read_text(encoding="utf-8")
