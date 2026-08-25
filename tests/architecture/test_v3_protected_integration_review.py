@@ -84,17 +84,44 @@ def test_review_only_changes_governance_ci_tests_and_docs_after_verified_candida
     assert unexpected == []
 
 
-def test_main_policy_remains_fail_closed_until_explicit_merge_step() -> None:
+def test_main_policy_records_completed_explicit_merge_step() -> None:
     payload = yaml.safe_load(REVIEW.read_text(encoding="utf-8"))
     policy = payload["main_policy"]
     gates = payload["review_gates"]
+    integration = payload["main_integration"]
+    lineage = payload["lineage"]
 
-    assert policy["main_merge_authorized"] is False
-    assert policy["main_merge_performed"] is False
+    assert policy["main_merge_authorized"] is True
+    assert policy["main_merge_performed"] is True
+    assert policy["main_merge_recommended"] is True
     assert policy["branch_protection_currently_enabled"] is False
     assert policy["required_status_checks_currently_enabled"] is False
     assert policy["recommended_required_check"] == (
         "V3 Protected Integration Gate / integration-gate"
     )
+
+    assert integration["authorized"] is True
+    assert integration["performed"] is True
+    assert integration["pull_request"] == 1
+    assert integration["merge_method"] == "MERGE_COMMIT_PRESERVE_EXISTING_STAGE_SHAS"
+    assert integration["merge_commit_sha"] == (
+        "c2e106dee185a4cd850c203b5e284f1db337ea0e"
+    )
+    assert integration["merge_parent_old_main"] == lineage["main_base_sha"]
+    assert integration["merge_parent_review_head"] == lineage["final_review_head_sha"]
+    assert integration["merge_tree_equals_review_head_tree"] is True
+    assert integration["stage_commit_identities_preserved"] is True
+
+    parents = git("show", "-s", "--format=%P", integration["merge_commit_sha"]).split()
+    assert parents == [
+        integration["merge_parent_old_main"],
+        integration["merge_parent_review_head"],
+    ]
+    assert git("show", "-s", "--format=%T", integration["merge_commit_sha"]) == (
+        integration["merge_tree_sha"]
+    )
+    assert integration["merge_tree_sha"] == integration["review_head_tree_sha"]
+
     assert gates["linear_ancestry"] == "PASS"
     assert gates["remediation_ci_at_verified_candidate"] == "PASS"
+    assert gates["final_review_head_gate"] == "PASS"
