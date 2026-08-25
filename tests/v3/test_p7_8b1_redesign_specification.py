@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "docs/v3/physics/p7_8b1_redesign_specification.yaml"
 P7_8A = ROOT / "docs/v3/physics/p7_8a_redesign_priority_registry.yaml"
 BASE_SHA = "986e375ce586a1ba1b3a707e07f5f5dd80e5617e"
+STAGE_TIP_SHA = "9d3ba09abf4fd68a93ae2e5e4e80c9f2d0d76e6e"
 
 EXPECTED_REDESIGNS = {
     "R1_OBT_DAYLIGHT_FORMATION_STATE",
@@ -82,8 +83,10 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    """Return only the immutable P7.8B-1 historical stage diff."""
+
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
