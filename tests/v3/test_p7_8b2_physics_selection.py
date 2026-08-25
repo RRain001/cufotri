@@ -12,6 +12,7 @@ ROADMAP = ROOT / "docs/v3/physics/p7_8b2_architecture_roadmap.yaml"
 COUPLING = ROOT / "docs/v3/physics/p7_8b2_coupling_decision.yaml"
 VALIDATION = ROOT / "docs/v3/physics/p7_8b2_validation_dependency.yaml"
 BASE_SHA = "9d3ba09abf4fd68a93ae2e5e4e80c9f2d0d76e6e"
+STAGE_TIP_SHA = "5ba891ec5e2d24cffdfe197afcf9006d2e4c5280"
 
 EXPECTED_SOURCE_ITEMS = {
     "R1_OBT_DAYLIGHT_FORMATION_STATE",
@@ -90,9 +91,9 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
-    )
+    """Return only the immutable P7.8B-2 historical stage diff."""
+
+    return set(git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines())
 
 
 def test_selection_registry_is_complete_and_traceable() -> None:
