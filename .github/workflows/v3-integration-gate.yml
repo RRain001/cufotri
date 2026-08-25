@@ -1,0 +1,69 @@
+name: V3 Protected Integration Gate
+
+on:
+  push:
+    branches:
+      - codex/v3-protected-integration-review
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[test]'
+
+      - name: Verify linear ancestry and diff hygiene
+        run: |
+          git fetch origin main --no-tags
+          git merge-base --is-ancestor origin/main HEAD
+          git diff --check origin/main...HEAD
+
+      - name: Compile and import smoke
+        run: |
+          python -m compileall -q src
+          python - <<'PY'
+          import cteas_ufotri
+          import cteas_ufotri.parameters_v3
+          import cteas_ufotri.validation_v3
+          import cteas_ufotri.v3_pipeline
+          from cteas_ufotri.plant import soil_v3, root_v3, tfwt_v3, obt_v3, food_v3
+          from cteas_ufotri.exposure import intake_v3, dose_v3
+          print('V3_IMPORT_SMOKE=PASS')
+          PY
+
+      - name: Run full non-external test suite
+        run: >-
+          python -m pytest
+          -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret"
+
+      - name: Run current integration invariants explicitly
+        run: |
+          python -m pytest \
+            tests/architecture/test_codex_branch_disposition.py \
+            tests/architecture/test_v3_current_remediation_invariants.py \
+            tests/integration/test_v3_pipeline_composite_conservation.py \
+            tests/v3/test_p7_7b_synthetic_benchmarks.py \
+            tests/v3/test_p7_8a_physics_redesign_governance.py \
+            tests/v3/test_p7_8b1_redesign_specification.py \
+            tests/v3/test_p7_8b2_physics_selection.py
