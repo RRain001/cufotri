@@ -1,0 +1,52 @@
+schema_version: v1
+stage: protected_integration_review
+review_date: '2026-08-25'
+repository: RRain001/CTEAS_ufotri
+review_branch: codex/v3-protected-integration-review
+
+lineage:
+  main_base_sha: 6671f5793d04842bf2ceae4904f3c0cf30a0d7e0
+  verified_runtime_candidate_sha: 8d5bff32a6fd43b3109f59f086170d89a0e9a8cd
+  merge_base_equals_main_base: true
+  candidate_ahead_of_main_at_review_entry: 44
+  candidate_behind_main_at_review_entry: 0
+  linear_fast_forward_possible_at_review_entry: true
+
+frozen_runtime_state:
+  runtime_source_changes_after_verified_candidate: false
+  physics_equations_changed_after_verified_candidate: false
+  numerical_coupling_changed_after_verified_candidate: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+
+review_gates:
+  linear_ancestry: PASS
+  remediation_ci_at_verified_candidate: PASS
+  full_non_external_suite: PENDING
+  compile_and_import_smoke: PENDING
+  current_integration_invariants: PENDING
+  pull_request_mergeability: PENDING
+
+main_policy:
+  main_merge_authorized: false
+  main_merge_performed: false
+  branch_protection_currently_enabled: false
+  required_status_checks_currently_enabled: false
+  recommended_required_check: V3 Protected Integration Gate / integration-gate
+  recommended_merge_method: fast_forward_or_rebase_without_squashing_stage_history
+  recommendation: PENDING_INTEGRATION_GATE
+
+known_non_blocking_limitations:
+  - HISTORICAL_SYNTHETIC_SHA256_SENTINELS_NOT_PROVENANCE_GRADE
+  - INTEGRATED_SOIL_SIGNED_TRANSPORT_NOT_WIRED_IN_PIPELINE
+  - BIOLOGICAL_FORCING_IS_RUNNER_STATIC
+  - PHYSICAL_VALIDATION_NOT_COMPLETE
+
+blocking_if_detected:
+  - NON_EXTERNAL_TEST_FAILURE_NOT_CLASSIFIED_AS_PREEXISTING_ENVIRONMENTAL
+  - MAIN_NO_LONGER_ANCESTOR_OF_REVIEW_HEAD
+  - RUNTIME_SOURCE_CHANGE_AFTER_VERIFIED_CANDIDATE
+  - ACTIVE_PARAMETER_COUNT_NONZERO
+  - V3_PHYSICS_READY_TRUE_WITHOUT_PHYSICAL_VALIDATION_GATE
