@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "6671f5793d04842bf2ceae4904f3c0cf30a0d7e0"
+STAGE_TIP_SHA = "5ac5d5713b27f734676b2c3ff822c34a7ed2e95b"
 
 
 def git(*args: str) -> str:
@@ -23,16 +24,14 @@ def git(*args: str) -> str:
 
 
 def all_changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    """Return only the historical P6.2B-1 stage diff."""
+
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
 def test_only_new_resistance_package_is_added_under_src() -> None:
-    if (REPO / "src/cteas_ufotri/plant/tfwt_v3").exists():
-        # This architecture test is inherited by later V3 branches. The
-        # P6.2B-2 boundary test owns the child-branch source-scope assertion.
-        return
     changed = all_changed_paths()
     source_changes = sorted(path for path in changed if path.startswith("src/"))
     assert source_changes
@@ -44,6 +43,7 @@ def test_only_new_resistance_package_is_added_under_src() -> None:
         "diff",
         "--name-only",
         BASE_SHA,
+        STAGE_TIP_SHA,
         "--",
         "src/cteas_ufotri/plant/leaf_exchange.py",
     ) == ""
@@ -58,7 +58,9 @@ def test_configs_parameters_and_trusted_registry_are_unchanged() -> None:
         or path.endswith("trusted_external_evidence_registry.yaml")
     )
     assert forbidden == []
-    assert git("diff", "--name-only", BASE_SHA, "--", "configs") == ""
+    assert git(
+        "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", "configs"
+    ) == ""
 
 
 def test_default_leaf_exchange_behavior_is_unchanged() -> None:
