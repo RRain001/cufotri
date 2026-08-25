@@ -1,7 +1,7 @@
 schema_version: v1
 stage: V3.1
 item_id: V3_1_MASS_BASIS_CONTRACT
-status: PASS_REMEDIATION_TECHNICAL_REREVIEW_INDEPENDENT_REVIEW_PENDING
+status: PASS_SCHEMA_REMEDIATION_PENDING_INDEPENDENT_REREVIEW
 baseline:
   main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
   profile: v3_frozen_baseline
@@ -72,6 +72,20 @@ conversion_evidence_contract:
   parameter_activation: false
   calibration: false
 
+serialization_contract:
+  schema: schemas/v3_1/mass_basis_contract.schema.json
+  python_schema_text_parity:
+    whitespace_only_text_rejected: true
+    applies_to:
+      - subject_id
+      - tissue_scope.identifier_when_string
+      - area_basis.identifier_when_string
+      - provenance.source_id
+      - provenance.source_locator
+      - provenance.revision
+      - provenance.note_when_string
+      - conversion_evidence_id_when_string
+
 isolation:
   solver_equations_changed: false
   pipeline_changed: false
@@ -92,26 +106,41 @@ review_history:
     Flat paired_measurement_ids did not prove source/target pairing, evidence
     was not bound to tissue/area scope, and proposal validation did not enforce
     consistency with a declared conversion_evidence_id.
-  remediated_implementation_head: f1bdce343e667274c67f5af15ab4520b226122e6
-  remediation_ci_run: 32808331504
-  remediation_ci: PASS
-  protected_integration_gate_run: 32808331423
-  protected_integration_gate: PASS
-  portable_current_suite: 989_PASSED_1_SKIPPED_57_DESELECTED
-  explicit_current_frozen_v3_1_invariants: 68_PASSED
-  dimensional_and_semantic_rereview: PASS
+  paired_evidence_remediation_head: f1bdce343e667274c67f5af15ab4520b226122e6
+  paired_evidence_remediation_ci_run: 32808331504
+  paired_evidence_integration_gate_run: 32808331423
+  paired_evidence_portable_suite: 989_PASSED_1_SKIPPED_57_DESELECTED
+  paired_evidence_explicit_invariants: 68_PASSED
+  first_independent_review:
+    reviewer: github-copilot-code-review
+    review_pr: 4
+    reviewed_target: 4664e4c09f20bbfd48c5d1c750efafeb6d6e9643
+    review_id: PRR_kwDOTiMPdM8AAAABKupe9g
+    status: HOLD_REMEDIATION_REQUIRED
+    finding: >-
+      JSON Schema accepted whitespace-only serialized strings that the Python
+      _require_text contract rejected after stripping.
+  schema_whitespace_remediation_head: 6926ebf405b976ef58c66e17f6bfc0aacca551dd
+  schema_whitespace_remediation_ci_run: 32809809259
+  schema_whitespace_remediation_ci: PASS
+  schema_whitespace_integration_gate_run: 32809809310
+  schema_whitespace_integration_gate: PASS
+  schema_whitespace_portable_suite: 994_PASSED_1_SKIPPED_57_DESELECTED
+  schema_whitespace_explicit_invariants: 73_PASSED
+  technical_rereview: PASS
+  formal_external_independent_rereview: PENDING
   review_report: docs/v3_1/reports/v3_1_mass_basis_contract_technical_review.md
-  formal_external_independent_review: PENDING
 
 exit_gate:
   completed:
     - remediation_contract_tests_pass
     - schema_tests_pass
+    - whitespace_schema_python_parity_pass
     - frozen_runtime_blob_isolation_pass
-    - portable_current_suite_pass_on_remediated_implementation_head
+    - portable_current_suite_pass_on_schema_remediation_head
     - dimensional_and_semantic_rereview_pass
   pending:
     - final_documentation_head_exact_ci_pass
-    - independent_review_pass
+    - independent_rereview_pass
   merge_ready: false
   implementation_authorizes_v4: false
