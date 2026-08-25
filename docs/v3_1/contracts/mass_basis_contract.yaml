@@ -1,7 +1,7 @@
 schema_version: v1
 stage: V3.1
 item_id: V3_1_MASS_BASIS_CONTRACT
-status: REMEDIATION_IN_PROGRESS_SECOND_ADVERSARIAL_REVIEW
+status: PASS_REMEDIATION_TECHNICAL_REREVIEW_INDEPENDENT_REVIEW_PENDING
 baseline:
   main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
   profile: v3_frozen_baseline
@@ -87,24 +87,31 @@ isolation:
 review_history:
   prior_reviewed_head: cfcdc3128a01f753f30dd8e710d5c1802db9d0dc
   prior_review_status: SUPERSEDED_BY_SECOND_ADVERSARIAL_REVIEW
-  prior_remediation_ci_run: 32807272247
-  prior_protected_integration_gate_run: 32807272253
   second_review_trigger_head: 87fc9b2e3226ad028133e070bfd7b89d803adcfb
   second_review_finding: >-
     Flat paired_measurement_ids did not prove source/target pairing, evidence
     was not bound to tissue/area scope, and proposal validation did not enforce
     consistency with a declared conversion_evidence_id.
-  remediation_required: true
+  remediated_implementation_head: f1bdce343e667274c67f5af15ab4520b226122e6
+  remediation_ci_run: 32808331504
+  remediation_ci: PASS
+  protected_integration_gate_run: 32808331423
+  protected_integration_gate: PASS
+  portable_current_suite: 989_PASSED_1_SKIPPED_57_DESELECTED
+  explicit_current_frozen_v3_1_invariants: 68_PASSED
+  dimensional_and_semantic_rereview: PASS
+  review_report: docs/v3_1/reports/v3_1_mass_basis_contract_technical_review.md
   formal_external_independent_review: PENDING
 
 exit_gate:
   completed:
-    - frozen_runtime_blob_isolation_pass
-  pending:
     - remediation_contract_tests_pass
-    - remediation_schema_tests_pass
-    - portable_current_suite_pass_on_new_exact_head
+    - schema_tests_pass
+    - frozen_runtime_blob_isolation_pass
+    - portable_current_suite_pass_on_remediated_implementation_head
     - dimensional_and_semantic_rereview_pass
+  pending:
+    - final_documentation_head_exact_ci_pass
     - independent_review_pass
   merge_ready: false
   implementation_authorizes_v4: false
