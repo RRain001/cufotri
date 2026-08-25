@@ -35,7 +35,11 @@ main_policy:
   branch_protection_currently_enabled: false
   required_status_checks_currently_enabled: false
   recommended_required_check: V3 Protected Integration Gate / integration-gate
-  recommended_merge_method: fast_forward_or_rebase_without_squashing_stage_history
+  recommended_merge_method: MERGE_COMMIT_PRESERVE_EXISTING_STAGE_SHAS
+  alternative_merge_method: EXACT_FAST_FORWARD_REF_UPDATE_IF_EXPLICITLY_AUTHORIZED
+  forbidden_merge_methods:
+    - REBASE_REWRITES_STAGE_SHAS
+    - SQUASH_DESTROYS_STAGE_HISTORY
   recommendation: PENDING_INTEGRATION_GATE
 
 known_non_blocking_limitations:
