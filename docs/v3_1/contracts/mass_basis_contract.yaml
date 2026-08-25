@@ -1,7 +1,7 @@
 schema_version: v1
 stage: V3.1
 item_id: V3_1_MASS_BASIS_CONTRACT
-status: PASS_TECHNICAL_REVIEW_INDEPENDENT_REVIEW_PENDING
+status: REMEDIATION_IN_PROGRESS_SECOND_ADVERSARIAL_REVIEW
 baseline:
   main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
   profile: v3_frozen_baseline
@@ -34,6 +34,7 @@ contract:
   conversion_evidence_binding:
     evidence_declared_requires_evidence_id: true
     evidence_id_forbidden_for_other_statuses: true
+    supplied_evidence_id_must_match_declared_id: true
     evidence_declared_is_physical_validation: false
 
 comparison_policy:
@@ -43,7 +44,9 @@ comparison_policy:
     - identical_area_basis
   cross_mass_basis:
     default: FAIL_CLOSED
-    paired_measurements_required: true
+    explicit_source_target_pairs_required: true
+    evidence_tissue_scope_must_match: true
+    evidence_area_basis_must_match: true
     provenance_required: true
     numerical_conversion_implemented: false
     inferred_conversion_factor_forbidden: true
@@ -54,11 +57,18 @@ comparison_policy:
 
 conversion_evidence_contract:
   purpose: >-
-    Record that a proposed cross-basis relation has explicit provenance and
-    paired measurements. It does not contain or calculate a conversion factor.
-  minimum_paired_measurement_ids: 2
-  duplicate_measurement_ids_forbidden: true
+    Record that a proposed cross-basis relation has explicit provenance,
+    matching tissue/area scope, and explicit matched source/target measurement
+    pairs. It does not contain or calculate a conversion factor.
+  paired_measurement_representation: explicit_source_target_pair_records
+  minimum_pair_count: 1
+  pair_id_unique: true
+  source_target_measurement_ids_distinct_within_pair: true
+  measurement_record_reuse_across_pairs_forbidden: true
+  tissue_scope_bound: true
+  area_basis_bound: true
   source_target_direction_must_match: true
+  declared_contract_evidence_id_must_match: true
   parameter_activation: false
   calibration: false
 
@@ -74,26 +84,27 @@ isolation:
   ufotri_active_database: false
   v3_physics_ready: false
 
-technical_review:
-  implementation_head: cfcdc3128a01f753f30dd8e710d5c1802db9d0dc
-  remediation_ci_run: 32807272247
-  remediation_ci: PASS
-  protected_integration_gate_run: 32807272253
-  protected_integration_gate: PASS
-  portable_current_suite: 987_PASSED_1_SKIPPED_57_DESELECTED
-  explicit_current_frozen_v3_1_invariants: 66_PASSED
-  dimensional_and_semantic_review: PASS
-  review_report: docs/v3_1/reports/v3_1_mass_basis_contract_technical_review.md
+review_history:
+  prior_reviewed_head: cfcdc3128a01f753f30dd8e710d5c1802db9d0dc
+  prior_review_status: SUPERSEDED_BY_SECOND_ADVERSARIAL_REVIEW
+  prior_remediation_ci_run: 32807272247
+  prior_protected_integration_gate_run: 32807272253
+  second_review_trigger_head: 87fc9b2e3226ad028133e070bfd7b89d803adcfb
+  second_review_finding: >-
+    Flat paired_measurement_ids did not prove source/target pairing, evidence
+    was not bound to tissue/area scope, and proposal validation did not enforce
+    consistency with a declared conversion_evidence_id.
+  remediation_required: true
   formal_external_independent_review: PENDING
 
 exit_gate:
   completed:
-    - contract_tests_pass
-    - schema_tests_pass
     - frozen_runtime_blob_isolation_pass
-    - portable_current_suite_pass
-    - dimensional_and_semantic_review_pass
   pending:
+    - remediation_contract_tests_pass
+    - remediation_schema_tests_pass
+    - portable_current_suite_pass_on_new_exact_head
+    - dimensional_and_semantic_rereview_pass
     - independent_review_pass
   merge_ready: false
   implementation_authorizes_v4: false
