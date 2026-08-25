@@ -7,6 +7,7 @@ review_branch: codex/v3-protected-integration-review
 lineage:
   main_base_sha: 6671f5793d04842bf2ceae4904f3c0cf30a0d7e0
   verified_runtime_candidate_sha: 8d5bff32a6fd43b3109f59f086170d89a0e9a8cd
+  final_review_head_sha: 0fcc3f11835df05167b5496e3b1f55ee32c4702f
   merge_base_equals_main_base: true
   candidate_ahead_of_main_at_review_entry: 44
   candidate_behind_main_at_review_entry: 0
@@ -32,31 +33,46 @@ review_gates:
   current_integration_invariants: PASS
   explicit_invariant_result: 53_PASSED
   pull_request_mergeability: PASS
+  final_review_head_gate: PASS
 
 ci_evidence:
   workflow: V3 Protected Integration Gate
   job: integration-gate
-  pr_run_id: 32804857229
-  verified_head_sha: 432533b8bb4f449661a3099bbe13aa55c9fbf0e3
+  detailed_pr_run_id: 32804857229
+  detailed_verified_head_sha: 432533b8bb4f449661a3099bbe13aa55c9fbf0e3
+  final_pr_run_id: 32805154997
+  final_verified_head_sha: 0fcc3f11835df05167b5496e3b1f55ee32c4702f
+  final_outcome: PASS
   runner_os: ubuntu-24.04
   python_version: '3.12.14'
-  outcome: PASS
   warnings:
     - NUMPY_BINARY_COMPATIBILITY_RUNTIME_WARNING_IN_ERA5_NETCDF_TEST
 
+main_integration:
+  authorized: true
+  performed: true
+  pull_request: 1
+  merge_method: MERGE_COMMIT_PRESERVE_EXISTING_STAGE_SHAS
+  merge_commit_sha: c2e106dee185a4cd850c203b5e284f1db337ea0e
+  merge_parent_old_main: 6671f5793d04842bf2ceae4904f3c0cf30a0d7e0
+  merge_parent_review_head: 0fcc3f11835df05167b5496e3b1f55ee32c4702f
+  merge_tree_sha: 68232a5645a83b170bcb8f45ca2f4332c330e220
+  review_head_tree_sha: 68232a5645a83b170bcb8f45ca2f4332c330e220
+  merge_tree_equals_review_head_tree: true
+  stage_commit_identities_preserved: true
+
 main_policy:
-  main_merge_authorized: false
-  main_merge_performed: false
+  main_merge_authorized: true
+  main_merge_performed: true
   main_merge_recommended: true
   branch_protection_currently_enabled: false
   required_status_checks_currently_enabled: false
   recommended_required_check: V3 Protected Integration Gate / integration-gate
   recommended_merge_method: MERGE_COMMIT_PRESERVE_EXISTING_STAGE_SHAS
-  alternative_merge_method: EXACT_FAST_FORWARD_REF_UPDATE_IF_EXPLICITLY_AUTHORIZED
-  forbidden_merge_methods:
+  forbidden_merge_methods_for_this_integrated_line:
     - REBASE_REWRITES_STAGE_SHAS
     - SQUASH_DESTROYS_STAGE_HISTORY
-  recommendation: MAIN_MERGE_RECOMMENDED
+  recommendation: MAIN_INTEGRATION_COMPLETE_BRANCH_PROTECTION_PENDING
 
 known_non_blocking_limitations:
   - HISTORICAL_SYNTHETIC_SHA256_SENTINELS_NOT_PROVENANCE_GRADE
@@ -64,10 +80,10 @@ known_non_blocking_limitations:
   - BIOLOGICAL_FORCING_IS_RUNNER_STATIC
   - PHYSICAL_VALIDATION_NOT_COMPLETE
   - CI_NUMPY_BINARY_COMPATIBILITY_WARNING_IN_ERA5_NETCDF_TEST
+  - MAIN_BRANCH_PROTECTION_NOT_ENABLED
 
 blocking_if_detected:
   - PORTABLE_CURRENT_TEST_FAILURE
-  - MAIN_NO_LONGER_ANCESTOR_OF_REVIEW_HEAD
   - RUNTIME_SOURCE_CHANGE_AFTER_VERIFIED_CANDIDATE
   - ACTIVE_PARAMETER_COUNT_NONZERO
   - V3_PHYSICS_READY_TRUE_WITHOUT_PHYSICAL_VALIDATION_GATE
