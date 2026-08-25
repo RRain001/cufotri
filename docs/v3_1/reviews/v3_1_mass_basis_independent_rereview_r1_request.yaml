@@ -1,0 +1,119 @@
+schema_version: v1
+stage: V3.1
+review_id: V3_1_MASS_BASIS_INDEPENDENT_REREVIEW_R1
+review_type: REVIEWER_INDEPENDENT_REREVIEW
+status: PENDING_INDEPENDENT_REREVIEW
+repository: RRain001/CTEAS_ufotri
+
+review_target:
+  implementation_pr: 3
+  prior_review_pr: 4
+  implementation_branch: codex/v3-1-mass-basis-contract
+  rereview_branch: codex/v3-1-mass-basis-independent-rereview-r1
+  frozen_target_sha: e28fd18033984e9fda252aa87b81b399b60ece1e
+  baseline_main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+
+prior_independent_review:
+  reviewer: github-copilot-code-review
+  review_id: PRR_kwDOTiMPdM8AAAABKupe9g
+  reviewed_sha: 4664e4c09f20bbfd48c5d1c750efafeb6d6e9643
+  verdict: HOLD_REMEDIATION_REQUIRED
+  blocking_finding: >-
+    JSON Schema admitted whitespace-only serialized strings while Python
+    _require_text stripped and rejected them.
+
+remediation_evidence:
+  schema_remediation_code_head: 6926ebf405b976ef58c66e17f6bfc0aacca551dd
+  final_documentation_head: e28fd18033984e9fda252aa87b81b399b60ece1e
+  remediation_ci_run: 32809809259
+  remediation_ci: PASS
+  protected_integration_gate_run: 32809809310
+  protected_integration_gate: PASS
+  portable_suite: 994_PASSED_1_SKIPPED_57_DESELECTED
+  explicit_invariants: 73_PASSED
+  exact_final_head_remediation_ci_run: 32810070891
+  exact_final_head_remediation_ci: PASS
+  exact_final_head_protected_gate_run: 32810070923
+  exact_final_head_protected_gate: PASS
+
+reviewer_independence:
+  must_not_be_implementation_author: true
+  prior_copilot_reviewer_is_acceptable_independent_reviewer: true
+  reviewer_identity: null
+
+required_checks:
+  - id: PRIOR_BLOCKER_WHITESPACE_SCHEMA_PARITY
+    blocking: true
+    expected: PASS
+    question: >-
+      Does the JSON Schema now reject whitespace-only values for every
+      serialized text field that Python _require_text rejects after stripping?
+  - id: NO_NUMERICAL_BASIS_CONVERSION
+    blocking: true
+    expected: NO
+    question: >-
+      Does any V3.1 code infer or execute fresh/dry/water/hydrogen numerical
+      conversion or introduce a hidden conversion multiplier?
+  - id: EXPLICIT_SOURCE_TARGET_PAIRING
+    blocking: true
+    expected: YES
+    question: >-
+      Does evidence require explicit source/target matched pair records?
+  - id: PAIR_REUSE_FAIL_CLOSED
+    blocking: true
+    expected: YES
+    question: >-
+      Are self-pairs, duplicate pair IDs, and measurement reuse across pairs rejected?
+  - id: EVIDENCE_TISSUE_SCOPE_BINDING
+    blocking: true
+    expected: YES
+    question: Must evidence tissue scope match both compared contracts?
+  - id: EVIDENCE_AREA_BASIS_BINDING
+    blocking: true
+    expected: YES
+    question: Must evidence area basis match both compared contracts?
+  - id: EVIDENCE_ID_BINDING
+    blocking: true
+    expected: YES
+    question: Is conflicting contract-level conversion_evidence_id rejected?
+  - id: PYTHON_SCHEMA_BOUNDARY
+    blocking: true
+    expected: YES
+    question: >-
+      Is the persisted MassBasisContract schema semantically aligned with the
+      Python contract, with evidence-record persistence explicitly out of scope?
+  - id: FROZEN_RUNTIME_ISOLATION
+    blocking: true
+    expected: YES
+    question: >-
+      Are pre-existing leaf, TFWT, OBT, soil, root, food, exposure, P7.5, and
+      P7.5B runtime semantics unchanged?
+  - id: P7_8B2_SCOPE_COMPLIANCE
+    blocking: true
+    expected: YES
+    question: >-
+      Is the change still limited to the V3.1 contract without parameter
+      activation, calibration, physical validation claims, or V4 physics?
+
+reviewer_verdict:
+  allowed_statuses:
+    - PASS_INDEPENDENT_REREVIEW
+    - PASS_WITH_NONBLOCKING_NOTES
+    - HOLD_REMEDIATION_REQUIRED
+    - REJECT
+  status: PENDING_INDEPENDENT_REREVIEW
+  reviewed_sha: null
+  reviewer_identity: null
+  review_id: null
+  review_date: null
+  blocking_findings: []
+  nonblocking_notes: []
+
+exit_policy:
+  implementation_pr_merge_ready: false
+  main_merge_authorized_by_this_request: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  v4_implementation_authorized: false
