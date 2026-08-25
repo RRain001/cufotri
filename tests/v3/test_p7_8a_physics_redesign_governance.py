@@ -12,6 +12,7 @@ REGISTRY = ROOT / "docs/v3/physics/p7_8a_redesign_priority_registry.yaml"
 MATRIX = ROOT / "docs/v3/physics/p7_8a_coupling_impact_matrix.yaml"
 P7_6D = ROOT / "docs/v3/physics/p7_6d_physics_adoption_decision.yaml"
 BASE_SHA = "9490c21d491754fd77f12151380a107df5409445"
+STAGE_TIP_SHA = "986e375ce586a1ba1b3a707e07f5f5dd80e5617e"
 
 REQUIRED_ITEM_FIELDS = {
     "item_id",
@@ -77,9 +78,9 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
-    )
+    """Return only the immutable P7.8A historical stage diff."""
+
+    return set(git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines())
 
 
 def test_registry_covers_p7_6d_redesigns_and_required_schema() -> None:
