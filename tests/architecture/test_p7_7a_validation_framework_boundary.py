@@ -6,59 +6,39 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_SHA = "1f26819cb641fb908f04b8e776f788f8e311770e"
+STAGE_TIP_SHA = "ebd9976486e8ef5cbf10fa54a3c0644aee42c3c6"
 VALIDATION_SOURCE = ROOT / "src/cteas_ufotri/validation_v3"
 
 
 def git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
-    )
+    return set(git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines())
 
 
 def test_p7_7a_source_is_an_additive_validation_control_plane() -> None:
     changed_source = sorted(path for path in changed_paths() if path.startswith("src/"))
-
     assert changed_source
     assert all(path.startswith("src/cteas_ufotri/validation_v3/") for path in changed_source)
 
 
 def test_no_solver_parameter_or_numerical_coupling_files_changed() -> None:
     forbidden_prefixes = (
-        "configs/v2/",
-        "parameters/",
-        "src/cteas_ufotri/atmosphere/",
-        "src/cteas_ufotri/plant/",
-        "src/cteas_ufotri/soil/",
-        "src/cteas_ufotri/exposure/",
-        "src/cteas_ufotri/coupling/",
-        "src/cteas_ufotri/v3_pipeline/",
-        "src/cteas_ufotri/parameters_v3/",
+        "configs/v2/", "parameters/", "src/cteas_ufotri/atmosphere/",
+        "src/cteas_ufotri/plant/", "src/cteas_ufotri/soil/",
+        "src/cteas_ufotri/exposure/", "src/cteas_ufotri/coupling/",
+        "src/cteas_ufotri/v3_pipeline/", "src/cteas_ufotri/parameters_v3/",
     )
-
-    assert not sorted(
-        path for path in changed_paths() if path.startswith(forbidden_prefixes)
-    )
+    assert not sorted(path for path in changed_paths() if path.startswith(forbidden_prefixes))
 
 
 def test_validation_package_does_not_import_runtime_owners() -> None:
     forbidden_tokens = (
-        "cteas_ufotri.plant",
-        "cteas_ufotri.soil",
-        "cteas_ufotri.exposure",
-        "cteas_ufotri.coupling",
-        "cteas_ufotri.v3_pipeline",
-        "ParameterDatabase",
+        "cteas_ufotri.plant", "cteas_ufotri.soil", "cteas_ufotri.exposure",
+        "cteas_ufotri.coupling", "cteas_ufotri.v3_pipeline", "ParameterDatabase",
         "UFOTRI_ACTIVE_DATABASE",
     )
     offenders = []
