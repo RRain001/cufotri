@@ -56,15 +56,16 @@ jobs:
           print('V3_IMPORT_SMOKE=PASS')
           PY
 
-      - name: Run full non-external test suite
+      - name: Run portable current integration test suite
         run: >-
           python -m pytest
-          -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret"
+          -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret and not historical_review_context"
 
-      - name: Run current integration invariants explicitly
+      - name: Run current and frozen-boundary invariants explicitly
         run: |
           python -m pytest \
             tests/architecture/test_codex_branch_disposition.py \
+            tests/architecture/test_historical_review_context_boundaries.py \
             tests/architecture/test_v3_current_remediation_invariants.py \
             tests/architecture/test_v3_protected_integration_review.py \
             tests/integration/test_v3_pipeline_composite_conservation.py \
