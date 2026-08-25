@@ -1,0 +1,629 @@
+schema_version: v1
+stage: P7.7A
+status: DEFINITION_ONLY
+cases:
+  - case_id: v3-p7-7a-radioactive-decay
+    description: Synthetic inventory decay trajectory against an analytic reference.
+    scenario_type: SYNTHETIC_BENCHMARK
+    forcing_definition:
+      forcing_id: radioactive-decay-zero-input
+      time_basis: seconds_from_initial_state
+      variables:
+        external_input:
+          value: 0.0
+          unit: Bq m^-2 s^-1
+    initial_state:
+      state_id: soil-inventory
+      variables:
+        inventory:
+          value: 100.0
+          unit: Bq m^-2
+    execution_definition:
+      benchmark_kind: radioactive_decay
+      start_timestamp: "2026-01-01T00:00:00+00:00"
+      duration_seconds: 40.0
+      timestep_seconds: 10.0
+      refinement_factors: [1, 2, 4]
+      restart_split_steps: 2
+      soil_identifier: synthetic-soil
+      layer_id: surface
+      layer_depth_m: 0.05
+      soil_water_content: 5.0
+      acceptance_thresholds:
+        numerical_stability: 1.0e-12
+        conservation: 1.0e-12
+        restart: 1.0e-12
+        deterministic: 0.0
+    parameter_context:
+      - parameter_id: half_life
+        value: 10.0
+        unit: s
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-radioactive-decay-half-life-fixture
+          artifact_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#radioactive-decay
+    model_outputs:
+      - observable_id: inventory
+        quantity: decayed_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.inventory
+    reference_data:
+      - observable_id: inventory
+        quantity: analytic_decayed_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        reference_method: ANALYTIC_SOLUTION
+        reference_expression: "N(t) = N0 * exp(-ln(2) * t / T_half)"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-radioactive-decay-analytic-reference
+          artifact_sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#radioactive-decay-reference
+    expected_metric:
+      metric_name: decay_error
+      observable_id: inventory
+      unit: Bq m^-2
+    acceptance_criteria:
+      - metric_name: decay_error
+        observable_id: inventory
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: Bq m^-2
+        rationale: Analytic semantic benchmark tolerance only; not half-life validation.
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-radioactive-decay-case
+      artifact_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#radioactive-decay
+
+  - case_id: v3-p7-7a-leaf-exchange
+    description: Explicit leaf flux into TFWT storage without resistance validation.
+    scenario_type: SYNTHETIC_BENCHMARK
+    forcing_definition:
+      forcing_id: explicit-leaf-exchange-flux
+      time_basis: seconds_from_initial_state
+      variables:
+        leaf_exchange_flux:
+          value: 2.0
+          unit: Bq m^-2 s^-1
+    initial_state:
+      state_id: tfwt-inventory
+      variables:
+        inventory:
+          value: 0.0
+          unit: Bq m^-2
+    execution_definition:
+      benchmark_kind: leaf_exchange_tfwt
+      start_timestamp: "2026-01-01T00:00:00+00:00"
+      duration_seconds: 40.0
+      timestep_seconds: 10.0
+      refinement_factors: [1, 2, 4]
+      restart_split_steps: 2
+      plant_identifier: synthetic-plant
+      crop: synthetic-crop
+      growth_stage: vegetative
+      water_content_kg_m2: 1.0
+      acceptance_thresholds:
+        numerical_stability: 1.0e-12
+        conservation: 1.0e-12
+        restart: 1.0e-12
+        deterministic: 0.0
+    parameter_context: []
+    model_outputs:
+      - observable_id: tfwt_inventory
+        quantity: tfwt_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.tfwt_inventory
+    reference_data:
+      - observable_id: tfwt_inventory
+        quantity: integrated_explicit_flux
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        reference_method: ANALYTIC_FLUX_INTEGRAL
+        reference_expression: "M(t) = M0 + integral(J_leaf, dt)"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-leaf-exchange-integral-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#leaf-exchange-reference
+    expected_metric:
+      metric_name: state_difference
+      observable_id: tfwt_inventory
+      unit: Bq m^-2
+    acceptance_criteria:
+      - metric_name: state_difference
+        observable_id: tfwt_inventory
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: Bq m^-2
+        rationale: Explicit-flux storage interface check; leaf resistance is out of scope.
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-leaf-exchange-case
+      artifact_sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#leaf-exchange
+
+  - case_id: v3-p7-7a-tfwt-obt
+    description: Explicit TFWT-to-OBT transfer with test-only formation and turnover rates.
+    scenario_type: SYNTHETIC_BENCHMARK
+    forcing_definition:
+      forcing_id: tfwt-obt-constant-forcing
+      time_basis: seconds_from_initial_state
+      variables:
+        daylight: true
+        tfwt_inventory:
+          value: 50.0
+          unit: Bq m^-2
+    initial_state:
+      state_id: obt-inventory
+      variables:
+        inventory:
+          value: 0.0
+          unit: Bq m^-2
+    execution_definition:
+      benchmark_kind: tfwt_obt
+      start_timestamp: "2026-01-01T00:00:00+00:00"
+      duration_seconds: 40.0
+      timestep_seconds: 10.0
+      refinement_factors: [1, 2, 4]
+      restart_split_steps: 2
+      plant_identifier: synthetic-plant
+      crop: synthetic-crop
+      growth_stage: vegetative
+      water_content_kg_m2: 1.0
+      plant_mass_kg_m2: 1.0
+      acceptance_thresholds:
+        numerical_stability: 1.0e-12
+        conservation: 1.0e-12
+        restart: 1.0e-12
+        deterministic: 0.0
+    parameter_context:
+      - parameter_id: kf_s
+        value: 0.01
+        unit: s^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-tfwt-obt-kf-fixture
+          artifact_sha256: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt-kf
+      - parameter_id: kr_s
+        value: 0.02
+        unit: s^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-tfwt-obt-kr-fixture
+          artifact_sha256: "1111111111111111111111111111111111111111111111111111111111111111"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt-kr
+    model_outputs:
+      - observable_id: obt_inventory
+        quantity: obt_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.obt_inventory
+    reference_data:
+      - observable_id: obt_inventory
+        quantity: analytic_linear_obt_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        reference_method: ANALYTIC_LINEAR_STORAGE
+        reference_expression: "dM_obt/dt = kf * M_tfwt - kr * M_obt"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-tfwt-obt-analytic-reference
+          artifact_sha256: "2222222222222222222222222222222222222222222222222222222222222222"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt-reference
+    expected_metric:
+      metric_name: trajectory_comparison
+      observable_id: obt_inventory
+      unit: Bq m^-2
+    acceptance_criteria:
+      - metric_name: trajectory_comparison
+        observable_id: obt_inventory
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: Bq m^-2
+        rationale: Linear transfer semantic check; kf and kr physical validity are out of scope.
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-tfwt-obt-case
+      artifact_sha256: "3333333333333333333333333333333333333333333333333333333333333333"
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#tfwt-obt
+
+  - case_id: v3-p7-7a-soil-root
+    description: Explicit soil inventory to root-flux transfer with a test-only coefficient.
+    scenario_type: SYNTHETIC_BENCHMARK
+    forcing_definition:
+      forcing_id: soil-root-constant-forcing
+      time_basis: seconds_from_initial_state
+      variables:
+        root_zone_concentration:
+          value: 20.0
+          unit: Bq m^-3 water
+    initial_state:
+      state_id: soil-inventory
+      variables:
+        inventory:
+          value: 100.0
+          unit: Bq m^-2
+    execution_definition:
+      benchmark_kind: soil_root
+      start_timestamp: "2026-01-01T00:00:00+00:00"
+      duration_seconds: 20.0
+      timestep_seconds: 10.0
+      refinement_factors: [1, 2, 4]
+      restart_split_steps: 1
+      soil_water_content: 5.0
+      layer_depth_m: 0.05
+      soil_identifier: synthetic-soil
+      layer_id: surface
+      plant_identifier: synthetic-plant
+      root_zone_identifier: synthetic-root-zone
+      acceptance_thresholds:
+        numerical_stability: 1.0e-12
+        conservation: 1.0e-12
+        restart: 1.0e-12
+        deterministic: 0.0
+    parameter_context:
+      - parameter_id: root_coefficient
+        value: 0.001
+        unit: m s^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-soil-root-coefficient-fixture
+          artifact_sha256: "4444444444444444444444444444444444444444444444444444444444444444"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#soil-root
+    model_outputs:
+      - observable_id: root_flux
+        quantity: root_uptake_flux
+        unit: Bq m^-2 s^-1
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.root_flux
+    reference_data:
+      - observable_id: root_flux
+        quantity: explicit_coefficient_flux
+        unit: Bq m^-2 s^-1
+        time_basis: seconds_from_initial_state
+        reference_method: ANALYTIC_LINEAR_FLUX
+        reference_expression: "J_root = k_root * C_root_zone"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-soil-root-analytic-reference
+          artifact_sha256: "5555555555555555555555555555555555555555555555555555555555555555"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#soil-root-reference
+    expected_metric:
+      metric_name: relative_error
+      observable_id: root_flux
+      unit: "1"
+    acceptance_criteria:
+      - metric_name: relative_error
+        observable_id: root_flux
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: "1"
+        rationale: Explicit root-flux interface check; coefficient physical validity is out of scope.
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-soil-root-case
+      artifact_sha256: "6666666666666666666666666666666666666666666666666666666666666666"
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#soil-root
+
+  - case_id: v3-p7-7a-end-to-end-pathway
+    description: Synthetic end-to-end state propagation, closure, and restart contract.
+    scenario_type: SYNTHETIC_BENCHMARK
+    forcing_definition:
+      forcing_id: end-to-end-explicit-pathway-forcing
+      time_basis: seconds_from_initial_state
+      variables:
+        atmospheric_hto:
+          value: 5.0
+          unit: Bq m^-3
+        leaf_exchange_flux:
+          value: 1.0
+          unit: Bq m^-2 s^-1
+        root_zone_concentration:
+          value: 10.0
+          unit: Bq m^-3 water
+        deposition_flux:
+          value: 0.0
+          unit: Bq m^-2 s^-1
+    initial_state:
+      state_id: atmosphere-soil-plant-food-dose-state
+      variables:
+        atmosphere_inventory:
+          value: 0.0
+          unit: Bq
+        soil_inventory:
+          value: 0.0
+          unit: Bq m^-2
+        tfwt_inventory:
+          value: 0.0
+          unit: Bq m^-2
+        obt_inventory:
+          value: 0.0
+          unit: Bq m^-2
+    execution_definition:
+      benchmark_kind: end_to_end_pathway
+      start_timestamp: "2026-01-01T00:00:00+00:00"
+      source_version: p7-7b-synthetic
+      location: synthetic-site
+      duration_seconds: 40.0
+      timestep_seconds: 10.0
+      refinement_factors: [1, 2, 4]
+      restart_split_steps: 2
+      equilibrium_air_concentration_bq_m3: 0.0
+      resistance_components_s_m: [1.0, 2.0, 2.0]
+      soil_half_life_seconds: 10000000000.0
+      soil_identifier: synthetic-soil
+      layer_id: surface
+      layer_depth_m: 0.05
+      soil_water_content: 5.0
+      plant_identifier: synthetic-plant
+      crop: synthetic-crop
+      growth_stage: vegetative
+      water_content_kg_m2: 1.0
+      plant_mass_kg_m2: 1.0
+      root_zone_identifier: synthetic-root-zone
+      food_product_identifier: synthetic-food
+      harvest_growth_stage: harvest
+      harvest_area_m2: 1.0
+      tfwt_harvest_fraction: 0.0
+      food_product_mass_kg: 1.0
+      age_group_identifier: adult
+      consumer_identifier: synthetic-consumer
+      radionuclide_identifier: H-3
+      pathway_identifier: food-ingestion
+      reference_tfwt_trajectory: [0.0, 9.0, 17.1, 24.39, 30.951]
+      air_temperature_k: 293.15
+      relative_humidity: 0.5
+      wind_speed_m_s: 1.0
+      precipitation_m_s: 0.0
+      metadata_model_name: synthetic-atmosphere
+      metadata_grid_definition: synthetic-grid
+      metadata_source_dataset: synthetic-v3
+      metadata_quality_flag: unreviewed
+      acceptance_thresholds:
+        numerical_stability: 1.0e-12
+        conservation: 1.0e-12
+        restart: 1.0e-12
+        deterministic: 0.0
+    parameter_context:
+      - parameter_id: kf_s
+        value: 0.01
+        unit: s^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-kf-fixture
+          artifact_sha256: "7777777777777777777777777777777777777777777777777777777777777777"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+      - parameter_id: kr_s
+        value: 0.02
+        unit: s^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-kr-fixture
+          artifact_sha256: "8888888888888888888888888888888888888888888888888888888888888888"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+      - parameter_id: root_coefficient
+        value: 0.001
+        unit: m s^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-root-fixture
+          artifact_sha256: "9999999999999999999999999999999999999999999999999999999999999999"
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+      - parameter_id: harvest_fraction
+        value: 0.1
+        unit: "1"
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-harvest-fixture
+          artifact_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+      - parameter_id: consumption_rate
+        value: 1.0
+        unit: kg year^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-consumption-fixture
+          artifact_sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+      - parameter_id: dose_coefficient
+        value: 1.0e-10
+        unit: Sv Bq^-1
+        status: TEST_ONLY
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-dose-fixture
+          artifact_sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end
+    model_outputs:
+      - observable_id: atmosphere
+        quantity: atmosphere_inventory
+        unit: Bq
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.atmosphere
+      - observable_id: soil
+        quantity: soil_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.soil
+      - observable_id: tfwt
+        quantity: tfwt_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.tfwt
+      - observable_id: obt
+        quantity: obt_inventory
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        output_reference: model_outputs.obt
+      - observable_id: food
+        quantity: food_inventory
+        unit: Bq
+        time_basis: endpoint
+        output_reference: model_outputs.food
+      - observable_id: intake
+        quantity: food_intake_inventory
+        unit: Bq
+        time_basis: endpoint
+        output_reference: model_outputs.intake
+      - observable_id: dose
+        quantity: committed_dose
+        unit: Sv
+        time_basis: endpoint
+        output_reference: model_outputs.dose
+    reference_data:
+      - observable_id: atmosphere
+        quantity: independent_synthetic_atmosphere
+        unit: Bq
+        time_basis: seconds_from_initial_state
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent state table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+      - observable_id: soil
+        quantity: independent_synthetic_soil
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent state table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+      - observable_id: tfwt
+        quantity: independent_synthetic_tfwt
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent state table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+      - observable_id: obt
+        quantity: independent_synthetic_obt
+        unit: Bq m^-2
+        time_basis: seconds_from_initial_state
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent state table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+      - observable_id: food
+        quantity: independent_synthetic_food
+        unit: Bq
+        time_basis: endpoint
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent endpoint table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+      - observable_id: intake
+        quantity: independent_synthetic_intake
+        unit: Bq
+        time_basis: endpoint
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent endpoint table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+      - observable_id: dose
+        quantity: independent_synthetic_dose
+        unit: Sv
+        time_basis: endpoint
+        reference_method: INDEPENDENT_SYNTHETIC_STATE_REFERENCE
+        reference_expression: "Independent endpoint table supplied by the benchmark author"
+        independent: true
+        provenance:
+          source_kind: SYNTHETIC_FIXTURE
+          source_identifier: p7.7a-end-to-end-independent-state-reference
+          artifact_sha256: dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+          license_or_access_basis: repository_controlled_test_fixture
+          locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end-reference
+    expected_metric:
+      metric_name: trajectory_comparison
+      observable_id: tfwt
+      unit: Bq m^-2
+    acceptance_criteria:
+      - metric_name: trajectory_comparison
+        observable_id: tfwt
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: Bq m^-2
+        rationale: State propagation interface check over the synthetic pathway.
+      - metric_name: conservation_residual
+        observable_id: tfwt
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: Bq m^-2
+        rationale: Existing interval ledgers must close without redefining their equations.
+      - metric_name: state_difference
+        observable_id: tfwt
+        threshold: 1.0e-12
+        comparison: ABSOLUTE_LTE
+        unit: Bq m^-2
+        rationale: Restart state must match the uninterrupted synthetic trajectory.
+    provenance:
+      source_kind: SYNTHETIC_FIXTURE
+      source_identifier: p7.7a-end-to-end-pathway-case
+      artifact_sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+      license_or_access_basis: repository_controlled_test_fixture
+      locator: configs/v3/validation/p7_7a_baseline_benchmarks.yaml#end-to-end

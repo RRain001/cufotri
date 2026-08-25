@@ -1,0 +1,131 @@
+schema_version: v1
+stage: P7.8B-2
+status: PASS_COUPLING_DECISION
+source_selection_registry: docs/v3/physics/p7_8b2_physics_selection.yaml
+
+coupling_states:
+  - NO_IMPACT
+  - INTERFACE_EXTENSION
+  - PIPELINE_CHANGE_REQUIRED
+  - NUMERICAL_COUPLING_CHANGE_REQUIRED
+
+coupling_invariants:
+  current_coupling_changed: false
+  p7_5_semantics_changed: false
+  p7_5b_semantics_changed: false
+  implementation_started: false
+  solver_changes: false
+  numerical_coupling_changes: false
+  active_parameters: 0
+  v3_physics_ready: false
+  selected_future_impact_is_not_current_change: true
+
+decisions:
+  - item_id: OBT_PLANT_MASS_BASIS_CONTRACT
+    selected_model: explicit_typed_mass_basis_contract
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3 diagnostics and case schema
+      - plant.food_transfer_v3 basis metadata
+      - validation_v3 case contract
+    migration_strategy: 'Add explicit metadata in an opt-in contract; retain the current declared basis for v3_frozen_baseline and reject incomplete cross-basis comparisons.'
+    compatibility_plan: 'No numerical state or equation changes; no automatic fresh/dry/water/hydrogen conversion.'
+    required_review: 'Dimensional/unit and state-basis review.'
+
+  - item_id: OBT_FORMATION_PACKAGE
+    selected_model: option_b_two_pool_biological_extension
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3 state and forcing adapter
+      - plant.tfwt_v3 public inventory interface
+      - validation_v3 biological case schema
+    migration_strategy: 'Keep reduced first-order OBT as the default; introduce P/B_x/B_n only in an explicit V4 profile with required forcing provenance.'
+    compatibility_plan: 'Expose aggregate OBT only after component scope and units are frozen; no mapping from current day/night multipliers to future forcing functions.'
+    required_review: 'Equation, unit, state ownership, conservation, restart, and independent biological review.'
+
+  - item_id: LEAF_DYNAMIC_STOMATAL_RESPONSE
+    selected_model: option_b_dynamic_stomatal_response
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.leaf_exchange_v3 forcing/state adapter
+      - meteorology/stage metadata adapter
+      - plant.tfwt_v3 leaf flux consumer
+    migration_strategy: 'Keep r_a + r_b + r_c as the baseline; add bounded conductance response only in a V4 opt-in profile.'
+    compatibility_plan: 'Missing radiation, VPD, temperature, or stage fields fail closed to the future profile; baseline does not reinterpret them.'
+    required_review: 'Conductance/resistance dimensional audit and matched-data review.'
+
+  - item_id: ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+    selected_model: option_b_water_flux_coupled
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    affected_modules:
+      - plant.soil_v3 layer state and activity ledger
+      - plant.root_uptake_v3
+      - plant.tfwt_v3 root input boundary
+      - water forcing and validation case pipeline
+      - P7.5/P7.5B interval coupling and restart contracts
+    migration_strategy: 'Do not map scalar k_root or v_r into layers. Require explicit layer geometry, C_w,i, theta_i, q_w,i, and root-zone ownership in a V4 profile.'
+    compatibility_plan: 'v3_frozen_baseline remains one-layer and uses its existing root input. A future profile must pass global/layer conservation, restart, refinement, and failure-isolation tests before activation.'
+    required_review: 'Mandatory P7.5/P7.5B numerical-coupling review plus independent validation.'
+
+  - item_id: SOIL_SIGNED_TRANSPORT_BASELINE
+    selected_model: option_a_signed_transport_interface
+    coupling_impact: NO_IMPACT
+    affected_modules:
+      - plant.soil_v3 current one-layer ledger
+    migration_strategy: 'No migration; retain signed transport as an explicit input boundary.'
+    compatibility_plan: 'Existing soil cases, equation, storage basis, and restart semantics remain unchanged.'
+    required_review: 'Existing baseline conservation/restart checks only; any layered hydrology is a separate future decision.'
+
+  - item_id: TFWT_FIXED_STORAGE_BOUNDARY
+    selected_model: option_a_fixed_water_storage
+    coupling_impact: NO_IMPACT
+    affected_modules:
+      - plant.tfwt_v3 current activity ledger
+    migration_strategy: 'No migration; retain explicit activity fluxes and current water-basis semantics.'
+    compatibility_plan: 'Do not add a hidden dilution factor or convert activity loss to water loss.'
+    required_review: 'Existing ledger and restart checks; dynamic water turnover requires a new pipeline decision.'
+
+  - item_id: FOOD_ENVIRONMENTAL_TRANSFER_BOUNDARY
+    selected_model: option_a_harvest_event
+    coupling_impact: NO_IMPACT
+    affected_modules:
+      - plant.food_transfer_v3 event transfer
+      - exposure.consumption downstream readout
+    migration_strategy: 'No migration; maintain separate OBT and TFWT product event inventories.'
+    compatibility_plan: 'Do not replace the harvest event with a continuous product rate or infer product kinetics from dose.'
+    required_review: 'Existing event/basis checks; any continuous or hybrid state would require numerical-coupling review.'
+
+  - item_id: CONSUMPTION_EXTERNAL_INPUT_BOUNDARY
+    selected_model: external_scenario_input
+    coupling_impact: NO_IMPACT
+    affected_modules:
+      - exposure.consumption case input
+    migration_strategy: 'No migration; retain external scenario ownership.'
+    compatibility_plan: 'Consumption assumptions cannot alter plant, soil, or food environmental equations.'
+    required_review: 'Case-input provenance and unit review only.'
+
+  - item_id: DOSE_EXTERNAL_LAYER_BOUNDARY
+    selected_model: keep_external_dose_layer
+    coupling_impact: NO_IMPACT
+    affected_modules:
+      - exposure.dose external dosimetry layer
+    migration_strategy: 'No migration; retain external dose coefficient ownership.'
+    compatibility_plan: 'Dose outputs cannot drive environmental-physics selection or activation.'
+    required_review: 'Independent dosimetry/regulatory input audit, separate from environmental physics.'
+
+future_unselected_impacts:
+  - item_id: TFWT_DYNAMIC_WATER_TURNOVER
+    candidate_model: option_b_dynamic_water_turnover
+    coupling_impact: PIPELINE_CHANGE_REQUIRED
+    status: INSUFFICIENT_EVIDENCE
+    reason: 'Requires water-mass forcing, growth-water activity semantics, and explicit pipeline ownership.'
+  - item_id: SOIL_LAYERED_OR_FULL_HYDROLOGY
+    candidate_model: option_b_or_option_c_soil_hydrology
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    status: INSUFFICIENT_EVIDENCE
+    reason: 'Requires layer water/HTO data, boundary signs, and a P7.5/P7.5B review.'
+  - item_id: FOOD_CONTINUOUS_OR_HYBRID_PRODUCT_STATE
+    candidate_model: option_b_or_option_c_food_state
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    status: INSUFFICIENT_EVIDENCE
+    reason: 'Not selected under the current environmental-transfer boundary.'

@@ -1,0 +1,72 @@
+name: V3 Remediation CI
+
+on:
+  push:
+    branches:
+      - codex/v3-repository-audit-remediation
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  focused-remediation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install package and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[test]'
+
+      - name: Check remediation diff and report
+        run: |
+          git diff --check 5ba891ec5e2d24cffdfe197afcf9006d2e4c5280..HEAD
+          test -f docs/v3/reports/v3_repository_audit_remediation.md
+
+      - name: Run historical boundary governance tests
+        run: |
+          python -m pytest \
+            tests/architecture/test_atmos_v3_boundary.py \
+            tests/architecture/test_dose_v3_boundary.py \
+            tests/architecture/test_food_transfer_v3_boundary.py \
+            tests/architecture/test_intake_v3_boundary.py \
+            tests/architecture/test_leaf_exchange_resistance_boundary.py \
+            tests/architecture/test_obt_solver_boundary.py \
+            tests/architecture/test_p7_6d_physics_adoption_boundary.py \
+            tests/architecture/test_p7_7a_validation_framework_boundary.py \
+            tests/architecture/test_root_uptake_v3_boundary.py \
+            tests/architecture/test_soil_hto_v3_boundary.py \
+            tests/architecture/test_tfwt_solver_boundary.py \
+            tests/architecture/test_v3_parameter_applicability_boundary.py \
+            tests/architecture/test_v3_parameter_candidate_boundary.py \
+            tests/architecture/test_v3_parameter_evidence_boundary.py \
+            tests/architecture/test_v3_parameter_validation_boundary.py \
+            tests/architecture/test_v3_pipeline_boundary.py \
+            tests/architecture/test_v3_plant_pathway_boundary.py \
+            tests/architecture/test_v3_validation_feasibility_boundary.py \
+            tests/v3/test_p7_8a_physics_redesign_governance.py \
+            tests/v3/test_p7_8b1_redesign_specification.py \
+            tests/v3/test_p7_8b2_physics_selection.py
+
+      - name: Run current evergreen and synthetic verification tests
+        run: |
+          python -m pytest \
+            tests/architecture/test_codex_branch_disposition.py \
+            tests/architecture/test_v3_current_remediation_invariants.py \
+            tests/integration/test_v3_pipeline_composite_conservation.py \
+            tests/v3/test_p7_7b_synthetic_benchmarks.py

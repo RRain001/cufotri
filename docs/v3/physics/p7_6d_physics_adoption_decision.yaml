@@ -1,0 +1,776 @@
+schema_version: v1
+stage: P7.6D
+status: PASS_PHYSICS_ADOPTION_DECISION
+decision_registry: true
+current_v3_model: FROZEN
+all_feasibility_items_reviewed: true
+redesign_items_identified: true
+implementation_started: false
+new_validation_candidates: 0
+validated_parameters: 1
+active_parameters: 0
+calibration_started: false
+ufotri_active_database: false
+physics_changed: false
+numerical_coupling_changed: false
+v3_physics_ready: false
+source_registry:
+  path: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+  stage: P7.6C-3
+  commit: e27badfe7aabb5a030607e8604c73e0598322a0f
+  assessment_record_count: 27
+  mapped_parameter_count: 26
+  derived_quantity_count: 1
+decision_counts:
+  KEEP_CURRENT_V3: 2
+  VALIDATE_CURRENT_MODEL: 9
+  EXTEND_V3_PHYSICS: 2
+  REDESIGN_REQUIRED: 9
+  DO_NOT_IMPORT: 4
+  WAIT_FOR_EVIDENCE: 1
+required_redesign_parameter_ids:
+  - food.harvest_fraction
+  - food.tfwt_harvest_fraction
+  - leaf.growth_stage
+  - obt.daylight_multiplier
+  - obt.nighttime_multiplier
+  - obt.photosynthetic_activity
+  - obt.plant_mass
+  - obt.temperature
+  - root.k_root
+baseline_statement: >-
+  Current V3 physics baseline remains frozen until a separately authorized
+  redesign approval. This registry makes decisions only; it contains no
+  parameter values, runtime lookup, solver change, or numerical-coupling
+  implementation.
+
+decision_records:
+  - parameter_id: dose.dose_coefficient
+    subsystem: exposure.dose_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.dose.dose_coefficient
+    current_v3_model: "D = I_food * e; e remains an external dosimetry input"
+    ufotri_reference: "mapping.dose.dose_coefficient; external dose-coefficient role"
+    feasibility_class: NOT_IMPORTABLE
+    adoption_decision: DO_NOT_IMPORT
+    decision_reason: >-
+      The coefficient belongs to an external dosimetry or regulatory layer,
+      not to the UFOTRI environmental-physics parameter set.
+    physics_gap: >-
+      There is no environmental-physics gap to repair; the boundary is a
+      deliberate scope exclusion.
+    required_redesign: false
+    priority: LOW
+    impact_level: LOW
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Govern the coefficient through an independent dosimetry source and
+      preserve its provenance at the dose boundary.
+    future_stage: "External dosimetry governance outside the UFOTRI physics path"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.dose.dose_coefficient]"
+      decision_basis: P7.6C-3 feasibility plus P7.6D scope decision
+
+  - parameter_id: food.crop
+    subsystem: plant.food_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.food.crop
+    current_v3_model: "Crop identifier selects the explicit V3 food pathway context"
+    ufotri_reference: "mapping.food.crop; crop identity is metadata"
+    feasibility_class: NOT_IMPORTABLE
+    adoption_decision: DO_NOT_IMPORT
+    decision_reason: >-
+      Crop identity is scenario and applicability metadata, not a numerical
+      UFOTRI environmental-physics parameter.
+    physics_gap: >-
+      No numerical physics gap is established; crop identity must remain an
+      explicit case-context field.
+    required_redesign: false
+    priority: LOW
+    impact_level: LOW
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Validate crop applicability as case metadata when a pathway dataset is
+      assembled; do not admit a universal crop value.
+    future_stage: "Case-schema and applicability review"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.food.crop]"
+      decision_basis: P7.6C-3 feasibility plus P7.6D scope decision
+
+  - parameter_id: food.harvest_fraction
+    subsystem: plant.food_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.food.harvest_fraction
+    current_v3_model: "Harvest event transfers a configured fraction of plant inventory"
+    ufotri_reference: "mapping.food.harvest_fraction; UFOTRI continuous food-chain rates"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      A continuous UFOTRI plant/cow/product representation cannot be mapped
+      to the current V3 harvest-event fraction without a new state and event
+      contract.
+    physics_gap: >-
+      The event fraction and continuous transfer rate have different state,
+      timing, and conservation semantics.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    validation_requirement: >-
+      Freeze the continuous-versus-event representation, harvest timing, and
+      inventory conservation contract before collecting matched data.
+    future_stage: "P7.6E-proposed food-chain event/continuous redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.food.harvest_fraction]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: food.tfwt_harvest_fraction
+    subsystem: plant.food_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.food.tfwt_harvest_fraction
+    current_v3_model: "Harvest event transfers a configured TFWT fraction from plant inventory"
+    ufotri_reference: "mapping.food.tfwt_harvest_fraction; separate continuous plant-water compartment"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      UFOTRI compartment rates do not define the current V3 TFWT harvest
+      fraction or its event timing.
+    physics_gap: >-
+      A compatible TFWT harvest state and conservation relation are missing
+      between continuous plant water and the product event.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    validation_requirement: >-
+      Freeze plant-water and product-water bases, harvest timing, and the
+      plant-to-food inventory boundary before evidence admission.
+    future_stage: "P7.6E-proposed food-chain event/continuous redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.food.tfwt_harvest_fraction]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: intake.annual_consumption_amount
+    subsystem: exposure.intake_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.intake.annual_consumption_amount
+    current_v3_model: "Annual intake is an exposure-scenario input derived from consumption rate"
+    ufotri_reference: "mapping.intake.annual_consumption_amount; consumer habit/scenario quantity"
+    feasibility_class: NOT_IMPORTABLE
+    adoption_decision: DO_NOT_IMPORT
+    decision_reason: >-
+      Consumption amount describes an exposure scenario and is not an
+      environmental or plant-physics parameter.
+    physics_gap: >-
+      No UFOTRI physics adoption decision is applicable to a population or
+      dietary assumption.
+    required_redesign: false
+    priority: LOW
+    impact_level: LOW
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Specify population, dietary scenario, time basis, and uncertainty in
+      the independent exposure layer.
+    future_stage: "Exposure-scenario governance outside P7.6D physics adoption"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.intake.annual_consumption_amount]"
+      decision_basis: P7.6C-3 feasibility plus P7.6D scope decision
+
+  - parameter_id: intake.food_product_mass
+    subsystem: exposure.intake_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.intake.food_product_mass
+    current_v3_model: "Product concentration uses an explicit product-mass denominator"
+    ufotri_reference: "mapping.intake.food_product_mass; original product-mass definition not recovered"
+    feasibility_class: INSUFFICIENT_INFORMATION
+    adoption_decision: WAIT_FOR_EVIDENCE
+    decision_reason: >-
+      The recovered material does not define the UFOTRI product-mass basis
+      corresponding to the V3 denominator.
+    physics_gap: >-
+      The missing source definition prevents a state-basis and unit decision;
+      no numerical replacement is admissible.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Recover the original definition and basis, or define a separately
+      governed product-mass contract before exposure validation.
+    future_stage: "Evidence recovery before any P7.7 intake validation contract"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.intake.food_product_mass]"
+      decision_basis: P7.6C-3 INSUFFICIENT_INFORMATION review
+
+  - parameter_id: leaf.crop
+    subsystem: plant.leaf_exchange_resistance
+    derived_quantity: false
+    feasibility_mapping_id: mapping.leaf.crop
+    current_v3_model: "Resistance evaluation is explicitly scoped by crop context"
+    ufotri_reference: "mapping.leaf.crop; crop identity is applicability metadata"
+    feasibility_class: NOT_IMPORTABLE
+    adoption_decision: DO_NOT_IMPORT
+    decision_reason: >-
+      Crop identity stratifies resistance evidence but is not an importable
+      numerical resistance coefficient.
+    physics_gap: >-
+      No numerical gap is established; the context field must remain explicit.
+    required_redesign: false
+    priority: LOW
+    impact_level: LOW
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Use crop identity to stratify matched resistance data without assigning
+      it a UFOTRI parameter value.
+    future_stage: "Leaf-resistance dataset applicability contract"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.leaf.crop]"
+      decision_basis: P7.6C-3 feasibility plus P7.6D scope decision
+
+  - parameter_id: leaf.growth_stage
+    subsystem: plant.leaf_exchange_resistance
+    derived_quantity: false
+    feasibility_mapping_id: mapping.leaf.growth_stage
+    current_v3_model: "Growth stage is accepted as metadata but does not alter the resistance equation"
+    ufotri_reference: "mapping.leaf.growth_stage; vegetation-period analogue without stage equation"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      The recovered vegetation-period material does not define the V3 stage
+      ontology or a stage-dependent resistance relation.
+    physics_gap: >-
+      A stage-to-geometry/physiology relation is missing; metadata alone
+      cannot be treated as a resistance parameter.
+    required_redesign: true
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Define stage labels, transition rules, canopy basis, and matched
+      meteorology/resistance observations before validation.
+    future_stage: "P7.6E-proposed leaf phenology/resistance redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.leaf.growth_stage]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: leaf.r_a
+    subsystem: plant.leaf_exchange_resistance
+    derived_quantity: false
+    feasibility_mapping_id: mapping.leaf.r_a
+    current_v3_model: "Aerodynamic resistance is one component of r_total = r_a + r_b + r_c"
+    ufotri_reference: "mapping.leaf.r_a; aerodynamic resistance role and s m^-1 unit"
+    feasibility_class: VALIDATION_FEASIBLE
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The V3 component role and unit match the reviewed UFOTRI semantic role;
+      future work is evidence validation, not value import.
+    physics_gap: >-
+      No equation gap is identified; measurement basis and meteorological
+      conditioning remain to be specified.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Pair aerodynamic-resistance observations with wind, stability, geometry,
+      time, and measurement-basis metadata.
+    future_stage: "P7.7 resistance validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.leaf.r_a]"
+      decision_basis: P7.6C-3 VALIDATION_FEASIBLE review
+
+  - parameter_id: leaf.r_b
+    subsystem: plant.leaf_exchange_resistance
+    derived_quantity: false
+    feasibility_mapping_id: mapping.leaf.r_b
+    current_v3_model: "Boundary-layer resistance is one component of r_total = r_a + r_b + r_c"
+    ufotri_reference: "mapping.leaf.r_b; quasi-laminar boundary-layer resistance role and s m^-1 unit"
+    feasibility_class: VALIDATION_FEASIBLE
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The reviewed boundary-layer resistance role and unit are compatible
+      with the current V3 resistance chain.
+    physics_gap: >-
+      No equation gap is identified; leaf geometry and micro-meteorological
+      measurement basis must be frozen for validation.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Pair boundary-layer resistance observations with leaf geometry, wind,
+      and micro-meteorological metadata.
+    future_stage: "P7.7 resistance validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.leaf.r_b]"
+      decision_basis: P7.6C-3 VALIDATION_FEASIBLE review
+
+  - parameter_id: leaf.r_c
+    subsystem: plant.leaf_exchange_resistance
+    derived_quantity: false
+    feasibility_mapping_id: mapping.leaf.r_c
+    current_v3_model: "Canopy/surface resistance is one component of r_total = r_a + r_b + r_c"
+    ufotri_reference: "mapping.leaf.r_c; canopy/surface resistance role and s m^-1 unit"
+    feasibility_class: VALIDATION_FEASIBLE
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The reviewed canopy/surface resistance role is compatible with the V3
+      chain, subject to a declared measurement basis and crop context.
+    physics_gap: >-
+      No equation gap is identified; stomatal state and canopy aggregation
+      need explicit validation metadata.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Pair surface-resistance observations with stomatal state, crop context,
+      canopy geometry, and exchange measurement basis.
+    future_stage: "P7.7 resistance validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.leaf.r_c]"
+      decision_basis: P7.6C-3 VALIDATION_FEASIBLE review
+
+  - parameter_id: obt.daylight_multiplier
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.daylight_multiplier
+    current_v3_model: "Daylight may select an effective first-order formation rate"
+    ufotri_reference: "mapping.obt.daylight_multiplier; day treatment is not a normalized V3 multiplier"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      The reviewed day treatment does not define a normalized multiplier or
+      the baseline from which the multiplier would be applied.
+    physics_gap: >-
+      Daylight formation mechanism, normalization, and state scope are absent
+      from the current adopted equation.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Define the daylight state equation and normalization before using
+      time-resolved TFWT/OBT observations.
+    future_stage: "P7.6E-proposed OBT formation redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.daylight_multiplier]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: obt.kf
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.kf
+    current_v3_model: "First-order TFWT-to-OBT formation term is retained as a reduced baseline"
+    ufotri_reference: "mapping.obt.kf; first-order formation role with unresolved biological scope"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: EXTEND_V3_PHYSICS
+    decision_reason: >-
+      The first-order formation role can be tested as a scoped reduced model,
+      while a future compartment/scope extension remains necessary for a full
+      UFOTRI interpretation.
+    physics_gap: >-
+      Biological scope, exchangeable versus non-exchangeable compartments,
+      and equilibrium-derived source assumptions are not fully represented.
+    required_redesign: false
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Validate only against paired TFWT/OBT inventories with biological scope,
+      crop stage, daylight state, chemical form, and rate basis declared.
+    future_stage: "P7.7 scoped first-order validation, then proposed OBT state extension"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.kf]"
+      decision_basis: P7.6C-3 limited feasibility plus P7.6D reduced-model adoption
+
+  - parameter_id: obt.kr
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.kr
+    current_v3_model: "First-order OBT turnover term is retained as a reduced baseline"
+    ufotri_reference: "mapping.obt.kr; return/loss role with unresolved compartment scope"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: EXTEND_V3_PHYSICS
+    decision_reason: >-
+      The first-order turnover role can be tested under a declared reduced
+      scope, but the compartment and loss interpretation needs future extension.
+    physics_gap: >-
+      Exchangeable, non-exchangeable, return, and loss compartments are not
+      separated by the current V3 state.
+    required_redesign: false
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Use time-resolved depuration data that distinguishes return, loss, and
+      non-exchangeable organic compartments before interpreting turnover.
+    future_stage: "P7.7 scoped first-order validation, then proposed OBT state extension"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.kr]"
+      decision_basis: P7.6C-3 limited feasibility plus P7.6D reduced-model adoption
+
+  - parameter_id: obt.nighttime_multiplier
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.nighttime_multiplier
+    current_v3_model: "Nighttime may select an effective first-order formation rate"
+    ufotri_reference: "mapping.obt.nighttime_multiplier; day/night analogue without normalized night multiplier"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      The reviewed nighttime text is a mechanism analogue and does not define
+      a normalized V3 multiplier or nighttime formation equation.
+    physics_gap: >-
+      Nighttime state, normalization, and biological process representation
+      are absent from the adopted equation.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Define the nighttime state equation and its relation to the baseline
+      formation term before validation.
+    future_stage: "P7.6E-proposed OBT formation redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.nighttime_multiplier]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: obt.photosynthetic_activity
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.photosynthetic_activity
+    current_v3_model: "Biological forcing exposes no photosynthesis state equation"
+    ufotri_reference: "mapping.obt.photosynthetic_activity; mechanistic analogue without V3 forcing definition"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      A mechanistic photosynthetic description cannot be inserted into the
+      reserved V3 forcing field without defining a new equation or state.
+    physics_gap: >-
+      The source, units, normalization, and coupling of photosynthetic
+      activity to OBT formation are unspecified.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Define a scalar forcing or explicit photosynthesis state, then collect
+      independent light, activity, TFWT, OBT, and growth observations.
+    future_stage: "P7.6E-proposed OBT formation redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.photosynthetic_activity]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: obt.plant_mass
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.plant_mass
+    current_v3_model: "OBT concentration is diagnosed from areal inventory and fresh plant mass"
+    ufotri_reference: "mapping.obt.plant_mass; UFOTRI hydrogen-mass compartments"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      UFOTRI compartment hydrogen masses are not equivalent to the current V3
+      fresh-plant-mass denominator.
+    physics_gap: >-
+      A fresh/dry/water/hydrogen mass-basis relation and its time dependence
+      are missing.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Freeze the mass and hydrogen basis relation and its area normalization
+      before validating concentration or food-transfer diagnostics.
+    future_stage: "P7.6E-proposed OBT mass-basis redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.plant_mass]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: obt.temperature
+    subsystem: plant.obt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.obt.temperature
+    current_v3_model: "Temperature is optional biological forcing but does not alter the OBT equation"
+    ufotri_reference: "mapping.obt.temperature; no recovered OBT-specific temperature relation"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      A shared meteorological temperature field is not an OBT physical
+      mapping without a formation or turnover response equation.
+    physics_gap: >-
+      The OBT-specific temperature response, basis, and valid range are not
+      defined in V3.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Define an OBT-specific temperature relation and collect time-resolved
+      temperature/TFWT/OBT data before validation.
+    future_stage: "P7.6E-proposed OBT formation redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.obt.temperature]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: root.k_root
+    subsystem: plant.root_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.root.k_root
+    current_v3_model: "One-layer root uptake uses an effective velocity multiplying soil-water concentration"
+    ufotri_reference: "mapping.root.k_root; layer-distributed first-order transfer tied to transpiration"
+    feasibility_class: PHYSICS_REDESIGN_REQUIRED
+    adoption_decision: REDESIGN_REQUIRED
+    decision_reason: >-
+      The UFOTRI rate and the V3 effective velocity have different units,
+      state bases, layer structure, and aggregation semantics.
+    physics_gap: >-
+      A layer-resolved root state, water-uptake relation, and admissible
+      rate-to-velocity aggregation are missing.
+    required_redesign: true
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    validation_requirement: >-
+      Define layer states, transpiration/root-water coupling, storage length,
+      aggregation, and inventory conservation before evidence collection.
+    future_stage: "P7.6E-proposed root uptake state and coupling redesign"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.root.k_root]"
+      decision_basis: P7.6C-3 PHYSICS_REDESIGN_REQUIRED review
+
+  - parameter_id: soil.layer_depth
+    subsystem: plant.soil_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.soil.layer_depth
+    current_v3_model: "One authoritative soil-water layer uses an explicit layer depth"
+    ufotri_reference: "mapping.soil.layer_depth; UFOTRI has multiple soil layers"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The current one-layer geometry can be tested when the selected source
+      layer is declared; importing a multi-layer depth set is not authorized.
+    physics_gap: >-
+      Layer selection and geometric basis differ between the V3 one-layer
+      state and the UFOTRI multi-layer representation.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Identify the selected layer, depth basis, area basis, and timing in each
+      validation case.
+    future_stage: "P7.7 soil state-basis validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.soil.layer_depth]"
+      decision_basis: P7.6C-3 limited feasibility review
+
+  - parameter_id: soil.transport_flux
+    subsystem: plant.soil_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.soil.transport_flux
+    current_v3_model: "One-layer soil balance accepts a signed boundary transport flux"
+    ufotri_reference: "mapping.soil.transport_flux; downward UFOTRI boundary flux requires declared sign reversal"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      A signed boundary flux can be validated after the layer boundary and
+      orientation are explicitly frozen; the UFOTRI hydraulic derivation is
+      not imported.
+    physics_gap: >-
+      The sign, boundary orientation, and time averaging must be tied to the
+      same one-layer V3 inventory balance.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Record boundary orientation, sign convention, selected layer, and flux
+      time basis with conservation tests.
+    future_stage: "P7.7 soil transport boundary validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.soil.transport_flux]"
+      decision_basis: P7.6C-3 limited feasibility review
+
+  - parameter_id: soil.tritium_half_life
+    subsystem: plant.soil_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.soil.tritium_half_life
+    current_v3_model: "Radioactive decay uses the universal H-3 half-life in the soil inventory equation"
+    ufotri_reference: "mapping.soil.tritium_half_life; nuclear decay constant, not retention or transfer"
+    feasibility_class: VALIDATION_FEASIBLE
+    adoption_decision: KEEP_CURRENT_V3
+    decision_reason: >-
+      P7.6C-1 already validated the universal decay constant role; P7.6D
+      preserves it and does not reopen or activate a new value.
+    physics_gap: >-
+      No P7.6D physics gap is identified for the radioactive-decay role.
+    required_redesign: false
+    priority: LOW
+    impact_level: LOW
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Preserve the existing P7.6C-1 provenance and decay-semantic regression
+      test; do not use it for soil retention or biological transfer.
+    future_stage: "Maintain P7.6C-1 validated constant boundary"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.soil.tritium_half_life]"
+      decision_basis: P7.6C-1 preservation plus P7.6C-3 feasibility
+
+  - parameter_id: soil.water_content
+    subsystem: plant.soil_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.soil.water_content
+    current_v3_model: "Soil concentration uses one-layer HTO inventory divided by authoritative water storage"
+    ufotri_reference: "mapping.soil.water_content; UFOTRI soil-water basis requires selected layer and density convention"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The water-basis transformation is dimensional and testable when the
+      selected layer and density convention are fixed.
+    physics_gap: >-
+      Source water mass/volume/depth basis and layer selection are not
+      universal across the two model representations.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Declare water basis, layer, density convention, area normalization, and
+      concentration units, then run inventory/concentration consistency tests.
+    future_stage: "P7.7 soil state-basis validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.soil.water_content]"
+      decision_basis: P7.6C-3 limited feasibility review
+
+  - parameter_id: tfwt.transformation_flux
+    subsystem: plant.tfwt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.tfwt.transformation_flux
+    current_v3_model: "TFWT storage accepts an explicit activity flux at the TFWT-to-OBT boundary"
+    ufotri_reference: "mapping.tfwt.transformation_flux; rate-times-inventory transformation requires matched areal basis"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The current explicit flux boundary can be assessed after the rate,
+      inventory, timing, and plant-area bases are declared.
+    physics_gap: >-
+      A source rate cannot be imported without proving equivalence to the V3
+      TFWT areal inventory boundary.
+    required_redesign: false
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Freeze TFWT inventory basis, rate time basis, area normalization, and
+      transformation conservation before a future validation dataset.
+    future_stage: "P7.7 TFWT boundary validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.tfwt.transformation_flux]"
+      decision_basis: P7.6C-3 limited feasibility review
+
+  - parameter_id: tfwt.water_content
+    subsystem: plant.tfwt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.tfwt.water_content
+    current_v3_model: "TFWT concentration is the plant areal inventory divided by plant water content"
+    ufotri_reference: "mapping.tfwt.water_content; plant TFWT/leaf-free-water inventory basis"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The current storage basis is retained, with future validation limited to
+      cases that demonstrate equivalent plant-water and area normalization.
+    physics_gap: >-
+      Plant-water definition, sampling basis, and area normalization are not
+      resolved by the semantic name alone.
+    required_redesign: false
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Pair TFWT inventory and water-content observations with plant-water
+      basis, area, crop stage, and timing metadata.
+    future_stage: "P7.7 TFWT state-basis validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.tfwt.water_content]"
+      decision_basis: P7.6C-3 limited feasibility review
+
+  - parameter_id: tfwt.water_loss_flux
+    subsystem: plant.tfwt_v3
+    derived_quantity: false
+    feasibility_mapping_id: mapping.tfwt.water_loss_flux
+    current_v3_model: "TFWT storage accepts an explicit non-negative water-loss activity flux"
+    ufotri_reference: "mapping.tfwt.water_loss_flux; plant HTO loss boundary requires matched rate and inventory"
+    feasibility_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    adoption_decision: VALIDATE_CURRENT_MODEL
+    decision_reason: >-
+      The explicit loss boundary is retained; only a rate with matching plant
+      state, timing, and water-loss semantics can be considered later.
+    physics_gap: >-
+      The source water-loss rate and V3 activity-flux boundary are not
+      equivalent without an explicit rate-times-inventory derivation.
+    required_redesign: false
+    priority: HIGH
+    impact_level: HIGH
+    coupling_impact: INTERFACE_ONLY
+    validation_requirement: >-
+      Declare water-loss boundary, source rate, plant inventory basis, and
+      timing before testing the integrated TFWT balance.
+    future_stage: "P7.7 TFWT boundary validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[mapping.tfwt.water_loss_flux]"
+      decision_basis: P7.6C-3 limited feasibility review
+
+  - parameter_id: leaf.g_ex
+    subsystem: plant.leaf_exchange_resistance
+    derived_quantity: true
+    feasibility_mapping_id: derived.leaf.g_ex
+    current_v3_model: "g_ex is derived only as 1 / (r_a + r_b + r_c)"
+    ufotri_reference: "derived leaf.g_ex review item; no independent UFOTRI parameter"
+    feasibility_class: VALIDATION_FEASIBLE
+    adoption_decision: KEEP_CURRENT_V3
+    decision_reason: >-
+      The conductance relation is an accepted deterministic consequence of the
+      three reviewed resistance components and requires no imported value.
+    physics_gap: >-
+      There is no independent UFOTRI conductance record to adopt; component
+      measurement basis remains the validation dependency.
+    required_redesign: false
+    priority: MEDIUM
+    impact_level: MEDIUM
+    coupling_impact: NO_IMPACT
+    validation_requirement: >-
+      Derive conductance only after r_a, r_b, and r_c pass their own unit and
+      provenance checks; do not admit an independent g_ex value.
+    future_stage: "P7.7 derived-resistance validation framework"
+    provenance:
+      source_manifest: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+      source_record: "parameters[derived leaf.g_ex]"
+      decision_basis: P7.6C-3 derived-quantity review

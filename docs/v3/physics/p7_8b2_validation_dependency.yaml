@@ -1,0 +1,195 @@
+schema_version: v1
+stage: P7.8B-2
+status: PASS_VALIDATION_DEPENDENCY_DEFINITION
+source_selection_registry: docs/v3/physics/p7_8b2_physics_selection.yaml
+
+validation_invariants:
+  dependency_map_is_control_plane_only: true
+  synthetic_benchmarks_are_not_empirical_validation: true
+  production_arithmetic_is_not_expected_data: true
+  candidate_parameters_have_values: false
+  implementation_started: false
+  active_parameters: 0
+  calibration_started: false
+  v3_physics_ready: false
+
+validation_dependencies:
+  - item_id: OBT_PLANT_MASS_BASIS_CONTRACT
+    selected_model: explicit_typed_mass_basis_contract
+    implementation_stage: V3.1
+    required_datasets:
+      - 'Paired fresh, dry, water, and hydrogen mass measurements when those bases are used.'
+      - 'Plant OBT inventory/concentration and product mass with explicit tissue and basis labels.'
+    observable_variables:
+      - 'mass_basis, tissue_scope, area_basis, basis_provenance'
+      - 'plant/product mass and OBT inventory or concentration'
+    validation_metrics:
+      - 'Basis-label completeness rate.'
+      - 'Dimensional reconciliation residual.'
+      - 'Count of cross-basis comparisons correctly rejected when metadata is incomplete.'
+    minimum_case_contract:
+      - 'Every activity value declares unit, area basis, mass basis, tissue scope, and timestamp.'
+      - 'No conversion factor is supplied unless a separately reviewed evidence record exists.'
+    blocking_risks:
+      - 'Unrecorded moisture or hydrogen fraction would make a comparison non-auditable.'
+
+  - item_id: OBT_FORMATION_PACKAGE
+    selected_model: option_b_two_pool_biological_extension
+    implementation_stage: V4
+    required_datasets:
+      - 'Matched time-resolved TFWT, exchangeable OBT, and non-exchangeable OBT observations.'
+      - 'Timestamped light/day-night state, activity/PAR proxy, leaf temperature, crop stage, and tissue scope.'
+      - 'Independent biological replicates and declared sampling/missing-data protocol.'
+    observable_variables:
+      - 'TFWT T, precursor proxy or formation forcing, B_x, B_n, aggregate OBT B_x + B_n'
+      - 'day/night state, activity forcing, leaf temperature, stage, and plant basis'
+    validation_metrics:
+      - 'Pool-specific and aggregate trajectory error.'
+      - 'Integrated inventory error and component/total conservation residual.'
+      - 'Out-of-sample replicate error stratified by day/night and stage.'
+      - 'Restart equivalence and sensitivity to declared sampling alignment.'
+    minimum_case_contract:
+      - 'Day/night transition convention is pre-registered.'
+      - 'B_x and B_n scopes are defined before labels are assigned.'
+      - 'Option A reduced baseline and Option B candidate are compared on the same cases.'
+    blocking_risks:
+      - 'Rates and forcing functions are not identifiable from sparse aggregate OBT alone.'
+      - 'Synthetic conservation cannot establish biological realism.'
+
+  - item_id: LEAF_DYNAMIC_STOMATAL_RESPONSE
+    selected_model: option_b_dynamic_stomatal_response
+    implementation_stage: V4
+    required_datasets:
+      - 'Time-resolved stomatal conductance or leaf resistance observations.'
+      - 'Matched radiation/PAR, VPD or humidity, leaf temperature, crop stage, and TFWT flux.'
+      - 'Independent observations covering the declared response domains.'
+    observable_variables:
+      - 'g_s, r_c, r_a, r_b, r_tot, g_ex'
+      - 'light, VPD, leaf temperature, stage, and TFWT response'
+    validation_metrics:
+      - 'Conductance and resistance trajectory error.'
+      - 'Reciprocal-unit identity and non-negative/bounded response checks.'
+      - 'Cross-condition and cross-stage generalization error.'
+    minimum_case_contract:
+      - 'Every response function declares domain, units, bounds, provenance, and missing-data policy.'
+      - 'The current resistance chain remains a comparison baseline.'
+    blocking_risks:
+      - 'A fitted response can absorb unmodelled water or plant effects.'
+
+  - item_id: ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+    selected_model: option_b_water_flux_coupled
+    implementation_stage: V4
+    required_datasets:
+      - 'Layer-resolved soil HTO activity and soil-water moisture profiles.'
+      - 'Layer geometry, root depth/activity profile, transpiration or water uptake, and plant TFWT.'
+      - 'Infiltration, drainage, evaporation, boundary conditions, and event timing where relevant.'
+    observable_variables:
+      - 'C_w,i, theta_i, Delta_z_i, q_w,i, root-zone activity, J_root,i'
+      - 'Plant TFWT input and layer/global soil activity inventories'
+    validation_metrics:
+      - 'Layer and global mass-balance residual.'
+      - 'Root-flux and plant-TFWT trajectory error.'
+      - 'Layer refinement, restart equivalence, and boundary-condition sensitivity.'
+      - 'Independent uptake prediction error without production arithmetic as expected data.'
+    minimum_case_contract:
+      - 'Layer boundaries and water/activity basis are explicit.'
+      - 'q_w,i is observed or supplied by a separately reviewed water model.'
+      - 'Root activity ownership and extraction signs are explicit.'
+    blocking_risks:
+      - 'A scalar root rate cannot be silently divided by an assumed length.'
+      - 'Missing hydraulic data blocks activation even if the equation is dimensionally valid.'
+
+  - item_id: SOIL_SIGNED_TRANSPORT_BASELINE
+    selected_model: option_a_signed_transport_interface
+    implementation_stage: MAINTAINED
+    required_datasets:
+      - 'Declared one-layer deposition and signed transport inputs.'
+      - 'Initial soil activity inventory, decay basis, and timing metadata.'
+    observable_variables:
+      - 'M_s, F_deposition, F_transport, lambda, and ledger terms'
+    validation_metrics:
+      - 'Inventory conservation residual.'
+      - 'Restart equivalence under the current signed-flux contract.'
+    minimum_case_contract:
+      - 'Signed transport direction and activity basis are declared.'
+    blocking_risks:
+      - 'No layered or hydrologic claim is allowed from one-layer signed-flux data.'
+
+  - item_id: TFWT_FIXED_STORAGE_BOUNDARY
+    selected_model: option_a_fixed_water_storage
+    implementation_stage: MAINTAINED
+    required_datasets:
+      - 'Declared TFWT activity inventory, leaf/root activity fluxes, water loss, and transformation terms.'
+      - 'Water basis, area basis, timing, and stage metadata.'
+    observable_variables:
+      - 'M_T and each explicit activity flux/loss term'
+    validation_metrics:
+      - 'Activity-ledger conservation residual.'
+      - 'Restart equivalence and unit consistency.'
+    minimum_case_contract:
+      - 'Activity loss is not relabelled as water-mass loss.'
+    blocking_risks:
+      - 'Dynamic water turnover is not validated by an activity-only time series.'
+
+  - item_id: FOOD_ENVIRONMENTAL_TRANSFER_BOUNDARY
+    selected_model: option_a_harvest_event
+    implementation_stage: MAINTAINED
+    required_datasets:
+      - 'Plant and product OBT/TFWT at declared harvest events.'
+      - 'Product water/mass basis, harvest timing, repeated harvest metadata, and product identity.'
+    observable_variables:
+      - 'M_plant,O, M_plant,T, M_food,O, M_food,T, h_O, h_T'
+    validation_metrics:
+      - 'Event transfer and basis reconciliation.'
+      - 'Separate OBT and TFWT product inventory error.'
+      - 'No product-to-intake or dose feedback into environmental equations.'
+    minimum_case_contract:
+      - 'Harvest operator and product state are explicit.'
+      - 'Consumption amount and dose coefficients are external inputs.'
+    blocking_risks:
+      - 'A continuous product rate cannot be validated by a single harvest observation.'
+
+  - item_id: CONSUMPTION_EXTERNAL_INPUT_BOUNDARY
+    selected_model: external_scenario_input
+    implementation_stage: MAINTAINED
+    required_datasets:
+      - 'Case-specific consumption amount, timing, product identity, and mass basis.'
+    observable_variables:
+      - 'Intake scenario values and provenance'
+    validation_metrics:
+      - 'Scenario completeness and unit consistency.'
+    minimum_case_contract:
+      - 'Consumption remains downstream of environmental transfer.'
+    blocking_risks:
+      - 'Scenario assumptions must not be presented as environmental observations.'
+
+  - item_id: DOSE_EXTERNAL_LAYER_BOUNDARY
+    selected_model: keep_external_dose_layer
+    implementation_stage: MAINTAINED
+    required_datasets:
+      - 'External dose-coefficient source, version, applicability, and intake-to-dose contract.'
+    observable_variables:
+      - 'Intake, dose coefficient, and dose output with separate provenance'
+    validation_metrics:
+      - 'Unit consistency and independent dosimetry audit.'
+    minimum_case_contract:
+      - 'Dose output cannot activate or calibrate environmental parameters.'
+    blocking_risks:
+      - 'Regulatory coefficients and environmental transfer parameters must not be merged.'
+
+validation_sequence:
+  - order: 1
+    action: 'Freeze dataset schema, units, time alignment, basis, and replicate identifiers.'
+  - order: 2
+    action: 'Run current v3_frozen_baseline and preserve its output as the comparison reference.'
+  - order: 3
+    action: 'Run candidate-specific dimensional, conservation, restart, and failure-closed checks.'
+  - order: 4
+    action: 'Compare selected candidates against independent observations using pre-registered metrics.'
+  - order: 5
+    action: 'Obtain independent review and explicit implementation authorization before activation.'
+
+not_validation:
+  - 'P7.7B synthetic trajectories are software/interface evidence only.'
+  - 'A plausible literature number without source/applicability/equation evidence is not a validation dataset.'
+  - 'Production solver arithmetic cannot be used to generate expected values for an independent validation claim.'

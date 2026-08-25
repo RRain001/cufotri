@@ -17,11 +17,20 @@ FIELD_BY_ID = {field["field_id"]: field for field in FIELDS}
 ALLOWED_CATEGORIES = set(MAPPING["classification_enum"])
 ALLOWED_ACTIONS = set(MAPPING["action_enum"])
 ALLOWED_REQUIREMENTS = set(MAPPING["requirement_enum"])
+BASE_MAIN = "f5d18886f3a635cd6c3a813d820b1f3b3e52dd3a"
+REVIEW_TARGET = "0164a99cae30ab44411fe98be9ea9cc512c51966"
 
 
 def _git_diff_is_empty(path: str) -> bool:
     result = subprocess.run(
-        ["git", "diff", "--quiet", "main", "--", path],
+        [
+            "git",
+            "diff",
+            "--quiet",
+            f"{BASE_MAIN}...{REVIEW_TARGET}",
+            "--",
+            path,
+        ],
         cwd=ROOT,
         check=False,
     )

@@ -1,0 +1,151 @@
+schema_version: v1
+stage: P7.6C-1
+stage_status: PASS_PHYSICAL_CONSTANT_VALIDATION
+validation_registry: true
+physical_constant_validation_complete: true
+evidence_reconciliation: PASS
+uncertainty_provenance: PASS
+decay_semantic_benchmark: PASS
+validated_parameters: 1
+validated_parameter_count: 1
+active_parameters: 0
+active_parameter_count: 0
+calibration_started: false
+ufotri_parameter_imported: false
+ufotri_active_database: false
+physics_changed: false
+numerical_coupling_changed: false
+v3_physics_ready: false
+
+parameters:
+  - parameter_id: soil.tritium_half_life
+    candidate_record_id: candidate.soil.tritium_half_life
+    evidence_status: EVIDENCE_FOUND
+    validation_status: PASS
+    validated_quantity: universal H-3 nuclear half-life
+    canonical_unit: s
+    selected_value: 388540800.0
+    selected_uncertainty: 777600.0
+    uncertainty_unit: s
+    source_evidence_ids:
+      - evidence.nist.tritium_half_life.2000
+      - evidence.ddep.tritium_half_life.2006
+    selected_source_evidence_id: evidence.ddep.tritium_half_life.2006
+    source_agreement_status: CONSISTENT_DERIVED_EVALUATIONS
+    reconciliation_method: LATEST_RECOGNIZED_EVALUATED_RECOMMENDATION_WITH_EXPLICIT_LINEAGE
+    reconciliation_rationale: >-
+      The NIST evaluation reports 4500 +/- 8 d and the later DDEP/BIPM
+      evaluation reports 4497 +/- 9 d. Their normalized values differ by
+      259200 s, or about 0.25 combined standard uncertainties. DDEP is the
+      later recognized evaluated recommendation and explicitly records its
+      source lineage to the Lucas and Unterweger evaluation. The DDEP value is
+      selected without arithmetic averaging or inverse-variance weighting.
+    equation_match: true
+    unit_match: true
+    applicability_match: true
+    independence_review: >-
+      NIST and DDEP are separate evaluation authorities, but DDEP is not an
+      independent measurement stream: its 3H comments state that the evaluated
+      data table was taken from Lucas and Unterweger (2000). The lineage is
+      recorded explicitly; only the NIST evaluation is counted as an
+      independent evidence stream, and duplicate/derived records never add to
+      that count.
+    remaining_limitations:
+      - >-
+        DDEP notes that its evaluated value is for molecular tritium and that
+        atomic tritium has a small chemical-state-related difference; the V3
+        decay interface intentionally applies no chemical-form correction and
+        does not claim atomic-tritium or bare-triton specialization.
+      - >-
+        The uncertainty is the source one-standard-uncertainty convention; no
+        environmental, soil-retention, biological-elimination, or scenario
+        uncertainty has been combined with it.
+      - >-
+        Validation is limited to the radioactive-decay term and does not
+        validate soil transport, plant transfer, OBT dynamics, exposure, or
+        dose parameters.
+    candidate_status: VALIDATION_CANDIDATE
+    parameter_status: VALIDATED
+    selected_uncertainty_convention: one standard uncertainty (1 sigma; DDEP k=1 presentation)
+    benchmark_id: p7.6c1.decay_half_life_fraction
+    benchmark_status: PASS
+    review_status: INDEPENDENT_REVIEWED
+    provenance:
+      repository: CTEAS_ufotri
+      revision: 2d6a0d1174795980406355055c4855df46ba583f
+      file: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
+      location: parameters[soil.tritium_half_life]
+
+evidence_records:
+  - evidence_id: evidence.nist.tritium_half_life.2000
+    parameter_id: soil.tritium_half_life
+    evaluation_authority: NIST
+    evaluation_date: '2000-07-27'
+    source_kind: EVALUATED_RECOMMENDATION
+    underlying_measurement_basis: >-
+      NIST reviewed 23 experimentally determined tritium half-life values,
+      retained 13 after screening and evaluated them using several statistical
+      procedures; the final recommendation is the average of adopted values
+      from four recent evaluations.
+    source_identifier: doi:10.6028/jres.105.043
+    source_url: https://doi.org/10.6028/jres.105.043
+    source_locator: Abstract; Table 4; section 8 Final Recommended Value; pp. 541-549
+    reported_quantity: recommended physical half-life of H-3
+    reported_value: 4500.0
+    reported_uncertainty: 8.0
+    reported_unit: d
+    uncertainty_convention: one standard uncertainty (1 sigma)
+    canonical_unit: s
+    normalized_value: 388800000.0
+    normalized_uncertainty: 691200.0
+    normalized_unit: s
+    conversion_path: 4500 d x 86400 s d^-1 = 388800000 s; 8 d x 86400 s d^-1 = 691200 s
+    evidence_independence: INDEPENDENT_EVALUATION
+    applicability_scope: >-
+      Universal H-3 radioactive half-life; decay term only; no environmental
+      residence, soil-retention, biological-elimination, or OBT half-life.
+    lineage_source_evidence_ids: []
+    reuses_evaluated_recommendation: true
+    primary_measurement: false
+    provenance:
+      repository: CTEAS_ufotri
+      revision: 2d6a0d1174795980406355055c4855df46ba583f
+      file: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
+      location: evidence_records[evidence.nist.tritium_half_life.2000]
+
+  - evidence_id: evidence.ddep.tritium_half_life.2006
+    parameter_id: soil.tritium_half_life
+    evaluation_authority: DDEP / LNE-LNHB / BIPM-5
+    evaluation_date: '2006-04'
+    source_kind: EVALUATED_RECOMMENDATION
+    underlying_measurement_basis: >-
+      The revised DDEP evaluation states that its 3H experimental-data table
+      was taken from Lucas and Unterweger (2000), then gives an adopted value
+      of 12.312(25) years, or 4497(9) days, after its own evaluation procedure.
+    source_identifier: ddep:monographie-bipm-5-comments-3h-2006
+    source_url: https://www.bipm.org/utils/common/pdf/monographieRI/Monographie_BIPM-5_Comments_Vol1-3.pdf
+    source_locator: Comments on evaluation 3H; section 2 Nuclear Data; pp. 1-5
+    reported_quantity: adopted physical half-life of H-3
+    reported_value: 4497.0
+    reported_uncertainty: 9.0
+    reported_unit: d
+    uncertainty_convention: combined standard uncertainty; DDEP presentation uses k=1
+    canonical_unit: s
+    normalized_value: 388540800.0
+    normalized_uncertainty: 777600.0
+    normalized_unit: s
+    conversion_path: 4497 d x 86400 s d^-1 = 388540800 s; 9 d x 86400 s d^-1 = 777600 s; DDEP also reports 12.312(25) years
+    evidence_independence: DERIVED_FROM_EXISTING_EVALUATION
+    applicability_scope: >-
+      Evaluated 3H half-life used only as nuclear-decay evidence; the source
+      notes a molecular-tritium evaluation and no chemical-form correction is
+      introduced into the V3 decay interface.
+    lineage_source_evidence_ids:
+      - evidence.nist.tritium_half_life.2000
+    reuses_evaluated_recommendation: true
+    primary_measurement: false
+    provenance:
+      repository: CTEAS_ufotri
+      revision: 2d6a0d1174795980406355055c4855df46ba583f
+      file: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
+      location: evidence_records[evidence.ddep.tritium_half_life.2006]

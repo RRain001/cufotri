@@ -1,0 +1,596 @@
+schema_version: v1
+stage: P7.6C-3
+status: PASS_VALIDATION_FEASIBILITY_ASSESSMENT
+feasibility_registry: true
+all_parameters_assessed: true
+mapped_parameter_count: 26
+assessment_record_count: 27
+derived_quantity_count: 1
+validation_feasible: 4
+validation_feasible_with_limitations: 8
+physics_redesign_required: 9
+not_importable: 4
+insufficient_information: 1
+new_validation_candidates: 0
+validated_parameters: 1
+active_parameters: 0
+calibration_started: false
+ufotri_parameter_imported: false
+ufotri_active_database: false
+physics_changed: false
+numerical_coupling_changed: false
+v3_physics_ready: false
+required_v3_parameter_ids:
+  - dose.dose_coefficient
+  - food.crop
+  - food.harvest_fraction
+  - food.tfwt_harvest_fraction
+  - intake.annual_consumption_amount
+  - intake.food_product_mass
+  - leaf.crop
+  - leaf.growth_stage
+  - leaf.r_a
+  - leaf.r_b
+  - leaf.r_c
+  - obt.daylight_multiplier
+  - obt.kf
+  - obt.kr
+  - obt.nighttime_multiplier
+  - obt.photosynthetic_activity
+  - obt.plant_mass
+  - obt.temperature
+  - root.k_root
+  - soil.layer_depth
+  - soil.transport_flux
+  - soil.tritium_half_life
+  - soil.water_content
+  - tfwt.transformation_flux
+  - tfwt.water_content
+  - tfwt.water_loss_flux
+
+parameters:
+  - mapping_id: mapping.dose.dose_coefficient
+    parameter_id: dose.dose_coefficient
+    subsystem: exposure.dose_v3
+    current_v3_equation: 'D = I_food * e'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: NOT_IMPORTABLE
+    physics_alignment: COMPATIBLE_ROLE_BUT_EXTERNAL
+    required_action: KEEP_EXTERNAL_DOSIMETRY_INPUT
+    validation_data_requirement: >-
+      Use a separately governed dosimetry source only; no UFOTRI biological
+      validation dataset is applicable to this coefficient.
+    uncertainty_source: external dose-coefficient metrology or regulatory source
+    blocking_reason: EXTERNAL_REGULATORY_DOSE_COEFFICIENT
+    review_notes: >-
+      The role and unit match, but this is an external dose coefficient rather
+      than an environmental or plant physics parameter. It must not enter the
+      UFOTRI physical-parameter validation path.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.dose.dose_coefficient]"}
+
+  - mapping_id: mapping.food.crop
+    parameter_id: food.crop
+    subsystem: plant.food_v3
+    current_v3_equation: plant-to-food transfer is keyed by the explicit crop identifier
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: NOT_IMPORTABLE
+    physics_alignment: METADATA_ROLE_ONLY
+    required_action: KEEP_CASE_METADATA_EXPLICIT
+    validation_data_requirement: >-
+      A future case may document crop identity and applicability, but no
+      universal UFOTRI parameter value is to be imported.
+    uncertainty_source: crop identity and case applicability metadata
+    blocking_reason: SCENARIO_OR_METADATA_INPUT
+    review_notes: >-
+      Crop identity selects a pathway context. It is not a numerical UFOTRI
+      physical parameter and cannot be admitted as one.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.food.crop]"}
+
+  - mapping_id: mapping.food.harvest_fraction
+    parameter_id: food.harvest_fraction
+    subsystem: plant.food_v3
+    current_v3_equation: 'M_food = f_h * A_h * M_plant'
+    ufotri_mapping_status: NO_MAPPING
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: INCOMPATIBLE_EVENT_VS_CONTINUOUS_FOOD_CHAIN
+    required_action: REDESIGN_FOOD_CHAIN_EVENT_AND_CONTINUOUS_STATE_MAPPING
+    validation_data_requirement: >-
+      Obtain matched plant-inventory and harvest-product measurements only
+      after the event-versus-continuous representation is explicitly frozen.
+    uncertainty_source: future matched harvest mass and activity observations
+    blocking_reason: NO_ADMISSIBLE_TRANSFORMATION_FROM_CONTINUOUS_RATES
+    review_notes: >-
+      UFOTRI provides continuous food-chain transfer rates and compartments;
+      the current V3 harvest-event fraction is a different model quantity.
+      Do not derive the fraction from a reported rate.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.food.harvest_fraction]"}
+
+  - mapping_id: mapping.food.tfwt_harvest_fraction
+    parameter_id: food.tfwt_harvest_fraction
+    subsystem: plant.food_v3
+    current_v3_equation: 'M_food,TFWT = f_tfwt * A_h * M_TFWT'
+    ufotri_mapping_status: NO_MAPPING
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: INCOMPATIBLE_EVENT_VS_CONTINUOUS_FOOD_CHAIN
+    required_action: REDESIGN_TFWT_HARVEST_EVENT_REPRESENTATION
+    validation_data_requirement: >-
+      Obtain paired plant TFWT inventory and harvested-product activity data
+      only after a compatible event representation exists.
+    uncertainty_source: future matched TFWT harvest observations
+    blocking_reason: NO_ADMISSIBLE_TRANSFORMATION_TO_HARVEST_FRACTION
+    review_notes: >-
+      UFOTRI separates plant water and organic compartments but does not define
+      the current V3 TFWT harvest-event fraction.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.food.tfwt_harvest_fraction]"}
+
+  - mapping_id: mapping.intake.annual_consumption_amount
+    parameter_id: intake.annual_consumption_amount
+    subsystem: exposure.intake_v3
+    current_v3_equation: 'I_food = (M_food / m_food) * R_consumption'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: NOT_IMPORTABLE
+    physics_alignment: COMPATIBLE_ROLE_BUT_EXPOSURE_SCENARIO
+    required_action: KEEP_DIET_INPUT_OUTSIDE_PHYSICS_VALIDATION
+    validation_data_requirement: >-
+      Use a separately specified and documented exposure scenario with its own
+      population and dietary uncertainty model.
+    uncertainty_source: exposure survey or regulatory scenario source
+    blocking_reason: EXTERNAL_EXPOSURE_HABIT
+    review_notes: >-
+      The unit conversion from daily to annual is arithmetic, but the quantity
+      is a consumer habit/scenario input, not UFOTRI environmental physics.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.intake.annual_consumption_amount]"}
+
+  - mapping_id: mapping.intake.food_product_mass
+    parameter_id: intake.food_product_mass
+    subsystem: exposure.intake_v3
+    current_v3_equation: 'C_food = M_food / m_food'
+    ufotri_mapping_status: SOURCE_UNAVAILABLE
+    validation_feasibility: INSUFFICIENT_INFORMATION
+    physics_alignment: UNKNOWN
+    required_action: RECOVER_OR_DEFINE_THE_PRODUCT_MASS_SEMANTICS
+    validation_data_requirement: >-
+      Recover the original UFOTRI definition, basis, and source artifact before
+      any feasibility decision can be revisited.
+    uncertainty_source: source definition and product-basis uncertainty unavailable
+    blocking_reason: SOURCE_UNAVAILABLE_AND_DEFINITION_INCOMPLETE
+    review_notes: >-
+      The recovered manual does not establish the original UFOTRI quantity
+      corresponding to the explicit V3 product-mass denominator.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.intake.food_product_mass]"}
+
+  - mapping_id: mapping.leaf.crop
+    parameter_id: leaf.crop
+    subsystem: plant.leaf_exchange_resistance
+    current_v3_equation: resistance chain is evaluated for the explicit crop context
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: NOT_IMPORTABLE
+    physics_alignment: METADATA_ROLE_ONLY
+    required_action: KEEP_CROP_CONTEXT_EXPLICIT
+    validation_data_requirement: >-
+      Use crop identity to stratify a future resistance validation dataset;
+      do not import it as a numerical parameter.
+    uncertainty_source: crop identity and canopy applicability metadata
+    blocking_reason: SCENARIO_OR_METADATA_INPUT
+    review_notes: >-
+      Crop identity is necessary context for resistance validation but is not a
+      numerical UFOTRI coefficient.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.leaf.crop]"}
+
+  - mapping_id: mapping.leaf.growth_stage
+    parameter_id: leaf.growth_stage
+    subsystem: plant.leaf_exchange_resistance
+    current_v3_equation: current V3 resistance chain accepts growth-stage metadata but does not derive a stage-dependent resistance equation
+    ufotri_mapping_status: CONCEPTUAL_ANALOGUE
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: STAGE_ONTOLOGY_AND_EQUATION_MISSING
+    required_action: DEFINE_STAGE_DEPENDENT_RESISTANCE_MODEL
+    validation_data_requirement: >-
+      Matched growth-stage, canopy-geometry, meteorology, and resistance data
+      can be used only after a stage ontology and equation are frozen.
+    uncertainty_source: crop-stage classification and stage-dependent resistance observations
+    blocking_reason: VEGETATION_PERIOD_CANNOT_BE_IMPORTED_AS_GROWTH_STAGE
+    review_notes: >-
+      The recovered vegetation-period discussion is related but does not define
+      the current V3 discrete stage variable or its resistance relation.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.leaf.growth_stage]"}
+
+  - mapping_id: mapping.leaf.r_a
+    parameter_id: leaf.r_a
+    subsystem: plant.leaf_exchange_resistance
+    current_v3_equation: 'r_total = r_a + r_b + r_c; g_ex = 1/r_total'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE
+    physics_alignment: EXACT_ROLE_AND_UNIT
+    required_action: COLLECT_MATCHED_AERODYNAMIC_RESISTANCE_DATA
+    validation_data_requirement: >-
+      Leaf or canopy resistance observations paired with wind, stability,
+      geometry, and measurement-basis metadata.
+    uncertainty_source: resistance measurement and meteorological uncertainty
+    blocking_reason: NONE
+    review_notes: >-
+      UFOTRI and V3 use the same aerodynamic resistance role and unit. This
+      permits a future validation pathway but does not select a value.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.leaf.r_a]"}
+
+  - mapping_id: mapping.leaf.r_b
+    parameter_id: leaf.r_b
+    subsystem: plant.leaf_exchange_resistance
+    current_v3_equation: 'r_total = r_a + r_b + r_c; g_ex = 1/r_total'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE
+    physics_alignment: EXACT_ROLE_AND_UNIT
+    required_action: COLLECT_MATCHED_BOUNDARY_LAYER_RESISTANCE_DATA
+    validation_data_requirement: >-
+      Boundary-layer resistance observations with leaf geometry, wind, and
+      micro-meteorological metadata.
+    uncertainty_source: boundary-layer measurement and aerodynamic uncertainty
+    blocking_reason: NONE
+    review_notes: >-
+      UFOTRI and V3 use the same quasi-laminar boundary-layer resistance role;
+      validation remains separate from parameter activation.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.leaf.r_b]"}
+
+  - mapping_id: mapping.leaf.r_c
+    parameter_id: leaf.r_c
+    subsystem: plant.leaf_exchange_resistance
+    current_v3_equation: 'r_total = r_a + r_b + r_c; g_ex = 1/r_total'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE
+    physics_alignment: EXACT_ROLE_AND_UNIT
+    required_action: COLLECT_MATCHED_CANOPY_OR_SURFACE_RESISTANCE_DATA
+    validation_data_requirement: >-
+      Surface or canopy resistance observations with stomatal state, crop
+      context, and exchange measurement basis.
+    uncertainty_source: surface-resistance measurement and stomatal-state uncertainty
+    blocking_reason: NONE
+    review_notes: >-
+      The component role is semantically identical, but the measurement basis
+      and crop context must be frozen in a future validation dataset.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.leaf.r_c]"}
+
+  - mapping_id: mapping.obt.daylight_multiplier
+    parameter_id: obt.daylight_multiplier
+    subsystem: plant.obt_v3
+    current_v3_equation: 'k_f,eff = k_f * m_day during daylight'
+    ufotri_mapping_status: CONCEPTUAL_ANALOGUE
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: NORMALIZATION_AND_DAYLIGHT_MECHANISM_MISSING
+    required_action: FREEZE_DAYLIGHT_FORMATION_MODEL
+    validation_data_requirement: >-
+      Time-resolved daylight TFWT/OBT data can be used only after the baseline
+      kf normalization and daylight state equation are defined.
+    uncertainty_source: daylight state classification and time-resolved OBT formation data
+    blocking_reason: NO_ADMISSIBLE_SCALAR_MULTIPLIER_TRANSFORMATION
+    review_notes: >-
+      The manual's day treatment does not provide a normalized V3 multiplier;
+      importing a percentage or rate would add an unsupported assumption.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.daylight_multiplier]"}
+
+  - mapping_id: mapping.obt.kf
+    parameter_id: obt.kf
+    subsystem: plant.obt_v3
+    current_v3_equation: 'dM_OBT/dt = k_f * M_TFWT - k_r * M_OBT'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: EXACT_FIRST_ORDER_ROLE_UNIT_SCALE_ONLY
+    required_action: FREEZE_BIOLOGICAL_SCOPE_AND_VALIDATE_FIRST_ORDER_FORMATION
+    validation_data_requirement: >-
+      Time-resolved paired TFWT and OBT inventories with crop stage,
+      daylight state, chemical form, and sampling uncertainty.
+    uncertainty_source: OBT/TFWT observations, biological scope, and manual rate-basis uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      The first-order formation role and unit conversion are compatible, but
+      the manual rate may be equilibrium-derived and its biological scope is
+      not yet identical to the V3 state. No kf value is admitted.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.kf]"}
+
+  - mapping_id: mapping.obt.kr
+    parameter_id: obt.kr
+    subsystem: plant.obt_v3
+    current_v3_equation: 'dM_OBT/dt = k_f * M_TFWT - k_r * M_OBT'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: EXACT_FIRST_ORDER_ROLE_UNIT_SCALE_ONLY
+    required_action: FREEZE_RETURN_LOSS_SCOPE_AND_VALIDATE_FIRST_ORDER_TURNOVER
+    validation_data_requirement: >-
+      Time-resolved OBT depuration data that distinguishes return, loss, and
+      non-exchangeable organic compartments.
+    uncertainty_source: OBT depuration observations and biological half-time uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      The first-order turnover role is compatible, but the manual mixes
+      exchangeable and non-exchangeable compartments and does not select a V3
+      kr value.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.kr]"}
+
+  - mapping_id: mapping.obt.nighttime_multiplier
+    parameter_id: obt.nighttime_multiplier
+    subsystem: plant.obt_v3
+    current_v3_equation: 'k_f,eff = k_f * m_night during nighttime'
+    ufotri_mapping_status: CONCEPTUAL_ANALOGUE
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: NORMALIZATION_AND_NIGHTTIME_MECHANISM_MISSING
+    required_action: FREEZE_NIGHTTIME_FORMATION_MODEL
+    validation_data_requirement: >-
+      Time-resolved nighttime TFWT/OBT data can be used only after a baseline
+      kf and multiplier normalization are defined.
+    uncertainty_source: nighttime state classification and OBT formation data
+    blocking_reason: NO_ADMISSIBLE_SCALAR_MULTIPLIER_TRANSFORMATION
+    review_notes: >-
+      The recovered day/night text is a mechanism analogue, not a normalized
+      V3 multiplier.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.nighttime_multiplier]"}
+
+  - mapping_id: mapping.obt.photosynthetic_activity
+    parameter_id: obt.photosynthetic_activity
+    subsystem: plant.obt_v3
+    current_v3_equation: current V3 OBT solver has no photosynthesis state equation
+    ufotri_mapping_status: CONCEPTUAL_ANALOGUE
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: V3_PHOTOSYNTHESIS_EQUATION_ABSENT
+    required_action: DESIGN_AND_FREEZE_PHOTOSYNTHESIS_COUPLING
+    validation_data_requirement: >-
+      Independent photosynthetic activity, TFWT, OBT, growth, and light data
+      after a scalar or state-equation definition is established.
+    uncertainty_source: photosynthesis and biological growth observations
+    blocking_reason: NO_SCALAR_V3_FORCING_DEFINITION
+    review_notes: >-
+      A mechanistic description cannot be converted into the reserved V3
+      forcing field without adding a new equation.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.photosynthetic_activity]"}
+
+  - mapping_id: mapping.obt.plant_mass
+    parameter_id: obt.plant_mass
+    subsystem: plant.obt_v3
+    current_v3_equation: 'C_OBT = M_OBT / m_plant'
+    ufotri_mapping_status: CONCEPTUAL_ANALOGUE
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: FRESH_MASS_VS_HYDROGEN_MASS_BASIS_MISMATCH
+    required_action: FREEZE_PLANT_MASS_AND_HYDROGEN_BASIS_RELATION
+    validation_data_requirement: >-
+      Paired fresh/dry/water/organic mass and hydrogen-content measurements for
+      the exact plant and product compartments.
+    uncertainty_source: biomass, water content, and hydrogen-content measurements
+    blocking_reason: NO_ADMISSIBLE_MASS_BASIS_TRANSFORMATION
+    review_notes: >-
+      UFOTRI compartment hydrogen masses are not the current V3 fresh-plant
+      mass denominator. A new basis relation is required before validation.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.plant_mass]"}
+
+  - mapping_id: mapping.obt.temperature
+    parameter_id: obt.temperature
+    subsystem: plant.obt_v3
+    current_v3_equation: current V3 OBT solver has no temperature-dependent formation or turnover equation
+    ufotri_mapping_status: NO_MAPPING
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: OBT_TEMPERATURE_EQUATION_ABSENT
+    required_action: DEFINE_TEMPERATURE_DEPENDENT_OBT_EQUATION_OR_EXCLUDE
+    validation_data_requirement: >-
+      Temperature-stratified TFWT/OBT formation and depuration observations
+      after an explicit temperature response equation is defined.
+    uncertainty_source: temperature measurement and response-model uncertainty
+    blocking_reason: SHARED_METEOROLOGICAL_NAME_IS_NOT_A_PHYSICAL_MAPPING
+    review_notes: >-
+      Temperature appears in the recovered material in other contexts, but no
+      current V3 OBT temperature relation is defined.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.obt.temperature]"}
+
+  - mapping_id: mapping.root.k_root
+    parameter_id: root.k_root
+    subsystem: plant.root_v3
+    current_v3_equation: 'J_root = k_root * C_soil'
+    ufotri_mapping_status: CONCEPTUAL_ANALOGUE
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    physics_alignment: RATE_VS_VELOCITY_AND_LAYER_STATE_MISMATCH
+    required_action: REDESIGN_ROOT_UPTAKE_STATE_AND_LAYER_AGGREGATION
+    validation_data_requirement: >-
+      Layer-resolved soil-water, transpiration, root-uptake flux, and plant
+      activity data after the one-layer boundary and coefficient meaning are
+      redesigned.
+    uncertainty_source: root uptake, transpiration, soil-water storage, and layer aggregation
+    blocking_reason: NO_ADMISSIBLE_RATE_TO_VELOCITY_TRANSFORMATION
+    review_notes: >-
+      UFOTRI uses layer-distributed first-order rates tied to transpiration;
+      the current V3 coefficient is a one-layer m/s velocity. Names and units
+      do not authorize conversion.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.root.k_root]"}
+
+  - mapping_id: mapping.soil.layer_depth
+    parameter_id: soil.layer_depth
+    subsystem: plant.soil_v3
+    current_v3_equation: 'C_s = M_s / W_s; layer_depth defines the current soil-water layer'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: COMPATIBLE_GEOMETRY_ONE_LAYER_SELECTION_REQUIRED
+    required_action: VALIDATE_AS_CASE_GEOMETRY_NOT_AS_UNIVERSAL_COEFFICIENT
+    validation_data_requirement: >-
+      Documented soil-layer boundaries, sampling depth, and water-basis metadata
+      for each validation case.
+    uncertainty_source: layer-boundary measurement and selected-layer applicability
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      The dimensional conversion is explicit, but UFOTRI has multiple layers
+      while V3 has one authoritative layer. A selected layer must be declared.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.soil.layer_depth]"}
+
+  - mapping_id: mapping.soil.transport_flux
+    parameter_id: soil.transport_flux
+    subsystem: plant.soil_v3
+    current_v3_equation: 'dM_s/dt includes F_transport; positive enters the current V3 layer'
+    ufotri_mapping_status: TRANSFORMABLE_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: COMPATIBLE_SIGNED_BOUNDARY_FLUX
+    required_action: FREEZE_BOUNDARY_ORIENTATION_AND_VALIDATE_FLUX
+    validation_data_requirement: >-
+      Signed layer-boundary flux or an independent soil-inventory balance with
+      time, depth, water movement, and sign-convention metadata.
+    uncertainty_source: flux measurement, boundary orientation, and hydraulic/diffusive uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      A sign reversal is admissible at a declared boundary. The UFOTRI
+      hydraulic/diffusive derivation itself is not imported into V3.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.soil.transport_flux]"}
+
+  - mapping_id: mapping.soil.tritium_half_life
+    parameter_id: soil.tritium_half_life
+    subsystem: plant.soil_v3
+    current_v3_equation: 'lambda_T = ln(2) / T_half; dM_s/dt includes -lambda_T M_s'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE
+    physics_alignment: UNIVERSAL_RADIOACTIVE_DECAY_CONSTANT
+    required_action: PRESERVE_P7_6C1_VALIDATION_WITHOUT_NEW_CANDIDATE
+    validation_data_requirement: >-
+      No new UFOTRI value is required; retain the P7.6C-1 evaluated nuclear-data
+      reconciliation and decay semantic benchmark.
+    uncertainty_source: P7.6C-1 NIST/DDEP evaluated nuclear-data uncertainty
+    blocking_reason: NONE
+    review_notes: >-
+      This is the one existing validated physical constant. The feasibility
+      assessment does not reopen, replace, or activate it.
+    current_v3_status: VALIDATED
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.soil.tritium_half_life]"}
+
+  - mapping_id: mapping.soil.water_content
+    parameter_id: soil.water_content
+    subsystem: plant.soil_v3
+    current_v3_equation: 'C_s = M_s / W_s'
+    ufotri_mapping_status: TRANSFORMABLE_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: COMPATIBLE_WATER_BASIS_EXPLICIT_CONVERSION
+    required_action: FREEZE_WATER_BASIS_LAYER_AND_DENSITY_CONVENTION
+    validation_data_requirement: >-
+      Soil water mass per area or volumetric water content with layer depth,
+      density, time, and moisture-basis metadata.
+    uncertainty_source: soil moisture, density, layer depth, and basis-conversion uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      The conversion to water depth is dimensional and explicit, but the
+      selected source basis and layer must be fixed before validation.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.soil.water_content]"}
+
+  - mapping_id: mapping.tfwt.transformation_flux
+    parameter_id: tfwt.transformation_flux
+    subsystem: plant.tfwt_v3
+    current_v3_equation: 'dM_TFWT/dt includes -F_tfwt_to_obt'
+    ufotri_mapping_status: TRANSFORMABLE_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: COMPATIBLE_RATE_TO_AREAL_FLUX_BOUNDARY
+    required_action: FREEZE_TFWT_INVENTORY_BASIS_AND_VALIDATE_FLUX
+    validation_data_requirement: >-
+      Paired TFWT areal inventory, OBT formation observations, and explicit
+      transfer-rate or flux timing with units.
+    uncertainty_source: TFWT/OBT inventory, transfer-rate, and areal-basis uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      Multiplying an explicitly measured rate by the explicitly defined areal
+      inventory is a possible future transformation; it is not a value import.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.tfwt.transformation_flux]"}
+
+  - mapping_id: mapping.tfwt.water_content
+    parameter_id: tfwt.water_content
+    subsystem: plant.tfwt_v3
+    current_v3_equation: 'C_TFWT = M_TFWT / W_p'
+    ufotri_mapping_status: DIRECT_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: COMPATIBLE_WATER_INVENTORY_BASIS_UNIT_SCALE_ONLY
+    required_action: FREEZE_PLANT_WATER_BASIS_AND_VALIDATE_INVENTORY
+    validation_data_requirement: >-
+      Direct plant TFWT water inventory or an explicitly convertible water
+      mass/area measurement with plant geometry and sampling metadata.
+    uncertainty_source: plant water inventory, areal normalization, and unit-conversion uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      The role is compatible, but the plant-water basis and area normalization
+      must be demonstrated for the future case.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.tfwt.water_content]"}
+
+  - mapping_id: mapping.tfwt.water_loss_flux
+    parameter_id: tfwt.water_loss_flux
+    subsystem: plant.tfwt_v3
+    current_v3_equation: 'dM_TFWT/dt includes -F_water_loss'
+    ufotri_mapping_status: TRANSFORMABLE_MAPPING
+    validation_feasibility: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    physics_alignment: COMPATIBLE_RATE_TO_AREAL_FLUX_BOUNDARY
+    required_action: FREEZE_WATER_LOSS_BOUNDARY_AND_VALIDATE_FLUX
+    validation_data_requirement: >-
+      Time-resolved plant TFWT inventory, transpiration/water-loss observations,
+      and explicit areal normalization.
+    uncertainty_source: transpiration, water-loss, TFWT inventory, and timing uncertainty
+    blocking_reason: LIMITATION_ONLY
+    review_notes: >-
+      A rate-times-inventory transformation may be assessed with explicit
+      state and timing metadata; no UFOTRI rate is imported here.
+    current_v3_status: PROVISIONAL
+    derived_quantity: false
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "parameters[mapping.tfwt.water_loss_flux]"}
+
+  - mapping_id: derived.leaf.g_ex
+    parameter_id: leaf.g_ex
+    subsystem: plant.leaf_exchange_resistance
+    current_v3_equation: 'g_ex = 1 / (r_a + r_b + r_c)'
+    ufotri_mapping_status: DERIVED_QUANTITY
+    validation_feasibility: VALIDATION_FEASIBLE
+    physics_alignment: DERIVED_FROM_EXACT_RESISTANCE_COMPONENTS
+    required_action: DERIVE_ONLY_FROM_REVIEWED_RESISTANCE_COMPONENTS
+    validation_data_requirement: >-
+      Validate the derived conductance against independent exchange-flux or
+      conductance observations after r_a, r_b, and r_c are assessed.
+    uncertainty_source: propagated r_a/r_b/r_c measurement uncertainty and exchange observations
+    blocking_reason: NONE
+    review_notes: >-
+      g_ex is included to close the requested leaf review but is not an
+      independent UFOTRI parameter or an importable value.
+    current_v3_status: PROVISIONAL
+    derived_quantity: true
+    provenance: {repository: CTEAS_ufotri, revision: f0195c77d0521ec4ade9892e88318856934a3243, file: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml, location: "derived[leaf.g_ex]"}

@@ -1,0 +1,837 @@
+schema_version: v1
+stage: P7.6C-2
+mapping_manifest: true
+status: PASS_SEMANTIC_MAPPING_COMPLETE
+ufotri_mapping_complete: true
+source_inventory_complete: true
+new_validation_candidates: 0
+validated_parameters: 1
+active_parameters: 0
+calibration_started: false
+ufotri_parameter_imported: false
+ufotri_active_database: false
+physics_changed: false
+numerical_coupling_changed: false
+v3_physics_ready: false
+required_v3_parameter_ids:
+  - dose.dose_coefficient
+  - food.crop
+  - food.harvest_fraction
+  - food.tfwt_harvest_fraction
+  - intake.annual_consumption_amount
+  - intake.food_product_mass
+  - leaf.crop
+  - leaf.growth_stage
+  - leaf.r_a
+  - leaf.r_b
+  - leaf.r_c
+  - obt.daylight_multiplier
+  - obt.kf
+  - obt.kr
+  - obt.nighttime_multiplier
+  - obt.photosynthetic_activity
+  - obt.plant_mass
+  - obt.temperature
+  - root.k_root
+  - soil.layer_depth
+  - soil.transport_flux
+  - soil.tritium_half_life
+  - soil.water_content
+  - tfwt.transformation_flux
+  - tfwt.water_content
+  - tfwt.water_loss_flux
+
+parameters:
+  - mapping_id: mapping.dose.dose_coefficient
+    v3_parameter_id: dose.dose_coefficient
+    v3_subsystem: exposure.dose_v3
+    v3_symbol: e
+    v3_equation: 'D = I_food * e'
+    v3_quantity_definition: public dose coefficient applied to an annual intake inventory
+    v3_canonical_unit: Sv/Bq
+    v3_state_basis: annual activity intake to committed dose
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: DF
+    ufotri_equation: 'D_IH = BR * DF * C_a,t * QF * 1.5 (106); D_IN = QF * DF * sum(c_N * C_N,f) (107)'
+    ufotri_quantity_definition: dose-conversion factor selected for inhalation or ingestion
+    ufotri_reported_unit: Sv/Bq
+    ufotri_compartment: human exposure and dose pathway
+    ufotri_time_basis: time-integrated air or food concentration; selected dose commitment
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: NONE
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No model transformation is required for the generic Sv/Bq coefficient role.
+    mapping_notes: >-
+      This is an external/regulatory or scenario-selected dose coefficient, not
+      an UFOTRI-derived biological parameter. The manual treats ingested OBT
+      like HTO and states that a separate OBT coefficient is not available;
+      semantic compatibility therefore does not validate the V3 age/pathway
+      coefficient or import the manual value.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.dose.dose_coefficient]"}
+
+  - mapping_id: mapping.food.crop
+    v3_parameter_id: food.crop
+    v3_subsystem: plant.food_v3
+    v3_symbol: crop_identifier
+    v3_equation: plant-to-food transfer is keyed by the explicit crop identifier
+    v3_quantity_definition: crop identity carried with the harvest event
+    v3_canonical_unit: identifier
+    v3_state_basis: plant crop metadata at harvest
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: plant species or representative green vegetable
+    ufotri_equation: representative green vegetable and grass plant compartments are selected by food pathway
+    ufotri_quantity_definition: plant/crop identity used to select the food-chain compartment
+    ufotri_reported_unit: identifier
+    ufotri_compartment: plant and food-chain pathway
+    ufotri_time_basis: model run and vegetation period
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: NONE
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No numerical transformation applies to an identifier.
+    mapping_notes: The semantic match is metadata only; it does not admit a crop value or claim plant-species equivalence beyond the recovered manual scope.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.food.crop]"}
+
+  - mapping_id: mapping.food.harvest_fraction
+    v3_parameter_id: food.harvest_fraction
+    v3_subsystem: plant.food_v3
+    v3_symbol: f_h
+    v3_equation: 'M_food = f_h * A_h * M_plant'
+    v3_quantity_definition: fraction of plant inventory transferred by one explicit harvest event
+    v3_canonical_unit: '1'
+    v3_state_basis: plant inventory at an event timestamp
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: not recovered
+    ufotri_equation: no explicit plant-to-food harvest-event fraction was recovered
+    ufotri_quantity_definition: no same UFOTRI quantity recovered
+    ufotri_reported_unit: not applicable
+    ufotri_compartment: continuous plant, cow, milk, and product compartments
+    ufotri_time_basis: daily transfer-rate system rather than an event harvest
+    mapping_status: NO_MAPPING
+    unit_relationship: NOT_APPLICABLE
+    equation_relationship: INCOMPATIBLE
+    compartment_relationship: INCOMPATIBLE
+    state_basis_relationship: INCOMPATIBLE
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No admissible transformation from continuous UFOTRI transfer rates to a V3 harvest event fraction was recovered.
+    mapping_notes: >-
+      The manual selects representative food products and uses continuous
+      food-chain transfer rates; it does not define the V3 event fraction.
+      Do not derive f_h from any reported transfer rate or benchmark result.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.food.harvest_fraction]"}
+
+  - mapping_id: mapping.food.tfwt_harvest_fraction
+    v3_parameter_id: food.tfwt_harvest_fraction
+    v3_subsystem: plant.food_v3
+    v3_symbol: f_tfwt
+    v3_equation: 'M_food,TFWT = f_tfwt * A_h * M_TFWT'
+    v3_quantity_definition: fraction of plant TFWT inventory transferred by one harvest event
+    v3_canonical_unit: '1'
+    v3_state_basis: plant TFWT inventory at an event timestamp
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: not recovered
+    ufotri_equation: no separate TFWT harvest-event fraction was recovered
+    ufotri_quantity_definition: no same UFOTRI quantity recovered
+    ufotri_reported_unit: not applicable
+    ufotri_compartment: plant and food-chain compartments
+    ufotri_time_basis: continuous daily transfer-rate system
+    mapping_status: NO_MAPPING
+    unit_relationship: NOT_APPLICABLE
+    equation_relationship: INCOMPATIBLE
+    compartment_relationship: INCOMPATIBLE
+    state_basis_relationship: INCOMPATIBLE
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No admissible transformation from the recovered UFOTRI compartment rates to a separate V3 TFWT harvest fraction.
+    mapping_notes: UFOTRI separates plant water and organic compartments but does not provide the current V3 harvest-event parameter.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.food.tfwt_harvest_fraction]"}
+
+  - mapping_id: mapping.intake.annual_consumption_amount
+    v3_parameter_id: intake.annual_consumption_amount
+    v3_subsystem: exposure.intake_v3
+    v3_symbol: R_consumption
+    v3_equation: 'I_food = (M_food / m_food) * R_consumption'
+    v3_quantity_definition: annual mass consumption rate for one food product
+    v3_canonical_unit: kg/year
+    v3_state_basis: consumer and food-product exposure scenario
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: c_N
+    ufotri_equation: 'D_IN = QF * DF * sum(c_N * C_N,f) (107)'
+    ufotri_quantity_definition: consumption rate for food class N
+    ufotri_reported_unit: kg/day
+    ufotri_compartment: human diet scenario
+    ufotri_time_basis: daily rate integrated over the selected commitment period
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: UNIT_SCALE_ONLY
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: UNIT_SCALE_ONLY
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: 'R_annual = c_N * 365 d/year (or an explicitly configured calendar contract); no scientific coefficient is inferred.'
+    mapping_notes: >-
+      This is an exposure habit/scenario input, not UFOTRI physical evidence.
+      The mapping records the unit and role only and cannot import the manual
+      diet table into V3 production configuration.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.intake.annual_consumption_amount]"}
+
+  - mapping_id: mapping.intake.food_product_mass
+    v3_parameter_id: intake.food_product_mass
+    v3_subsystem: exposure.intake_v3
+    v3_symbol: m_food
+    v3_equation: 'C_food = M_food / m_food'
+    v3_quantity_definition: mass denominator for the explicit V3 food-product inventory
+    v3_canonical_unit: kg
+    v3_state_basis: food-product inventory concentration denominator
+    ufotri_source_id: ufotri.source.code.unavailable
+    ufotri_symbol: SOURCE_UNAVAILABLE
+    ufotri_equation: SOURCE_UNAVAILABLE
+    ufotri_quantity_definition: SOURCE_UNAVAILABLE
+    ufotri_reported_unit: SOURCE_UNAVAILABLE
+    ufotri_compartment: SOURCE_UNAVAILABLE
+    ufotri_time_basis: SOURCE_UNAVAILABLE
+    mapping_status: SOURCE_UNAVAILABLE
+    unit_relationship: UNKNOWN
+    equation_relationship: UNKNOWN
+    compartment_relationship: UNKNOWN
+    state_basis_relationship: UNKNOWN
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: NOT_AVAILABLE
+    mapping_notes: >-
+      The recovered manual gives time-integrated food specific concentration
+      and food-class consumption rates, plus some compartment hydrogen masses,
+      but the original UFOTRI definition corresponding to this V3 explicit
+      product-mass denominator was not recovered. No value is inferred.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.intake.food_product_mass]"}
+
+  - mapping_id: mapping.leaf.crop
+    v3_parameter_id: leaf.crop
+    v3_subsystem: plant.leaf_exchange_resistance
+    v3_symbol: crop
+    v3_equation: resistance chain is evaluated for the explicit crop context
+    v3_quantity_definition: crop identity associated with the resistance state
+    v3_canonical_unit: identifier
+    v3_state_basis: crop metadata for the leaf/canopy state
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: vegetation or plant species
+    ufotri_equation: plant resistance and exchange equations (7)-(31) use the selected vegetation geometry and type
+    ufotri_quantity_definition: vegetation type used by plant-atmosphere exchange
+    ufotri_reported_unit: identifier
+    ufotri_compartment: plant leaf/canopy exchange
+    ufotri_time_basis: one-hour parameter interval and vegetation period
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: NONE
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No numerical transformation applies to a crop identifier.
+    mapping_notes: Crop identity is a semantic context, not a recovered resistance value or validation claim.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.leaf.crop]"}
+
+  - mapping_id: mapping.leaf.growth_stage
+    v3_parameter_id: leaf.growth_stage
+    v3_subsystem: plant.leaf_exchange_resistance
+    v3_symbol: growth_stage
+    v3_equation: current V3 resistance chain accepts growth-stage metadata but does not derive a stage-dependent resistance equation
+    v3_quantity_definition: explicit V3 growth-stage identifier
+    v3_canonical_unit: identifier
+    v3_state_basis: leaf/canopy metadata
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: vegetation period and canopy/LAI context
+    ufotri_equation: resistance and canopy equations (12)-(25), with vegetation-period discussion
+    ufotri_quantity_definition: seasonal or canopy context, not a discrete V3 growth-stage field
+    ufotri_reported_unit: qualitative stage or model context
+    ufotri_compartment: plant leaf/canopy exchange
+    ufotri_time_basis: vegetation period and one-hour resistance interval
+    mapping_status: CONCEPTUAL_ANALOGUE
+    unit_relationship: NOT_APPLICABLE
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: TRANSFER_REQUIRED
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No explicit transformation from the manual vegetation-period treatment to the V3 growth-stage identifier was recovered.
+    mapping_notes: The mechanism is related, but a stage ontology and crop-specific relation would be an additional model assumption.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.leaf.growth_stage]"}
+
+  - mapping_id: mapping.leaf.r_a
+    v3_parameter_id: leaf.r_a
+    v3_subsystem: plant.leaf_exchange_resistance
+    v3_symbol: r_a
+    v3_equation: 'r_total = r_a + r_b + r_c; g_ex = 1/r_total'
+    v3_quantity_definition: aerodynamic resistance component of leaf exchange
+    v3_canonical_unit: s m^-1
+    v3_state_basis: leaf/canopy exchange resistance chain
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: r_a
+    ufotri_equation: 'r_a = r_aV (12)'
+    ufotri_quantity_definition: aerodynamic resistance component
+    ufotri_reported_unit: s m^-1
+    ufotri_compartment: leaf-atmosphere exchange
+    ufotri_time_basis: one-hour parameter interval
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: EXACT_ROLE
+    compartment_relationship: EXACT
+    state_basis_relationship: EXACT
+    required_transformation: NONE
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: No transformation is required; the value remains an explicit unresolved V3 input.
+    mapping_notes: Semantic identity is limited to the resistance component and equation role; no UFOTRI value is selected.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.leaf.r_a]"}
+
+  - mapping_id: mapping.leaf.r_b
+    v3_parameter_id: leaf.r_b
+    v3_subsystem: plant.leaf_exchange_resistance
+    v3_symbol: r_b
+    v3_equation: 'r_total = r_a + r_b + r_c; g_ex = 1/r_total'
+    v3_quantity_definition: quasi-laminar boundary-layer resistance component
+    v3_canonical_unit: s m^-1
+    v3_state_basis: leaf/canopy exchange resistance chain
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: r_b
+    ufotri_equation: 'r_b = r_bV (13)'
+    ufotri_quantity_definition: quasi-laminar boundary-layer resistance component
+    ufotri_reported_unit: s m^-1
+    ufotri_compartment: leaf-atmosphere exchange
+    ufotri_time_basis: one-hour parameter interval
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: EXACT_ROLE
+    compartment_relationship: EXACT
+    state_basis_relationship: EXACT
+    required_transformation: NONE
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: No transformation is required; the value remains an explicit unresolved V3 input.
+    mapping_notes: Semantic identity is limited to the resistance component and equation role; no UFOTRI value is selected.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.leaf.r_b]"}
+
+  - mapping_id: mapping.leaf.r_c
+    v3_parameter_id: leaf.r_c
+    v3_subsystem: plant.leaf_exchange_resistance
+    v3_symbol: r_c
+    v3_equation: 'r_total = r_a + r_b + r_c; g_ex = 1/r_total'
+    v3_quantity_definition: canopy/stomatal resistance component
+    v3_canonical_unit: s m^-1
+    v3_state_basis: leaf/canopy exchange resistance chain
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: r_c
+    ufotri_equation: 'r_c = r_ST / L (14)'
+    ufotri_quantity_definition: canopy resistance obtained from stomatal resistance and LAI
+    ufotri_reported_unit: s m^-1
+    ufotri_compartment: leaf-atmosphere exchange
+    ufotri_time_basis: one-hour parameter interval
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: EXACT_ROLE
+    compartment_relationship: EXACT
+    state_basis_relationship: EXACT
+    required_transformation: NONE
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: No transformation is required; the value remains an explicit unresolved V3 input.
+    mapping_notes: The manual's LAI relation is retained as source semantics; this mapping does not activate dynamic LAI or a resistance value.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.leaf.r_c]"}
+
+  - mapping_id: mapping.obt.daylight_multiplier
+    v3_parameter_id: obt.daylight_multiplier
+    v3_subsystem: plant.obt_v3
+    v3_symbol: m_day
+    v3_equation: 'k_f,eff = k_f * m_day during daylight'
+    v3_quantity_definition: dimensionless daylight modulation of the OBT formation rate
+    v3_canonical_unit: '1'
+    v3_state_basis: TFWT-to-OBT formation during the daylight state
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: day/night formation split
+    ufotri_equation: daily average OBT uptake is stated with separate day/night treatment
+    ufotri_quantity_definition: daylight-specific formation modulation
+    ufotri_reported_unit: dimensionless multiplier or percentage per hour
+    ufotri_compartment: plant TFWT and non-exchangeable OBT
+    ufotri_time_basis: daylight portion of each day
+    mapping_status: CONCEPTUAL_ANALOGUE
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: TRANSFER_REQUIRED
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No admissible transformation from the manual percentage-per-hour formation statement to a V3 multiplier was recovered.
+    mapping_notes: The daylight mechanism is a conceptual analogue; a V3 multiplier requires a separately defined baseline kf and normalization.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.daylight_multiplier]"}
+
+  - mapping_id: mapping.obt.kf
+    v3_parameter_id: obt.kf
+    v3_subsystem: plant.obt_v3
+    v3_symbol: k_f
+    v3_equation: 'dM_OBT/dt = k_f * M_TFWT - k_r * M_OBT'
+    v3_quantity_definition: first-order TFWT-to-OBT formation coefficient
+    v3_canonical_unit: s^-1
+    v3_state_basis: plant TFWT inventory to plant OBT inventory
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: V_P or t_14,15
+    ufotri_equation: 'dC_P,HTO/dt includes -V_P C_P (3); t_14,15 = t_15,14 * M_OBT * 9/(M_HTO * 13) (66)'
+    ufotri_quantity_definition: first-order plant HTO-to-OBT transfer rate derived with hydrogen-mass equilibrium
+    ufotri_reported_unit: s^-1 or d^-1
+    ufotri_compartment: plant HTO/TFWT and non-exchangeable OBT
+    ufotri_time_basis: one-hour dynamic exchange and daily food-chain rate basis
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: UNIT_SCALE_ONLY
+    equation_relationship: EXACT_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: DAY_TO_SECOND
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'k_f[s^-1] = k_f[d^-1] / 86400; the manual hydrogen-mass relation and crop applicability still require independent review before value recovery.'
+    mapping_notes: Same first-order formation role is mapped without claiming that the manual equilibrium-derived rate is a validated V3 kf value.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.kf]"}
+
+  - mapping_id: mapping.obt.kr
+    v3_parameter_id: obt.kr
+    v3_subsystem: plant.obt_v3
+    v3_symbol: k_r
+    v3_equation: 'dM_OBT/dt = k_f * M_TFWT - k_r * M_OBT'
+    v3_quantity_definition: first-order OBT turnover/loss coefficient
+    v3_canonical_unit: s^-1
+    v3_state_basis: plant OBT inventory returned or lost by the V3 OBT boundary
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: t_15,14 or t_6,5
+    ufotri_equation: 't_15,14 = ln(2)/10 d (65); grass OBT turnover is also derived from a 10-day half-time (105-1)'
+    ufotri_quantity_definition: first-order OBT turnover rate from an assumed biological half-time
+    ufotri_reported_unit: d^-1
+    ufotri_compartment: plant OBT and food-chain organic compartments
+    ufotri_time_basis: daily food-chain rate basis; separate short dynamic plant exchange text
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: UNIT_SCALE_ONLY
+    equation_relationship: EXACT_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: DAY_TO_SECOND
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'k_r[s^-1] = k_r[d^-1] / 86400; the biological half-time and return-versus-loss allocation remain unresolved.'
+    mapping_notes: >-
+      The rate role is compatible, but the manual mixes exchangeable and
+      non-exchangeable organic compartments and uses equilibrium-derived
+      allocations. This record does not choose a V3 turnover value.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.kr]"}
+
+  - mapping_id: mapping.obt.nighttime_multiplier
+    v3_parameter_id: obt.nighttime_multiplier
+    v3_subsystem: plant.obt_v3
+    v3_symbol: m_night
+    v3_equation: 'k_f,eff = k_f * m_night during nighttime'
+    v3_quantity_definition: dimensionless nighttime modulation of the OBT formation rate
+    v3_canonical_unit: '1'
+    v3_state_basis: TFWT-to-OBT formation during the nighttime state
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: day/night formation split
+    ufotri_equation: daily average OBT uptake is stated with separate day/night treatment
+    ufotri_quantity_definition: nighttime-specific formation modulation
+    ufotri_reported_unit: dimensionless multiplier or percentage per hour
+    ufotri_compartment: plant TFWT and non-exchangeable OBT
+    ufotri_time_basis: nighttime portion of each day
+    mapping_status: CONCEPTUAL_ANALOGUE
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: TRANSFER_REQUIRED
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No admissible transformation from the manual percentage-per-hour formation statement to a V3 multiplier was recovered.
+    mapping_notes: The nighttime mechanism is a conceptual analogue; a V3 multiplier requires a separately defined baseline kf and normalization.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.nighttime_multiplier]"}
+
+  - mapping_id: mapping.obt.photosynthetic_activity
+    v3_parameter_id: obt.photosynthetic_activity
+    v3_subsystem: plant.obt_v3
+    v3_symbol: photosynthetic_activity
+    v3_equation: current V3 OBT solver has no photosynthesis state equation
+    v3_quantity_definition: reserved biological forcing for OBT formation
+    v3_canonical_unit: model-specific forcing
+    v3_state_basis: plant biological forcing extension point
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: photosynthesis and carbohydrate synthesis
+    ufotri_equation: non-exchangeable OBT is described as formed through photosynthesis and exchangeable organic hydrogen
+    ufotri_quantity_definition: mechanism description, not a recovered scalar forcing definition
+    ufotri_reported_unit: not stated
+    ufotri_compartment: plant organic matter and OBT
+    ufotri_time_basis: daylight/biological growth context
+    mapping_status: CONCEPTUAL_ANALOGUE
+    unit_relationship: UNKNOWN
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: TRANSFER_REQUIRED
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No scalar transformation from the manual photosynthesis mechanism to the V3 forcing field was recovered.
+    mapping_notes: The mechanism is a conceptual analogue only; adding a photosynthesis equation would exceed P7.6C-2.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.photosynthetic_activity]"}
+
+  - mapping_id: mapping.obt.plant_mass
+    v3_parameter_id: obt.plant_mass
+    v3_subsystem: plant.obt_v3
+    v3_symbol: m_plant
+    v3_equation: 'C_OBT = M_OBT / m_plant'
+    v3_quantity_definition: fresh plant mass denominator for the V3 OBT diagnostic concentration
+    v3_canonical_unit: kg fresh plant m^-2
+    v3_state_basis: plant OBT inventory concentration diagnostic
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: M_P,HTO or plant organic/inorganic hydrogen masses
+    ufotri_equation: plant and food-chain balances use separate hydrogen masses and assumed water/organic contents
+    ufotri_quantity_definition: compartment hydrogen mass, not the V3 fresh-plant mass denominator
+    ufotri_reported_unit: kg H m^-2 or compartment mass basis
+    ufotri_compartment: plant water and organic compartments
+    ufotri_time_basis: daily transfer-rate system
+    mapping_status: CONCEPTUAL_ANALOGUE
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: TRANSFER_REQUIRED
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: A fresh/dry/water and hydrogen-content relation would be required; the recovered material does not provide the V3 denominator definition.
+    mapping_notes: Do not substitute manual hydrogen masses or vegetation density for the V3 plant-mass parameter.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.plant_mass]"}
+
+  - mapping_id: mapping.obt.temperature
+    v3_parameter_id: obt.temperature
+    v3_subsystem: plant.obt_v3
+    v3_symbol: temperature
+    v3_equation: current V3 OBT solver has no temperature-dependent formation or turnover equation
+    v3_quantity_definition: reserved OBT temperature forcing
+    v3_canonical_unit: K
+    v3_state_basis: plant OBT forcing extension point
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: temperature
+    ufotri_equation: temperature appears in meteorological/evapotranspiration context, not as a current OBT parameter equation
+    ufotri_quantity_definition: meteorological temperature input with no recovered V3 OBT coefficient role
+    ufotri_reported_unit: C
+    ufotri_compartment: atmosphere/soil/vegetation forcing context
+    ufotri_time_basis: meteorological interval
+    mapping_status: NO_MAPPING
+    unit_relationship: INCOMPATIBLE
+    equation_relationship: INCOMPATIBLE
+    compartment_relationship: INCOMPATIBLE
+    state_basis_relationship: INCOMPATIBLE
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: No OBT-specific temperature relation was recovered.
+    mapping_notes: A shared meteorological input name is insufficient for a V3 OBT physical mapping.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.obt.temperature]"}
+
+  - mapping_id: mapping.root.k_root
+    v3_parameter_id: root.k_root
+    v3_subsystem: plant.root_v3
+    v3_symbol: k_root
+    v3_equation: 'J_root = k_root * C_soil'
+    v3_quantity_definition: effective root uptake velocity multiplying soil-water concentration
+    v3_canonical_unit: m s^-1
+    v3_state_basis: current V3 one-layer soil-water concentration to plant root flux
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: U_P or t_i,14
+    ufotri_equation: 'dC_S,HTO/dt includes -U_P C_S,HTO (2); t_i = total plant uptake / soil-compartment hydrogen content * layer fraction (57)'
+    ufotri_quantity_definition: layer-distributed first-order root transfer rate linked to transpiration and soil hydrogen content
+    ufotri_reported_unit: s^-1 or d^-1
+    ufotri_compartment: multi-layer soil and plant root uptake
+    ufotri_time_basis: daily transfer-rate basis with 0-5, 5-15, and 15-30 cm layers
+    mapping_status: CONCEPTUAL_ANALOGUE
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: TRANSFER_REQUIRED
+    state_basis_relationship: TRANSFER_REQUIRED
+    required_transformation: BLOCKED
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: 'A rate-to-velocity conversion would require a formally selected water storage length and a validated aggregation of the UFOTRI layer/transpiration model; no such conversion is admitted here.'
+    mapping_notes: >-
+      UFOTRI root uptake is mechanistically related but is not automatically a
+      V3 m/s coefficient. The 20/40/40 layer distribution, actual transpiration
+      dependence, and current V3 one-layer boundary are material differences.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.root.k_root]"}
+
+  - mapping_id: mapping.soil.layer_depth
+    v3_parameter_id: soil.layer_depth
+    v3_subsystem: plant.soil_v3
+    v3_symbol: z_layer
+    v3_equation: 'C_s = M_s / W_s; layer_depth defines the current soil-water layer'
+    v3_quantity_definition: thickness of the authoritative V3 soil-water layer
+    v3_canonical_unit: m
+    v3_state_basis: one explicit soil layer per V3 soil state
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: z and soil-layer boundaries
+    ufotri_equation: soil layers 0-5, 5-15, and 15-30 cm are used in the root/food-chain transfer system
+    ufotri_quantity_definition: soil layer thickness or boundary depth
+    ufotri_reported_unit: cm
+    ufotri_compartment: soil water layer
+    ufotri_time_basis: daily layer transport/transfer basis
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: UNIT_SCALE_ONLY
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: CM_TO_M
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'z[m] = z[cm] / 100; the mapping is limited to an explicitly selected layer such as 0-5 cm.'
+    mapping_notes: The source has multiple layers while the formal V3 soil state is one layer; only a stated layer selection is admissible.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.soil.layer_depth]"}
+
+  - mapping_id: mapping.soil.transport_flux
+    v3_parameter_id: soil.transport_flux
+    v3_subsystem: plant.soil_v3
+    v3_symbol: F_transport
+    v3_equation: 'dM_s/dt includes F_transport; positive enters the current V3 layer'
+    v3_quantity_definition: signed activity transport flux supplied at the current layer boundary
+    v3_canonical_unit: Bq m^-2 s^-1
+    v3_state_basis: one-layer signed soil inventory balance
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: F_S
+    ufotri_equation: 'dC_S,HTO/dt = -F_S,HTO + v_d X - R_S C_S - U_P C_S (2)'
+    ufotri_quantity_definition: downward soil HTO transport flux leaving the topsoil control volume
+    ufotri_reported_unit: Bq m^-2 s^-1
+    ufotri_compartment: soil layer boundary and deeper-soil transport
+    ufotri_time_basis: one-hour/daily averaged soil transport approximation
+    mapping_status: TRANSFORMABLE_MAPPING
+    unit_relationship: EXACT_UNIT
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: SIGN_AND_BOUNDARY_ORIENTATION
+    transformation_possible: true
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'For the selected topsoil layer, F_transport,V3 = -F_S,UFOTRI when positive UFOTRI downward flux leaves the current layer; the sign reverses only by the explicitly declared boundary convention.'
+    mapping_notes: >-
+      The flux quantity can be transformed at a declared boundary, but the
+      source hydraulic/diffusive derivation and multi-layer state are not
+      imported into the V3 solver by this record.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.soil.transport_flux]"}
+
+  - mapping_id: mapping.soil.tritium_half_life
+    v3_parameter_id: soil.tritium_half_life
+    v3_subsystem: plant.soil_v3
+    v3_symbol: T_half
+    v3_equation: 'lambda_T = ln(2) / T_half; dM_s/dt includes -lambda_T M_s'
+    v3_quantity_definition: universal radioactive half-life of H-3 used only by the V3 decay term
+    v3_canonical_unit: s
+    v3_state_basis: physical radioactive decay of the soil HTO inventory
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: H-3 half-life
+    ufotri_equation: the manual states the H-3 half-life as 12.36 years in dose-section general remarks
+    ufotri_quantity_definition: universal nuclear half-life, distinct from soil retention or biological turnover
+    ufotri_reported_unit: year
+    ufotri_compartment: radionuclide-independent physical decay
+    ufotri_time_basis: universal physical time basis
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: UNIT_SCALE_ONLY
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: YEAR_TO_SECOND
+    transformation_possible: false
+    future_evidence_recovery_allowed: false
+    transformation_derivation: 'T_half[s] = T_half[year] * configured year-to-second conversion; P7.6C-1 independently validated the physical constant and this mapping does not reopen that gate.'
+    mapping_notes: >-
+      This record preserves the P7.6C-1 snapshot validated=1/active=0. It does
+      not claim that the manual's soil/biological rates are the nuclear
+      half-life or that the manual environmental balances were independently
+      validated by this semantic mapping.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: VALIDATED
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.soil.tritium_half_life]"}
+
+  - mapping_id: mapping.soil.water_content
+    v3_parameter_id: soil.water_content
+    v3_subsystem: plant.soil_v3
+    v3_symbol: W_s
+    v3_equation: 'C_s = M_s / W_s'
+    v3_quantity_definition: equivalent soil-water depth per ground area
+    v3_canonical_unit: m water
+    v3_state_basis: authoritative water basis of one V3 soil layer
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: BODWA or Theta
+    ufotri_equation: 'REEM = (EaS/BODWA)*(1-ABFLR)*C1*C2*ZT (44-1); soil water potential/continuity use Theta (33)-(37)'
+    ufotri_quantity_definition: topsoil water mass per area or volumetric water content used by soil transport/re-emission
+    ufotri_reported_unit: kg m^-2 water or dimensionless volumetric fraction
+    ufotri_compartment: topsoil water layer
+    ufotri_time_basis: daily-average soil moisture and re-emission basis
+    mapping_status: TRANSFORMABLE_MAPPING
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: WATER_MASS_OR_VOLUME_TO_WATER_DEPTH
+    transformation_possible: true
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'W_s[m] = BODWA[kg m^-2] / rho_w[kg m^-3], or W_s[m] = Theta * layer_depth[m] when Theta is the selected volumetric basis; the source basis must be declared before conversion.'
+    mapping_notes: >-
+      The transformation is dimensional and explicit, but water density,
+      volumetric-versus-areal basis, and selected layer must be recorded. No
+      source water value is imported into the V3 state.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.soil.water_content]"}
+
+  - mapping_id: mapping.tfwt.transformation_flux
+    v3_parameter_id: tfwt.transformation_flux
+    v3_subsystem: plant.tfwt_v3
+    v3_symbol: F_tfwt_to_obt
+    v3_equation: 'dM_TFWT/dt includes -F_tfwt_to_obt'
+    v3_quantity_definition: activity flux removed from TFWT for the OBT formation boundary
+    v3_canonical_unit: Bq m^-2 s^-1
+    v3_state_basis: plant TFWT areal inventory
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: V_P
+    ufotri_equation: 'dC_P,HTO/dt = ... - V_P C_P ... (3)'
+    ufotri_quantity_definition: first-order plant HTO-to-OBT transfer rate acting on plant HTO activity
+    ufotri_reported_unit: s^-1
+    ufotri_compartment: plant TFWT/HTO to plant OBT
+    ufotri_time_basis: one-hour dynamic plant interval
+    mapping_status: TRANSFORMABLE_MAPPING
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: RATE_TIMES_AREAL_INVENTORY
+    transformation_possible: true
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'F_tfwt_to_obt[Bq m^-2 s^-1] = V_P[s^-1] * M_TFWT[Bq m^-2], after declaring C_P as the matching areal plant activity basis.'
+    mapping_notes: >-
+      The source coefficient can produce a V3 flux only through the explicit
+      rate-times-inventory relation. It does not select kf, activate an OBT
+      source, or change the existing V3 solver equation.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.tfwt.transformation_flux]"}
+
+  - mapping_id: mapping.tfwt.water_content
+    v3_parameter_id: tfwt.water_content
+    v3_subsystem: plant.tfwt_v3
+    v3_symbol: W_p
+    v3_equation: 'C_TFWT = M_TFWT / W_p'
+    v3_quantity_definition: plant free-water mass per plant area
+    v3_canonical_unit: kg water m^-2
+    v3_state_basis: plant TFWT concentration denominator
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: mu
+    ufotri_equation: 'mu dC/dt = (1/r)*(chi - (rho/a)C) (27)'
+    ufotri_quantity_definition: leaf water content per leaf area
+    ufotri_reported_unit: g cm^-2 leaf area
+    ufotri_compartment: leaf free water / plant TFWT
+    ufotri_time_basis: one-hour leaf exchange interval
+    mapping_status: DIRECT_MAPPING
+    unit_relationship: UNIT_SCALE_ONLY
+    equation_relationship: EXACT_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: 'G_CM2_TO_KG_M2'
+    transformation_possible: false
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'W_p[kg m^-2] = mu[g cm^-2] * 10 when the leaf-area and plant-area basis are explicitly the same.'
+    mapping_notes: >-
+      The physical water-content role is direct up to an area/unit conversion;
+      area-basis equivalence and crop geometry remain prerequisites for any
+      future evidence recovery.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.tfwt.water_content]"}
+
+  - mapping_id: mapping.tfwt.water_loss_flux
+    v3_parameter_id: tfwt.water_loss_flux
+    v3_subsystem: plant.tfwt_v3
+    v3_symbol: F_water_loss
+    v3_equation: 'dM_TFWT/dt includes -F_water_loss'
+    v3_quantity_definition: activity flux removed from TFWT by water loss/transpiration
+    v3_canonical_unit: Bq m^-2 s^-1
+    v3_state_basis: plant TFWT areal inventory
+    ufotri_source_id: ufotri.manual.kfk4605
+    ufotri_symbol: T_P
+    ufotri_equation: 'dC_P,HTO/dt = ... - T_P C_P ... (3)'
+    ufotri_quantity_definition: first-order plant water-loss/transpiration rate acting on plant HTO activity
+    ufotri_reported_unit: s^-1
+    ufotri_compartment: plant TFWT/HTO and atmospheric water exchange
+    ufotri_time_basis: one-hour plant interval; source also uses daily averaged transpiration
+    mapping_status: TRANSFORMABLE_MAPPING
+    unit_relationship: TRANSFER_REQUIRED
+    equation_relationship: COMPATIBLE_ROLE
+    compartment_relationship: COMPATIBLE_COMPARTMENT
+    state_basis_relationship: COMPATIBLE
+    required_transformation: RATE_TIMES_AREAL_INVENTORY
+    transformation_possible: true
+    future_evidence_recovery_allowed: true
+    transformation_derivation: 'F_water_loss[Bq m^-2 s^-1] = T_P[s^-1] * M_TFWT[Bq m^-2], after declaring the source T_P term and plant activity basis equivalent to the V3 boundary.'
+    mapping_notes: >-
+      This is a flux transformation, not an import of UFOTRI transpiration or
+      water-balance values. The V3 solver still receives an explicit external
+      flux and does not derive it from the manual.
+    review_status: INDEPENDENT_REVIEWED
+    current_status: PROVISIONAL
+    provenance: {repository: CTEAS_ufotri, revision: 2d6a0d1174795980406355055c4855df46ba583f, file: docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml, location: "parameters[mapping.tfwt.water_loss_flux]"}

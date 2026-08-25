@@ -1,6 +1,759 @@
 # Implementation status
 
-Updated: 2026-08-03
+Updated: 2026-08-24
+
+## V3 P7.7B Baseline synthetic benchmark execution
+
+P7.7B executes all five P7.7A synthetic cases through the existing public V3
+solver and `V3PipelineRunner` APIs. `validation_v3/benchmark_runner.py` reads
+the explicit YAML `execution_definition`, runs `dt`, `dt/2`, and `dt/4`
+refinements, checks existing conservation ledgers, repeats each case for
+determinism, and checks component/pipeline restart equivalence. Results are
+serialized in
+`validation/results/v3/p7_7b_synthetic_benchmark_results.yaml` with input
+hashes, execution IDs, solver version, test-only snapshots, and provenance.
+
+```text
+P7_7B_STATUS = PASS_SYNTHETIC_BENCHMARK_VALIDATION
+BENCHMARKS_EXECUTED = TRUE
+DECAY_TEST = PASS
+LEAF_TFWT_TEST = PASS
+TFWT_OBT_TEST = PASS
+SOIL_ROOT_TEST = PASS
+END_TO_END_TEST = PASS
+CONSERVATION = PASS
+RESTART_EQUIVALENCE = PASS
+SOLVER_CHANGES = FALSE
+NUMERICAL_COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+This is synthetic software/interface evidence only. It does not validate
+environmental realism, parameter accuracy, field observations, calibration,
+regulatory dose coefficients, UFOTRI equivalence, or V3 physical readiness.
+The execution policy and independent review are recorded in
+`docs/adr/ADR-018-v3-synthetic-benchmark-validation-policy.md` and
+`docs/v3/reports/v3_p7_7b_*.md`.
+
+The historical full pytest collection is not used as the P7.7B gate because
+its stage-specific architecture baselines intentionally reject follow-on
+validation additions. With `--maxfail=1`, the first failure was
+`tests/architecture/test_atmos_v3_boundary.py::test_p7_source_scope_is_atmospheric_interface_only`,
+which only permits earlier atmospheric/pipeline source paths. The focused
+P7.7B/P7.7A and parameter compatibility suites are the recorded stage checks.
+
+## V3 P7.7A Baseline validation framework
+
+P7.7A adds an isolated validation control plane at
+`src/cteas_ufotri/validation_v3/`. `ValidationCase` requires named forcing,
+initial state, explicit parameter snapshots, model outputs, reference data,
+expected metrics, acceptance criteria, and complete artifact provenance.
+`ValidationResult` records the metric value, threshold, pass/fail decision,
+uncertainty, execution hash, solver version, and parameter snapshot. The
+metric layer supports RMSE, MAE, relative error, bias, conservation residual,
+trajectory comparison, decay error, and state difference; it audits existing
+ledgers without replacing them.
+
+Five synthetic benchmark definitions are stored in
+`configs/v3/validation/p7_7a_baseline_benchmarks.yaml`. They are interface
+fixtures only: values are test-only, no production solver is called by the
+loader, and no physical parameter truth is inferred. `can_enter_validation()`
+admits only synthetic/software/analytical baseline cases with explicit
+`TEST_ONLY` parameters and rejects active parameters, calibration, physical or
+empirical validation classes, UFOTRI database activation, and V3 readiness.
+
+```text
+P7_7A_STATUS = PASS_VALIDATION_FRAMEWORK
+VALIDATION_SCHEMA = TRUE
+VALIDATION_METRICS = TRUE
+BASELINE_BENCHMARKS_DEFINED = TRUE
+SOLVER_CHANGES = FALSE
+NUMERICAL_COUPLING_CHANGES = FALSE
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The machine-readable schema is
+`schemas/v3/validation_case.schema.json`; policy and review artifacts are
+`docs/adr/ADR-017-v3-validation-framework-policy.md`,
+`docs/v3/validation/`, `docs/v3/reports/v3_p7_7a_validation_framework_report.md`,
+and `docs/v3/reports/v3_p7_7a_independent_review.md`. Focused schema, metric,
+result, gate, benchmark, and source-isolation tests pass. No P7.6D redesign,
+solver equation, numerical coupling, pipeline semantic, active parameter, or
+calibration path was changed.
+
+## V3-P7.6A Parameter evidence and provenance freeze
+
+P7.6A adds a control-plane-only parameter evidence layer at
+`src/cteas_ufotri/parameters_v3/`. The immutable `ParameterEvidenceRecord`
+preserves reported and normalized values separately, requires explicit units,
+source identifiers, applicability, review state, and repository/file/location
+provenance. `ParameterEvidenceRegistry` sorts records deterministically,
+rejects duplicate IDs, and rejects `VALIDATED`/`ACTIVE` records at the P7.6A
+stage gate. It is not imported by any P6/P7 physics module or by the P7.5
+pipeline.
+
+The canonical inventory contains 76 records across the 10 required primary
+classes: 56 provisional records and 20 test-only `EVIDENCE_FOUND` records.
+The test-only status means reproducible software fixture evidence only; it is
+not physical, empirical, calibration, regulatory, or observational evidence.
+No production value is resolved, converted, calibrated, or activated.
+
+    P7_6A_STATUS = PASS_PARAMETER_EVIDENCE_PROVENANCE_FROZEN
+    PARAMETER_INVENTORY_COMPLETE = TRUE
+    PARAMETER_EVIDENCE_SCHEMA_FROZEN = TRUE
+    PARAMETER_STATUS_LIFECYCLE_FROZEN = TRUE
+    PARAMETER_CALIBRATION_STARTED = FALSE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The manifest and stage records are in
+`docs/v3/parameter_evidence/parameter_inventory.yaml`. The implementation,
+gap matrix, test report, and independent review are in
+`docs/v3/reports/v3_p7_6a_parameter_inventory_report.md`,
+`docs/v3/reports/v3_p7_6a_parameter_evidence_report.md`,
+`docs/v3/reports/v3_p7_6a_parameter_gap_analysis.md`,
+`docs/v3/reports/v3_p7_6a_test_report.md`, and
+`docs/v3/reports/v3_p7_6a_independent_review.md`. The formal decision is in
+`docs/adr/010-v3-parameter-evidence-lifecycle.md`.
+
+## V3-P7.6B-1 Parameter applicability review
+
+P7.6B-1 adds an immutable source-to-model `ApplicabilityRecord`, a
+one-to-one deterministic review matrix for all 76 P7.6A records, and a
+fail-closed validation-candidate gate. The five applicability dispositions are
+`DIRECT_MATCH`, `PARTIAL_MATCH`, `TRANSFER_REQUIRED`, `NOT_APPLICABLE`, and
+`UNKNOWN`. The matrix records 26 unresolved model/evidence reviews as
+`UNKNOWN` and 50 scenario/control/test records as `NOT_APPLICABLE`; there are
+no direct, partial, or transfer dispositions and no admitted candidates.
+
+`EVIDENCE_FOUND` test fixtures remain software evidence only. The candidate
+gate requires a non-test-only `EVIDENCE_FOUND` record plus a direct match, or
+a partial match with resolved uncertainty and a direct unit match. It only
+identifies candidates for a future protocol; it cannot validate, calibrate,
+activate, replace a value, or provide a runtime lookup.
+
+    P7_6B1_STATUS = PASS_PARAMETER_APPLICABILITY_REVIEW
+    PARAMETER_APPLICABILITY_SCHEMA = TRUE
+    PARAMETER_REVIEW_MATRIX = TRUE
+    VALIDATION_CANDIDATES_IDENTIFIED = TRUE
+    VALIDATION_CANDIDATE_COUNT = 0
+    CALIBRATION_STARTED = FALSE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The canonical matrix is in
+`docs/v3/parameter_evidence/parameter_applicability_matrix.yaml`. The review,
+matrix, gate, and independent boundary reports are in
+`docs/v3/reports/v3_p7_6b1_applicability_review.md`,
+`docs/v3/reports/v3_p7_6b1_parameter_review_matrix.md`,
+`docs/v3/reports/v3_p7_6b1_validation_gate_report.md`, and
+`docs/v3/reports/v3_p7_6b1_independent_review.md`; the test report is in
+`docs/v3/reports/v3_p7_6b1_test_report.md`. The formal decision is in
+`docs/adr/011-v3-parameter-applicability-review.md`.
+
+## V3-P7.6B-2A Parameter candidate construction
+
+P7.6B-2A adds a deterministic candidate-preparation control plane over the
+P7.6A evidence inventory and P7.6B-1 applicability matrix. Each candidate
+record carries explicit evidence links, applicability disposition, candidate
+lifecycle status, screening disposition, reason, uncertainty source,
+validation plan, priority tier, and provenance. The registry contains exactly
+the 76 reviewed inventory records and does not contain reported or normalized
+parameter values.
+
+Candidate admission requires an evidence record with `EVIDENCE_FOUND`, a
+non-test-only source, and an applicability disposition other than `UNKNOWN`
+or `NOT_APPLICABLE`. `DIRECT_MATCH`, `PARTIAL_MATCH`, and
+`TRANSFER_REQUIRED` are admissible shapes for a future validation candidate,
+but every such record remains `validation_required = true`. The current
+reviewed inputs produce no admitted candidates: 26 records remain
+`PROVISIONAL`/`DEFERRED`, while 50 scenario, numerical-control, or test-only
+records are `REJECTED` for this physical-validation screen.
+
+    P7_6B2A_STATUS = PASS_PARAMETER_CANDIDATE_CONSTRUCTION
+    PARAMETER_CANDIDATE_REGISTRY = TRUE
+    VALIDATION_CANDIDATES_IDENTIFIED = TRUE
+    VALIDATION_CANDIDATE_COUNT = 0
+    VALIDATED_PARAMETERS = 0
+    ACTIVE_PARAMETERS = 0
+    CALIBRATION_STARTED = FALSE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    PHYSICS_MODULE_CHANGED = FALSE
+
+`can_enter_validation()` admits only the explicit
+`VALIDATION_CANDIDATE` lifecycle state; the P7.6B-2A registry rejects
+`VALIDATED` and `ACTIVE` records, so candidate construction cannot activate a
+parameter or start calibration. The candidate layer is not imported by any
+solver, coupling, or pipeline module.
+
+The canonical registry is in
+`docs/v3/parameter_evidence/parameter_candidate_registry.yaml`. The
+construction, registry, gate, and independent review records are in
+`docs/v3/reports/v3_p7_6b2a_candidate_construction_report.md`,
+`docs/v3/reports/v3_p7_6b2a_candidate_registry_report.md`,
+`docs/v3/reports/v3_p7_6b2a_validation_gate_report.md`, and
+`docs/v3/reports/v3_p7_6b2a_independent_review.md`. The formal decision is in
+`docs/adr/012-v3-parameter-candidate-construction.md`.
+
+## V3-P7.6B-2B Evidence recovery and validation-candidate generation
+
+P7.6B-2B adds a fail-closed evidence-recovery gate to the P7.6A/P7.6B-1
+control plane. Recovered physical evidence must carry complete bibliographic
+metadata, a source identifier match, an explicit equation role, reported and
+canonical units, and a visible conversion path. The candidate layer also
+records deterministic applicability links, equation/unit compatibility, and
+remaining questions.
+
+One external physical-constant record was accepted:
+`soil.tritium_half_life`, from Lucas and Unterweger's NIST review. It is a
+direct match only for the existing H-3 radioactive-decay term. OBT formation/
+turnover, root uptake, leaf resistance, and soil-transport screens remain
+deferred because the reviewed material did not close the current V3 equation,
+compartment, effective-velocity, or resistance-unit requirements. No source
+values were averaged or filled by assumption.
+
+The canonical evidence inventory now contains 55 `PROVISIONAL` records and 21
+`EVIDENCE_FOUND` records, of which 20 remain test-only fixtures. The
+applicability matrix contains one `DIRECT_MATCH`, 25 `UNKNOWN`, and 50
+`NOT_APPLICABLE` records. The candidate registry covers all 76 records and
+contains one `VALIDATION_CANDIDATE`, 25 deferred records, and 50 rejected
+records; it contains no parameter values.
+
+    P7_6B2B_STATUS = PASS_EVIDENCE_RECOVERY
+    EVIDENCE_RECORDS_UPDATED = TRUE
+    PARAMETER_APPLICABILITY_REVIEW_UPDATED = TRUE
+    PARAMETER_CANDIDATE_REGISTRY = TRUE
+    VALIDATION_CANDIDATES_IDENTIFIED = TRUE
+    VALIDATION_CANDIDATE_COUNT = 1
+    VALIDATED = 0
+    ACTIVE = 0
+    CALIBRATION_STARTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    PHYSICS_CHANGED = FALSE
+    NUMERICAL_COUPLING_CHANGED = FALSE
+
+The stage artifacts are
+`docs/v3/parameter_evidence/parameter_inventory.yaml`,
+`docs/v3/parameter_evidence/parameter_applicability_matrix.yaml`,
+`docs/v3/parameter_evidence/parameter_candidate_registry.yaml`,
+`docs/v3/reports/v3_p7_6b2b_evidence_recovery_report.md`,
+`docs/v3/reports/v3_p7_6b2b_candidate_generation_report.md`,
+`docs/v3/reports/v3_p7_6b2b_parameter_review_report.md`, and
+`docs/v3/reports/v3_p7_6b2b_independent_review.md`.
+
+The control plane remains isolated from all V3 physics, numerical-coupling,
+pipeline, and runtime parameter modules.
+
+## V3-P7.6C-1 Physical-constant validation and evidence reconciliation
+
+P7.6C-1 closes the first formal validation loop for the only current physical
+candidate, `soil.tritium_half_life`. The new immutable
+`PhysicalConstantEvidenceRecord` preserves each evaluation's reported value,
+uncertainty, unit, explicit SI conversion, evaluation basis, and source
+lineage. `ParameterValidationRecord` keeps source records separate from the
+selected value and enforces equation, unit, applicability, reconciliation,
+uncertainty, review, and benchmark gates. Derived or duplicate evidence never
+counts as an independent evidence stream, and source conflicts fail closed to
+`HOLD` without averaging.
+
+The NIST evaluation reports `4500 +/- 8 d`. The later DDEP/BIPM evaluation
+reports `4497 +/- 9 d` and explicitly derives its 3H evidence table from the
+Lucas--Unterweger evaluation. The sources are consistent after explicit
+normalization; DDEP is selected unchanged under the recorded
+`LATEST_RECOGNIZED_EVALUATED_RECOMMENDATION_WITH_EXPLICIT_LINEAGE` policy.
+This validates only the universal H-3 radioactive-decay half-life for
+`lambda_T = ln(2) / T_half`; it does not validate soil retention, transport,
+plant transfer, OBT, exposure, dose, or chemical-form corrections.
+
+```text
+P7_6C1_STATUS = PASS_PHYSICAL_CONSTANT_VALIDATION
+PHYSICAL_CONSTANT_VALIDATION_COMPLETE = TRUE
+SOIL_TRITIUM_HALF_LIFE = VALIDATED
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+EVIDENCE_RECONCILIATION = PASS
+UNCERTAINTY_PROVENANCE = PASS
+DECAY_SEMANTIC_BENCHMARK = PASS
+CALIBRATION_STARTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+```
+
+The canonical validation manifest is
+`docs/v3/parameter_evidence/physical_constant_validation_registry.yaml`. The
+formal policy is in
+`docs/v3/adr/ADR-013-v3-physical-constant-validation-policy.md`; stage reports
+are in `docs/v3/reports/v3_p7_6c1_physical_constant_validation_report.md`,
+`docs/v3/reports/v3_p7_6c1_evidence_reconciliation_report.md`,
+`docs/v3/reports/v3_p7_6c1_test_report.md`, and
+`docs/v3/reports/v3_p7_6c1_independent_review.md`.
+
+The validation registry is not imported by any solver, coupling, pipeline, or
+runtime parameter module. P7.6C-1 does not set `ACTIVE`, start calibration,
+modify physics equations, modify numerical coupling, or promote
+`V3_PHYSICS_READY`.
+
+## V3-P7.5B Numerical coupling semantics freeze
+
+P7.5B freezes the actual one-interval operator split used by the P7.5
+pipeline.  Atmospheric forcing is representative of the complete interval
+`[t_n, t_{n+1}]` and carries the interval-start label `t_n`; all emitted
+continuous states and downstream records use `t_{n+1}`.  The frozen order is
+soil deposition, leaf exchange into a TFWT intermediate, OBT transformation,
+root uptake from the step-start soil snapshot, post-deposition soil/root
+reconciliation, OBT-loss then root-input TFWT reconciliation, and finally
+food/intake/dose endpoint readout.
+
+Soil, TFWT, and OBT remain continuous reservoirs.  Root fluxes and ledgers are
+interval transfer records.  Harvest, food, intake, and dose are non-mutating
+endpoint assessment/readout records; P7.5B does not model continuous harvest
+or cumulative food consumption.
+
+The coupling is an explicit sequential/operator-split composition, not a
+fully implicit solution.  Timestep refinement is therefore required and is
+checked over a fixed synthetic horizon without introducing an unvalidated
+accuracy threshold.
+
+    P7_5B_STATUS = PASS_NUMERICAL_COUPLING_SEMANTICS_FROZEN
+    V3_PIPELINE_AVAILABLE = TRUE
+    NUMERICAL_COUPLING_FROZEN = TRUE
+    TIMESTEP_REFINEMENT = PASS
+    RESTART_EQUIVALENCE = PASS
+    PIPELINE_CONSERVATION = PASS
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The implementation, numerical test, and independent review records are in
+`docs/v3/reports/v3_p7_5b_numerical_coupling_implementation_report.md`,
+`docs/v3/reports/v3_p7_5b_numerical_coupling_test_report.md`, and
+`docs/v3/reports/v3_p7_5b_independent_review.md`.  The formal decision is in
+`docs/adr/009-v3-pipeline-numerical-coupling-semantics.md`.
+
+## V3-P7.5 End-to-end pipeline integration
+
+The P7.5 branch adds `v3_pipeline/` as a stateless orchestration layer over
+the existing typed V3 modules. `V3PipelineParameters` requires every
+interval, resistance, soil, root, OBT, biological, harvest, consumption,
+dose, root-zone, and consumer input explicitly. `V3PipelineRunner` retains
+no mutable inventory and returns a new frozen `V3SimulationState` for each
+step.
+
+The controlled order is atmospheric forcing and soil deposition, leaf
+exchange into TFWT, OBT formation, root uptake, root/OBT balance application
+back to TFWT and soil, food transfer, intake, and dose. Existing solver
+balances are preserved in `V3PipelineLedger`; the orchestration layer adds
+only state wiring and cross-module consistency checks. `V3SimulationState`
+also supports validated mapping/JSON round-trips for an explicit restart
+boundary.
+
+The root solver is called against the step-start soil snapshot because its
+public contract advances the supplied soil timestamp by the interval. Its
+typed transfer balance is then applied to the post-deposition soil state at
+the same endpoint timestamp. Similarly, the OBT solver's reported TFWT loss
+is consumed before the root transfer is applied to the final TFWT state.
+These are state-boundary operations; P7.5 does not reimplement either
+solver's equation.
+
+    P7_5_STATUS = PASS_PIPELINE_INTEGRATION
+    V3_PIPELINE_AVAILABLE = TRUE
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p7_5_pipeline_integration_report.md`,
+`docs/v3/reports/v3_p7_5_pipeline_test_report.md`, and
+`docs/v3/reports/v3_p7_5_independent_review.md`.
+
+## V3-P7 Atmospheric forcing coupling interface
+
+The P7 branch adds a typed atmospheric forcing boundary at
+`coupling/atmos_v3/`. `AtmosphericHTOForcing` is immutable and fail-closed:
+timestamp, location, air HTO concentration, deposition flux, temperature,
+humidity, wind speed, precipitation, source, and provenance are explicit
+inputs. Concentration, flux, temperature, humidity, wind-speed,
+precipitation, and metadata time-resolution units are checked exactly; no
+unit conversion or missing-value repair is performed. The `air_ht0_concentration`
+spelling is retained as an explicit alias of the canonical
+`air_hto_concentration` field.
+
+`AtmosphericForcingMetadata` records model name, version, grid definition,
+time resolution, source dataset, UTC creation time, and quality flag. The
+interface has two adapters only: atmospheric forcing can produce the
+existing leaf-resistance forcing input or the existing soil deposition
+forcing input. It does not import or call TFWT, OBT, root-uptake,
+food-transfer, intake, or dose solvers, and it has no CALMET/CALPUFF,
+ERA5/WRF file-reader, dispersion, hydrology, or UFOTRI parameter-loader
+dependency.
+
+    P7_ATMOS_INTERFACE_STATUS = PASS
+    ATMOS_FORCING_INTERFACE = TRUE
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P8_CTEAS_ATMOS_DATA_EXCHANGE
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p7_atmos_interface_implementation_report.md`,
+`docs/v3/reports/v3_p7_atmos_interface_test_report.md`, and
+`docs/v3/reports/v3_p7_independent_review.md`.
+
+## V3-P6.6B Intake-to-dose assessment
+
+The P6.6B branch adds an isolated downstream dose boundary at
+`exposure/dose_v3/`. `DoseSolver` consumes only the public `IntakeState`
+methods `inventory()`, `consumer()`, `age_group()`, `period()`, and `time()`.
+It emits an immutable `DoseState` containing the intake inventory, explicit
+dose coefficient, committed-dose result, pathway, age group, time, and
+provenance. No environmental, plant, food, or assessment-policy state is
+created.
+
+The frozen conversion equation is:
+
+    D [Sv]
+      = I [Bq] * e [Sv Bq^-1]
+
+The P6.6A annual intake is consumed as one explicit annual exposure-period
+inventory at this boundary; no hidden time, coefficient, or database default
+is introduced. `DoseParameters` requires an explicit `Sv/Bq` coefficient and
+`parameter_status = provisional`. The coefficient is an interface input, not
+a validated UFOTRI or regulatory value.
+
+    P6_6B_STATUS = PASS_DOSE_ASSESSMENT_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    DOSE_SOLVER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P7_CTEAS_ATMOS_COUPLING
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_6b_dose_assessment_implementation_report.md`,
+`docs/v3/reports/v3_p6_6b_dose_assessment_test_report.md`, and
+`docs/v3/reports/v3_p6_6b_independent_review.md`.
+
+## V3-P6.6A Food consumption and intake pathway
+
+The P6.6A branch adds an isolated food-to-human inventory boundary at
+`exposure/intake_v3/`. `FoodIntakeSolver` consumes a typed `FoodInventory`
+through its public `inventory()` and `product()` methods and emits an
+immutable annual `IntakeState`. The state records consumer, age-group,
+product, consumption rate, annual intake inventory, UTC time, and provenance;
+it does not contain any downstream radiological-result or regulatory fields.
+
+The dimensional calculation is explicit:
+
+    C_food [Bq kg^-1]
+      = M_food [Bq] / m_food [kg]
+
+    I_food [Bq year^-1]
+      = C_food [Bq kg^-1] * R_consumption [kg year^-1]
+
+The food mass basis `m_food` is an explicit `ConsumptionParameters` input;
+there is no hidden mass or unit conversion. Consumption parameters remain
+provisional and are not loaded from the UFOTRI database or any regulatory
+database. Adult and child records remain separate immutable states.
+
+    P6_6A_STATUS = PASS_INTAKE_PATHWAY_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    INTAKE_PATHWAY = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.6B_DOSE_ASSESSMENT
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_6a_intake_pathway_implementation_report.md`,
+`docs/v3/reports/v3_p6_6a_intake_pathway_test_report.md`, and
+`docs/v3/reports/v3_p6_6a_independent_review.md`.
+
+## V3-P6.5 Plant harvest and food transfer
+
+The P6.5 branch adds an isolated plant-to-food inventory boundary at
+plant/food_v3/. FoodTransferSolver consumes only the public inventory()
+methods of OBTState and TFWTState. It emits an immutable HarvestState and a
+FoodInventory record; it does not mutate plant states and does not create dose,
+ingestion, population, regulatory, or CTEAS-Atmos state.
+
+The OBT transfer equation is:
+
+    M_food,OBT [Bq]
+      = f_h [1] * M_OBT [Bq m^-2] * A_h [m^2]
+
+The optional TFWT branch is:
+
+    M_food,TFWT [Bq]
+      = f_w [1] * M_TFWT [Bq m^-2] * A_h [m^2]
+
+The harvest area A_h is explicit in HarvestParameters; no hidden area or
+parameter default is used. Both transfer fractions remain provisional. The
+FoodTransferBalance verifies:
+
+    plant inventory
+      = harvest transfer + remaining plant inventory + residual
+
+    P6_5_STATUS = PASS_FOOD_TRANSFER_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    FOOD_TRANSFER = TRUE
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.6_DOSE_ASSESSMENT
+
+The implementation, test, and independent boundary-review records are in
+docs/v3/reports/v3_p6_5_food_transfer_implementation_report.md,
+docs/v3/reports/v3_p6_5_food_transfer_test_report.md, and
+docs/v3/reports/v3_p6_5_independent_review.md.
+
+## V3-P6.4 Root uptake and Soil-Plant coupling
+
+The P6.4 branch adds the first isolated Soil -> Root -> TFWT transfer
+interface. The new plant/root_v3 package reads SoilState only through its
+public inventory() and concentration() methods. RootUptakeSolver evaluates the
+minimal provisional interface equation and emits a typed RootFlux record; it
+does not mutate SoilState or create any plant compartment.
+
+The effective coefficient is explicit and provisional:
+
+    J_root = k_root * C_soil
+
+where C_soil is in Bq m^-3 water, k_root is in m s^-1, and J_root is in
+Bq m^-2 s^-1. The interval transfer is recorded in Bq m^-2. No value is read
+from the UFOTRI parameter database, configs, parameters, or trusted registry.
+The TFWT storage solver accepts the optional RootFlux and records its integrated
+input in the existing storage balance. The previous leaf-only call path
+remains valid.
+
+The root source-inventory ledger verifies:
+
+    initial soil inventory
+      = root transfer + remaining soil inventory + other loss + residual
+
+The ledger is a transfer boundary audit; P6.4 does not implement soil
+hydrology, root geometry, root competition, or a production soil-state mutation
+from uptake.
+
+    P6_4_STATUS = PASS_ROOT_UPTAKE_IMPLEMENTED
+    LEAF_RESISTANCE = TRUE
+    TFWT_SOLVER = TRUE
+    OBT_SOLVER = TRUE
+    SOIL_SOLVER = TRUE
+    ROOT_UPTAKE = TRUE
+    ROOT_TO_TFWT_INTERFACE = TRUE
+    ROOT_UPTAKE_COEFFICIENT = PROVISIONAL_EXPLICIT
+    UFOTRI_PARAMETER_IMPORTED = FALSE
+    UFOTRI_ACTIVE_DATABASE = FALSE
+    V3_PHYSICS_READY = FALSE
+    V1_V2_DEFAULT_PATH_CHANGED = FALSE
+    NEXT_PHASE = P6.5_FOODCHAIN
+
+The implementation, test, and independent boundary-review records are in
+docs/v3/reports/v3_p6_4_root_uptake_implementation_report.md,
+docs/v3/reports/v3_p6_4_root_uptake_test_report.md, and
+docs/v3/reports/v3_p6_4_independent_review.md.
+
+## V3-P6.3 Soil HTO transport
+
+The P6.3 branch adds an isolated inventory-based soil HTO pathway at
+`plant/soil_v3/`. `SoilState` stores one immutable layer inventory and a
+checked soil-water concentration derived from the explicit water-content
+basis. `SoilStorageSolver` consumes only deposition and signed layer-transport
+fluxes. A positive transport flux enters the current layer; a negative flux
+leaves it. It does not calculate atmospheric dispersion or hydrology.
+
+The first step uses the constant-flux linear storage equation with explicit
+tritium half-life:
+
+```text
+dM_soil/dt = deposition_flux + transport_flux - lambda_T * M_soil
+lambda_T = ln(2) / tritium_half_life_s
+```
+
+The state and balance ledger do not contain root, plant, foodchain, dose, or
+CTEAS-Atmos state. The old V1/V2 `soil/` and `coupling/` paths remain
+untouched; no default runtime or configuration is connected.
+
+```text
+P6_3_STATUS = PASS_SOIL_HTO_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = TRUE
+SOIL_SOLVER = TRUE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V1_V2_DEFAULT_PATH_CHANGED = FALSE
+P6_3_TARGETED_TESTS = PASS_14_OF_14
+P6_3_REGRESSION_TESTS = PASS_1_OF_1
+NEXT_PHASE = P6.4_ROOT_UPTAKE_FOODCHAIN
+```
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_3_soil_hto_implementation_report.md`,
+`docs/v3/reports/v3_p6_3_soil_hto_test_report.md`, and
+`docs/v3/reports/v3_p6_3_independent_review.md`.
+
+## V3-P6.2C OBT solver
+
+The P6.2C branch adds an isolated inventory-based TFWT-to-OBT solver at
+`plant/obt_v3/`. It consumes only the public `TFWTState.inventory()` and
+`TFWTState.activity_concentration()` methods. `OBTState` keeps OBT inventory as
+the authoritative quantity and derives a checked fresh-mass concentration;
+TFWT/OBT ratios are not stored. The biological forcing boundary currently uses
+only `is_daylight`; temperature, photosynthetic activity, and growth stage are
+reserved extension fields.
+
+The solver accepts explicit provisional test rates and does not read the
+UFOTRI parameter database, configs, or the trusted external-evidence registry.
+It is not connected to the existing V1/V2 runtime, foodchain, dose, soil, or
+the P6.2B plant facade. The P6.2B public pathway remains a TFWT-only pathway.
+
+```text
+P6_2C_STATUS = PASS_OBT_SOLVER_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = TRUE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V1_V2_DEFAULT_PATH_CHANGED = FALSE
+P6_2C_TARGETED_TESTS = PASS_34_OF_34
+P6_2C_BOUNDARY_REVIEW = PASS_4_OF_4
+FULL_REPOSITORY_PYTEST = NOT_GREEN_17_ENVIRONMENT_OR_STAGE_INCOMPATIBLE_FAILURES
+NEXT_PHASE = P6.3_SOIL_HTO
+```
+
+The implementation, test, and independent boundary-review records are in
+`docs/v3/reports/v3_p6_2c_obt_solver_implementation_report.md`,
+`docs/v3/reports/v3_p6_2c_obt_solver_test_report.md`, and
+`docs/v3/reports/v3_p6_2c_independent_review.md`.
+
+## V3-P6.2B integration and P6.2B-2.5 public interface freeze
+
+The P6.2B integration branch preserves the P6.2B-1 resistance subsystem and
+P6.2B-2 TFWT storage solver as separate V3 packages. The new `plant/v3`
+facade only connects atmospheric forcing to a precomputed resistance state,
+one signed leaf-exchange flux, and the public TFWT state API. OBT remains a
+reserved future interface; no OBT, root, soil, dose, atmosphere, parameter
+activation, or default-runtime connection was added.
+
+```text
+P6_2B_INTEGRATION_STATUS = PASS
+P6_2B_INTERFACE_FREEZE = PASS
+P6_2B_2_5_STATUS = PASS_PUBLIC_PATHWAY_INTERFACE_FREEZE
+LEAF_EXCHANGE_RESISTANCE_IMPLEMENTED = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+V3_PHYSICS_READY = FALSE
+NEXT_PHASE = P6_2C
+```
+
+The default V1/V2 configuration remains unchanged, including
+`leaf_exchange_mode: off` and `direct_leaf_uptake_enabled: false`. The
+implementation and boundary reports are in
+`docs/v3/reports/v3_p6_2b_2_5_interface_implementation_report.md`,
+`docs/v3/reports/v3_p6_2b_integration_review.md`, and
+`docs/v3/reports/v3_p6_2b_2_5_boundary_audit.md`.
+
+## V3-P6.2B-2 TFWT dynamic solver
+
+The V3 TFWT storage-only solver consumes the signed P6.2B-1
+`LeafExchangeFlux` and updates `TFWTState` at fixed water content. It does not
+recompute resistance, create OBT, perform root or soil coupling, connect dose,
+foodchain, CTEAS-Atmos, or alter the V1/V2 default path. The existing
+`plant/tfwt.py` file remains unchanged; the V3 package is isolated at
+`plant/tfwt_v3/`.
+
+```text
+P6_2B_2_STATUS = PASS_TFWT_SOLVER_IMPLEMENTED
+LEAF_RESISTANCE = TRUE
+TFWT_SOLVER = TRUE
+OBT_SOLVER = FALSE
+UFOTRI_DATABASE_ACTIVE = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+V3_PHYSICS_READY = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+P6_2B_2_INDEPENDENT_REVIEW = PASS
+NEXT_PHASE = P6_2B_3
+```
+
+## V3-P6.2B-1 Leaf-exchange resistance subsystem
+
+The resistance-only subsystem is implemented on a branch based on the latest
+`origin/main@6671f579`. It is isolated from the existing V1/V2
+`plant/leaf_exchange.py` import path. The subsystem validates the atmospheric
+forcing boundary, computes `r_a + r_b + r_c` and `g_ex`, and emits one signed
+`LeafExchangeFlux` placeholder. The P6.1 ParameterDatabase is consumed only by
+a structural `lookup(..., production=False)` seam because its implementation
+remains on an unmerged branch. No parameter value, default, trusted registry,
+or production path is changed.
+
+```text
+P6_2B_1_STATUS = PASS_RESISTANCE_SUBSYSTEM_IMPLEMENTED
+LEAF_EXCHANGE_RESISTANCE_IMPLEMENTED = TRUE
+LEAF_EXCHANGE_SOLVER = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+LEAF_EXCHANGE_COMPLETE = FALSE
+TFWT_SOLVER = FALSE
+OBT_SOLVER = FALSE
+V3_PHYSICS_READY = FALSE
+NEXT_PHASE = P6_2B_2
+```
 
 ## D3 UFOTRI manual data mapping and laboratory handoff
 
@@ -285,6 +1038,49 @@ SB1_V3_ARCHITECTURE_STATUS = READY_ARCHITECTURE_ONLY
 SB1_FORMAL_PHYSICS_CHANGE_COUNT = 0
 SB1_FORMAL_CONFIG_CHANGE_COUNT = 0
 V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
+
+## V3 P7.6C-2 UFOTRI semantic mapping
+
+The P7.6C-2 audit inventories the available KfK 4605 UFOTRI manual and
+separates it from project-derived V3 contracts. No original UFOTRI source code
+or executable was recovered. The read-only mapping control plane records the
+equation, quantity definition, unit, compartment, time/state basis, and
+provenance for every current deferred V3 plant/soil/food/exposure parameter
+covered by this stage. It does not load a value into a solver.
+
+```text
+P7_6C2_STATUS = PASS_SEMANTIC_MAPPING_COMPLETE
+UFOTRI_MAPPING_COMPLETE = TRUE
+UFOTRI_SOURCE_INVENTORY = COMPLETE_FOR_AVAILABLE_MANUAL
+UFOTRI_SOURCE_CODE = SOURCE_UNAVAILABLE
+UFOTRI_SOURCE_ASSETS_INSPECTED = 21
+UFOTRI_V3_PARAMETERS_MAPPED = 26
+UFOTRI_DIRECT_MAPPINGS = 12
+UFOTRI_TRANSFORMABLE_MAPPINGS = 4
+UFOTRI_CONCEPTUAL_ANALOGUES = 6
+UFOTRI_NO_MAPPINGS = 3
+UFOTRI_SOURCE_UNAVAILABLE_MAPPINGS = 1
+NEW_VALIDATION_CANDIDATES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+V3_PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+```
+
+The mapping manifest is
+`docs/v3/parameter_evidence/ufotri_parameter_mapping.yaml`. The immutable
+record type is
+`src/cteas_ufotri/parameters_v3/ufotri_mapping.py`; it is not imported by
+production plant, soil, exposure, coupling, or pipeline modules. P7.6C-2
+classifies root rate versus V3 velocity, soil transport versus signed V3 flux,
+continuous UFOTRI food-chain rates versus V3 harvest fractions, and external
+intake/dose assumptions without guessing conversions. The targeted mapping
+suite passes 8/8 tests; no production simulation, calibration, or physics
+activation was run.
 SB1_MERGE_RECOMMENDATION = READY_FOR_INDEPENDENT_BENCHMARK_REVIEW
 ```
 
@@ -1129,3 +1925,242 @@ EXPERIMENT_SPECIFICATION = READY_FOR_EXTERNAL_DATA_SEARCH_OR_NEW_EXPERIMENT
 FORMAL_V3_PHYSICS = NOT_STARTED
 V3_PHYSICS_START_GATE = BLOCKED_EXTERNAL_EXPERIMENT_OR_FIELD_DATA
 ```
+
+## V3 integration review and P7.7 validation preparation
+
+The independent `codex/v3-integration-review` branch was created from
+`origin/main` and sequentially integrated P7.5, P7.5B, P7.6A, P7.6B-1,
+P7.6B-2A, P7.6B-2B, P7.6C-1, and P7.6C-2. The review uses new integration
+commits and does not merge `origin/main`. The final tree is unchanged from
+the P7.6C-2 source tree before the review report was added, so this phase
+introduced no physics-module, numerical-coupling, or solver changes.
+
+```text
+V3_INTEGRATION_REVIEW = PASS
+CODE_CONFLICTS = 0
+NEW_TEST_FAILURES = 0
+PHYSICS_MODULE_CHANGES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+CALIBRATION = NOT_STARTED
+REAL_ATMOS_INPUT = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The requested unit, integration, architecture, and regression scopes pass
+with `PYTHONPATH=.`. The only test-suite warning is the existing NumPy/NetCDF
+binary-compatibility warning in the ERA5 reader test. The full integration
+review is recorded in
+`docs/v3/reports/v3_integration_readiness_review.md`. The next stage is
+preparation-only and is defined in
+`docs/v3/physics/p7_7_physics_validation_preparation.md`; it does not start
+calibration or activate any parameter.
+
+## V3 P7.6C-3 UFOTRI validation-feasibility assessment
+
+P7.6C-3 evaluates every P7.6C-2 UFOTRI semantic mapping record without
+searching for or importing a parameter value. The decision matrix separates
+future validation pathways from V3 equation gaps, external exposure/dose
+inputs, and unrecovered source definitions. The derived leaf conductance is
+reviewed separately from its three resistance components.
+
+```text
+P7_6C3_STATUS = PASS_VALIDATION_FEASIBILITY_ASSESSMENT
+ALL_PARAMETERS_ASSESSED = TRUE
+MAPPED_PARAMETERS_ASSESSED = 26
+DERIVED_REVIEW_ITEMS = 1
+VALIDATION_FEASIBLE = 4
+VALIDATION_FEASIBLE_WITH_LIMITATIONS = 8
+PHYSICS_REDESIGN_REQUIRED = 9
+NOT_IMPORTABLE = 4
+INSUFFICIENT_INFORMATION = 1
+NEW_VALIDATION_CANDIDATES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+CALIBRATION_STARTED = FALSE
+UFOTRI_PARAMETER_IMPORTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The typed control plane is
+`src/cteas_ufotri/parameters_v3/validation_feasibility.py`; its canonical
+matrix is `docs/v3/parameter_evidence/parameter_validation_feasibility.yaml`.
+ADR-015 freezes the five states and the fail-closed validation gate. Reports
+are `v3_p7_6c3_validation_feasibility_report.md`,
+`v3_p7_6c3_physics_gap_analysis.md`,
+`v3_p7_6c3_parameter_decision_matrix.md`, and
+`v3_p7_6c3_independent_review.md`. No solver, equation, numerical coupling,
+runtime parameter lookup, calibration, or active database was added.
+
+## V3 P7.6D physics adoption decision and redesign roadmap
+
+P7.6D converts the P7.6C-3 feasibility assessment into an explicit model
+adoption decision. All 26 mapped records and the derived `leaf.g_ex` review
+item are covered exactly once. The current V3 model remains frozen; nine
+records require a future physics redesign, while metadata, exposure, and dose
+records remain outside the UFOTRI environmental-physics path.
+
+```text
+P7_6D_STATUS = PASS_PHYSICS_ADOPTION_DECISION
+ALL_FEASIBILITY_ITEMS_REVIEWED = TRUE
+CURRENT_V3_MODEL = FROZEN
+REDESIGN_ITEMS_IDENTIFIED = TRUE
+IMPLEMENTATION_STARTED = FALSE
+NEW_VALIDATION_CANDIDATES = 0
+VALIDATED_PARAMETERS = 1
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+PHYSICS_CHANGED = FALSE
+NUMERICAL_COUPLING_CHANGED = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+Adoption counts are `KEEP_CURRENT_V3=2`, `VALIDATE_CURRENT_MODEL=9`,
+`EXTEND_V3_PHYSICS=2`, `REDESIGN_REQUIRED=9`, `DO_NOT_IMPORT=4`, and
+`WAIT_FOR_EVIDENCE=1`. The canonical registry and priority matrix are
+`docs/v3/physics/p7_6d_physics_adoption_decision.yaml` and
+`docs/v3/physics/p7_6d_redesign_priority_matrix.yaml`. The policy is frozen in
+`docs/v3/adr/ADR-016-v3-physics-adoption-and-redesign-policy.md`; reports are
+`v3_p7_6d_physics_adoption_report.md`,
+`v3_p7_6d_redesign_roadmap.md`,
+`v3_p7_6d_coupling_impact_report.md`, and
+`v3_p7_6d_independent_review.md`.
+
+The P7.6D control-plane loader and focused unit/architecture tests pass. No
+solver, equation, P7.5/P7.5B pipeline, numerical coupling, parameter value,
+calibration routine, runtime lookup, or active database was added.
+
+## V3 P7.8A physics redesign prioritization and planning
+
+P7.8A converts the P7.6C-3 feasibility findings and P7.6D adoption decisions
+into a ranked, evidence-gated physics roadmap. The current V3 model remains
+frozen. The registry covers all nine P7.6D `REDESIGN_REQUIRED` records,
+separates two deferred water/hydrology extensions, and permanently rejects
+four shortcuts or scope expansions. The coupling matrix classifies every
+governed item as `NO_IMPACT`, `INTERFACE_CHANGE_ONLY`,
+`PIPELINE_CHANGE_REQUIRED`, or
+`NUMERICAL_COUPLING_REDESIGN_REQUIRED` without reopening P7.5/P7.5B.
+
+```text
+P7_8A_STATUS = PASS_PHYSICS_REDESIGN_PRIORITIZATION
+REDESIGN_ITEMS_REVIEWED = TRUE
+PRIORITY_MATRIX_COMPLETE = TRUE
+ROADMAP_DEFINED = TRUE
+IMPLEMENTATION_STARTED = FALSE
+SOLVER_CHANGES = FALSE
+COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The primary outputs are
+`docs/v3/physics/p7_8a_redesign_priority_registry.yaml`,
+`docs/v3/physics/p7_8a_coupling_impact_matrix.yaml`,
+`docs/v3/reports/v3_p7_8a_redesign_prioritization_report.md`,
+`docs/v3/reports/v3_p7_8a_physics_evolution_roadmap.md`,
+`docs/v3/reports/v3_p7_8a_coupling_impact_report.md`,
+`docs/v3/reports/v3_p7_8a_independent_review.md`, and
+`docs/v3/adr/ADR-019-v3-physics-redesign-governance.md`.
+
+The P7.8A governance test validates registry completeness, subsystem review,
+priority states, coupling coverage, direct-activation rejection, required
+artifacts, and runtime isolation. The compatibility command completed with
+`32 passed`; `git diff --check` passed. No plant, soil, exposure, coupling,
+pipeline, or parameter-runtime source was changed.
+
+## V3 P7.8B-1 physics redesign specification
+
+P7.8B-1 converts the P7.8A redesign priorities into candidate scientific
+specifications without implementing them. The specification registry covers
+the nine redesign records and two deferred extensions, including current
+equations, equation gaps, candidate formulations, state variables, symbolic
+parameters, interface changes, validation data, coupling impact, backward
+compatibility, and migration strategy.
+
+```text
+P7_8B1_STATUS = PASS_REDESIGN_SPECIFICATION
+HIGH_PRIORITY_ITEMS_SPECIFIED = TRUE
+EQUATION_GAPS_DOCUMENTED = TRUE
+VALIDATION_REQUIREMENTS_DEFINED = TRUE
+COUPLING_IMPACTS_DEFINED = TRUE
+IMPLEMENTATION_STARTED = FALSE
+SOLVER_CHANGES = FALSE
+NUMERICAL_COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The primary outputs are
+`docs/v3/physics/p7_8b1_redesign_specification.yaml`,
+`docs/v3/reports/v3_p7_8b1_redesign_specification_report.md`,
+`docs/v3/reports/v3_p7_8b1_equation_gap_analysis.md`,
+`docs/v3/reports/v3_p7_8b1_coupling_impact_report.md`,
+`docs/v3/reports/v3_p7_8b1_independent_review.md`, and
+`docs/v3/adr/ADR-020-v3-redesign-specification-policy.md`.
+
+The current `v3_frozen_baseline` remains runnable and unchanged. Candidate
+equations and parameters are control-plane-only, value-free, and not runtime
+admissible. Root, layered soil, and food event/continuous candidates are
+explicit `NUMERICAL_COUPLING_CHANGE` designs; OBT/leaf candidates are
+interface extensions; TFWT dynamic water turnover is a pipeline change.
+
+The P7.8B-1 specification test validates schema completeness, candidate
+options, dimensional markers, conservation-boundary markers, activation
+governance, baseline compatibility, required artifacts, and runtime
+isolation. The focused suite completed with `12 passed`; `git diff --check`
+passed. No production source was changed.
+
+## V3 P7.8B-2 physics selection and architecture decision
+
+P7.8B-2 selects the future physics direction after the P7.8A prioritization
+and P7.8B-1 specification review. V3.1 is limited to a typed plant/product
+mass-basis contract. V4 selects the OBT precursor and exchangeable/non-
+exchangeable pool direction, dynamic stomatal response at the existing leaf
+resistance boundary, and water-flux-coupled layered root uptake. The current
+one-layer soil signed-transport interface, fixed TFWT storage, food harvest
+event, external consumption, and external dose layers remain unchanged.
+
+```text
+P7_8B2_STATUS = PASS_PHYSICS_SELECTION
+FINAL_MODEL_CHOICES_DEFINED = TRUE
+V3_1_ROADMAP_DEFINED = TRUE
+V4_ITEMS_DEFINED = TRUE
+VALIDATION_DEPENDENCY_DEFINED = TRUE
+IMPLEMENTATION_ORDER_FROZEN = TRUE
+IMPLEMENTATION_STARTED = FALSE
+SOLVER_CHANGES = FALSE
+COUPLING_CHANGES = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+UFOTRI_ACTIVE_DATABASE = FALSE
+V3_PHYSICS_READY = FALSE
+```
+
+The primary outputs are
+`docs/v3/physics/p7_8b2_physics_selection.yaml`,
+`docs/v3/physics/p7_8b2_architecture_roadmap.yaml`,
+`docs/v3/physics/p7_8b2_coupling_decision.yaml`,
+`docs/v3/physics/p7_8b2_validation_dependency.yaml`,
+`docs/v3/reports/v3_p7_8b2_physics_selection_report.md`,
+`docs/v3/reports/v3_p7_8b2_architecture_roadmap.md`,
+`docs/v3/reports/v3_p7_8b2_validation_dependency_report.md`,
+`docs/v3/reports/v3_p7_8b2_independent_review.md`, and
+`docs/v3/adr/ADR-021-v3-physics-selection-policy.md`.
+
+The registry remains control-plane-only. Selected equations are not
+implemented, candidate parameters have no values, no calibration is started,
+and the root candidate is explicitly gated by a future P7.5/P7.5B numerical-
+coupling review. Soil hydrology, TFWT water turnover, and continuous/hybrid
+food transfer remain `INSUFFICIENT_EVIDENCE`; unreviewed values, guessed
+conversions, continuous-only food transfer, and dose-driven environmental
+redesign remain rejected.

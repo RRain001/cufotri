@@ -1,0 +1,606 @@
+schema_version: v1
+stage: P7.8B-1
+status: PASS_REDESIGN_SPECIFICATION
+source_priority_registry: docs/v3/physics/p7_8a_redesign_priority_registry.yaml
+source_coupling_matrix: docs/v3/physics/p7_8a_coupling_impact_matrix.yaml
+current_v3_model: FROZEN
+
+decision_states:
+  - APPROVED_FOR_FUTURE_IMPLEMENTATION
+  - REQUIRES_MORE_RESEARCH
+  - KEEP_CURRENT_MODEL
+  - REJECT_REDESIGN
+
+coupling_impact_states:
+  - NO_INTERFACE_CHANGE
+  - INTERFACE_EXTENSION
+  - PIPELINE_CHANGE
+  - NUMERICAL_COUPLING_CHANGE
+
+specification_scope:
+  p7_8a_redesign_items_specified: 9
+  p7_8a_deferred_extensions_specified: 2
+  high_priority_items_specified: true
+  equation_gaps_documented: true
+  validation_requirements_defined: true
+  coupling_impacts_defined: true
+  implementation_started: false
+  solver_changes: false
+  numerical_coupling_changes: false
+  p7_5_semantics_changed: false
+  p7_5b_semantics_changed: false
+  active_parameters: 0
+  validated_parameters: 1
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+
+governance:
+  specification_is_control_plane_only: true
+  candidate_equations_are_implemented: false
+  candidate_parameters_have_values: false
+  candidate_parameters_are_runtime_admissible: false
+  implementation_authorized: false
+  direct_activation_forbidden: true
+  forbidden_transitions:
+    - [SPECIFICATION_ONLY, ACTIVE_PARAMETER]
+    - [REQUIRES_MORE_RESEARCH, ACTIVE_PARAMETER]
+    - [APPROVED_FOR_FUTURE_IMPLEMENTATION, ACTIVE_PARAMETER]
+  required_before_p7_8b2:
+    - equation_selection_record
+    - dimensional_and_unit_audit
+    - state_ownership_contract
+    - conservation_and_restart_tests
+    - validation_dataset_and_case_contract
+    - coupling_impact_review_when_required
+    - independent_review
+    - explicit_implementation_authorization
+
+baseline_compatibility:
+  profile_id: v3_frozen_baseline
+  status: RUNNABLE_UNCHANGED
+  existing_cases_continue_running: true
+  existing_solver_equations_changed: false
+  existing_state_serialization_changed: false
+  existing_parameter_defaults_changed: false
+  new_parameters_required: false
+  migration_strategy: 'Keep the current profile as the default; future profiles are opt-in and fail closed when their required fields are absent.'
+  rollback_strategy: 'Select v3_frozen_baseline and retain the current V3 result contract; no automatic conversion of candidate states is allowed.'
+
+baseline_preservation:
+  - item_id: BASE_LEAF_RESISTANCE_CHAIN
+    subsystem: plant.leaf_exchange_resistance
+    current_equation: 'r_tot = r_a + r_b + r_c; g_ex = 1 / r_tot'
+    decision: KEEP_CURRENT_MODEL
+    coupling_impact: NO_INTERFACE_CHANGE
+    compatibility: 'All existing resistance cases remain on the current component and unit contract.'
+  - item_id: BASE_TFWT_STORAGE_BOUNDARY
+    subsystem: plant.tfwt_v3
+    current_equation: 'dM_T/dt = J_leaf + J_root - J_water_loss - J_transformation at fixed water content'
+    decision: KEEP_CURRENT_MODEL
+    coupling_impact: NO_INTERFACE_CHANGE
+    compatibility: 'Existing explicit activity-flux inputs and ledger semantics remain unchanged.'
+  - item_id: BASE_SOIL_SIGNED_TRANSPORT
+    subsystem: plant.soil_v3
+    current_equation: 'dM_s/dt = F_deposition + F_transport - lambda M_s'
+    decision: KEEP_CURRENT_MODEL
+    coupling_impact: NO_INTERFACE_CHANGE
+    compatibility: 'Existing one-layer signed transport remains the default; layered hydrology is not inferred.'
+  - item_id: BASE_OBT_REDUCED_FIRST_ORDER
+    subsystem: plant.obt_v3
+    current_equation: 'dB/dt = k_f T - k_r B under the declared reduced-model forcing contract'
+    decision: KEEP_CURRENT_MODEL
+    coupling_impact: NO_INTERFACE_CHANGE
+    compatibility: 'Existing kf/kr cases remain software baselines and are not promoted to full biological validation.'
+
+model_options:
+  obt:
+    option_a_reduced_first_order:
+      decision: KEEP_CURRENT_MODEL
+      equation: 'dB/dt = k_f T - k_r B'
+      advantages:
+        - minimal state and parameter burden
+        - analytic or stable interval advancement remains available
+        - existing V3 cases remain directly comparable
+      limitations:
+        - day/night, photosynthesis, growth, organ scope, and temperature are reduced or external
+        - cannot claim a resolved carbon-fixation mechanism
+      parameter_status: 'Existing provisional/reduced-model parameters only; no new UFOTRI values admitted'
+    option_b_two_pool_biological_extension:
+      decision: REQUIRES_MORE_RESEARCH
+      candidate_equations:
+        - 'dP/dt = u_P(T, A, d, s, T_leaf) - k_P P'
+        - 'dB_x/dt = k_PB P - (k_x + k_xn) B_x'
+        - 'dB_n/dt = k_xn B_x - k_n B_n'
+      interpretation: 'P is a precursor/activity pool; B_x and B_n are exchangeable and non-exchangeable OBT activity inventories.'
+      advantages:
+        - separates formation forcing from OBT turnover
+        - permits explicit day/night, activity, temperature, and pool scope decisions
+        - preserves a path to aggregate B = B_x + B_n
+      limitations:
+        - requires matched time-resolved biological data
+        - adds state identifiability and conservation obligations
+        - candidate functions and rates have no admitted values
+    option_c_organ_specific_growth_model:
+      decision: REQUIRES_MORE_RESEARCH
+      candidate_equations: 'For organ o, dB_o/dt = u_o(T, A, s, T_leaf) - k_o B_o with explicit plant-growth and allocation states.'
+      limitations:
+        - requires organ-specific observations and allocation data
+        - not justified as the first implementation target by current evidence
+      disposition: 'Research branch only; do not add organ states in P7.8B-1.'
+  root:
+    option_a_effective_velocity:
+      decision: KEEP_CURRENT_MODEL
+      equation: 'J_root = v_r C_w'
+      limitation: 'Equivalent to the current one-layer effective-velocity abstraction and does not resolve layer or water-flux mechanisms.'
+    option_b_water_flux_coupled:
+      decision: REQUIRES_MORE_RESEARCH
+      equation: 'J_root,i = q_w,i C_w,i, with M_s,i = theta_i Delta_z_i C_w,i'
+      advantages:
+        - preserves activity flux units from water flux times concentration
+        - can represent layer-resolved uptake when q_w,i is observed or separately modelled
+        - makes storage length and layer basis explicit
+      limitations:
+        - q_w,i, layer boundaries, and root activity require data and coupling ownership
+    option_c_moisture_dependent:
+      decision: REQUIRES_MORE_RESEARCH
+      equation: 'J_root,i = v_r,i f_theta(theta_i) C_w,i, where f_theta is dimensionless and bounded by a reviewed contract'
+      advantages:
+        - represents moisture limitation as a separate response function
+      limitations:
+        - does not solve layer aggregation or water-flux identifiability by itself
+      disposition: 'Use only as a closure candidate inside Option B, never as a substitute for the layered state contract.'
+  soil:
+    option_a_signed_transport_interface:
+      decision: KEEP_CURRENT_MODEL
+      equation: 'dM_s/dt = F_deposition + F_transport - lambda M_s'
+      compatibility: 'No interface or numerical-coupling change.'
+    option_b_layered_conservative_transport:
+      decision: REQUIRES_MORE_RESEARCH
+      equation: 'dM_i/dt = F_adv,i-1/2 + F_diff,i-1/2 - F_adv,i+1/2 - F_diff,i+1/2 + S_i - lambda M_i - J_root,i - J_evap,i'
+      advantages:
+        - conservative layer-by-layer bookkeeping
+        - explicit boundaries for deposition, root extraction, evaporation, and drainage
+      limitations:
+        - requires layer-resolved water and HTO data
+        - changes the soil/root numerical state boundary
+  leaf_exchange:
+    option_a_resistance_chain:
+      decision: KEEP_CURRENT_MODEL
+      equation: 'r_tot = r_a + r_b + r_c; g_ex = 1 / r_tot'
+      compatibility: 'Current V3 leaf cases remain unchanged.'
+    option_b_dynamic_stomatal_response:
+      decision: REQUIRES_MORE_RESEARCH
+      equation: 'g_s(t) = g_s,max F_light(L) F_vpd(VPD) F_temp(T_leaf) F_stage(s); r_c(t) = 1 / g_s(t)'
+      constraints:
+        - response functions require explicit domains and provenance
+        - conductance and resistance must retain reciprocal units
+        - no response-function values are selected here
+  tfwt:
+    option_a_fixed_water_storage:
+      decision: KEEP_CURRENT_MODEL
+      equation: 'dM_T/dt = J_leaf + J_root - J_loss - J_transformation'
+      compatibility: 'Current TFWT storage and ledger remain the default.'
+    option_b_dynamic_water_turnover:
+      decision: REQUIRES_MORE_RESEARCH
+      equation: 'dW/dt = I_W - O_W + G_W; C_T = M_T/W; dM_T/dt = J_leaf + J_root + J_in,W - C_T O_W - J_transformation'
+      advantages:
+        - distinguishes activity loss from water mass turnover
+        - represents dilution through an explicit water state rather than a hidden factor
+      limitations:
+        - requires water-balance forcing and pipeline ownership
+        - must define whether growth water carries activity
+  food_transfer:
+    option_a_harvest_event:
+      decision: KEEP_CURRENT_MODEL
+      equation: 'M_food,O^+ = h_O M_plant,O and M_food,T^+ = h_T M_plant,T at a declared harvest event'
+      compatibility: 'Existing event cases remain runnable and separate from intake/dose.'
+    option_b_continuous_or_hybrid_product_state:
+      decision: REQUIRES_MORE_RESEARCH
+      equation: 'dM_food,x/dt = k_p,x M_plant,x - k_loss,x M_food,x; event H(t_h) may add a declared harvest transfer'
+      advantages:
+        - separates continuous product formation from harvest readout
+        - retains OBT and TFWT product inventories as distinct states
+      limitations:
+        - changes plant-product time coupling and requires product data
+        - event, continuous, and hybrid semantics must be selected before implementation
+
+specifications:
+  - item_id: R1_OBT_DAYLIGHT_FORMATION_STATE
+    p7_6d_parameter_ids: [obt.daylight_multiplier]
+    subsystem: plant.obt_v3
+    current_model: 'Reduced TFWT-to-OBT storage with a Boolean daylight selector and a provisional multiplier.'
+    current_equation: 'dB/dt = k_f m_day(d) T - k_r B; B,T [Bq m^-2], k_f,k_r [s^-1], m_day dimensionless.'
+    identified_gap: 'The source record does not define a normalized daylight state or a biological interpretation of m_day.'
+    scientific_requirement: 'Separate daylight timing from the formation mechanism and preserve an auditable OBT inventory balance.'
+    candidate_model: 'Use the OBT Option B precursor/pool structure; define u_P = k_f0 T phi_daynight(d,s) with phi_daynight dimensionless and explicitly bounded.'
+    new_state_variables:
+      - 'P: precursor/activity inventory [Bq m^-2]'
+      - 'B_x: exchangeable OBT inventory [Bq m^-2]'
+      - 'B_n: non-exchangeable OBT inventory [Bq m^-2]'
+      - 'daylight_state: timestamp-aligned categorical or normalized forcing state'
+    new_parameters:
+      - 'k_f0 [s^-1], candidate only'
+      - 'phi_daynight(d,s) [1], candidate forcing function only'
+      - 'k_P, k_PB, k_x, k_xn, k_n [s^-1], candidate only'
+    interface_changes: 'Add an opt-in biological-forcing contract for daylight state and preserve the existing TFWT/OBT public inventory boundary.'
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3
+      - plant.tfwt_v3 public inventory interface
+      - validation_v3 future biological case schema
+    migration_strategy: 'Keep current reduced profile as default; map no existing multiplier into phi_daynight automatically.'
+    validation_dataset_requirement: 'Matched time-resolved plant TFWT, exchangeable/non-exchangeable OBT, light-state, temperature, stage, mass basis, and replicate data.'
+    validation_plan:
+      - 'Pre-register day/night transition convention and sampling alignment.'
+      - 'Compare Option A and Option B on trajectories and integrated inventories.'
+      - 'Require component and total OBT conservation residuals.'
+      - 'Keep synthetic software tests separate from biological validation.'
+    implementation_complexity: HIGH
+    priority: CRITICAL
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Existing cases continue on Option A; future profile is opt-in and cannot silently change day/night behavior.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R2_OBT_NIGHTTIME_FORMATION_STATE
+    p7_6d_parameter_ids: [obt.nighttime_multiplier]
+    subsystem: plant.obt_v3
+    current_model: 'Reduced OBT storage selects a provisional nighttime multiplier when is_daylight is false.'
+    current_equation: 'dB/dt = k_f m_night(d) T - k_r B; m_night is currently a software input, not a reviewed biological relation.'
+    identified_gap: 'Nighttime residual formation, turnover scope, and time convention are not specified.'
+    scientific_requirement: 'Decide whether nighttime activity is zero, residual, or state-dependent using observations rather than a default.'
+    candidate_model: 'Use the same P/B_x/B_n package as R1 with phi_daynight(d,s) defined over both day and night; do not hard-code the nighttime branch.'
+    new_state_variables:
+      - 'nighttime_state: timestamp-aligned biological period state'
+      - 'P, B_x, B_n: shared OBT package inventories [Bq m^-2]'
+    new_parameters:
+      - 'phi_night(d,s) [1], candidate function only'
+      - 'night/day transition and residual-activity descriptors, candidate metadata only'
+    interface_changes: 'Require explicit period convention and biological forcing provenance; retain the existing OBT inventory output.'
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3
+      - meteorology or chamber light-state forcing adapter
+    migration_strategy: 'Existing cases retain their current explicit forcing; no current nighttime input is reinterpreted as a validated residual rate.'
+    validation_dataset_requirement: 'Paired day/night TFWT and OBT trajectories with declared-resolution light, temperature, stage, sampling, and biological-replicate metadata.'
+    validation_plan:
+      - 'Use a prospective case with separated day and night intervals.'
+      - 'Test identifiability of zero, residual, and state-dependent nighttime hypotheses.'
+      - 'Audit total OBT and TFWT-to-OBT inventory balances.'
+    implementation_complexity: HIGH
+    priority: CRITICAL
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Current reduced profile remains the compatibility path; no automatic conversion from m_night to phi_night.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R3_OBT_PHOTOSYNTHETIC_FORCING_STATE
+    p7_6d_parameter_ids: [obt.photosynthetic_activity]
+    subsystem: plant.obt_v3
+    current_model: 'Photosynthetic activity is accepted as an optional forcing field but does not alter the current equation.'
+    current_equation: 'dB/dt = k_f T - k_r B; activity A is absent from the RHS.'
+    identified_gap: 'No decision exists between measured activity forcing and a prognostic plant activity state.'
+    scientific_requirement: 'Connect any activity descriptor to OBT formation with explicit units, timing, and biological scope.'
+    candidate_model: 'Extend the precursor source as u_P = k_f0 T phi_photo(A,L,s), where A is either measured activity or a separately specified state; the two interpretations must not be mixed.'
+    new_state_variables:
+      - 'A(t): measured activity forcing or explicitly defined activity state'
+      - 'P: precursor/activity inventory [Bq m^-2]'
+    new_parameters:
+      - 'activity response function phi_photo [1], candidate only'
+      - 'activity normalization and temporal aggregation rule, candidate contract only'
+      - 'k_f0 [s^-1], candidate only'
+    interface_changes: 'Add a typed activity forcing/state discriminator, provenance, unit, temporal-resolution, and missing-data fields.'
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3 biological forcing boundary
+      - validation_v3 forcing schema
+    migration_strategy: 'Ignore the optional activity field in the frozen baseline; require an explicit future profile before it affects OBT.'
+    validation_dataset_requirement: 'Plant TFWT/OBT time series paired with measured PAR/light or a defensible activity proxy, temperature, humidity, stage, biomass, and replicates.'
+    validation_plan:
+      - 'Compare activity-as-forcing and activity-as-state hypotheses.'
+      - 'Pre-register normalization and missing-data handling.'
+      - 'Use trajectory and conservation metrics without refitting an unapproved parameter.'
+    implementation_complexity: HIGH
+    priority: CRITICAL
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Current cases remain unchanged because activity is ignored under the baseline profile.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R4_OBT_PLANT_MASS_BASIS
+    p7_6d_parameter_ids: [obt.plant_mass]
+    subsystem: plant.obt_v3
+    current_model: 'OBT concentration is derived as inventory divided by a declared fresh-plant mass basis.'
+    current_equation: 'C_B,basis = B / M_basis; B [Bq m^-2], M_basis [kg m^-2], C_B,basis [Bq kg^-1 basis].'
+    identified_gap: 'Fresh, dry, water, and hydrogen bases are not connected by a reviewed conversion and plant-product contract.'
+    scientific_requirement: 'Make concentration basis, inventory basis, tissue scope, area, and plant-product mass mapping explicit and traceable.'
+    candidate_model: 'Use an explicit basis state/descriptor M_basis(t,b) with measured or separately governed conversion records; do not infer moisture or hydrogen fractions.'
+    new_state_variables:
+      - 'M_basis(t,b): plant mass on declared basis [kg m^-2] or an explicitly supplied diagnostic'
+      - 'basis_id and tissue_scope: provenance/state descriptors'
+    new_parameters:
+      - 'basis conversion factors or observations, candidate evidence fields with no default values'
+      - 'area and product-mass mapping descriptors, candidate contract fields'
+    interface_changes: 'Extend OBT and food state metadata with basis_id, tissue_scope, and product-basis provenance; preserve existing fresh-basis default only for baseline cases.'
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3 state diagnostic
+      - plant.food_v3 product-basis boundary
+      - exposure.intake_v3 denominator contract
+    migration_strategy: 'Existing fresh-basis cases continue; a non-fresh basis requires an explicit basis contract and cannot be auto-converted.'
+    validation_dataset_requirement: 'Paired OBT activity/inventory and fresh/dry/water/hydrogen mass measurements with plant stage, tissue, area, product mass, and provenance.'
+    validation_plan:
+      - 'Run a dimensional and basis-conversion audit before trajectory comparison.'
+      - 'Verify plant-to-product inventory and mass basis separately.'
+      - 'Reject records with an ambiguous denominator.'
+    implementation_complexity: MEDIUM
+    priority: HIGH
+    decision: APPROVED_FOR_FUTURE_IMPLEMENTATION
+    backward_compatibility: 'Metadata-only extension can preserve baseline numerical results, but no new basis becomes active without a separate implementation gate.'
+    equation_status: SPECIFICATION_ONLY
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R5_OBT_TEMPERATURE_RESPONSE
+    p7_6d_parameter_ids: [obt.temperature]
+    subsystem: plant.obt_v3
+    current_model: 'Temperature is optional biological forcing and does not alter kf or kr.'
+    current_equation: 'dB/dt = k_f T - k_r B; T_leaf is absent from the RHS.'
+    identified_gap: 'No OBT-specific response relation, affected process, domain, or reference temperature is defined.'
+    scientific_requirement: 'Separate formation and turnover temperature effects and prevent generic response factors from being treated as UFOTRI parameters.'
+    candidate_model: 'Use u_P = k_f0 T phi_form(T_leaf) and/or k_n = k_n0 phi_turn(T_leaf), with explicitly bounded response functions selected only after evidence review.'
+    new_state_variables:
+      - 'T_leaf(t): measured or explicitly modelled leaf temperature forcing'
+      - 'P, B_x, B_n: OBT package states if Option B is selected'
+    new_parameters:
+      - 'phi_form and phi_turn response functions, candidate only'
+      - 'reference temperature and valid domain, candidate contract only'
+    interface_changes: 'Require temperature provenance, units, temporal resolution, and an explicit choice of affected OBT process.'
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.obt_v3 biological forcing boundary
+      - meteorology/chamber forcing adapter
+    migration_strategy: 'Baseline ignores temperature response; future profile must declare whether temperature affects formation, turnover, or both.'
+    validation_dataset_requirement: 'Matched temperature-series plant TFWT/OBT data under contrasting but documented temperature conditions, with light, humidity, stage, mass, and replicates.'
+    validation_plan:
+      - 'Pre-register response domain and process scope.'
+      - 'Compare reduced and temperature-response candidate trajectories.'
+      - 'Check non-negativity, conservation, and parameter identifiability before admission.'
+    implementation_complexity: HIGH
+    priority: HIGH
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Existing cases remain numerically identical under the frozen profile.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R6_ROOT_LAYERED_UPTAKE_STATE
+    p7_6d_parameter_ids: [root.k_root]
+    subsystem: plant.root_v3
+    current_model: 'One-layer provisional effective velocity multiplies soil-water HTO concentration.'
+    current_equation: 'J_root = k_root C_soil; k_root [m s^-1], C_soil [Bq m^-3 water], J_root [Bq m^-2 s^-1].'
+    identified_gap: 'A layer-distributed rate tied to water uptake cannot be converted to the current velocity without storage length, aggregation, and state ownership.'
+    scientific_requirement: 'Represent soil/root layer activity, water flux, moisture, root activity, signs, and soil-plant conservation explicitly.'
+    candidate_model: 'Preferred candidate is the layer-resolved water-flux model J_root,i = q_w,i C_w,i, optionally closed by a reviewed f_theta(theta_i); the effective-velocity and moisture-only forms remain comparison options.'
+    new_state_variables:
+      - 'M_s,i: soil-layer HTO inventory [Bq m^-2]'
+      - 'theta_i: layer water content on a declared basis'
+      - 'C_w,i: layer soil-water HTO concentration [Bq m^-3 water]'
+      - 'a_root,i: active-root fraction or root-distribution state [1]'
+      - 'J_root,i: layer root-transfer flux [Bq m^-2 s^-1]'
+    new_parameters:
+      - 'layer boundaries and storage geometry, candidate contract fields'
+      - 'q_w,i or a water-uptake closure, candidate forcing/parameter fields'
+      - 'f_theta(theta_i) response parameters, candidate only'
+      - 'root aggregation weights, candidate only'
+    interface_changes: 'Replace the future profile scalar soil/root snapshot with a layer-aware state boundary while retaining an explicit aggregate flux adapter for baseline consumers.'
+    coupling_impact: NUMERICAL_COUPLING_CHANGE
+    affected_modules:
+      - plant.soil_v3
+      - plant.root_v3
+      - plant.tfwt_v3
+      - coupling numerical state and conservation ledger
+    migration_strategy: 'Keep the existing one-layer profile and output contract; no automatic scalar-to-layer conversion or assumed layer depth is allowed.'
+    validation_dataset_requirement: 'Layer-resolved soil water/HTO, root distribution, transpiration or water uptake, plant TFWT, layer geometry, signs, and soil/plant boundary observations.'
+    validation_plan:
+      - 'Compare effective-velocity, water-flux, and moisture-dependent candidate models.'
+      - 'Require layer and aggregate conservation residuals, restart equivalence, and timestep/refinement checks.'
+      - 'Use a separate P7.5/P7.5B numerical-coupling review before any code work.'
+    implementation_complexity: HIGH
+    priority: CRITICAL
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Baseline cases remain runnable only when the legacy one-layer profile is selected; layer data cannot be silently collapsed.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R7_FOOD_OBT_EVENT_CONTINUOUS_BOUNDARY
+    p7_6d_parameter_ids: [food.harvest_fraction]
+    subsystem: plant.food_v3
+    current_model: 'A harvest event transfers h_O times plant OBT inventory to a product inventory.'
+    current_equation: 'M_food,O^+ = h_O M_plant,O(t_h); M_remaining,O = M_plant,O(t_h) - M_food,O^+.'
+    identified_gap: 'A continuous plant/cow/product representation is not equivalent to an event fraction and has a different state/time boundary.'
+    scientific_requirement: 'Choose event, continuous, or hybrid product semantics and conserve plant/product OBT inventory at every boundary.'
+    candidate_model: 'Evaluate the hybrid candidate dM_food,O/dt = k_p,O M_plant,O - k_loss,O M_food,O with an explicit harvest operator H(t_h); retain the event-only model as the compatibility option.'
+    new_state_variables:
+      - 'M_food,O(t): continuous product OBT inventory [Bq]'
+      - 'M_plant,O remaining inventory on the declared harvest area [Bq]'
+      - 'harvest event ledger and product mass basis'
+    new_parameters:
+      - 'k_p,O and k_loss,O [s^-1], candidate only'
+      - 'h_O or harvest operator semantics, scenario/design field not imported value'
+      - 'product mass and tissue mapping descriptors'
+    interface_changes: 'Add a plant-product state/event boundary and keep product OBT separate from TFWT and from intake/dose.'
+    coupling_impact: NUMERICAL_COUPLING_CHANGE
+    affected_modules:
+      - plant.obt_v3
+      - plant.food_v3
+      - coupling endpoint/event semantics
+      - exposure.intake_v3 readout boundary
+    migration_strategy: 'Keep event-only cases on the current profile; future continuous/hybrid profile must provide product state and event timestamps explicitly.'
+    validation_dataset_requirement: 'Plant and product OBT at harvest times, product mass, remaining biomass/activity, harvest loss, repeated harvest timing, tissue identity, and independent replicates.'
+    validation_plan:
+      - 'Pre-register event versus continuous versus hybrid model semantics.'
+      - 'Audit OBT plant-product conservation and product-basis conversions.'
+      - 'Do not use dose agreement alone to choose transfer physics.'
+    implementation_complexity: HIGH
+    priority: HIGH
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Existing harvest events remain valid under the event profile; no continuous rate is manufactured from h_O.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R8_FOOD_TFWT_EVENT_CONTINUOUS_BOUNDARY
+    p7_6d_parameter_ids: [food.tfwt_harvest_fraction]
+    subsystem: plant.food_v3
+    current_model: 'An optional TFWT harvest fraction transfers plant TFWT inventory at a declared harvest event.'
+    current_equation: 'M_food,T^+ = h_T M_plant,T(t_h); C_food,T = M_food,T / W_food when a product-water basis is supplied.'
+    identified_gap: 'Continuous plant-water/product-water transfer, water basis, and timing are not defined by the recovered source.'
+    scientific_requirement: 'Separate TFWT product activity from OBT, preserve water-basis units, and conserve plant/product TFWT inventory.'
+    candidate_model: 'Evaluate dM_food,T/dt = k_p,T M_plant,T - k_loss,T M_food,T with an explicit water-basis state and optional harvest operator; do not copy OBT semantics.'
+    new_state_variables:
+      - 'M_food,T(t): product TFWT activity inventory [Bq]'
+      - 'W_food(t): product water mass [kg water]'
+      - 'M_plant,T remaining TFWT inventory on the product area [Bq]'
+      - 'plant-product TFWT event ledger'
+    new_parameters:
+      - 'k_p,T and k_loss,T [s^-1], candidate only'
+      - 'product water-basis and harvest timing descriptors'
+      - 'h_T, if retained as an event field, scenario/design value not imported parameter'
+    interface_changes: 'Add a distinct TFWT product state and water-mass boundary; preserve separate OBT and TFWT fields in FoodInventory.'
+    coupling_impact: NUMERICAL_COUPLING_CHANGE
+    affected_modules:
+      - plant.tfwt_v3
+      - plant.food_v3
+      - coupling endpoint/event semantics
+      - exposure.intake_v3 product denominator boundary
+    migration_strategy: 'Existing event-only TFWT cases remain on the baseline profile; no TFWT fraction is inferred from total food activity or OBT.'
+    validation_dataset_requirement: 'Plant TFWT, product-water HTO, plant/product water mass, harvest time, product mass, remaining plant inventory, paired OBT, and replicate data.'
+    validation_plan:
+      - 'Require separate TFWT and OBT product ledgers.'
+      - 'Test event and continuous candidates against water-basis and conservation criteria.'
+      - 'Keep annual consumption and dose coefficients outside environmental transfer selection.'
+    implementation_complexity: HIGH
+    priority: HIGH
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Existing event-profile cases continue; future continuous product states are opt-in and require a coupling review.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: R9_LEAF_PHENOLOGY_RESISTANCE
+    p7_6d_parameter_ids: [leaf.growth_stage]
+    subsystem: plant.leaf_exchange_resistance
+    current_model: 'Growth stage is a coordinate/metadata field; resistance remains the sum of aerodynamic, boundary-layer, and canopy components.'
+    current_equation: 'r_tot = r_a + r_b + r_c; g_ex = 1 / r_tot; leaf flux = g_ex (C_air - C_eq).'
+    identified_gap: 'No reproducible stage ontology, transition rule, or stage-dependent resistance relation is defined.'
+    scientific_requirement: 'Decide whether stage is metadata-only or changes a resistance component, while preserving component roles and units.'
+    candidate_model: 'Use an opt-in dynamic stomatal closure g_s(t) = g_s,max F_light F_vpd F_temp F_stage and set r_c = 1/g_s; keep r_a and r_b ownership explicit.'
+    new_state_variables:
+      - 'growth_stage: typed stage/transition state'
+      - 'g_s or r_c: optional dynamic canopy/stomatal state'
+      - 'leaf temperature: optional forcing if temperature response is selected'
+    new_parameters:
+      - 'g_s,max and response-function descriptors, candidate only'
+      - 'stage transition and canopy geometry descriptors'
+      - 'no numerical resistance values admitted by P7.8B-1'
+    interface_changes: 'Extend ResistanceCoordinates and forcing provenance only in a future opt-in profile; current r_a/r_b/r_c interface remains valid.'
+    coupling_impact: INTERFACE_EXTENSION
+    affected_modules:
+      - plant.leaf_exchange_resistance
+      - meteorology forcing adapter
+      - validation_v3 resistance case schema
+    migration_strategy: 'Keep stage as metadata under the baseline; future dynamic stage response must declare all forcing fields and fail closed when missing.'
+    validation_dataset_requirement: 'Crop-specific stage timestamps, canopy geometry/LAI, matched meteorology, component resistances or conductance, and independent cases.'
+    validation_plan:
+      - 'First test metadata-only stratification against the current chain.'
+      - 'Only then compare a dynamic stomatal candidate with resistance and flux observations.'
+      - 'Check reciprocal units, positivity, and component-level provenance.'
+    implementation_complexity: MEDIUM
+    priority: MEDIUM
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Current resistance cases remain unchanged; stage-dependent conductance is opt-in.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: D1_TFWT_WATER_TURNOVER_GROWTH_DILUTION
+    p7_6d_parameter_ids: []
+    subsystem: plant.tfwt_v3
+    current_model: 'Fixed water-content TFWT activity storage receives explicit activity fluxes; water mass is not advanced.'
+    current_equation: 'dM_T/dt = J_leaf + J_root - J_loss - J_transformation; W is fixed in the current state contract.'
+    identified_gap: 'Growth, water turnover, and dilution are not represented as a selected dynamic plant-water model.'
+    scientific_requirement: 'Separate water mass balance from activity balance and define whether growth water carries activity.'
+    candidate_model: 'Use TFWT Option B with dW/dt = I_W - O_W + G_W and C_T = M_T/W; all water and activity fluxes must have declared bases.'
+    new_state_variables:
+      - 'W(t): plant water mass [kg water m^-2]'
+      - 'C_T(t): TFWT concentration [Bq kg^-1 water]'
+      - 'growth-stage water-balance state or forcing'
+    new_parameters:
+      - 'water input/output/growth flux descriptors'
+      - 'stage-dependent water-balance closure, candidate only'
+    interface_changes: 'Add a separate plant-water forcing/state interface; do not reuse activity loss flux as water loss.'
+    coupling_impact: PIPELINE_CHANGE
+    affected_modules:
+      - plant.tfwt_v3
+      - meteorology and plant-water forcing pipeline
+      - plant.obt_v3 concentration interface
+    migration_strategy: 'Keep fixed-water baseline; defer dynamic water state until matched water-balance evidence and pipeline review exist.'
+    validation_dataset_requirement: 'Plant water content/biomass trajectories, transpiration, irrigation/precipitation, water loss, TFWT activity, stage, area, and timing.'
+    validation_plan:
+      - 'Close the current TFWT basis/timing contract first.'
+      - 'Compare fixed-water and dynamic-water candidates with separate water/activity ledgers.'
+      - 'Test dilution and growth under known water inputs.'
+    implementation_complexity: HIGH
+    priority: DEFERRED
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Existing fixed-water cases remain runnable; no hidden dilution factor is added.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+  - item_id: D2_SOIL_HYDRAULIC_TRANSPORT_EVAPORATION
+    p7_6d_parameter_ids: []
+    subsystem: plant.soil_v3
+    current_model: 'One-layer soil activity storage accepts signed transport as an external flux and does not derive hydrology.'
+    current_equation: 'dM_s/dt = F_deposition + F_transport - lambda M_s; transport sign is an explicit interface input.'
+    identified_gap: 'Layered water movement, diffusion, evaporation, and root extraction interaction are not represented.'
+    scientific_requirement: 'If hydrology is reopened, use a conservative layer state with explicit water/HTO bases and boundary fluxes.'
+    candidate_model: 'Use a finite-volume layered candidate with dM_i/dt = incoming interface fluxes - outgoing interface fluxes + sources - decay - root extraction - evaporation.'
+    new_state_variables:
+      - 'M_i: layer HTO inventories [Bq m^-2]'
+      - 'theta_i and W_i: layer water state on declared basis'
+      - 'advective/diffusive interface fluxes'
+      - 'root extraction and evaporation boundary fluxes'
+    new_parameters:
+      - 'layer depths, hydraulic velocities, and effective diffusivities, candidate only'
+      - 'evaporation/root extraction closures, candidate only'
+      - 'soil-water retention and boundary descriptors'
+    interface_changes: 'Layered soil/water state and boundary fluxes would replace the scalar transport interface in a future profile; the baseline remains unchanged.'
+    coupling_impact: NUMERICAL_COUPLING_CHANGE
+    affected_modules:
+      - plant.soil_v3
+      - plant.root_v3
+      - meteorology/soil-water forcing
+      - numerical coupling and conservation ledger
+    migration_strategy: 'Retain signed transport baseline; do not infer layered hydrology from a synthetic benchmark or a scalar flux.'
+    validation_dataset_requirement: 'Layer-resolved soil profile, moisture, infiltration, drainage, evaporation, transport/HTO observations, root-zone data, and boundary conditions.'
+    validation_plan:
+      - 'Specify layer orientation, signs, water basis, and boundary conditions.'
+      - 'Require layer/global conservation, restart, and refinement tests.'
+      - 'Review soil-root coupling before implementation.'
+    implementation_complexity: HIGH
+    priority: DEFERRED
+    decision: REQUIRES_MORE_RESEARCH
+    backward_compatibility: 'Existing one-layer cases remain valid only under the frozen baseline profile.'
+    equation_status: CANDIDATE_NOT_IMPLEMENTED
+    parameter_admission: FORBIDDEN_IN_P7_8B1
+
+rejected_redesigns:
+  - item_id: X1_IMPORT_UNREVIEWED_UFOTRI_VALUES
+    decision: REJECT_REDESIGN
+    reason: 'No equation specification may bypass source, unit, applicability, and validation evidence to import a value.'
+  - item_id: X2_ROOT_RATE_TO_VELOCITY_SCALING
+    decision: REJECT_REDESIGN
+    reason: 'A guessed storage length cannot convert a rate into the V3 velocity interface.'
+  - item_id: X3_CONTINUOUS_FOOD_RATE_TO_HARVEST_FRACTION
+    decision: REJECT_REDESIGN
+    reason: 'Time-scaling a continuous rate does not define an event/product state or conservation boundary.'
+  - item_id: X4_DOSE_DRIVEN_ENVIRONMENTAL_PHYSICS_REDESIGN
+    decision: REJECT_REDESIGN
+    reason: 'External dose assessment requirements do not establish a missing environmental equation.'
