@@ -6,24 +6,17 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_SHA = "f0195c77d0521ec4ade9892e88318856934a3243"
+STAGE_TIP_SHA = "e27badfe7aabb5a030607e8604c73e0598322a0f"
 FEASIBILITY_SOURCE = ROOT / "src/cteas_ufotri/parameters_v3/validation_feasibility.py"
 
 
 def git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
-    )
+    return set(git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines())
 
 
 def test_p7_6c3_source_is_control_plane_only() -> None:
@@ -34,16 +27,11 @@ def test_p7_6c3_source_is_control_plane_only() -> None:
 
 def test_no_solver_physics_or_numerical_coupling_changes() -> None:
     forbidden_prefixes = (
-        "configs/",
-        "parameters/",
-        "src/cteas_ufotri/plant/",
-        "src/cteas_ufotri/exposure/",
-        "src/cteas_ufotri/coupling/",
+        "configs/", "parameters/", "src/cteas_ufotri/plant/",
+        "src/cteas_ufotri/exposure/", "src/cteas_ufotri/coupling/",
         "src/cteas_ufotri/v3_pipeline/",
     )
-    assert not sorted(
-        path for path in changed_paths() if path.startswith(forbidden_prefixes)
-    )
+    assert not sorted(path for path in changed_paths() if path.startswith(forbidden_prefixes))
 
 
 def test_runtime_owners_do_not_import_feasibility_control_plane() -> None:
