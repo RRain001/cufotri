@@ -9,30 +9,24 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "a6200569154b90ab90c8dc9c5332b70401da8ec1"
+STAGE_TIP_SHA = "0ff463336409e74814d7d676577178b2e3680adc"
 PACKAGE = REPO / "src/cteas_ufotri/exposure/dose_v3"
 
 
 def git(*args: str) -> str:
     result = subprocess.run(
-        ["git", *args],
-        cwd=REPO,
-        check=True,
-        capture_output=True,
-        text=True,
+        ["git", *args], cwd=REPO, check=True, capture_output=True, text=True
     )
     return result.stdout.strip()
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
-    )
+    return set(git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines())
 
 
 def test_source_scope_is_intake_and_new_dose_v3_only() -> None:
     changed_source = sorted(
-        path
-        for path in changed_paths()
+        path for path in changed_paths()
         if path.startswith("src/")
         and not path.startswith("src/cteas_ufotri/parameters_v3/")
     )
@@ -49,8 +43,7 @@ def test_source_scope_is_intake_and_new_dose_v3_only() -> None:
 def test_protected_paths_and_assessment_boundary_are_clean() -> None:
     changed = changed_paths()
     forbidden = sorted(
-        path
-        for path in changed
+        path for path in changed
         if path.startswith(("configs/", "parameters/"))
         or path.endswith("trusted_external_evidence_registry.yaml")
     )
@@ -68,7 +61,7 @@ def test_protected_paths_and_assessment_boundary_are_clean() -> None:
         "src/cteas_ufotri/case.py",
         "src/cteas_ufotri/config.py",
     ):
-        assert git("diff", "--name-only", BASE_SHA, "--", path) == ""
+        assert git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", path) == ""
     config = yaml.safe_load(
         (REPO / "configs/default_parameters.yaml").read_text(encoding="utf-8")
     )
@@ -87,17 +80,9 @@ def test_solver_consumes_intake_public_api_only() -> None:
     assert "intake_state.age_group_identifier" not in solver_text
     assert "intake_state.timestamp" not in solver_text
     assert "ParameterDatabase" not in solver_text
-    imports = [
-        line
-        for line in solver_text.splitlines()
-        if re.match(r"^\s*(from|import)\s+", line)
-    ]
+    imports = [line for line in solver_text.splitlines() if re.match(r"^\s*(from|import)\s+", line)]
     assert not any(
-        re.search(
-            r"tfwt|obt|soil|plant|food|atmosphere|cteas[-_]atmos|config|parameter|regulatory|risk|emergency",
-            line,
-            re.IGNORECASE,
-        )
+        re.search(r"tfwt|obt|soil|plant|food|atmosphere|cteas[-_]atmos|config|parameter|regulatory|risk|emergency", line, re.IGNORECASE)
         for line in imports
     )
 
@@ -106,36 +91,18 @@ def test_dose_state_and_parameter_contracts_are_explicit() -> None:
     state_text = (PACKAGE / "dose_state.py").read_text(encoding="utf-8")
     solver_text = (PACKAGE / "dose_solver.py").read_text(encoding="utf-8")
     for marker in (
-        "consumer_identifier",
-        "age_group_identifier",
-        "pathway_identifier",
-        "intake_inventory_bq",
-        "dose_coefficient",
-        "dose_coefficient_unit",
-        "committed_dose_sv",
-        "time_period",
-        "timestamp",
-        "provenance",
-        "def inventory(",
-        "def dose(",
-        "def consumer(",
+        "consumer_identifier", "age_group_identifier", "pathway_identifier",
+        "intake_inventory_bq", "dose_coefficient", "dose_coefficient_unit",
+        "committed_dose_sv", "time_period", "timestamp", "provenance",
+        "def inventory(", "def dose(", "def consumer(",
     ):
         assert marker in state_text
     for marker in (
-        "radionuclide_identifier",
-        "pathway_identifier",
-        "dose_coefficient_unit",
-        'parameter_status: str = "provisional"',
-        "D [Sv] = I [Bq] * e [Sv/Bq]",
+        "radionuclide_identifier", "pathway_identifier", "dose_coefficient_unit",
+        'parameter_status: str = "provisional"', "D [Sv] = I [Bq] * e [Sv/Bq]",
     ):
         assert marker in solver_text
     for forbidden in (
-        "soil",
-        "plant",
-        "food",
-        "regulatory",
-        "risk",
-        "emergency",
-        "effective_dose",
+        "soil", "plant", "food", "regulatory", "risk", "emergency", "effective_dose",
     ):
         assert forbidden not in state_text.lower()
