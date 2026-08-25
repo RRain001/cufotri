@@ -9,6 +9,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: v3-protected-integration-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -62,6 +66,7 @@ jobs:
           python -m pytest \
             tests/architecture/test_codex_branch_disposition.py \
             tests/architecture/test_v3_current_remediation_invariants.py \
+            tests/architecture/test_v3_protected_integration_review.py \
             tests/integration/test_v3_pipeline_composite_conservation.py \
             tests/v3/test_p7_7b_synthetic_benchmarks.py \
             tests/v3/test_p7_8a_physics_redesign_governance.py \
