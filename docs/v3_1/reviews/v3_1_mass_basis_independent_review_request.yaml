@@ -1,0 +1,113 @@
+schema_version: v1
+stage: V3.1
+review_id: V3_1_MASS_BASIS_INDEPENDENT_REVIEW
+review_type: REVIEWER_INDEPENDENT
+status: PENDING_INDEPENDENT_REVIEW
+repository: RRain001/CTEAS_ufotri
+
+review_target:
+  implementation_pr: 3
+  implementation_branch: codex/v3-1-mass-basis-contract
+  independent_review_branch: codex/v3-1-mass-basis-independent-review
+  frozen_target_sha: 4664e4c09f20bbfd48c5d1c750efafeb6d6e9643
+  baseline_main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+  remediated_implementation_sha: f1bdce343e667274c67f5af15ab4520b226122e6
+
+reviewer_independence:
+  must_not_be_implementation_author: true
+  must_not_claim_same_author_rereview_as_independent: true
+  implementation_author_technical_rereview_satisfies_gate: false
+  reviewer_identity: null
+  reviewer_affiliation_or_agent: null
+
+frozen_ci_evidence:
+  remediation_ci:
+    run_id: 32808596664
+    status: PASS
+  protected_integration_gate:
+    run_id: 32808596714
+    status: PASS
+  implementation_head_prior_gate:
+    sha: f1bdce343e667274c67f5af15ab4520b226122e6
+    remediation_ci_run_id: 32808331504
+    protected_integration_gate_run_id: 32808331423
+    portable_suite: 989_PASSED_1_SKIPPED_57_DESELECTED
+    explicit_invariants: 68_PASSED
+
+required_checks:
+  - id: NO_NUMERICAL_BASIS_CONVERSION
+    blocking: true
+    question: >-
+      Does any V3.1 code infer or execute a fresh/dry/water/hydrogen numerical
+      conversion, water fraction, dry-matter fraction, hydrogen fraction, or
+      equivalent hidden multiplier?
+    expected: NO
+  - id: EXPLICIT_SOURCE_TARGET_PAIRING
+    blocking: true
+    question: >-
+      Does BasisConversionEvidence require explicit source/target matched pair
+      records rather than accepting an unstructured list of measurement IDs?
+    expected: YES
+  - id: PAIR_REUSE_FAIL_CLOSED
+    blocking: true
+    question: >-
+      Are duplicate pair IDs, self-pairs, and reuse of a measurement record
+      across multiple pairs rejected?
+    expected: YES
+  - id: EVIDENCE_TISSUE_SCOPE_BINDING
+    blocking: true
+    question: >-
+      Must evidence tissue scope match the contracts being compared?
+    expected: YES
+  - id: EVIDENCE_AREA_BASIS_BINDING
+    blocking: true
+    question: >-
+      Must evidence area basis match the contracts being compared?
+    expected: YES
+  - id: EVIDENCE_ID_BINDING
+    blocking: true
+    question: >-
+      If a contract declares EVIDENCE_DECLARED, is a conflicting supplied
+      conversion_evidence_id rejected?
+    expected: YES
+  - id: PYTHON_SCHEMA_BOUNDARY
+    blocking: true
+    question: >-
+      Is the serialized MassBasisContract schema consistent with the Python
+      contract, while the non-persisted evidence-record format remains
+      explicitly outside the frozen JSON schema rather than silently diverging?
+    expected: YES
+  - id: FROZEN_RUNTIME_ISOLATION
+    blocking: true
+    question: >-
+      Are pre-existing leaf, TFWT, OBT, soil, root, food, exposure, and P7.5/P7.5B
+      runtime semantics unchanged?
+    expected: YES
+  - id: P7_8B2_SCOPE_COMPLIANCE
+    blocking: true
+    question: >-
+      Is the change limited to the selected V3.1 mass-basis/tissue-scope
+      contract without activating V4 physics, calibration, or parameters?
+    expected: YES
+
+reviewer_verdict:
+  allowed_statuses:
+    - PASS_INDEPENDENT_REVIEW
+    - PASS_WITH_NONBLOCKING_NOTES
+    - HOLD_REMEDIATION_REQUIRED
+    - REJECT
+  status: PENDING_INDEPENDENT_REVIEW
+  reviewed_sha: null
+  reviewer_identity: null
+  review_date: null
+  blocking_findings: []
+  nonblocking_notes: []
+
+exit_policy:
+  implementation_pr_merge_ready: false
+  main_merge_authorized_by_this_request: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  v4_implementation_authorized: false
