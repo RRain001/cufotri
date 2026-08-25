@@ -33,8 +33,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e '.[test]'
 
-      - name: Check remediation diff whitespace
-        run: git diff --check 5ba891ec5e2d24cffdfe197afcf9006d2e4c5280..HEAD
+      - name: Check remediation diff and report
+        run: |
+          git diff --check 5ba891ec5e2d24cffdfe197afcf9006d2e4c5280..HEAD
+          test -f docs/v3/reports/v3_repository_audit_remediation.md
 
       - name: Run historical boundary governance tests
         run: |
@@ -53,6 +55,7 @@ jobs:
             tests/architecture/test_v3_parameter_applicability_boundary.py \
             tests/architecture/test_v3_parameter_candidate_boundary.py \
             tests/architecture/test_v3_parameter_evidence_boundary.py \
+            tests/architecture/test_v3_parameter_validation_boundary.py \
             tests/architecture/test_v3_pipeline_boundary.py \
             tests/architecture/test_v3_plant_pathway_boundary.py \
             tests/architecture/test_v3_validation_feasibility_boundary.py \
