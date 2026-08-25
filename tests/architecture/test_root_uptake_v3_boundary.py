@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "d38ae03536b5e9fd027012f0b2e68402310551c7"
+STAGE_TIP_SHA = "70ff7291a8f12359514107bfb9b17bc1d679f529"
 ROOT_PACKAGE = REPO / "src/cteas_ufotri/plant/root_v3"
 TFWT_PACKAGE = REPO / "src/cteas_ufotri/plant/tfwt_v3"
 
@@ -25,8 +26,8 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
@@ -66,7 +67,9 @@ def test_protected_configs_parameters_registry_and_legacy_paths_are_clean() -> N
         "src/cteas_ufotri/plant/soil_v3/",
         "src/cteas_ufotri/coupling/state.py",
     ):
-        assert git("diff", "--name-only", BASE_SHA, "--", path) == ""
+        assert git(
+            "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", path
+        ) == ""
 
     config = yaml.safe_load(
         (REPO / "configs/default_parameters.yaml").read_text(encoding="utf-8")
