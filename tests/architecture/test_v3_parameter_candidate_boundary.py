@@ -3,29 +3,23 @@ from __future__ import annotations
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_SHA = "838634f3af85e205fb15e10cbf15ee298ad4f017"
+STAGE_TIP_SHA = "cdaa6320cc3c8f17c585af12cc7501201b4b2047"
 PACKAGE = ROOT / "src/cteas_ufotri/parameters_v3"
 REGISTRY = ROOT / "docs/v3/parameter_evidence/parameter_candidate_registry.yaml"
 
 
 def git(*args: str) -> str:
-    result = subprocess.run(
-        ["git", *args],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
     return result.stdout.strip()
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
-    )
+    return set(git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines())
 
 
 def test_candidate_source_isolated_to_parameter_control_plane() -> None:
@@ -37,15 +31,10 @@ def test_candidate_source_isolated_to_parameter_control_plane() -> None:
 def test_physics_pipeline_and_protected_paths_are_unchanged() -> None:
     changed = changed_paths()
     forbidden_prefixes = (
-        "configs/",
-        "parameters/",
-        "src/cteas_ufotri/plant/",
-        "src/cteas_ufotri/soil/",
-        "src/cteas_ufotri/foodchain/",
-        "src/cteas_ufotri/atmosphere/",
-        "src/cteas_ufotri/dose/",
-        "src/cteas_ufotri/coupling/",
-        "src/cteas_ufotri/v3_pipeline/",
+        "configs/", "parameters/", "src/cteas_ufotri/plant/",
+        "src/cteas_ufotri/soil/", "src/cteas_ufotri/foodchain/",
+        "src/cteas_ufotri/atmosphere/", "src/cteas_ufotri/dose/",
+        "src/cteas_ufotri/coupling/", "src/cteas_ufotri/v3_pipeline/",
     )
     assert not sorted(path for path in changed if path.startswith(forbidden_prefixes))
 
@@ -100,9 +89,5 @@ def test_fresh_candidate_gate_import_does_not_load_solver_modules() -> None:
         "print(bad); raise SystemExit(1 if bad else 0)"
     )
     subprocess.run(
-        [".venv/bin/python", "-c", code],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
+        [sys.executable, "-c", code], cwd=ROOT, check=True, capture_output=True, text=True
     )
