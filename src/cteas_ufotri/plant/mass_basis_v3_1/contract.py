@@ -182,7 +182,10 @@ class MassBasisContract:
             raise BasisContractError(
                 "conversion_evidence_id is only valid when conversion_status is evidence_declared"
             )
-        object.__setattr__(self, "version", _require_text(self.version, field="version"))
+        version = _require_text(self.version, field="version")
+        if version != "v3.1-mass-basis-v1":
+            raise BasisContractError("version must be v3.1-mass-basis-v1")
+        object.__setattr__(self, "version", version)
 
 
 @dataclass(frozen=True)
