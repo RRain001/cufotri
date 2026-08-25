@@ -1,7 +1,7 @@
 schema_version: v1
 stage: V3.1
 item_id: V3_1_MASS_BASIS_CONTRACT
-status: IMPLEMENTED_FOR_REVIEW
+status: PASS_TECHNICAL_REVIEW_INDEPENDENT_REVIEW_PENDING
 baseline:
   main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
   profile: v3_frozen_baseline
@@ -74,12 +74,26 @@ isolation:
   ufotri_active_database: false
   v3_physics_ready: false
 
+technical_review:
+  implementation_head: cfcdc3128a01f753f30dd8e710d5c1802db9d0dc
+  remediation_ci_run: 32807272247
+  remediation_ci: PASS
+  protected_integration_gate_run: 32807272253
+  protected_integration_gate: PASS
+  portable_current_suite: 987_PASSED_1_SKIPPED_57_DESELECTED
+  explicit_current_frozen_v3_1_invariants: 66_PASSED
+  dimensional_and_semantic_review: PASS
+  review_report: docs/v3_1/reports/v3_1_mass_basis_contract_technical_review.md
+  formal_external_independent_review: PENDING
+
 exit_gate:
-  required:
+  completed:
     - contract_tests_pass
     - schema_tests_pass
     - frozen_runtime_blob_isolation_pass
     - portable_current_suite_pass
     - dimensional_and_semantic_review_pass
+  pending:
     - independent_review_pass
+  merge_ready: false
   implementation_authorizes_v4: false
