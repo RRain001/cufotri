@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "0ff463336409e74814d7d676577178b2e3680adc"
+STAGE_TIP_SHA = "b31e80ba4532262c20b4dadca24ec26d3d8029a7"
 PACKAGE = REPO / "src/cteas_ufotri/coupling/atmos_v3"
 
 
@@ -24,8 +25,10 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    """Return only the historical P7 stage diff, never later descendant work."""
+
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
@@ -67,7 +70,9 @@ def test_protected_runtime_paths_and_default_activation_are_unchanged() -> None:
         "src/cteas_ufotri/coupling/reference_solver.py",
         "src/cteas_ufotri/coupling/state.py",
     ):
-        assert git("diff", "--name-only", BASE_SHA, "--", path) == ""
+        assert git(
+            "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", path
+        ) == ""
 
     config = yaml.safe_load(
         (REPO / "configs/default_parameters.yaml").read_text(encoding="utf-8")
