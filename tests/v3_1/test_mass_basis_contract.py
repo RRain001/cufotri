@@ -57,6 +57,7 @@ def test_contract_is_typed_immutable_and_value_free() -> None:
     value = contract(MassBasis.FRESH_MASS)
     assert value.mass_basis is MassBasis.FRESH_MASS
     assert value.conversion_status is ConversionStatus.NOT_REQUESTED
+    assert value.conversion_evidence_id is None
     assert value.version == "v3.1-mass-basis-v1"
     with pytest.raises(FrozenInstanceError):
         value.subject_id = "changed"  # type: ignore[misc]
@@ -70,6 +71,39 @@ def test_contract_rejects_untyped_mass_basis() -> None:
             tissue_scope=TissueScope(TissueScopeKind.LEAF),
             area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
             provenance=provenance(),
+        )
+
+
+def test_declared_conversion_evidence_requires_explicit_evidence_id() -> None:
+    with pytest.raises(BasisContractError, match="requires conversion_evidence_id"):
+        MassBasisContract(
+            subject_id="sample",
+            mass_basis=MassBasis.FRESH_MASS,
+            tissue_scope=TissueScope(TissueScopeKind.LEAF),
+            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
+            provenance=provenance(),
+            conversion_status=ConversionStatus.EVIDENCE_DECLARED,
+        )
+
+    declared = MassBasisContract(
+        subject_id="sample",
+        mass_basis=MassBasis.FRESH_MASS,
+        tissue_scope=TissueScope(TissueScopeKind.LEAF),
+        area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
+        provenance=provenance(),
+        conversion_status=ConversionStatus.EVIDENCE_DECLARED,
+        conversion_evidence_id="fresh-dry-001",
+    )
+    assert declared.conversion_evidence_id == "fresh-dry-001"
+
+    with pytest.raises(BasisContractError, match="only valid"):
+        MassBasisContract(
+            subject_id="sample",
+            mass_basis=MassBasis.FRESH_MASS,
+            tissue_scope=TissueScope(TissueScopeKind.LEAF),
+            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
+            provenance=provenance(),
+            conversion_evidence_id="orphan-evidence",
         )
 
 
@@ -161,7 +195,7 @@ def test_identity_proposal_needs_no_conversion_evidence() -> None:
     assert validate_conversion_proposal(left, right, None) is ConversionStatus.IDENTITY_ONLY
 
 
-def test_json_schema_accepts_complete_contract_and_rejects_missing_custom_label() -> None:
+def test_json_schema_accepts_complete_contract_and_rejects_invalid_evidence_binding() -> None:
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
     payload = {
         "subject_id": "soybean-leaf-001",
@@ -175,10 +209,23 @@ def test_json_schema_accepts_complete_contract_and_rejects_missing_custom_label(
             "note": None,
         },
         "conversion_status": "not_requested",
+        "conversion_evidence_id": None,
         "version": "v3.1-mass-basis-v1",
     }
     jsonschema.validate(payload, schema)
 
     payload["tissue_scope"] = {"kind": "custom", "identifier": None}
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(payload, schema)
+
+    payload["tissue_scope"] = {"kind": "leaf", "identifier": None}
+    payload["conversion_status"] = "evidence_declared"
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(payload, schema)
+
+    payload["conversion_evidence_id"] = "fresh-dry-001"
+    jsonschema.validate(payload, schema)
+
+    payload["conversion_status"] = "not_requested"
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(payload, schema)
