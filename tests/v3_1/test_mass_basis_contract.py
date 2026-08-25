@@ -17,6 +17,7 @@ from cteas_ufotri.plant.mass_basis_v3_1 import (
     ConversionStatus,
     MassBasis,
     MassBasisContract,
+    PairedMeasurement,
     TissueScope,
     TissueScopeKind,
     require_direct_comparison,
@@ -37,18 +38,60 @@ def provenance() -> BasisProvenance:
     )
 
 
+def leaf_scope() -> TissueScope:
+    return TissueScope(TissueScopeKind.LEAF)
+
+
+def ground_area() -> AreaBasis:
+    return AreaBasis(AreaBasisKind.GROUND_AREA)
+
+
 def contract(
     mass_basis: MassBasis,
     *,
     subject_id: str = "soybean-leaf-001",
     tissue: TissueScope | None = None,
     area: AreaBasis | None = None,
+    conversion_status: ConversionStatus = ConversionStatus.NOT_REQUESTED,
+    conversion_evidence_id: str | None = None,
 ) -> MassBasisContract:
     return MassBasisContract(
         subject_id=subject_id,
         mass_basis=mass_basis,
-        tissue_scope=tissue or TissueScope(TissueScopeKind.LEAF),
-        area_basis=area or AreaBasis(AreaBasisKind.GROUND_AREA),
+        tissue_scope=tissue or leaf_scope(),
+        area_basis=area or ground_area(),
+        provenance=provenance(),
+        conversion_status=conversion_status,
+        conversion_evidence_id=conversion_evidence_id,
+    )
+
+
+def pair(
+    pair_id: str = "pair-1",
+    source_id: str = "pair-1-fresh",
+    target_id: str = "pair-1-dry",
+) -> PairedMeasurement:
+    return PairedMeasurement(
+        pair_id=pair_id,
+        source_measurement_id=source_id,
+        target_measurement_id=target_id,
+    )
+
+
+def evidence(
+    *,
+    evidence_id: str = "fresh-dry-001",
+    tissue: TissueScope | None = None,
+    area: AreaBasis | None = None,
+    pairs: tuple[PairedMeasurement, ...] | None = None,
+) -> BasisConversionEvidence:
+    return BasisConversionEvidence(
+        evidence_id=evidence_id,
+        source_basis=MassBasis.FRESH_MASS,
+        target_basis=MassBasis.DRY_MASS,
+        tissue_scope=tissue or leaf_scope(),
+        area_basis=area or ground_area(),
+        paired_measurements=pairs or (pair(),),
         provenance=provenance(),
     )
 
@@ -68,8 +111,8 @@ def test_contract_rejects_untyped_mass_basis() -> None:
         MassBasisContract(
             subject_id="sample",
             mass_basis="fresh_mass",  # type: ignore[arg-type]
-            tissue_scope=TissueScope(TissueScopeKind.LEAF),
-            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
+            tissue_scope=leaf_scope(),
+            area_basis=ground_area(),
             provenance=provenance(),
         )
 
@@ -79,8 +122,8 @@ def test_contract_version_must_match_schema() -> None:
         MassBasisContract(
             subject_id="sample",
             mass_basis=MassBasis.FRESH_MASS,
-            tissue_scope=TissueScope(TissueScopeKind.LEAF),
-            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
+            tissue_scope=leaf_scope(),
+            area_basis=ground_area(),
             provenance=provenance(),
             version="future-unreviewed-version",
         )
@@ -88,33 +131,21 @@ def test_contract_version_must_match_schema() -> None:
 
 def test_declared_conversion_evidence_requires_explicit_evidence_id() -> None:
     with pytest.raises(BasisContractError, match="requires conversion_evidence_id"):
-        MassBasisContract(
-            subject_id="sample",
-            mass_basis=MassBasis.FRESH_MASS,
-            tissue_scope=TissueScope(TissueScopeKind.LEAF),
-            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
-            provenance=provenance(),
+        contract(
+            MassBasis.FRESH_MASS,
             conversion_status=ConversionStatus.EVIDENCE_DECLARED,
         )
 
-    declared = MassBasisContract(
-        subject_id="sample",
-        mass_basis=MassBasis.FRESH_MASS,
-        tissue_scope=TissueScope(TissueScopeKind.LEAF),
-        area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
-        provenance=provenance(),
+    declared = contract(
+        MassBasis.FRESH_MASS,
         conversion_status=ConversionStatus.EVIDENCE_DECLARED,
         conversion_evidence_id="fresh-dry-001",
     )
     assert declared.conversion_evidence_id == "fresh-dry-001"
 
     with pytest.raises(BasisContractError, match="only valid"):
-        MassBasisContract(
-            subject_id="sample",
-            mass_basis=MassBasis.FRESH_MASS,
-            tissue_scope=TissueScope(TissueScopeKind.LEAF),
-            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
-            provenance=provenance(),
+        contract(
+            MassBasis.FRESH_MASS,
             conversion_evidence_id="orphan-evidence",
         )
 
@@ -160,45 +191,98 @@ def test_cross_basis_conversion_fails_closed_without_evidence() -> None:
         validate_conversion_proposal(source, target, None)
 
 
-def test_cross_basis_evidence_is_metadata_only_and_requires_paired_measurements() -> None:
-    source = contract(MassBasis.FRESH_MASS)
-    target = contract(MassBasis.DRY_MASS)
+def test_paired_measurement_is_explicit_and_cannot_self_pair() -> None:
+    value = pair()
+    assert value.pair_id == "pair-1"
+    assert value.source_measurement_id == "pair-1-fresh"
+    assert value.target_measurement_id == "pair-1-dry"
 
-    with pytest.raises(BasisContractError, match="at least two"):
+    with pytest.raises(BasisContractError, match="distinct records"):
+        PairedMeasurement(
+            pair_id="bad-pair",
+            source_measurement_id="same-record",
+            target_measurement_id="same-record",
+        )
+
+
+def test_cross_basis_evidence_requires_explicit_nonreused_pairs() -> None:
+    with pytest.raises(BasisContractError, match="at least one explicit"):
         BasisConversionEvidence(
             evidence_id="fresh-dry-001",
             source_basis=MassBasis.FRESH_MASS,
             target_basis=MassBasis.DRY_MASS,
-            paired_measurement_ids=("pair-1",),
+            tissue_scope=leaf_scope(),
+            area_basis=ground_area(),
+            paired_measurements=(),
             provenance=provenance(),
         )
 
-    evidence = BasisConversionEvidence(
-        evidence_id="fresh-dry-001",
-        source_basis=MassBasis.FRESH_MASS,
-        target_basis=MassBasis.DRY_MASS,
-        paired_measurement_ids=("pair-1-fresh", "pair-1-dry"),
-        provenance=provenance(),
-    )
-    assert validate_conversion_proposal(source, target, evidence) is (
-        ConversionStatus.EVIDENCE_DECLARED
-    )
-    assert not hasattr(evidence, "conversion_factor")
-    assert not hasattr(evidence, "multiplier")
+    with pytest.raises(BasisContractError, match="pair_id values must be unique"):
+        evidence(
+            pairs=(
+                pair("pair-1", "fresh-1", "dry-1"),
+                pair("pair-1", "fresh-2", "dry-2"),
+            )
+        )
+
+    with pytest.raises(BasisContractError, match="cannot be reused"):
+        evidence(
+            pairs=(
+                pair("pair-1", "fresh-1", "dry-1"),
+                pair("pair-2", "fresh-1", "dry-2"),
+            )
+        )
+
+    declared = evidence()
+    assert declared.paired_measurements == (pair(),)
+    assert not hasattr(declared, "conversion_factor")
+    assert not hasattr(declared, "multiplier")
 
 
-def test_conversion_evidence_direction_must_match_contracts() -> None:
+def test_conversion_evidence_direction_and_scope_must_match_contracts() -> None:
     source = contract(MassBasis.FRESH_MASS)
     target = contract(MassBasis.DRY_MASS)
+
     reverse = BasisConversionEvidence(
         evidence_id="dry-fresh-001",
         source_basis=MassBasis.DRY_MASS,
         target_basis=MassBasis.FRESH_MASS,
-        paired_measurement_ids=("pair-a", "pair-b"),
+        tissue_scope=leaf_scope(),
+        area_basis=ground_area(),
+        paired_measurements=(pair(),),
         provenance=provenance(),
     )
     with pytest.raises(BasisCompatibilityError, match="source basis"):
         validate_conversion_proposal(source, target, reverse)
+
+    grain_evidence = evidence(tissue=TissueScope(TissueScopeKind.GRAIN))
+    with pytest.raises(BasisCompatibilityError, match="tissue scope"):
+        validate_conversion_proposal(source, target, grain_evidence)
+
+    leaf_area_evidence = evidence(area=AreaBasis(AreaBasisKind.LEAF_AREA))
+    with pytest.raises(BasisCompatibilityError, match="area basis"):
+        validate_conversion_proposal(source, target, leaf_area_evidence)
+
+
+def test_declared_contract_evidence_id_must_match_supplied_evidence() -> None:
+    source = contract(
+        MassBasis.FRESH_MASS,
+        conversion_status=ConversionStatus.EVIDENCE_DECLARED,
+        conversion_evidence_id="fresh-dry-expected",
+    )
+    target = contract(MassBasis.DRY_MASS)
+
+    with pytest.raises(BasisCompatibilityError, match="conversion_evidence_id"):
+        validate_conversion_proposal(
+            source,
+            target,
+            evidence(evidence_id="fresh-dry-other"),
+        )
+
+    matching = evidence(evidence_id="fresh-dry-expected")
+    assert validate_conversion_proposal(source, target, matching) is (
+        ConversionStatus.EVIDENCE_DECLARED
+    )
 
 
 def test_identity_proposal_needs_no_conversion_evidence() -> None:
