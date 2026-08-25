@@ -1,5 +1,5 @@
 schema_version: v1
-stage: repository_audit_remediation
+stage: protected_integration_review
 audit_date: '2026-08-25'
 repository: RRain001/CTEAS_ufotri
 integration_policy:
@@ -13,11 +13,12 @@ integration_policy:
 
 classes:
   CURRENT_CANDIDATE_LINE:
-    merge_policy: ONLY_LINE_ELIGIBLE_FOR_FUTURE_INTEGRATION_REVIEW
+    merge_policy: ONLY_LINE_ELIGIBLE_FOR_FUTURE_MAIN_INTEGRATION
     description: >-
       Replay/integration line carrying the current V3 runtime plus later
-      control-plane, validation, and physics-selection work. Continue from the
-      newest member only; do not merge its ancestors individually.
+      control-plane, validation, physics-selection, remediation, and protected
+      integration-review work. Continue from the newest member only; do not
+      merge its ancestors individually.
     branches:
       - codex/v3-integration-review
       - codex/v3-p7-6c3-validation-feasibility
@@ -28,6 +29,7 @@ classes:
       - codex/v3-p7-8b1-redesign-specification
       - codex/v3-p7-8b2-physics-selection
       - codex/v3-repository-audit-remediation
+      - codex/v3-protected-integration-review
 
   CURRENT_RUNTIME_SOURCE_CHECKPOINT:
     merge_policy: REFERENCE_ONLY_ALREADY_REPLAYED
@@ -112,8 +114,9 @@ classes:
 
 rules:
   - >-
-    Future V3 work starts from codex/v3-repository-audit-remediation (or an
-    explicitly reviewed descendant), never from the superseded architecture line.
+    Future V3 work starts from codex/v3-protected-integration-review, or from an
+    explicitly reviewed descendant after this review closes, never from the
+    superseded architecture line.
   - >-
     A historical stage checkpoint may be used for comparison, bisect, or blob
     provenance, but is not merged individually after its content has been replayed.
@@ -125,5 +128,5 @@ rules:
     activation, calibration, UFOTRI database activation, and V3 physics readiness
     remain blocked by their independent gates.
   - >-
-    main remains outside this remediation branch; a later protected integration
-    review must decide whether and how the candidate line enters main.
+    A PASS protected integration review may recommend main integration but does
+    not itself authorize or perform the main ref update.
