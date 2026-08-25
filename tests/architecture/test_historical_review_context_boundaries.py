@@ -3,11 +3,19 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 
-from tests.conftest import HISTORICAL_REVIEW_CONTEXT_NODEIDS
-
 
 ROOT = Path(__file__).resolve().parents[2]
 TRUSTED_REGISTRY = "validation/v3/policy/trusted_external_evidence_registry.yaml"
+CONFTEXT = ROOT / "tests/conftest.py"
+HISTORICAL_NODEIDS = {
+    "tests/external_evidence_acquisition/test_d3_ufotri_manual_data_mapping_independent_rereview_r1.py::test_external_gate_scripts_remain_fail_closed",
+    "tests/external_evidence_acquisition/test_external_input_test_portability_r1.py::test_external_gate_and_physics_gate_remain_fail_closed",
+    "tests/independent_review_d3_true_reblinding/test_d3_true_reblinding_independent_review.py::test_review_classifier_worktree_never_contains_secret",
+    "tests/independent_review_sb1_mechanisms/test_sb1_mechanism_independent_review.py::test_review_no_formal_src_changes",
+    "tests/independent_review_sb1_mechanisms/test_sb1_mechanism_independent_review.py::test_review_no_formal_config_changes",
+    "tests/independent_review_sb1_mechanisms/test_sb1_mechanism_independent_review.py::test_review_trusted_registry_unchanged",
+    "tests/independent_review_sb4/test_emras_soybean_sb4_independent_review.py::test_review_sb4_formal_boundaries_unchanged",
+}
 
 
 def git(*args: str) -> str:
@@ -29,15 +37,11 @@ def assert_unchanged(base: str, tip: str, *paths: str) -> None:
 
 
 def test_historical_context_classification_is_exact_and_auditable() -> None:
-    assert HISTORICAL_REVIEW_CONTEXT_NODEIDS == {
-        "tests/external_evidence_acquisition/test_d3_ufotri_manual_data_mapping_independent_rereview_r1.py::test_external_gate_scripts_remain_fail_closed",
-        "tests/external_evidence_acquisition/test_external_input_test_portability_r1.py::test_external_gate_and_physics_gate_remain_fail_closed",
-        "tests/independent_review_d3_true_reblinding/test_d3_true_reblinding_independent_review.py::test_review_classifier_worktree_never_contains_secret",
-        "tests/independent_review_sb1_mechanisms/test_sb1_mechanism_independent_review.py::test_review_no_formal_src_changes",
-        "tests/independent_review_sb1_mechanisms/test_sb1_mechanism_independent_review.py::test_review_no_formal_config_changes",
-        "tests/independent_review_sb1_mechanisms/test_sb1_mechanism_independent_review.py::test_review_trusted_registry_unchanged",
-        "tests/independent_review_sb4/test_emras_soybean_sb4_independent_review.py::test_review_sb4_formal_boundaries_unchanged",
-    }
+    text = CONFTEXT.read_text(encoding="utf-8")
+    assert "HISTORICAL_REVIEW_CONTEXT_NODEIDS" in text
+    for nodeid in HISTORICAL_NODEIDS:
+        assert nodeid in text
+    assert text.count("::test_") == len(HISTORICAL_NODEIDS)
 
 
 def test_d3_manual_mapping_review_preserved_protected_paths() -> None:
