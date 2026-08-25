@@ -1,0 +1,81 @@
+schema_version: v1
+stage: V3.1
+item_id: V3_1_MASS_BASIS_CONTRACT
+status: IMPLEMENTED_FOR_REVIEW
+baseline:
+  main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+  profile: v3_frozen_baseline
+  runtime_default_changed: false
+
+contract:
+  public_module: cteas_ufotri.plant.mass_basis_v3_1
+  mass_basis:
+    - fresh_mass
+    - dry_mass
+    - water_mass
+    - hydrogen_mass
+  tissue_scope:
+    typed: true
+    custom_scope_requires_identifier: true
+  area_basis:
+    typed: true
+    custom_scope_requires_identifier: true
+    no_implicit_area_conversion: true
+  provenance:
+    required_fields:
+      - source_id
+      - source_locator
+      - revision
+  conversion_status:
+    - not_requested
+    - identity_only
+    - evidence_declared
+    - blocked_missing_evidence
+
+comparison_policy:
+  direct_comparison_requires:
+    - identical_mass_basis
+    - identical_tissue_scope
+    - identical_area_basis
+  cross_mass_basis:
+    default: FAIL_CLOSED
+    paired_measurements_required: true
+    provenance_required: true
+    numerical_conversion_implemented: false
+    inferred_conversion_factor_forbidden: true
+  cross_tissue_scope:
+    default: FAIL_CLOSED
+  cross_area_basis:
+    default: FAIL_CLOSED
+
+conversion_evidence_contract:
+  purpose: >-
+    Record that a proposed cross-basis relation has explicit provenance and
+    paired measurements. It does not contain or calculate a conversion factor.
+  minimum_paired_measurement_ids: 2
+  duplicate_measurement_ids_forbidden: true
+  source_target_direction_must_match: true
+  parameter_activation: false
+  calibration: false
+
+isolation:
+  solver_equations_changed: false
+  pipeline_changed: false
+  p7_5_semantics_changed: false
+  p7_5b_semantics_changed: false
+  existing_state_serialization_changed: false
+  existing_food_state_changed: false
+  existing_obt_state_changed: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+
+exit_gate:
+  required:
+    - contract_tests_pass
+    - schema_tests_pass
+    - frozen_runtime_blob_isolation_pass
+    - portable_current_suite_pass
+    - dimensional_and_semantic_review_pass
+    - independent_review_pass
+  implementation_authorizes_v4: false
