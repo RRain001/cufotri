@@ -31,6 +31,10 @@ contract:
     - identity_only
     - evidence_declared
     - blocked_missing_evidence
+  conversion_evidence_binding:
+    evidence_declared_requires_evidence_id: true
+    evidence_id_forbidden_for_other_statuses: true
+    evidence_declared_is_physical_validation: false
 
 comparison_policy:
   direct_comparison_requires:
