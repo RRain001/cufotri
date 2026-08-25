@@ -15,7 +15,7 @@
     "version"
   ],
   "properties": {
-    "subject_id": {"type": "string", "minLength": 1},
+    "subject_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
     "mass_basis": {
       "enum": ["fresh_mass", "dry_mass", "water_mass", "hydrogen_mass"]
     },
@@ -37,12 +37,16 @@
             "custom"
           ]
         },
-        "identifier": {"type": ["string", "null"], "minLength": 1}
+        "identifier": {"type": ["string", "null"], "minLength": 1, "pattern": ".*\\S.*"}
       },
       "allOf": [
         {
           "if": {"properties": {"kind": {"const": "custom"}}},
-          "then": {"properties": {"identifier": {"type": "string", "minLength": 1}}}
+          "then": {
+            "properties": {
+              "identifier": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"}
+            }
+          }
         }
       ]
     },
@@ -60,12 +64,16 @@
             "custom"
           ]
         },
-        "identifier": {"type": ["string", "null"], "minLength": 1}
+        "identifier": {"type": ["string", "null"], "minLength": 1, "pattern": ".*\\S.*"}
       },
       "allOf": [
         {
           "if": {"properties": {"kind": {"const": "custom"}}},
-          "then": {"properties": {"identifier": {"type": "string", "minLength": 1}}}
+          "then": {
+            "properties": {
+              "identifier": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"}
+            }
+          }
         }
       ]
     },
@@ -74,10 +82,10 @@
       "additionalProperties": false,
       "required": ["source_id", "source_locator", "revision", "note"],
       "properties": {
-        "source_id": {"type": "string", "minLength": 1},
-        "source_locator": {"type": "string", "minLength": 1},
-        "revision": {"type": "string", "minLength": 1},
-        "note": {"type": ["string", "null"], "minLength": 1}
+        "source_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "source_locator": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "revision": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "note": {"type": ["string", "null"], "minLength": 1, "pattern": ".*\\S.*"}
       }
     },
     "conversion_status": {
@@ -88,7 +96,11 @@
         "blocked_missing_evidence"
       ]
     },
-    "conversion_evidence_id": {"type": ["string", "null"], "minLength": 1},
+    "conversion_evidence_id": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
     "version": {"const": "v3.1-mass-basis-v1"}
   },
   "allOf": [
@@ -96,7 +108,11 @@
       "if": {"properties": {"conversion_status": {"const": "evidence_declared"}}},
       "then": {
         "properties": {
-          "conversion_evidence_id": {"type": "string", "minLength": 1}
+          "conversion_evidence_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": ".*\\S.*"
+          }
         }
       },
       "else": {
