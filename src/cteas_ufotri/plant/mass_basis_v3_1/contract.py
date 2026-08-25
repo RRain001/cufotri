@@ -150,6 +150,7 @@ class MassBasisContract:
     area_basis: AreaBasis
     provenance: BasisProvenance
     conversion_status: ConversionStatus = ConversionStatus.NOT_REQUESTED
+    conversion_evidence_id: str | None = None
     version: str = "v3.1-mass-basis-v1"
 
     def __post_init__(self) -> None:
@@ -164,6 +165,23 @@ class MassBasisContract:
             raise BasisContractError("provenance must be BasisProvenance")
         if not isinstance(self.conversion_status, ConversionStatus):
             raise BasisContractError("conversion_status must be a ConversionStatus")
+        if self.conversion_status is ConversionStatus.EVIDENCE_DECLARED:
+            if self.conversion_evidence_id is None:
+                raise BasisContractError(
+                    "evidence_declared conversion status requires conversion_evidence_id"
+                )
+            object.__setattr__(
+                self,
+                "conversion_evidence_id",
+                _require_text(
+                    self.conversion_evidence_id,
+                    field="conversion_evidence_id",
+                ),
+            )
+        elif self.conversion_evidence_id is not None:
+            raise BasisContractError(
+                "conversion_evidence_id is only valid when conversion_status is evidence_declared"
+            )
         object.__setattr__(self, "version", _require_text(self.version, field="version"))
 
 
