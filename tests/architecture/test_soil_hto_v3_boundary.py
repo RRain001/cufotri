@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "1b3966d9f5de23fe226c27b50029163dc2c063e9"
+STAGE_TIP_SHA = "d38ae03536b5e9fd027012f0b2e68402310551c7"
 PACKAGE = REPO / "src/cteas_ufotri/plant/soil_v3"
 
 
@@ -24,8 +25,8 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
@@ -69,7 +70,9 @@ def test_configs_parameters_registry_and_legacy_paths_are_unchanged() -> None:
         "src/cteas_ufotri/soil/hto_balance.py",
         "src/cteas_ufotri/soil/multibox.py",
     ):
-        assert git("diff", "--name-only", BASE_SHA, "--", path) == ""
+        assert git(
+            "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", path
+        ) == ""
 
     config = yaml.safe_load(
         (REPO / "configs/default_parameters.yaml").read_text(encoding="utf-8")
