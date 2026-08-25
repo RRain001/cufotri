@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted for implementation review on `codex/v3-1-mass-basis-contract`.
+Accepted, with evidence-binding remediation incorporated on
+`codex/v3-1-mass-basis-contract` before independent review.
 
 ## Context
 
@@ -34,14 +35,38 @@ serialized states therefore remain unchanged.
 
 Direct comparison is allowed only when mass basis, tissue scope, and area basis
 are identical. Cross-basis comparison fails closed. A separate
-`BasisConversionEvidence` record may establish that a proposed relation has
-explicit provenance and paired measurements, but V3.1 stores no numerical
+`BasisConversionEvidence` record may establish only that a proposed relation
+has explicit provenance and matched measurements; V3.1 stores no numerical
 conversion factor and performs no numerical conversion.
+
+### Evidence binding
+
+A cross-basis evidence record must be scoped to the exact `TissueScope` and
+`AreaBasis` for which it is proposed. Evidence cannot be reused across a
+different tissue or area basis merely because the mass-basis direction is the
+same.
+
+Matched measurements are represented as explicit `PairedMeasurement` records
+with:
+
+- a unique `pair_id`;
+- one source-basis measurement ID;
+- one target-basis measurement ID.
+
+The source and target IDs in a pair must identify distinct records, pair IDs
+must be unique, and one measurement record cannot be reused across multiple
+pairs. A flat list of unrelated IDs is not sufficient evidence of pairing.
+
+If a `MassBasisContract` already declares
+`conversion_status = EVIDENCE_DECLARED`, its `conversion_evidence_id` must
+match the evidence record supplied to proposal validation. Possessing or
+matching an evidence record still does **not** validate a numerical conversion
+relation.
 
 Custom tissue or area scopes require explicit identifiers. Missing provenance,
 untyped enum values, mismatched tissue scope, mismatched area basis, missing
-cross-basis evidence, duplicate paired-measurement identifiers, and reversed
-conversion direction all fail closed.
+cross-basis evidence, malformed or reused measurement pairs, mismatched
+evidence IDs, and reversed conversion direction all fail closed.
 
 ## Scientific boundary
 
@@ -51,8 +76,8 @@ hydrogen fraction, tissue composition, or crop-specific mass ratios.
 
 Any future numerical conversion must have a separate evidence record,
 scientific relation, uncertainty treatment, dimensional review, and independent
-approval. Merely possessing `BasisConversionEvidence` is not physical
-validation of such a relation.
+approval. `EVIDENCE_DECLARED` means only that traceable, scope-matched evidence
+metadata exists.
 
 ## Compatibility
 
@@ -74,10 +99,21 @@ change:
 The implementation must provide:
 
 1. unit tests for immutable typed contracts and fail-closed behavior;
-2. JSON Schema validation for serialized metadata;
-3. an isolation test that locks the frozen V3 solver and pipeline Git blobs;
-4. the existing portable integration suite;
-5. independent dimensional and semantic review before merge.
+2. negative tests for evidence pairing, evidence scope, and evidence-ID binding;
+3. JSON Schema validation for serialized mass-basis metadata;
+4. an isolation test that locks the frozen V3 solver and pipeline Git blobs;
+5. the existing portable integration suite;
+6. dimensional and semantic review followed by a reviewer-independent gate.
+
+## Review history
+
+A second adversarial review of head
+`87fc9b2e3226ad028133e070bfd7b89d803adcfb` found that the first evidence
+representation used a flat tuple of measurement IDs. That representation did
+not prove source/target pairing, did not bind evidence to tissue/area scope,
+and proposal validation did not enforce consistency with a declared evidence
+ID. The earlier technical-review PASS was therefore superseded and remediation
+was required before the independent-review branch could be opened.
 
 ## Consequences
 
@@ -86,7 +122,7 @@ work without pretending that cross-basis physics is already known. V4 remains
 unauthorized by this ADR.
 
 ```ini
-V3_1_MASS_BASIS_CONTRACT = IMPLEMENTED_FOR_REVIEW
+V3_1_MASS_BASIS_CONTRACT = REMEDIATION_IN_PROGRESS
 SOLVER_EQUATIONS_CHANGED = FALSE
 NUMERICAL_COUPLING_CHANGED = FALSE
 ACTIVE_PARAMETERS = 0
