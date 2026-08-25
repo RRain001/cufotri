@@ -74,6 +74,18 @@ def test_contract_rejects_untyped_mass_basis() -> None:
         )
 
 
+def test_contract_version_must_match_schema() -> None:
+    with pytest.raises(BasisContractError, match="version must be"):
+        MassBasisContract(
+            subject_id="sample",
+            mass_basis=MassBasis.FRESH_MASS,
+            tissue_scope=TissueScope(TissueScopeKind.LEAF),
+            area_basis=AreaBasis(AreaBasisKind.GROUND_AREA),
+            provenance=provenance(),
+            version="future-unreviewed-version",
+        )
+
+
 def test_declared_conversion_evidence_requires_explicit_evidence_id() -> None:
     with pytest.raises(BasisContractError, match="requires conversion_evidence_id"):
         MassBasisContract(
