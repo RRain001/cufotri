@@ -51,6 +51,7 @@ jobs:
           import cteas_ufotri.parameters_v3
           import cteas_ufotri.validation_v3
           import cteas_ufotri.v3_pipeline
+          import cteas_ufotri.plant.mass_basis_v3_1
           from cteas_ufotri.plant import soil_v3, root_v3, tfwt_v3, obt_v3, food_v3
           from cteas_ufotri.exposure import intake_v3, dose_v3
           print('V3_IMPORT_SMOKE=PASS')
@@ -68,8 +69,10 @@ jobs:
             tests/architecture/test_historical_review_context_boundaries.py \
             tests/architecture/test_v3_current_remediation_invariants.py \
             tests/architecture/test_v3_protected_integration_review.py \
+            tests/architecture/test_v3_1_mass_basis_isolation.py \
             tests/integration/test_v3_pipeline_composite_conservation.py \
             tests/v3/test_p7_7b_synthetic_benchmarks.py \
             tests/v3/test_p7_8a_physics_redesign_governance.py \
             tests/v3/test_p7_8b1_redesign_specification.py \
-            tests/v3/test_p7_8b2_physics_selection.py
+            tests/v3/test_p7_8b2_physics_selection.py \
+            tests/v3_1/test_mass_basis_contract.py
