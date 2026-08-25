@@ -1,6 +1,6 @@
 """V3.1 typed mass-basis and tissue-scope contract.
 
-This module is intentionally orthogonal to the frozen V3 solvers.  It provides
+This module is intentionally orthogonal to the frozen V3 solvers. It provides
 metadata and fail-closed comparison gates only; it does not perform numerical
 fresh/dry/water/hydrogen conversion and is not imported by the V3 pipeline.
 """
@@ -189,18 +189,47 @@ class MassBasisContract:
 
 
 @dataclass(frozen=True)
+class PairedMeasurement:
+    """Explicit source/target measurement pair for one matched specimen/event."""
+
+    pair_id: str
+    source_measurement_id: str
+    target_measurement_id: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "pair_id", _require_text(self.pair_id, field="pair_id"))
+        object.__setattr__(
+            self,
+            "source_measurement_id",
+            _require_text(self.source_measurement_id, field="source_measurement_id"),
+        )
+        object.__setattr__(
+            self,
+            "target_measurement_id",
+            _require_text(self.target_measurement_id, field="target_measurement_id"),
+        )
+        if self.source_measurement_id == self.target_measurement_id:
+            raise BasisContractError(
+                "source_measurement_id and target_measurement_id must identify distinct records"
+            )
+
+
+@dataclass(frozen=True)
 class BasisConversionEvidence:
     """Evidence declaration for a proposed cross-basis relation.
 
-    No conversion factor is stored here.  V3.1 validates only that a proposed
-    relation is explicitly sourced and based on paired measurements.  A future
-    numerical conversion requires a separately reviewed scientific relation.
+    No conversion factor is stored here. V3.1 validates only that a proposed
+    relation is explicitly sourced, biologically/area scoped, and based on
+    explicit matched source/target measurement pairs. A future numerical
+    conversion requires a separately reviewed scientific relation.
     """
 
     evidence_id: str
     source_basis: MassBasis
     target_basis: MassBasis
-    paired_measurement_ids: tuple[str, ...]
+    tissue_scope: TissueScope
+    area_basis: AreaBasis
+    paired_measurements: tuple[PairedMeasurement, ...]
     provenance: BasisProvenance
 
     def __post_init__(self) -> None:
@@ -211,17 +240,35 @@ class BasisConversionEvidence:
             raise BasisContractError("source_basis and target_basis must be MassBasis values")
         if self.source_basis is self.target_basis:
             raise BasisContractError("conversion evidence must connect different mass bases")
-        if len(self.paired_measurement_ids) < 2:
+        if not isinstance(self.tissue_scope, TissueScope):
+            raise BasisContractError("tissue_scope must be a TissueScope")
+        if not isinstance(self.area_basis, AreaBasis):
+            raise BasisContractError("area_basis must be an AreaBasis")
+        if not isinstance(self.paired_measurements, tuple):
+            raise BasisContractError("paired_measurements must be a tuple")
+        if len(self.paired_measurements) < 1:
             raise BasisContractError(
-                "cross-basis evidence requires at least two declared paired measurement ids"
+                "cross-basis evidence requires at least one explicit source/target measurement pair"
             )
-        cleaned = tuple(
-            _require_text(value, field="paired_measurement_ids")
-            for value in self.paired_measurement_ids
-        )
-        if len(set(cleaned)) != len(cleaned):
-            raise BasisContractError("paired_measurement_ids must be unique")
-        object.__setattr__(self, "paired_measurement_ids", cleaned)
+        if not all(isinstance(pair, PairedMeasurement) for pair in self.paired_measurements):
+            raise BasisContractError("paired_measurements must contain PairedMeasurement values")
+
+        pair_ids = [pair.pair_id for pair in self.paired_measurements]
+        if len(set(pair_ids)) != len(pair_ids):
+            raise BasisContractError("paired_measurement pair_id values must be unique")
+
+        measurement_ids = [
+            measurement_id
+            for pair in self.paired_measurements
+            for measurement_id in (
+                pair.source_measurement_id,
+                pair.target_measurement_id,
+            )
+        ]
+        if len(set(measurement_ids)) != len(measurement_ids):
+            raise BasisContractError(
+                "a measurement record cannot be reused across paired_measurements"
+            )
         if not isinstance(self.provenance, BasisProvenance):
             raise BasisContractError("provenance must be BasisProvenance")
 
@@ -258,8 +305,9 @@ def validate_conversion_proposal(
 ) -> ConversionStatus:
     """Validate evidence metadata for a proposed cross-basis conversion.
 
-    This function never converts a value.  It returns only the governance state
-    of the proposal and fails closed on scope or evidence mismatch.
+    This function never converts a value. It returns only the governance state
+    of the proposal and fails closed on basis, tissue, area, declared-evidence,
+    or evidence-record mismatch.
     """
 
     _require_same_scope(source, target)
@@ -273,6 +321,20 @@ def validate_conversion_proposal(
         raise BasisCompatibilityError("conversion evidence source basis does not match")
     if evidence.target_basis is not target.mass_basis:
         raise BasisCompatibilityError("conversion evidence target basis does not match")
+    if evidence.tissue_scope != source.tissue_scope:
+        raise BasisCompatibilityError("conversion evidence tissue scope does not match")
+    if evidence.area_basis != source.area_basis:
+        raise BasisCompatibilityError("conversion evidence area basis does not match")
+
+    for contract in (source, target):
+        if (
+            contract.conversion_status is ConversionStatus.EVIDENCE_DECLARED
+            and contract.conversion_evidence_id != evidence.evidence_id
+        ):
+            raise BasisCompatibilityError(
+                "declared conversion_evidence_id does not match supplied evidence"
+            )
+
     return ConversionStatus.EVIDENCE_DECLARED
 
 
@@ -286,6 +348,7 @@ __all__ = [
     "ConversionStatus",
     "MassBasis",
     "MassBasisContract",
+    "PairedMeasurement",
     "TissueScope",
     "TissueScopeKind",
     "require_direct_comparison",
