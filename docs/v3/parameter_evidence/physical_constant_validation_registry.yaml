@@ -72,7 +72,7 @@ parameters:
     review_status: INDEPENDENT_REVIEWED
     provenance:
       repository: CTEAS_ufotri
-      revision: 25195cfdb8bd87d0969cdd42bc2ba916a2aa513f
+      revision: 2d6a0d1174795980406355055c4855df46ba583f
       file: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
       location: parameters[soil.tritium_half_life]
 
@@ -109,7 +109,7 @@ evidence_records:
     primary_measurement: false
     provenance:
       repository: CTEAS_ufotri
-      revision: 25195cfdb8bd87d0969cdd42bc2ba916a2aa513f
+      revision: 2d6a0d1174795980406355055c4855df46ba583f
       file: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
       location: evidence_records[evidence.nist.tritium_half_life.2000]
 
@@ -146,6 +146,6 @@ evidence_records:
     primary_measurement: false
     provenance:
       repository: CTEAS_ufotri
-      revision: 25195cfdb8bd87d0969cdd42bc2ba916a2aa513f
+      revision: 2d6a0d1174795980406355055c4855df46ba583f
       file: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
       location: evidence_records[evidence.ddep.tritium_half_life.2006]
