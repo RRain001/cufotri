@@ -11,6 +11,7 @@
     "area_basis",
     "provenance",
     "conversion_status",
+    "conversion_evidence_id",
     "version"
   ],
   "properties": {
@@ -87,6 +88,22 @@
         "blocked_missing_evidence"
       ]
     },
+    "conversion_evidence_id": {"type": ["string", "null"], "minLength": 1},
     "version": {"const": "v3.1-mass-basis-v1"}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"conversion_status": {"const": "evidence_declared"}}},
+      "then": {
+        "properties": {
+          "conversion_evidence_id": {"type": "string", "minLength": 1}
+        }
+      },
+      "else": {
+        "properties": {
+          "conversion_evidence_id": {"type": "null"}
+        }
+      }
+    }
+  ]
 }
