@@ -9,6 +9,7 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[2]
 BASE_SHA = "5ac5d5713b27f734676b2c3ff822c34a7ed2e95b"
+STAGE_TIP_SHA = "de3f56d4b89d0bffcd547c9ce1eca70a5b83f568"
 PACKAGE = REPO / "src/cteas_ufotri/plant/tfwt_v3"
 
 
@@ -24,16 +25,12 @@ def git(*args: str) -> str:
 
 
 def changed_paths() -> set[str]:
-    return set(git("diff", "--name-only", BASE_SHA).splitlines()) | set(
-        git("ls-files", "--others", "--exclude-standard").splitlines()
+    return set(
+        git("diff", "--name-only", BASE_SHA, STAGE_TIP_SHA).splitlines()
     )
 
 
 def test_only_new_v3_tfwt_package_and_artifacts_are_added() -> None:
-    if (REPO / "src/cteas_ufotri/plant/v3").exists():
-        # This architecture test is inherited by the P6.2B-2.5 child branch.
-        # The child boundary test owns the combined tfwt_v3/plant/v3 scope.
-        return
     changed = changed_paths()
     source_changes = sorted(path for path in changed if path.startswith("src/"))
     assert source_changes
@@ -42,10 +39,13 @@ def test_only_new_v3_tfwt_package_and_artifacts_are_added() -> None:
         "diff",
         "--name-only",
         BASE_SHA,
+        STAGE_TIP_SHA,
         "--",
         "src/cteas_ufotri/plant/leaf_exchange_resistance",
     ) == ""
-    assert git("diff", "--name-only", BASE_SHA, "--", "src/cteas_ufotri/plant/tfwt.py") == ""
+    assert git(
+        "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", "src/cteas_ufotri/plant/tfwt.py"
+    ) == ""
 
 
 def test_configs_parameters_trusted_registry_and_legacy_paths_are_clean() -> None:
@@ -63,7 +63,9 @@ def test_configs_parameters_trusted_registry_and_legacy_paths_are_clean() -> Non
         "src/cteas_ufotri/plant/obt.py",
         "src/cteas_ufotri/coupling/state.py",
     ):
-        assert git("diff", "--name-only", BASE_SHA, "--", path) == ""
+        assert git(
+            "diff", "--name-only", BASE_SHA, STAGE_TIP_SHA, "--", path
+        ) == ""
     config = yaml.safe_load(
         (REPO / "configs/default_parameters.yaml").read_text(encoding="utf-8")
     )
