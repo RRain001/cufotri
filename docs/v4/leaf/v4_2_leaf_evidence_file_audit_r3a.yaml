@@ -1,0 +1,172 @@
+schema_version: v1
+stage: V4-2
+round: R3A
+registry_id: V4_2_LEAF_EVIDENCE_FILE_AUDIT_R3A
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 3e7ec58b19752da9eef018a80875d0a90bd6164f
+branch: codex/v4-2-leaf-evidence-file-audit-r3a
+status: COMPLETE_HOLD_REQUIRED_FIELDS_MISSING
+
+objective: >-
+  Perform byte-level audit of the highest-value R3 public soybean candidates.
+  Determine whether any single source provides a complete matched empirical
+  packet for the V4-2 leaf dynamic stomatal-response review. Do not fit a model,
+  select coefficients, activate parameters, or implement a solver.
+
+classification_enum:
+  - DIRECT_COLUMN
+  - DECLARED_CONSTANT_WITH_PROVENANCE
+  - EXPLICIT_DERIVATION_SUPPORTED
+  - MISSING
+  - AMBIGUOUS
+
+allowed_final_verdicts:
+  - PASS_ONE_COMPLETE_EMPIRICAL_PACKET_CANDIDATE
+  - HOLD_COMPONENT_EVIDENCE_ONLY
+  - HOLD_REQUIRED_FIELDS_MISSING
+  - HOLD_ALIGNMENT_OR_PROVENANCE_AMBIGUOUS
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+required_packet_fields:
+  - observed_stomatal_conductance_or_leaf_surface_resistance
+  - target_measurement_basis
+  - light_or_PAR
+  - VPD_or_explicit_humidity_to_VPD_basis
+  - leaf_temperature
+  - dataset_bound_growth_stage_or_explicit_developmental_context
+  - crop_identity
+  - timestamp_and_interval_semantics
+  - replicate_or_independent_group_identity
+  - quantitative_units
+  - variable_level_provenance
+  - matched_records_or_explicit_alignment_contract
+
+candidate_audits:
+  - candidate_id: MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD
+    priority: 1
+    dataset_doi: 10.5061/dryad.51c59zwkh
+    article_doi: 10.1073/pnas.2502360122
+    files_required:
+      - Raw_data_Mostofa_et_al._2025.xlsx
+      - README.md
+    source_facts_to_verify_against_files:
+      - Williams_82_soybean
+      - reproductive_stage_R1
+      - LI_6800_gas_exchange
+      - gsw_recorded_every_5_seconds
+      - PAR_1000_umol_m2_s_declared_for_gas_exchange
+      - chamber_temperature_30_C_declared_for_gas_exchange
+      - CO2_420_umol_mol_declared_for_gas_exchange
+      - water_vapor_22_to_26_mmol_mol_declared_for_gas_exchange
+    blocking_questions:
+      - Does_the_workbook_contain_absolute_gsw_records_rather_than_only_figure_summaries
+      - Are_gsw_records_time_resolved_and_group_identifiable
+      - Is_Tleaf_recorded_per_row_or_otherwise_source_bound_to_the_same_records
+      - Is_VPDleaf_recorded_per_row_or_derivable_from_complete_row_aligned_humidity_temperature_pressure_inputs
+      - Does_the_declared_PAR_condition_apply_to_the_same_gsw_records
+      - Are_replicate_or_plant_identifiers_available
+      - Can_R1_stage_be_bound_to_the_audited_records_without_guessing
+    result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
+
+  - candidate_id: TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD
+    priority: 2
+    dataset_doi: 10.5061/dryad.pk0p2ngst
+    article_doi: 10.1093/jxb/erae057
+    files_required:
+      - ACiMethod_4.0_RepositoryData.csv
+      - README.md
+    source_facts_to_verify_against_files:
+      - soybean_rows_present
+      - LI_6800_measurements
+      - Tleaf_column_reported
+      - PAR_column_reported
+      - VPDleaf_column_reported
+      - Elapsed_column_reported
+      - RunID_column_reported
+      - six_biological_replicates_for_soybean
+    blocking_questions:
+      - Does_the_actual_CSV_contain_gsw_or_any_equivalent_absolute_stomatal_target
+      - Are_RunID_and_Elapsed_sufficient_for_row_and_group_alignment
+      - Is_soybean_developmental_stage_available_from_data_README_protocol_or_article
+      - Are_units_and_measurement_basis_explicit
+    expected_risk: public_README_column_list_does_not_include_gsw_or_rc
+    result: HOLD_COMPONENT_EVIDENCE_ONLY
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
+
+  - candidate_id: HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD
+    priority: 3
+    dataset_doi: 10.5061/dryad.q573n5tgj
+    article_doi: 10.1111/nph.17214
+    files_required:
+      - Fig1e.data.csv
+      - README.txt
+      - Stomatal_conductance.R
+    optional_context_files:
+      - FigS3ab.data.csv
+      - FigS3cd.data.csv
+    source_facts_to_verify_against_files:
+      - Fig1e_is_soybean_stomatal_conductance
+      - conductance_was_measured_at_1_3_5_7_24_48_hours
+      - primary_soybean_conductance_in_Fig1e_was_measured_with_SC1_porometer
+      - LI_6800_was_used_for_separate_photosynthesis_activity_experiments
+    blocking_questions:
+      - Does_Fig1e_contain_absolute_conductance_and_independent_group_identity
+      - Are_PAR_VPD_Tleaf_or_derivation_inputs_present_and_row_aligned
+      - Is_growth_or_developmental_stage_source_bound_to_these_records
+      - Do_optional_LI_6800_files_contain_soybean_records_relevant_to_the_same_experiment
+    result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
+
+cross_dataset_rule: >-
+  Never combine target variables from one dataset with forcing, stage, or group
+  variables from another dataset merely to satisfy packet completeness. Any
+  evidence-composition model is a changed inference model and requires a separate
+  explicit design and independent review.
+
+constant_admission_rule: >-
+  A chamber setpoint or protocol constant may be classified as
+  DECLARED_CONSTANT_WITH_PROVENANCE only when source evidence establishes that
+  it applies to the same audited records. A range such as 22-26 mmol mol-1 water
+  vapor is not a per-record humidity value and cannot by itself support exact
+  VPD derivation.
+
+derivation_rule: >-
+  VPD derivation is allowed only when all necessary variables, units, equations,
+  pressure basis and row alignment are explicit. Approximation from incomplete
+  chamber conditions is not admitted.
+
+response_domain_rule: >-
+  Characterize empirical support only from observed or explicitly source-bound
+  records. Do not fit stomatal-response coefficients. Fixed chamber conditions
+  can document scope but do not establish a response function along that axis.
+
+raw_data_policy:
+  commit_third_party_raw_files: false
+  external_workspace_required: true
+  record_hashes: true
+  record_resolved_urls: true
+  record_byte_sizes: true
+
+result_artifacts_required:
+  - docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
+  - docs/v4/reports/v4_2_leaf_evidence_file_audit_r3a_result.md
+  - tests/v4/test_v4_2_leaf_evidence_file_audit_r3a.py
+
+exit_policy: >-
+  Even PASS_ONE_COMPLETE_EMPIRICAL_PACKET_CANDIDATE does not authorize leaf
+  solver implementation. A concrete packet must then be constructed and pass an
+  independent leaf item review before implementation authorization can be
+  reconsidered.
