@@ -1,15 +1,20 @@
 # V4-2 R3B status
 
-`READY_FOR_AUTHOR_CONTACT_NOT_SENT`
+`CLOSED_AUTHOR_CONTACT_NOT_PURSUED`
 
-This branch prepares author-held raw-data acquisition only.
+R3B prepared a fail-closed author-held raw-data acquisition path after the R3A
+public-data audit remained HOLD. The project has now explicitly decided not to
+contact authors or pursue author-held raw files.
 
-No author contact has been performed, no email/message has been sent, no author
-response has been received, and no raw author file has been admitted.
+No author contact was performed, no email/message was sent, no response was
+received, and no raw author file was admitted.
 
-The next external action, if authorized separately, is to verify the appropriate
-corresponding-author contact channel and send the source-specific raw-data
-request. Any received file must first pass integrity, identity, version and
-chain-of-custody checks before content-level evidence audit.
+The prepared request, provenance, integrity and chain-of-custody rules are kept
+only as an audit trail for this closed path.
 
-Implementation remains blocked.
+The active next path is a separately reviewed prospective soybean experiment
+design capable of collecting the complete `gsw + VPD + PAR/light + Tleaf +
+stage/group + timestamp/provenance` packet in one experiment.
+
+Evidence-composition remains unauthorized. Implementation, calibration and
+parameter activation remain blocked.
