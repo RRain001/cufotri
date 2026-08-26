@@ -1,0 +1,156 @@
+schema_version: v1
+stage: V4-2
+item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: HOLD_EVIDENCE_ACQUISITION_REQUIRED
+repository: RRain001/CTEAS_ufotri
+
+entry_state:
+  main_sha: 61dfee175d5b16fe358417e0beba75a776d6f394
+  v4_1_status: PASS_CONTROL_PLANE_CONTRACT_REVIEW
+  source_contract: docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+  baseline_profile: v3_frozen_baseline
+  baseline_resistance_chain: 'r_tot = r_a + r_b + r_c; g_ex = 1/r_tot'
+  candidate_relation: 'g_s = g_s_max * F_light(L) * F_vpd(VPD) * F_temp(T_leaf) * F_stage(stage); r_c = 1/g_s'
+  production_runtime_changed: false
+  implementation_started: false
+  active_parameters: 0
+  calibration_started: false
+  v3_physics_ready: false
+
+readiness_gates:
+  equation_and_unit_contract:
+    status: PASS_SYMBOLIC_CONTRACT_ONLY
+    evidence:
+      - docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+    limitations:
+      - response_function_shapes_not_selected
+      - g_s_max_value_not_selected
+      - closed_stomata_zero_conductance_numerical_policy_not_selected
+  state_and_forcing_ownership:
+    status: PASS_CONTRACT_DEFINED
+    evidence:
+      - docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+    notes:
+      - no_new_persistent_leaf_candidate_state
+      - L_VPD_T_leaf_stage_are_external_forcings
+      - g_s_r_c_r_tot_g_ex_are_derived_diagnostics
+  dimensional_and_failure_tests:
+    status: PASS_CONTRACT_LEVEL_ONLY
+    limitations:
+      - no_candidate_response_function_exists_to_test_numerically
+      - no_empirical_domain_bounds_exist
+  restart_and_compatibility:
+    status: PASS_CONTRACT_DEFINED
+    notes:
+      - no_new_persistent_leaf_state
+      - forcing_identity_and_timestamp_must_be_reproducible
+      - v3_frozen_baseline_remains_default_and_rollback
+  growth_stage_ontology:
+    status: HOLD_NOT_FROZEN
+    blocker: >-
+      Existing V3 evidence classifies growth stage as a conceptual analogue and
+      explicitly states that the stage ontology and stage-dependent resistance
+      equation are missing. No universal V4 stage category mapping is admitted.
+    required_action: DEFINE_DATASET_BOUND_STAGE_ONTOLOGY_WITH_PROVENANCE
+  response_domain_contract:
+    status: HOLD_NOT_FROZEN
+    blocker: >-
+      The selected response functions require declared domains and bounds for
+      light/PAR, VPD, leaf temperature and stage. Repository evidence does not
+      establish those empirical domains.
+    required_action: FREEZE_DOMAINS_FROM_MATCHED_VALIDATION_DATA_NOT_GUESSED_DEFAULTS
+  matched_validation_dataset:
+    status: HOLD_NOT_AVAILABLE_IN_REPOSITORY
+    required_variables:
+      - observed_stomatal_conductance_or_leaf_surface_resistance
+      - light_or_PAR
+      - VPD_or_explicit_humidity_basis
+      - leaf_temperature
+      - growth_stage_with_declared_ontology
+      - crop_identity
+      - timestamp_and_interval_semantics
+      - replicate_id
+      - provenance_and_unit_for_each_quantitative_variable
+    preferred_context:
+      - r_a_or_aerodynamic_context
+      - r_b_or_boundary_layer_context
+      - leaf_geometry
+      - wind_or_micrometeorology
+      - TFWT_or_exchange_flux_when_available
+    repository_search_result: >-
+      No checked-in dataset or validation packet satisfying the V4-1 empirical
+      validation envelope and the matched leaf-variable requirements was found
+      during the V4-2 readiness audit.
+  preregistered_validation_metrics:
+    status: PASS_CONTRACT_DEFINED_NOT_EXECUTED
+    required_metrics:
+      - conductance_or_resistance_trajectory_error
+      - reciprocal_identity_residual
+      - domain_and_bound_violation_count
+      - cross_condition_generalization_error
+    physical_validation_executed: false
+  independent_item_review:
+    status: HOLD_NOT_STARTED
+  explicit_item_level_implementation_authorization:
+    status: HOLD_NOT_GRANTED
+
+existing_evidence_interpretation:
+  leaf_r_a:
+    validation_feasibility: VALIDATION_FEASIBLE
+    role: aerodynamic_resistance
+    value_selected_or_activated: false
+  leaf_r_b:
+    validation_feasibility: VALIDATION_FEASIBLE
+    role: boundary_layer_resistance
+    value_selected_or_activated: false
+  leaf_r_c:
+    validation_feasibility: VALIDATION_FEASIBLE
+    role: canopy_or_surface_resistance
+    value_selected_or_activated: false
+  leaf_growth_stage:
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    blocker: STAGE_ONTOLOGY_AND_EQUATION_MISSING
+  interpretation_rule: >-
+    Semantic role/unit compatibility of r_a, r_b and r_c creates a future
+    validation pathway; it does not validate a dynamic stomatal response or
+    authorize importing a parameter value.
+
+allowed_next_work:
+  - define_dataset_bound_growth_stage_ontology_contract
+  - define_evidence_acquisition_packet_and_required_variable_metadata
+  - register_candidate_response_domains_only_when_supported_by_matched_data
+  - pre_register_validation_metrics_and_holdout_structure
+  - perform_independent_item_review_after_evidence_packet_is_complete
+
+forbidden_next_work:
+  - production_solver_implementation
+  - choosing_response_function_coefficients_from_convenience_defaults
+  - importing_unreviewed_UFOTRI_values
+  - treating_r_c_semantic_mapping_as_dynamic_response_validation
+  - treating_synthetic_data_as_physical_validation
+  - silent_stage_mapping_between_incompatible_crop_taxonomies
+  - parameter_activation
+  - calibration
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  production_solver_changed: false
+  runtime_state_serialization_changed: false
+  numerical_coupling_changed: false
+  candidate_parameter_values_admitted: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+exit_policy:
+  readiness_gate_result: HOLD_EVIDENCE_ACQUISITION_REQUIRED
+  may_start_evidence_and_ontology_preparation: true
+  may_start_leaf_solver_implementation: false
+  may_activate_leaf_candidate_parameters: false
+  next_review_after:
+    - growth_stage_ontology_frozen
+    - response_domains_evidence_bound
+    - matched_empirical_dataset_packet_complete
+    - preregistered_metrics_frozen
