@@ -12,6 +12,9 @@ required_target:
   observation_role_required: true
   measurement_basis_must_be_explicit: true
   unit_and_provenance_required: true
+  canonical_units:
+    stomatal_conductance: m s^-1
+    leaf_surface_resistance: s m^-1
 
 required_forcings:
   light:
@@ -29,6 +32,9 @@ required_forcings:
     canonical_unit: K
   growth_stage:
     variable: growth_stage
+    data_role: typed_category_context
+    runtime_role: external_typed_input
+    canonical_unit: '1'
     dataset_specific_ontology_required: true
 
 required_context:
@@ -54,6 +60,7 @@ measurement_and_provenance_policy:
   source_locator_required: true
   revision_required: true
   timestamp_basis_required: true
+  target_measurement_basis_required: true
   instrument_or_method_should_be_recorded_when_available: true
   inferred_observation_from_candidate_solver: FORBIDDEN
   software_expectation_as_empirical_observation: FORBIDDEN
@@ -72,6 +79,20 @@ response_domain_evidence_required:
   - stage
 numeric_domain_boundary_derivation_rule_must_be_preregistered: true
 joint_condition_coverage_assessment_required: true
+
+cross_field_validation_contract:
+  application_level_validation_required_in_addition_to_json_schema: true
+  variable_unit_must_equal_provenance_declared_unit: true
+  calibration_groups_must_be_disjoint_from_final_validation_groups: true
+  all_declared_groups_must_exist_in_independent_group_registry: true
+  response_domain_included_groups_must_exist_in_independent_group_registry: true
+  response_domain_included_groups_must_exclude_final_validation_groups: true
+  stage_domain_ontology_id_and_revision_must_match_packet_ontology: true
+  stage_domain_ids_must_be_declared_by_packet_ontology: true
+  source_stage_values_must_be_unique_within_packet_ontology: true
+  admitted_stage_ids_must_be_unique_within_packet_ontology: true
+  numeric_lower_support_boundary_must_not_exceed_upper_boundary: true
+  missing_cross_field_validator_result: IMPLEMENTATION_GATE_HOLD
 
 current_repository_availability:
   complete_packet_found: false
