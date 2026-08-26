@@ -126,7 +126,7 @@ class AreaBasis:
             raise BasisContractError("kind must be an AreaBasisKind")
         if self.kind is AreaBasisKind.CUSTOM:
             if self.identifier is None:
-                raise BasisContractError("custom area basis requires identifier")
+                raise BasisContractError("custom area scope requires identifier")
             object.__setattr__(
                 self,
                 "identifier",
@@ -307,11 +307,25 @@ def validate_conversion_proposal(
 
     This function never converts a value. It returns only the governance state
     of the proposal and fails closed on basis, tissue, area, declared-evidence,
-    or evidence-record mismatch.
+    or evidence-record mismatch. Same-basis identity is admitted only when no
+    cross-basis evidence state or evidence object is attached to the proposal;
+    direct same-basis comparison belongs to :func:`require_direct_comparison`.
     """
 
     _require_same_scope(source, target)
     if source.mass_basis is target.mass_basis:
+        if evidence is not None:
+            raise BasisCompatibilityError(
+                "same-basis identity proposal must not supply cross-basis conversion evidence"
+            )
+        if any(
+            contract.conversion_status is ConversionStatus.EVIDENCE_DECLARED
+            for contract in (source, target)
+        ):
+            raise BasisCompatibilityError(
+                "same-basis identity proposal cannot use evidence_declared conversion state; "
+                "use require_direct_comparison for direct same-basis comparison"
+            )
         return ConversionStatus.IDENTITY_ONLY
     if evidence is None:
         raise BasisCompatibilityError(
