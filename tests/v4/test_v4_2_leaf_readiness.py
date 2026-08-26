@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import json
 from pathlib import Path
 import subprocess
@@ -12,7 +11,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_MAIN = "61dfee175d5b16fe358417e0beba75a776d6f394"
-CONTENT_TIP = "a36a0c322a01a479ff6743913c5ac333cec03879"
+CONTENT_TIP = "61fddb0a7a5795e1d6a0dd3296bb58e52f7aecd0"
 READINESS = ROOT / "docs/v4/leaf/v4_2_leaf_dynamic_stomatal_readiness.yaml"
 ONTOLOGY = ROOT / "docs/v4/leaf/v4_2_growth_stage_ontology_contract.yaml"
 DOMAIN = ROOT / "docs/v4/leaf/v4_2_response_domain_admission.yaml"
@@ -47,6 +46,7 @@ def variable(name: str, role: str, unit: str) -> dict:
         "name": name,
         "role": role,
         "unit": unit,
+        "measurement_basis": "dataset-declared measurement basis",
         "provenance": provenance(name, unit),
         "independent_group_field": "replicate_id",
         "missing_data_policy": "CASE_INVALID",
@@ -209,13 +209,17 @@ def assert_cross_field_packet_invariants(packet: dict) -> None:
         assert item["unit"] == item["provenance"]["declared_unit"]
 
     ontology = packet["stage_ontology"]
+    source_values = [item["source_stage_value"] for item in ontology["stage_records"]]
+    admitted_values = [item["admitted_stage_id"] for item in ontology["stage_records"]]
+    assert len(source_values) == len(set(source_values))
+    assert len(admitted_values) == len(set(admitted_values))
+
     stage_domain = next(
         item for item in packet["response_domain_records"] if item["variable_name"] == "stage"
     )
     assert stage_domain["ontology_id"] == ontology["ontology_id"]
     assert stage_domain["ontology_revision"] == ontology["ontology_revision"]
-    admitted = {item["admitted_stage_id"] for item in ontology["stage_records"]}
-    assert set(stage_domain["admitted_stage_ids"]) <= admitted
+    assert set(stage_domain["admitted_stage_ids"]) <= set(admitted_values)
 
     for item in packet["response_domain_records"]:
         if item["domain_type"] == "NUMERIC":
@@ -302,6 +306,7 @@ def test_evidence_requirements_do_not_claim_checked_in_empirical_data() -> None:
     assert availability["empirical_response_domains_found"] is False
     assert availability["physical_validation_executed"] is False
     assert data["measurement_and_provenance_policy"]["software_expectation_as_empirical_observation"] == "FORBIDDEN"
+    assert data["required_target"]["measurement_basis_must_be_explicit"] is True
     assert data["admission_rule"]["implementation_authorization_requires_independent_item_review"] is True
 
 
@@ -315,28 +320,58 @@ def test_leaf_empirical_packet_schema_accepts_complete_reference_packet() -> Non
     "mutation",
     [
         "missing_target",
+        "missing_target_measurement_basis",
+        "wrong_target_unit",
         "missing_light",
+        "wrong_vpd_unit",
         "missing_leaf_temperature",
+        "wrong_leaf_temperature_unit",
         "missing_growth_stage",
+        "wrong_growth_stage_unit",
         "missing_vpd_basis",
+        "wrong_vpd_domain_unit",
+        "wrong_tleaf_domain_unit",
         "missing_stage_domain",
         "missing_final_validation_group",
         "blank_dataset_id",
     ],
 )
-def test_leaf_empirical_packet_schema_fails_closed_on_missing_required_evidence(mutation: str) -> None:
+def test_leaf_empirical_packet_schema_fails_closed_on_missing_or_incompatible_evidence(mutation: str) -> None:
     packet = sample_packet()
     if mutation == "missing_target":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "stomatal_conductance"]
+    elif mutation == "missing_target_measurement_basis":
+        del packet["variables"][0]["measurement_basis"]
+    elif mutation == "wrong_target_unit":
+        packet["variables"][0]["unit"] = "mm s^-1"
+        packet["variables"][0]["provenance"]["declared_unit"] = "mm s^-1"
     elif mutation == "missing_light":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "PAR"]
+    elif mutation == "wrong_vpd_unit":
+        item = next(item for item in packet["variables"] if item["name"] == "VPD")
+        item["unit"] = "kPa"
+        item["provenance"]["declared_unit"] = "kPa"
     elif mutation == "missing_leaf_temperature":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "leaf_temperature"]
+    elif mutation == "wrong_leaf_temperature_unit":
+        item = next(item for item in packet["variables"] if item["name"] == "leaf_temperature")
+        item["unit"] = "degC"
+        item["provenance"]["declared_unit"] = "degC"
     elif mutation == "missing_growth_stage":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "growth_stage"]
+    elif mutation == "wrong_growth_stage_unit":
+        item = next(item for item in packet["variables"] if item["name"] == "growth_stage")
+        item["unit"] = "stage-code"
+        item["provenance"]["declared_unit"] = "stage-code"
     elif mutation == "missing_vpd_basis":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "VPD"]
         packet["variables"].append(variable("relative_humidity", "FORCING", "%"))
+    elif mutation == "wrong_vpd_domain_unit":
+        item = next(item for item in packet["response_domain_records"] if item["variable_name"] == "VPD")
+        item["declared_unit"] = "kPa"
+    elif mutation == "wrong_tleaf_domain_unit":
+        item = next(item for item in packet["response_domain_records"] if item["variable_name"] == "T_leaf")
+        item["declared_unit"] = "degC"
     elif mutation == "missing_stage_domain":
         packet["response_domain_records"] = [
             item for item in packet["response_domain_records"] if item["variable_name"] != "stage"
@@ -382,6 +417,14 @@ def test_cross_field_guard_rejects_stage_ontology_mismatch() -> None:
         assert_cross_field_packet_invariants(packet)
 
 
+def test_cross_field_guard_rejects_duplicate_stage_mapping() -> None:
+    packet = sample_packet()
+    packet["stage_ontology"]["stage_records"][1]["admitted_stage_id"] = "stage-s1"
+    schema_validator().validate(packet)
+    with pytest.raises(AssertionError):
+        assert_cross_field_packet_invariants(packet)
+
+
 def test_cross_field_guard_rejects_inverted_numeric_support_boundaries() -> None:
     packet = sample_packet()
     numeric = next(
@@ -410,6 +453,7 @@ def test_v4_2_content_tip_is_readiness_only_and_does_not_touch_runtime() -> None
         "docs/v4/leaf/v4_2_validation_protocol.yaml",
         "docs/v4/reports/v4_2_leaf_dynamic_stomatal_readiness_review.md",
         "schemas/v4/v4_leaf_empirical_evidence_packet.schema.json",
+        "tests/v4/test_v4_2_leaf_readiness.py",
     }
     assert not any(path.startswith("src/") for path in changed)
     assert not any(path.startswith("configs/") for path in changed)
