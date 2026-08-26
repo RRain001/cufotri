@@ -1,0 +1,189 @@
+schema_version: v1
+stage: V4_ROOT_SOIL_LAYERED_BOUNDARY_DECISION_R1
+status: PASS_THREE_LAYER_UFOTRI_TARGET_SELECTED
+repository: RRain001/CTEAS_ufotri
+base_main_sha: f2b2a2aa6f2cc57a1ff3ef6df29758ecbcd9d6fa
+branch: codex/v4-root-soil-layered-boundary-decision-r1
+
+scope:
+  control_plane_only: true
+  production_src_changes: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  parameter_activation: false
+  calibration: false
+  real_cteas_atmos_binding: false
+
+source_authority:
+  source_id: ufotri.manual.kfk4605
+  asset: ufotri_manual.md
+  title: UFOTRI Program for Assessing the Off-Site Consequences from Accidental Tritium Releases
+  author: W. Raskob
+  report: KfK 4605
+  sha256_from_p7_6c2_inventory: 82c7c7f07975553a51e7ba1666a912f80096e5af4fc138aba6f45a120e6d3562
+  original_source_code_available: false
+
+manual_findings:
+  long_term_ingestion_soil_compartments:
+    explicit_three_layer_structure: true
+    layers:
+      - layer_id: L1
+        depth_top_m: 0.00
+        depth_bottom_m: 0.05
+        thickness_m: 0.05
+        manual_mean_volumetric_water_content: 0.25
+        manual_water_inventory_kg_m2: 12.5
+      - layer_id: L2
+        depth_top_m: 0.05
+        depth_bottom_m: 0.15
+        thickness_m: 0.10
+        manual_mean_volumetric_water_content: 0.25
+        manual_water_inventory_kg_m2: 25.0
+      - layer_id: L3
+        depth_top_m: 0.15
+        depth_bottom_m: 0.30
+        thickness_m: 0.15
+        manual_mean_volumetric_water_content: 0.25
+        manual_water_inventory_kg_m2: 37.5
+    manual_values_status: UFOTRI_REFERENCE_VALUES_NOT_ACTIVE_PARAMETERS
+
+  short_term_secondary_soil_model:
+    explicit_three_layer_runtime_proven: false
+    top_layer_depth_m: 0.05
+    hto_assumed_concentrated_in_top_layer: true
+    deeper_transport_reference_rate_per_hour: 0.004
+    deeper_transport_reference_rate_description: 0.4_percent_per_hour_constant_diffusion
+    agricultural_root_depth_m: 0.30
+    root_water_fraction_top_5_cm: 0.20
+    root_water_fraction_deeper_layers: 0.80
+    interpretation: >-
+      The short-term secondary model explicitly distinguishes the top 5 cm from deeper soil,
+      but the recovered manual text does not prove that this short-term implementation itself
+      carried the same three explicit state compartments as the ingestion module.
+
+  hydrology_background:
+    water_potential_equation: EQ33
+    continuity_equation: EQ34
+    darcy_law_applied: true
+    nonlinear_unsaturated_flow_equation: EQ37
+    modern_classification: RICHARDS_TYPE_DARCY_CONTINUITY_BACKGROUND
+    manual_uses_name_richards: false
+    full_model_selected_by_ufotri: false
+    manual_runtime_statement: >-
+      Complex but rather accurate models of this type cannot be used here; transport rates and
+      soil moisture are estimated as daily averages for selected soil layers using a simple soil
+      moisture and vegetation model.
+    directional_behavior:
+      dry_weather: LOW_VERTICAL_MOTION_WITH_CAPILLARY_UPWARD_TRANSPORT_POSSIBLE
+      rainfall: HIGHER_DOWNWARD_TRANSPORT
+
+hydrology_decision:
+  full_richards_darcy_solver:
+    authorized: false
+    disposition: REJECT_FOR_UFOTRI_REPLICATION_BASELINE
+    reason: >-
+      UFOTRI discusses the Darcy-continuity nonlinear PDE as physical background but explicitly
+      states that the complex model cannot be used in the program context. Implementing a full
+      Richards solver would therefore be an extension beyond replication, not a faithful baseline.
+  selected_v4_hydrology_class: UFOTRI_STYLE_THREE_LAYER_COMPARTMENT_TRANSPORT
+  interlayer_flux_semantics:
+    signed: true
+    upward_capillary_flux_allowed: true
+    downward_rain_enhanced_flux_allowed: true
+    source: EXPLICIT_FORCING_OR_REVIEWED_SIMPLE_HYDROLOGY_ADAPTER
+    silent_flux_inference: false
+
+selected_v4_target:
+  representation: THREE_LAYER_SOIL_WATER_AND_HTO_INVENTORY
+  implementation_authorized: true
+  opt_in_only: true
+  v3_one_layer_baseline_preserved: true
+  layers:
+    - {layer_id: L1, depth_top_m: 0.00, depth_bottom_m: 0.05}
+    - {layer_id: L2, depth_top_m: 0.05, depth_bottom_m: 0.15}
+    - {layer_id: L3, depth_top_m: 0.15, depth_bottom_m: 0.30}
+  authoritative_state_per_layer:
+    - water_inventory_m
+    - hto_inventory_bq_m2
+    - hto_concentration_bq_m3_water
+  required_fluxes:
+    - atmospheric_deposition_to_L1
+    - L1_to_L2_signed_water_and_hto_flux
+    - L2_to_L3_signed_water_and_hto_flux
+    - lower_boundary_loss_from_L3
+    - root_water_and_hto_extraction_by_layer
+    - surface_reemission_from_L1
+    - radioactive_decay_by_layer
+  invariants:
+    - exact_layer_geometry
+    - nonnegative_layer_water_inventory
+    - nonnegative_layer_hto_inventory
+    - concentration_equals_inventory_divided_by_water_depth
+    - layer_mass_balance
+    - global_mass_balance
+    - internal_interlayer_flux_cancels_globally
+    - restart_round_trip
+    - fail_closed_missing_flux_or_unit
+
+root_boundary_decision:
+  effective_v3_k_root_status: HOLD_NOT_ACTIVATABLE
+  reason: >-
+    The software screening exposed k_root and soil-water-basis confounding, while UFOTRI uses
+    layer-resolved root uptake tied to transpiration and root distribution.
+  v4_direction: LAYER_RESOLVED_WATER_FLUX_COUPLED_ROOT_UPTAKE
+  detailed_layer_root_fraction_values_activated: false
+  manual_20_80_split_status: EVIDENCE_REFERENCE_NOT_RUNTIME_ACTIVATED
+
+implementation_sequence:
+  - order: 1
+    stage: V4_THREE_LAYER_SOIL_CORE_IMPLEMENTATION_R1
+    scope: STATE_PLUS_CONSERVATIVE_TRANSPORT_CORE
+  - order: 2
+    stage: V4_THREE_LAYER_ROOT_WATER_UPTAKE_R1
+    scope: LAYER_RESOLVED_ROOT_BOUNDARY
+  - order: 3
+    stage: V4_THREE_LAYER_PIPELINE_INTEGRATION_R1
+    scope: OPT_IN_PIPELINE_WITH_FROZEN_V3_ROLLBACK
+  - order: 4
+    stage: V4_THREE_LAYER_EMPIRICAL_VALIDATION_PREP
+    scope: EVIDENCE_AND_CASE_PREPARATION
+
+next_stage_authorization:
+  stage: V4_THREE_LAYER_SOIL_CORE_IMPLEMENTATION_R1
+  authorized: true
+  production_code_changes_allowed: true
+  allowed_changes:
+    - new_opt_in_soil_v4_package
+    - three_layer_state_and_validation
+    - conservative_layer_transport_solver
+    - restart_serialization_contract
+    - synthetic_ufotri_reference_fixture
+    - tests_and_reports
+  forbidden_changes:
+    - modify_v3_soil_solver_equations
+    - activate_three_layer_path_as_default
+    - full_richards_solver
+    - calibrate_transport_rates
+    - activate_root_fraction_values
+    - change_p7_5_p7_5b_default_coupling
+    - leaf_r5
+    - real_cteas_atmos_binding
+
+hard_invariants:
+  three_layer_soil_target_selected: true
+  three_layer_soil_implemented: false
+  full_richards_darcy_authorized: false
+  v3_default_profile_changed: false
+  active_parameters: 0
+  calibration_started: false
+  leaf_r5_authorized: false
+  real_cteas_atmos_coupling_active: false
+  physical_validation_complete: false
+  v3_physics_ready: false
+
+exit_state:
+  decision_complete: true
+  selected_layer_count: 3
+  selected_depth_range_m: [0.0, 0.30]
+  hydrology_baseline: UFOTRI_STYLE_SIMPLIFIED_LAYER_TRANSPORT_NOT_FULL_RICHARDS
+  next_stage: V4_THREE_LAYER_SOIL_CORE_IMPLEMENTATION_R1
