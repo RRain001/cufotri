@@ -273,6 +273,7 @@ def test_v4_1_content_tip_is_control_plane_only() -> None:
         "docs/v4/contracts/v4_data_state_contract_registry.yaml",
         "docs/v4/reports/v4_1_data_state_contracts_review.md",
         "schemas/v4/v4_validation_case_envelope.schema.json",
+        "tests/v4/test_v4_1_data_state_contracts.py",
     }
     assert not any(path.startswith("src/") for path in changed)
     assert not any(path.startswith("configs/") for path in changed)
