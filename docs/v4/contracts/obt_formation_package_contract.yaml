@@ -18,8 +18,8 @@ scientific_scope:
     Freeze the symbolic precursor/exchangeable/non-exchangeable OBT inventory
     contract, dimensional identities, state ownership, conservation ledger,
     restart completeness, forcing provenance, and validation envelope for a
-    future V4 profile. No biological rate value or response-function value is
-    admitted in V4-1.
+    future V4 profile. No biological rate value, response-function value, or
+    unsupported functional composition is selected in V4-1.
   selected_candidate: option_b_two_pool_biological_extension
   prognostic_inventories:
     - P
@@ -28,17 +28,19 @@ scientific_scope:
   aggregate_readout: 'B_total = B_x + B_n'
 
 symbolic_equations:
-  precursor_source: 'u_P = k_f0 * T * phi_daynight(d,stage) * phi_photo(A,L,stage) * phi_temp(T_leaf,stage)'
-  precursor_balance: 'dP/dt = u_P - J_P_to_Bx - J_P_other'
+  precursor_source: 'u_P = u_P(T, A, d, stage, T_leaf, L)'
+  precursor_source_dimensional_requirement: 'u_P has unit Bq m^-2 s^-1'
+  precursor_source_functional_form_status: NOT_SELECTED_IN_V4_1
+  precursor_balance: 'dP/dt = u_P - k_P * P'
   exchangeable_balance: 'dB_x/dt = J_P_to_Bx - J_Bx_to_Bn - J_Bx_other'
   nonexchangeable_balance: 'dB_n/dt = J_Bx_to_Bn - J_Bn_other'
   transfer_definitions:
     J_P_to_Bx: 'k_PB * P'
-    J_P_other: 'k_P_other * P'
+    J_P_other: '(k_P - k_PB) * P'
     J_Bx_to_Bn: 'k_xn * B_x'
     J_Bx_other: 'k_x * B_x'
     J_Bn_other: 'k_n * B_n'
-  compatibility_relation_to_p7_8b2_notation: 'k_P = k_PB + k_P_other'
+  compatibility_relation_to_p7_8b2_notation: 'J_P_to_Bx + J_P_other = k_P * P'
   total_candidate_inventory_identity: >-
     d(P + B_x + B_n)/dt = u_P - J_P_other - J_Bx_other - J_Bn_other
 
@@ -72,23 +74,26 @@ quantity_contracts:
     meaning: precursor_activity_formation_flux
     canonical_unit: Bq m^-2 s^-1
     role: derived_source_flux
+    functional_form_selected_in_v4_1: false
   rate_parameters:
     names:
       - k_f0
+      - k_P
       - k_PB
-      - k_P_other
       - k_xn
       - k_x
       - k_n
     canonical_unit: s^-1
     role: candidate_symbolic_parameter
     numerical_values_allowed_in_v4_1: false
-  response_functions:
+  response_function_descriptors:
     names:
       - phi_daynight
       - phi_photo
       - phi_temp
     canonical_unit: '1'
+    role: candidate_symbolic_descriptor
+    product_or_other_composition_selected_in_v4_1: false
     numerical_functions_allowed_in_v4_1: false
   d:
     meaning: explicit_day_night_state
@@ -126,10 +131,11 @@ conservation_contract:
   composite_storage: 'P + B_x + B_n'
   composite_balance_residual_target: zero_within_reviewed_numerical_tolerance
   p7_8b2_rate_relation:
-    symbolic_relation: 'k_P = k_PB + k_P_other'
+    symbolic_relation: 'J_P_other = (k_P - k_PB) * P'
+    k_P_nonnegative: true
     k_PB_nonnegative: true
-    k_P_other_nonnegative: true
-    implies_k_PB_le_k_P: true
+    constraint: '0 <= k_PB <= k_P'
+    additional_precursor_loss_parameter_introduced: false
     numerical_values_allowed_in_v4_1: false
   transfer_double_counting: FORBIDDEN
   aggregate_B_is_additional_storage: false
@@ -147,6 +153,10 @@ forcing_contract:
     provenance_required: true
   crop_stage:
     provenance_required: true
+  precursor_source_functional_composition:
+    status: UNRESOLVED_REQUIRES_ITEM_SPECIFIC_REVIEW
+    multiplicative_response_product_assumed: false
+    additive_or_other_composition_assumed: false
   missing_required_future_forcing: FAIL_CLOSED
   mapping_from_existing_day_night_multiplier: FORBIDDEN
 
@@ -215,7 +225,9 @@ failure_policy:
   missing_component_observation_for_component_validation: CASE_INVALID
   nonfinite_state_or_flux: FAIL_CLOSED
   negative_rate_parameter: FAIL_CLOSED_IF_FUTURE_VALUE_IS_EVER_PROPOSED
+  k_PB_greater_than_k_P: FAIL_CLOSED_IF_FUTURE_VALUES_ARE_EVER_PROPOSED
   hidden_component_partition: FORBIDDEN
+  unsupported_source_function_composition: FORBIDDEN
   inferred_parameter_from_production_arithmetic: FORBIDDEN
 
 hard_boundaries:
