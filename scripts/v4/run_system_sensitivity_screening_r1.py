@@ -83,7 +83,7 @@ def baseline_config() -> dict[str, Any]:
         "tfwt_water_content_kg_m2": 1.0,
         "initial_obt_inventory": 2.0,
         "obt_plant_mass_kg_m2": 1.0,
-        "tritium_half_life_s": 1.0e10,
+        "tritium_half_life_s": 1000.0,
     }
 
 
