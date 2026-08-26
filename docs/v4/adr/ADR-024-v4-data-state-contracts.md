@@ -2,8 +2,21 @@
 
 ## Status
 
-Accepted for V4-1 control-plane contract review. This ADR does not authorize
+Accepted after V4-1 control-plane contract review. This ADR does not authorize
 implementation of a selected V4 physical model.
+
+Reviewed content head:
+
+`27ddffeaa2d88aac34f197ce2a4bcf3a67f42ec6`
+
+Verification:
+
+```text
+V3 Remediation CI 32923288035 = PASS
+V3 Protected Integration Gate 32923288127 = PASS
+portable suite = 1036 passed / 1 skipped / 57 deselected
+explicit invariants = 115 passed
+```
 
 ## Context
 
@@ -12,9 +25,9 @@ OBT and root models remain held until their item-specific equation/unit,
 ownership, conservation/restart, validation, coupling and independent-review
 gates are closed.
 
-V4-1 therefore must turn the P7.8B-2 architecture into explicit contracts
-without changing the frozen V3 runtime, admitting candidate parameter values,
-or silently selecting a biological functional form that P7.8B-2 left open.
+V4-1 therefore turns the P7.8B-2 architecture into explicit contracts without
+changing the frozen V3 runtime, admitting candidate parameter values, or
+silently selecting a biological functional form that P7.8B-2 left open.
 
 ## Decision
 
@@ -51,14 +64,14 @@ resistance are diagnostics.
 The future OBT package uses candidate inventories `P`, `B_x` and `B_n`, each in
 `Bq m^-2`. P7.8B-2 selected a generic precursor source
 `u_P(T,A,d,s,T_leaf,...)`; V4-1 therefore keeps the source functional form
-unresolved. It does **not** assume a multiplicative product of day/night,
-photosynthetic and temperature response functions.
+unresolved. It does **not** assume a multiplicative, additive or other unreviewed
+composition of day/night, photosynthetic and temperature response functions.
 
 To make the selected shorthand
 
 `dP/dt = u_P - k_P P`
 
-conservative when `k_PB P` feeds `B_x`, V4-1 decomposes the precursor removal
+conservative when `k_PB P` feeds `B_x`, V4-1 decomposes precursor removal
 without adding a new biological parameter:
 
 ```text
@@ -107,6 +120,18 @@ replicate IDs, time alignment and pre-registered metrics. Synthetic cases can
 verify software, dimensional and conservation behavior only. Production solver
 arithmetic cannot define expected observations.
 
+## Review corrections
+
+Two issues were caught without weakening the scientific gates:
+
+1. An intermediate OBT draft over-specified the unresolved source composition
+   and introduced an unnecessary precursor-loss symbol. The final contract
+   restores the P7.8B-2 generic source boundary and uses only the selected
+   `k_P`/`k_PB` rates for conservation bookkeeping.
+2. An initial CI run found that the stage-scope test omitted its own test file
+   from the expected changed-file set. The test governance error was corrected;
+   no contract or runtime semantics changed as a result.
+
 ## Compatibility
 
 `v3_frozen_baseline` remains default and rollback. Missing required V4 fields
@@ -115,18 +140,25 @@ multi-state, layer or response-function quantity.
 
 ## Consequences
 
-V4-1 can close the data/state/equation contract preparation step, but it cannot
-by itself authorize leaf, OBT or root implementation. Each model still requires
-its own later technical and independent review using these contracts.
+V4-1 closes the data/state/equation contract-preparation stage as a reviewed
+control-plane boundary. It does not authorize leaf, OBT or root implementation.
+Each model still requires its own later technical and independent review.
+
+The next roadmap item is `V4_LEAF_DYNAMIC_STOMATAL_RESPONSE`, entering an
+item-specific review/authorization gate rather than production implementation.
 
 ```ini
-V4_1_CONTROL_PLANE_CONTRACTS = DEFINED_PENDING_REVIEW
+V4_1_CONTROL_PLANE_CONTRACTS = PASS_CONTROL_PLANE_CONTRACT_REVIEW
 PRODUCTION_RUNTIME_CHANGED = FALSE
 SOLVER_IMPLEMENTATION_AUTHORIZED = FALSE
 NUMERICAL_COUPLING_CHANGE_AUTHORIZED = FALSE
 CANDIDATE_PARAMETER_VALUES_ADMITTED = FALSE
+LEAF_IMPLEMENTATION_AUTHORIZED = FALSE
+OBT_IMPLEMENTATION_AUTHORIZED = FALSE
+ROOT_IMPLEMENTATION_AUTHORIZED = FALSE
 ACTIVE_PARAMETERS = 0
 CALIBRATION_STARTED = FALSE
 UFOTRI_ACTIVE_DATABASE = FALSE
 V3_PHYSICS_READY = FALSE
+PHYSICAL_VALIDATION_COMPLETE = FALSE
 ```
