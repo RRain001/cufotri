@@ -1,4 +1,4 @@
-# V4-1 Data and State Contracts — Technical Review
+# V4-1 Data and State Contracts — Technical Review Closure
 
 ## Scope
 
@@ -12,6 +12,7 @@ Entry baseline:
 ```text
 MAIN = 175c5d7ed7fbec916485aa44c0ae733d330b661f
 P7_8C = PASS_CONTRACT_PREPARATION_AUTHORIZATION
+REVIEWED_CONTENT_HEAD = 27ddffeaa2d88aac34f197ce2a4bcf3a67f42ec6
 ```
 
 ## Contract set
@@ -33,22 +34,23 @@ velocities `[m s^-1]`; `r_a`, `r_b`, `r_c`, and `r_tot` are resistances
 forcings. V4-1 introduces no persistent leaf candidate state and no response
 coefficients.
 
-Result: structurally suitable for later item-specific review; not implementation
-ready because response functions, domains, empirical evidence and parameter
-values remain absent.
+Result: the equation/unit, ownership, restart, validation-envelope and
+fail-closed boundaries are defined. Leaf implementation is not authorized;
+response functions, domains, matched empirical evidence, parameter values and
+an independent item-specific review remain open.
 
 ## OBT review
 
 The OBT contract uses `P`, `B_x`, and `B_n` as candidate activity inventories
-`[Bq m^-2]`. A first V4-1 draft over-specified the unresolved precursor source
-as a product of day/night, photosynthetic and temperature response functions
-and introduced `k_P_other` as an extra symbolic parameter. That was rejected in
-technical review because P7.8B-2 selected only a generic
+`[Bq m^-2]`. An intermediate V4-1 draft over-specified the unresolved precursor
+source as a product of day/night, photosynthetic and temperature response
+functions and introduced `k_P_other` as an extra symbol. Technical review
+rejected that overreach because P7.8B-2 selected only a generic
 `u_P(T,A,d,s,T_leaf,...)` source boundary and the existing candidate rates.
 
-The corrected contract keeps the source functional form unresolved and retains
-the selected `k_P` and `k_PB` notation. Conservation is made explicit without
-adding a parameter:
+The final contract keeps the source functional form unresolved and retains the
+selected `k_P` and `k_PB` notation. Conservation is made explicit without
+adding a biological parameter:
 
 ```text
 J_P_to_Bx = k_PB P
@@ -72,9 +74,9 @@ No rate, response-function value, or response-function composition is admitted.
 Aggregate-only OBT observations are explicitly insufficient to validate the
 component pools.
 
-Result: conservation and scope contracts are coherent and auditable;
+Result: the conservation and ownership boundary is coherent and auditable;
 biological implementation remains held pending source-function selection,
-data, identifiability, numerical tests and independent review.
+matched data, identifiability, numerical tests and independent item review.
 
 ## Root review
 
@@ -94,8 +96,8 @@ The soil sink and TFWT source are the same internal transfer identity. Any
 future implementation remains a numerical-coupling change and therefore still
 requires P7.5/P7.5B rereview.
 
-Result: dimensional and ownership boundary is coherent; implementation remains
-held.
+Result: dimensional and ownership boundaries are coherent; implementation
+remains held.
 
 ## Validation envelope
 
@@ -113,19 +115,44 @@ Synthetic cases remain software evidence only.
 
 ## Runtime isolation
 
-V4-1 is required to remain outside `src/`, current runtime serialization,
-production parameter activation, and P7.5/P7.5B numerical semantics. The stage
-scope test freezes this boundary against the V4-1 content tip.
+V4-1 remains outside `src/`, current runtime serialization, production parameter
+activation, and P7.5/P7.5B numerical semantics. The stage-scope test freezes the
+control-plane file set. No production runtime file was changed.
 
-## Review status
+## CI and review evidence
 
-The document review finds the corrected contracts internally coherent subject
-to the repository tests and exact-head CI. Passing those checks will close V4-1
-as a **control-plane contract review only**. It will not satisfy any candidate
-model's independent implementation review.
+Final reviewed content head:
+
+`27ddffeaa2d88aac34f197ce2a4bcf3a67f42ec6`
+
+Exact-head GitHub Actions:
+
+```text
+V3 Remediation CI 32923288035 = PASS
+V3 Protected Integration Gate 32923288127 = PASS
+portable suite = 1036 passed / 1 skipped / 57 deselected
+explicit current/frozen/V4-1 invariants = 115 passed
+```
+
+A prior integration run (`32923036669`) found one stage-scope governance-test
+error: the expected changed-file set omitted the V4-1 test file even though the
+frozen content tip already contained it. The other tests in that run reported
+`1035 passed, 1 skipped, 57 deselected`. The expected set was corrected at
+`27ddffeaa2d88aac34f197ce2a4bcf3a67f42ec6`; no contract or runtime semantics
+were weakened to obtain the PASS.
+
+## Closure
+
+V4-1 is closed as a **control-plane contract review**. This closure is not an
+independent implementation review, does not establish physical validity, and
+does not authorize implementation of leaf, OBT or root candidate physics.
+
+The next roadmap item is the leaf dynamic stomatal response, but it must enter
+an item-specific equation/domain/data/review/authorization gate before any
+solver implementation.
 
 ```ini
-V4_1_STATUS = CONTRACTS_DEFINED_PENDING_EXACT_HEAD_CI
+V4_1_STATUS = PASS_CONTROL_PLANE_CONTRACT_REVIEW
 CONTROL_PLANE_ONLY = TRUE
 LEAF_IMPLEMENTATION_AUTHORIZED = FALSE
 OBT_IMPLEMENTATION_AUTHORIZED = FALSE
