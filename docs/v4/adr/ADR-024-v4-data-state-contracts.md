@@ -13,7 +13,8 @@ ownership, conservation/restart, validation, coupling and independent-review
 gates are closed.
 
 V4-1 therefore must turn the P7.8B-2 architecture into explicit contracts
-without changing the frozen V3 runtime or admitting candidate parameter values.
+without changing the frozen V3 runtime, admitting candidate parameter values,
+or silently selecting a biological functional form that P7.8B-2 left open.
 
 ## Decision
 
@@ -48,26 +49,35 @@ resistance are diagnostics.
 ## OBT boundary
 
 The future OBT package uses candidate inventories `P`, `B_x` and `B_n`, each in
-`Bq m^-2`. To remove the ambiguity in the earlier shorthand `dP/dt = u_P-k_P P`,
-V4-1 explicitly decomposes precursor removal into an internal transfer and an
-external/other precursor loss:
+`Bq m^-2`. P7.8B-2 selected a generic precursor source
+`u_P(T,A,d,s,T_leaf,...)`; V4-1 therefore keeps the source functional form
+unresolved. It does **not** assume a multiplicative product of day/night,
+photosynthetic and temperature response functions.
+
+To make the selected shorthand
+
+`dP/dt = u_P - k_P P`
+
+conservative when `k_PB P` feeds `B_x`, V4-1 decomposes the precursor removal
+without adding a new biological parameter:
 
 ```text
 J_P_to_Bx = k_PB P
-J_P_other = k_P_other P
-k_P = k_PB + k_P_other
+J_P_other = (k_P - k_PB) P
+0 <= k_PB <= k_P
 ```
 
 The candidate balances are
 
 ```text
-dP/dt   = u_P - J_P_to_Bx - J_P_other
+dP/dt   = u_P - k_P P
 dB_x/dt = J_P_to_Bx - J_Bx_to_Bn - J_Bx_other
 dB_n/dt = J_Bx_to_Bn - J_Bn_other
 ```
 
 so internal transfers cancel exactly in the composite inventory. This is a
-symbolic conservation contract only; no rate value is admitted.
+symbolic conservation contract only; no rate or response-function value is
+admitted.
 
 `B_total = B_x + B_n` is a derived readout, not an additional storage state.
 There is no automatic mapping from the frozen scalar OBT state to `P/B_x/B_n`.
