@@ -1,0 +1,110 @@
+schema_version: v1
+stage: V4-1
+contract_id: V4_COMMON_DATA_STATE_CONTRACT
+status: CONTROL_PLANE_CONTRACT_DEFINED
+
+profile_policy:
+  default_profile: v3_frozen_baseline
+  rollback_profile: v3_frozen_baseline
+  future_profiles_opt_in_only: true
+  required_future_field_missing: FAIL_CLOSED
+  automatic_v3_state_migration: FORBIDDEN
+  automatic_parameter_inference: FORBIDDEN
+
+unit_policy:
+  explicit_unit_required_for_quantitative_variable: true
+  canonical_si_unit_required_in_equation_contracts: true
+  source_unit_must_be_preserved_in_provenance: true
+  implicit_unit_conversion: FORBIDDEN
+  dimensionally_incompatible_comparison: FAIL_CLOSED
+
+provenance_contract:
+  required_fields:
+    - source_id
+    - source_locator
+    - revision
+    - variable_name
+    - declared_unit
+    - timestamp_basis
+  optional_fields:
+    - method
+    - instrument
+    - uncertainty_basis
+    - note
+  assumption_must_be_labeled_as_observation: false
+  synthetic_data_must_be_labeled_as_empirical_observation: false
+  production_solver_output_may_define_expected_observation: false
+
+time_contract:
+  timestamp_required: true
+  timezone_or_utc_offset_required: true
+  interval_alignment_required: true
+  interval_semantics_required:
+    - start
+    - end
+    - midpoint
+    - instantaneous
+    - interval_mean
+  implicit_local_time: FORBIDDEN
+  silent_resampling: FORBIDDEN
+
+missing_data_contract:
+  missing_required_forcing: FAIL_CLOSED
+  missing_required_observation_for_validation_case: CASE_INVALID
+  silent_zero_fill: FORBIDDEN
+  silent_forward_fill: FORBIDDEN
+  imputation_without_reviewed_method: FORBIDDEN
+
+replicate_contract:
+  replicate_identifier_required_for_empirical_validation: true
+  biological_replicates_must_remain_distinguishable: true
+  aggregation_rule_must_be_preregistered: true
+
+parameter_contract:
+  symbolic_parameter_descriptors_allowed: true
+  numerical_candidate_values_allowed_in_v4_1: false
+  calibration_allowed_in_v4_1: false
+  parameter_activation_allowed_in_v4_1: false
+  inferred_default_value: FORBIDDEN
+  unreviewed_ufotri_value_import: FORBIDDEN
+
+state_ownership_contract:
+  prognostic_state_single_owner: true
+  external_forcing_is_prognostic_state: false
+  derived_diagnostic_is_prognostic_state: false
+  derived_diagnostic_requires_restart_persistence: false
+  transfer_flux_may_be_applied_by_multiple_owners: false
+  downstream_readout_may_mutate_environmental_state: false
+
+restart_contract:
+  future_profile_restart_schema_version_required: true
+  all_future_prognostic_states_required: true
+  forcing_values_need_not_be_restart_state_but_forcing_identity_must_be_reproducible: true
+  derived_diagnostics_need_not_be_persisted: true
+  missing_required_future_restart_field: FAIL_CLOSED
+  automatic_mapping_from_v3_scalar_to_v4_multistate: FORBIDDEN
+  restart_equivalence_required_before_future_implementation: true
+
+validation_contract:
+  independent_observation_provenance_required: true
+  preregistered_metric_required: true
+  baseline_profile_comparison_required: true
+  candidate_item_identifier_required: true
+  replicate_identifier_required: true
+  timestamp_alignment_required: true
+  unit_declaration_required: true
+  software_synthetic_case_is_empirical_validation: false
+  production_arithmetic_is_expected_data: false
+
+hard_boundaries:
+  production_runtime_change: false
+  solver_equation_implementation: false
+  existing_state_serialization_change: false
+  numerical_coupling_change: false
+  p7_5_semantics_change: false
+  p7_5b_semantics_change: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false

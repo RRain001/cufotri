@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas.example/schemas/v4/v4_validation_case_envelope.schema.json",
+  "title": "CTEAS UFOTRI V4 validation case envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "case_type",
+    "candidate_item",
+    "baseline_profile",
+    "replicate_id",
+    "time_contract",
+    "variables",
+    "preregistered_metrics"
+  ],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "case_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+    "case_type": {
+      "type": "string",
+      "enum": ["EMPIRICAL_VALIDATION", "SYNTHETIC_SOFTWARE_VERIFICATION"]
+    },
+    "candidate_item": {
+      "type": "string",
+      "enum": [
+        "LEAF_DYNAMIC_STOMATAL_RESPONSE",
+        "OBT_FORMATION_PACKAGE",
+        "ROOT_UPTAKE_WATER_FLUX_BOUNDARY"
+      ]
+    },
+    "baseline_profile": {"const": "v3_frozen_baseline"},
+    "replicate_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+    "mass_basis_contract_ref": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+    "time_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timezone_or_offset", "interval_semantics", "alignment_rule"],
+      "properties": {
+        "timezone_or_offset": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "interval_semantics": {
+          "type": "string",
+          "enum": ["start", "end", "midpoint", "instantaneous", "interval_mean"]
+        },
+        "alignment_rule": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"}
+      }
+    },
+    "variables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/variable"}
+    },
+    "preregistered_metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/metric"}
+    },
+    "notes": {"type": "string"}
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_locator", "revision", "variable_name", "declared_unit", "timestamp_basis"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "source_locator": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "revision": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "variable_name": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "declared_unit": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "timestamp_basis": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "method": {"type": "string"},
+        "instrument": {"type": "string"},
+        "uncertainty_basis": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "unit", "provenance"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "role": {
+          "type": "string",
+          "enum": ["OBSERVATION", "FORCING", "GEOMETRY", "CONTEXT", "SOFTWARE_EXPECTATION"]
+        },
+        "unit": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "missing_data_policy": {
+          "type": "string",
+          "enum": ["FAIL_CLOSED", "CASE_INVALID", "SEPARATELY_REVIEWED_IMPUTATION"]
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "definition", "aggregation_rule"],
+      "properties": {
+        "metric_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "definition": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "aggregation_rule": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"case_type": {"const": "EMPIRICAL_VALIDATION"}}, "required": ["case_type"]},
+      "then": {
+        "not": {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"role": {"const": "SOFTWARE_EXPECTATION"}},
+                "required": ["role"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

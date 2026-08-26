@@ -1,0 +1,176 @@
+schema_version: v1
+stage: V4-1
+contract_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE_CONTRACT
+item_id: LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: SYMBOLIC_CONTROL_PLANE_CONTRACT_DEFINED
+coupling_classification: INTERFACE_EXTENSION
+implementation_authorized: false
+
+baseline:
+  profile: v3_frozen_baseline
+  current_boundary: 'r_tot = r_a + r_b + r_c; g_ex = 1 / r_tot'
+  remains_default: true
+  automatic_baseline_to_v4_mapping: FORBIDDEN
+
+scientific_scope:
+  purpose: >-
+    Define the units, forcing ownership, response-function domains, restart
+    semantics, validation envelope, and fail-closed behavior for a future
+    bounded stomatal conductance response. This contract does not implement
+    the response in production runtime and supplies no parameter values.
+  selected_candidate: option_b_dynamic_stomatal_response
+  symbolic_equations:
+    - 'g_s(t) = g_s_max * F_light(L) * F_vpd(VPD) * F_temp(T_leaf) * F_stage(stage)'
+    - 'r_c(t) = 1 / g_s(t)'
+    - 'r_tot(t) = r_a(t) + r_b(t) + r_c(t)'
+    - 'g_ex(t) = 1 / r_tot(t)'
+  response_composition_status: SYMBOLIC_NOT_CALIBRATED
+
+quantity_contracts:
+  g_s:
+    meaning: stomatal_conductance_velocity
+    canonical_unit: m s^-1
+    role: derived_diagnostic
+    finite_required: true
+    nonnegative_required: true
+  g_s_max:
+    meaning: maximum_stomatal_conductance_velocity
+    canonical_unit: m s^-1
+    role: candidate_symbolic_parameter
+    numerical_value_allowed_in_v4_1: false
+  r_c:
+    meaning: canopy_or_stomatal_resistance
+    canonical_unit: s m^-1
+    role: derived_diagnostic
+    finite_required: true
+    positive_when_exchange_enabled: true
+  r_a:
+    meaning: aerodynamic_resistance
+    canonical_unit: s m^-1
+    role: external_or_existing_boundary_input
+  r_b:
+    meaning: boundary_layer_resistance
+    canonical_unit: s m^-1
+    role: external_or_existing_boundary_input
+  r_tot:
+    meaning: total_exchange_resistance
+    canonical_unit: s m^-1
+    role: derived_diagnostic
+  g_ex:
+    meaning: total_exchange_conductance_velocity
+    canonical_unit: m s^-1
+    role: derived_diagnostic
+  L:
+    meaning: light_or_PAR_forcing
+    canonical_unit: source_specific_explicit_unit
+    role: external_forcing
+    provenance_required: true
+  VPD:
+    meaning: vapor_pressure_deficit
+    canonical_unit: Pa
+    role: external_forcing
+    provenance_required: true
+  T_leaf:
+    meaning: leaf_temperature
+    canonical_unit: K
+    role: external_forcing
+    provenance_required: true
+  stage:
+    meaning: declared_crop_or_phenological_stage
+    canonical_unit: '1'
+    role: external_forcing_or_typed_category
+    provenance_required: true
+
+response_function_contract:
+  functions:
+    - F_light
+    - F_vpd
+    - F_temp
+    - F_stage
+  output_unit: '1'
+  finite_required: true
+  nonnegative_required: true
+  declared_domain_required: true
+  declared_bounds_required: true
+  default_function_when_missing: FORBIDDEN
+  extrapolation_outside_declared_domain: FAIL_CLOSED
+  numerical_shape_or_coefficients_allowed_in_v4_1: false
+  inferred_mapping_from_existing_day_night_inputs: FORBIDDEN
+
+reciprocal_and_dimensional_invariants:
+  conductance_times_resistance_dimensionless: true
+  rc_equals_reciprocal_gs_when_exchange_enabled: true
+  gex_equals_reciprocal_rtot_when_exchange_enabled: true
+  zero_or_negative_rtot: FAIL_CLOSED
+  zero_gs_policy: >-
+    A future implementation must define the closed-stomata boundary explicitly;
+    V4-1 does not invent an infinite-resistance sentinel or numerical epsilon.
+
+state_ownership:
+  prognostic_candidate_states: []
+  external_forcings:
+    - L
+    - VPD
+    - T_leaf
+    - stage
+  existing_or_external_resistance_inputs:
+    - r_a
+    - r_b
+  derived_diagnostics:
+    - g_s
+    - r_c
+    - r_tot
+    - g_ex
+  tfwt_inventory_owner: plant.tfwt_v3_or_future_reviewed_successor
+  leaf_response_may_mutate_tfwt_state_directly: false
+  exchange_flux_application_owner_must_be_single: true
+
+restart_contract:
+  new_persistent_candidate_state_required: false
+  forcing_identity_and_timestamp_must_be_reproducible: true
+  derived_diagnostics_need_not_be_persisted: true
+  future_response_parameter_set_requires_versioned_identity: true
+  missing_required_forcing_on_restart: FAIL_CLOSED
+
+validation_case_contract:
+  required_observations:
+    - stomatal_conductance_or_leaf_resistance
+    - light_or_PAR
+    - VPD_or_declared_humidity_basis
+    - leaf_temperature
+    - crop_stage
+  required_context:
+    - tissue_scope
+    - mass_basis_when_activity_is_compared
+    - timestamp_and_interval_semantics
+    - replicate_id
+    - provenance_for_each_quantitative_variable
+  preregistered_metrics:
+    - conductance_or_resistance_trajectory_error
+    - reciprocal_identity_residual
+    - domain_and_bound_violation_count
+    - cross_condition_generalization_error
+  software_only_checks:
+    - dimensional_consistency
+    - missing_forcing_fail_closed
+    - out_of_domain_fail_closed
+    - reciprocal_identity
+  empirical_validation_required_before_implementation: true
+
+failure_policy:
+  missing_required_forcing: FAIL_CLOSED
+  unit_missing_or_incompatible: FAIL_CLOSED
+  provenance_missing: FAIL_CLOSED
+  response_outside_declared_domain: FAIL_CLOSED
+  nonfinite_response: FAIL_CLOSED
+  negative_conductance: FAIL_CLOSED
+  silent_clipping: FORBIDDEN_UNLESS_SEPARATELY_REVIEWED
+
+hard_boundaries:
+  production_solver_changed: false
+  runtime_candidate_state_activated: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  numerical_coupling_changed: false
+  active_parameters: 0
+  v3_physics_ready: false

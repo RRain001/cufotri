@@ -1,0 +1,207 @@
+schema_version: v1
+stage: V4-1
+contract_id: V4_ROOT_WATER_FLUX_BOUNDARY_CONTRACT
+item_id: ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+status: SYMBOLIC_CONTROL_PLANE_CONTRACT_DEFINED
+coupling_classification: NUMERICAL_COUPLING_CHANGE_REQUIRED
+implementation_authorized: false
+p7_5_p7_5b_re_review_required_before_implementation: true
+
+baseline:
+  profile: v3_frozen_baseline
+  current_boundary: 'J_root = v_r C_soil'
+  remains_default: true
+  automatic_scalar_rate_or_velocity_to_layer_flux_mapping: FORBIDDEN
+  automatic_v3_soil_state_to_v4_layers: FORBIDDEN
+
+scientific_scope:
+  purpose: >-
+    Define the dimensional, ownership, layer geometry, forcing provenance,
+    conservative extraction, restart, validation, and failure contracts for a
+    future water-flux-coupled root uptake boundary. V4-1 does not implement
+    hydrology, does not generate q_w,i, and does not convert any scalar root
+    rate into a velocity or layer flux.
+  selected_candidate: option_b_water_flux_coupled
+  symbolic_equations:
+    - 'M_s,i = theta_i * Delta_z_i * C_w,i'
+    - 'J_root,i = q_w,i * C_w,i'
+    - 'J_root,total = sum_i J_root,i'
+  sign_convention:
+    q_w_i_positive_direction: soil_layer_to_plant
+    J_root_i_positive_direction: soil_layer_to_TFWT_boundary
+    soil_extraction_term: '-J_root,i'
+    tfwt_input_term: '+J_root,total'
+
+quantity_contracts:
+  M_s_i:
+    meaning: layer_activity_inventory_per_ground_area
+    canonical_unit: Bq m^-2
+    role: future_prognostic_or_externally_owned_layer_state
+  theta_i:
+    meaning: volumetric_water_content
+    canonical_unit: m3 water m^-3 bulk
+    equivalent_dimension: '1'
+    role: external_forcing_or_separately_owned_water_state
+    provenance_required: true
+  Delta_z_i:
+    meaning: layer_thickness
+    canonical_unit: m
+    role: geometry_contract
+    positive_required: true
+  C_w_i:
+    meaning: HTO_activity_concentration_in_soil_water
+    canonical_unit: Bq m^-3 water
+    role: derived_from_layer_inventory_and_water_basis_or_external_observation
+    provenance_required_when_observed: true
+  q_w_i:
+    meaning: root_water_uptake_flux_per_ground_area
+    canonical_unit: m s^-1
+    role: external_forcing_or_output_of_separately_reviewed_water_model
+    provenance_required: true
+    generated_by_v4_1: false
+  J_root_i:
+    meaning: root_activity_uptake_flux_from_layer_i
+    canonical_unit: Bq m^-2 s^-1
+    role: derived_transfer_flux
+  J_root_total:
+    meaning: total_root_activity_uptake_flux
+    canonical_unit: Bq m^-2 s^-1
+    role: derived_transfer_flux
+  root_activity_distribution:
+    meaning: optional_or_required_future_layer_weighting_descriptor
+    canonical_unit: '1'
+    role: external_forcing_or_typed_structure
+    numerical_values_allowed_in_v4_1: false
+
+layer_geometry_contract:
+  explicit_layer_index_required: true
+  explicit_top_and_bottom_depth_or_thickness_required: true
+  overlap_forbidden: true
+  nonpositive_thickness: FAIL_CLOSED
+  layer_order_required: surface_to_depth_or_explicitly_declared
+  geometry_revision_required: true
+  grid_refinement_identity_required_before_implementation: true
+
+water_basis_contract:
+  theta_basis_must_be_declared: volumetric_water_fraction
+  C_w_basis_must_be_declared: activity_per_water_volume
+  bulk_soil_activity_concentration_substitution: FORBIDDEN_WITHOUT_EXPLICIT_CONVERSION_CONTRACT
+  dry_or_wet_soil_mass_conversion: FORBIDDEN_WITHOUT_EXPLICIT_EVIDENCE
+  inferred_effective_storage_length: FORBIDDEN
+  root_rate_s_inverse_to_velocity_m_per_s_conversion: FORBIDDEN
+
+state_ownership:
+  soil_layer_activity_owner_must_be_single: true
+  q_w_owner_must_be_external_or_separately_reviewed_water_model: true
+  v4_root_boundary_may_generate_q_w: false
+  v4_root_boundary_may_modify_soil_water_content: false
+  v4_root_boundary_may_apply_J_root_to_soil_more_than_once: false
+  v4_root_boundary_may_apply_J_root_to_TFWT_more_than_once: false
+  extraction_and_plant_input_are_same_transfer_identity: true
+  current_one_layer_soil_v3_is_implicitly_replaced: false
+
+conservation_contract:
+  layer_transfer_identity: 'soil_sink_i + plant_source_i = -J_root,i + J_root,i = 0'
+  total_transfer_identity: 'sum_i soil_sink_i + J_root,total = 0'
+  transfer_is_internal_to_composite_soil_plus_plant_system: true
+  q_w_i_may_not_remove_more_activity_than_available_under_future_time_integrator: true
+  negative_post_step_layer_inventory: FAIL_CLOSED_OR_TIME_STEP_REJECTION
+  layer_and_global_conservation_tests_required_before_implementation: true
+  refinement_test_required_before_implementation: true
+
+forcing_and_provenance_contract:
+  q_w_i:
+    accepted_origins:
+      - empirical_water_uptake_or_transpiration_partition
+      - separately_reviewed_water_model_output
+    source_id_required: true
+    source_locator_required: true
+    revision_required: true
+    timestamp_alignment_required: true
+    units_required: true
+  theta_i:
+    provenance_required: true
+    timestamp_alignment_required: true
+  layer_geometry:
+    provenance_or_case_definition_required: true
+  root_activity_distribution:
+    provenance_required_if_used: true
+  missing_q_w_i: FAIL_CLOSED
+  missing_theta_i: FAIL_CLOSED
+  missing_layer_geometry: FAIL_CLOSED
+  silent_uniform_layer_distribution: FORBIDDEN
+
+restart_contract:
+  future_restart_schema_version_required: true
+  required_future_state_or_identity:
+    - layer_activity_inventories_or_reconstructable_equivalent
+    - layer_geometry_revision
+    - water_basis_identity
+    - forcing_stream_identity_for_q_w
+    - timestamp_and_interval_alignment
+  derived_J_root_i_need_not_be_persisted: true
+  missing_layer_state: FAIL_CLOSED
+  changing_layer_geometry_across_restart_without_reviewed_remap: FORBIDDEN
+  v3_one_layer_to_v4_multilayer_restart_mapping: FORBIDDEN
+  restart_equivalence_required_before_implementation: true
+
+validation_case_contract:
+  required_observations_or_forcings:
+    - layer_resolved_soil_HTO_activity_or_reconcilable_C_w_i
+    - volumetric_water_content_theta_i
+    - layer_geometry
+    - root_water_uptake_or_transpiration_partition_q_w_i
+    - plant_TFWT_response
+  required_context:
+    - root_depth_or_activity_profile_when_used
+    - infiltration_drainage_evaporation_context_when_relevant_to_dataset_interpretation
+    - timestamp_and_interval_semantics
+    - replicate_id
+    - provenance_for_each_quantitative_variable
+  preregistered_metrics:
+    - layer_activity_balance_residual
+    - global_soil_plus_plant_transfer_residual
+    - root_flux_trajectory_error
+    - plant_TFWT_input_trajectory_error
+    - restart_equivalence_error
+    - layer_refinement_sensitivity
+    - boundary_condition_sensitivity
+  production_arithmetic_may_define_expected_observation: false
+  synthetic_case_is_physical_validation: false
+
+coupling_review_contract:
+  required_before_implementation: true
+  required_scope:
+    - soil_root_tfwt_state_ownership
+    - P7_5_interval_ordering
+    - P7_5B_restart_and_failure_semantics
+    - layer_transfer_single_application
+    - composite_conservation
+    - restart_equivalence
+    - refinement_behavior
+  current_p7_5_semantics_changed_by_v4_1: false
+  current_p7_5b_semantics_changed_by_v4_1: false
+
+failure_policy:
+  missing_required_layer_input: FAIL_CLOSED
+  incompatible_unit: FAIL_CLOSED
+  nonfinite_input: FAIL_CLOSED
+  negative_theta: FAIL_CLOSED
+  theta_greater_than_physical_domain: FAIL_CLOSED_UNLESS_DOMAIN_CONTRACT_EXPLAINS_BASIS
+  nonpositive_layer_thickness: FAIL_CLOSED
+  unprovenanced_q_w: FAIL_CLOSED
+  guessed_q_w: FORBIDDEN
+  inferred_hydrology: FORBIDDEN
+  scalar_rate_to_velocity_conversion: FORBIDDEN
+
+hard_boundaries:
+  production_solver_changed: false
+  runtime_candidate_state_activated: false
+  soil_hydrology_implemented: false
+  q_w_model_implemented: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  numerical_coupling_changed: false
+  active_parameters: 0
+  physical_validation_complete: false
+  v3_physics_ready: false
