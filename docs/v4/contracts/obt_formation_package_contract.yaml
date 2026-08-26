@@ -1,0 +1,229 @@
+schema_version: v1
+stage: V4-1
+contract_id: V4_OBT_FORMATION_PACKAGE_CONTRACT
+item_id: OBT_FORMATION_PACKAGE
+status: SYMBOLIC_CONTROL_PLANE_CONTRACT_DEFINED
+coupling_classification: INTERFACE_EXTENSION
+implementation_authorized: false
+
+baseline:
+  profile: v3_frozen_baseline
+  current_equation: 'dB/dt = k_f T - k_r B'
+  remains_default: true
+  aggregate_baseline_readout_preserved: true
+  automatic_mapping_from_baseline_B_to_P_Bx_Bn: FORBIDDEN
+
+scientific_scope:
+  purpose: >-
+    Freeze the symbolic precursor/exchangeable/non-exchangeable OBT inventory
+    contract, dimensional identities, state ownership, conservation ledger,
+    restart completeness, forcing provenance, and validation envelope for a
+    future V4 profile. No biological rate value or response-function value is
+    admitted in V4-1.
+  selected_candidate: option_b_two_pool_biological_extension
+  prognostic_inventories:
+    - P
+    - B_x
+    - B_n
+  aggregate_readout: 'B_total = B_x + B_n'
+
+symbolic_equations:
+  precursor_source: 'u_P = k_f0 * T * phi_daynight(d,stage) * phi_photo(A,L,stage) * phi_temp(T_leaf,stage)'
+  precursor_balance: 'dP/dt = u_P - J_P_to_Bx - J_P_other'
+  exchangeable_balance: 'dB_x/dt = J_P_to_Bx - J_Bx_to_Bn - J_Bx_other'
+  nonexchangeable_balance: 'dB_n/dt = J_Bx_to_Bn - J_Bn_other'
+  transfer_definitions:
+    J_P_to_Bx: 'k_PB * P'
+    J_P_other: 'k_P_other * P'
+    J_Bx_to_Bn: 'k_xn * B_x'
+    J_Bx_other: 'k_x * B_x'
+    J_Bn_other: 'k_n * B_n'
+  compatibility_relation_to_p7_8b2_notation: 'k_P = k_PB + k_P_other'
+  total_candidate_inventory_identity: >-
+    d(P + B_x + B_n)/dt = u_P - J_P_other - J_Bx_other - J_Bn_other
+
+quantity_contracts:
+  T:
+    meaning: TFWT_activity_inventory_available_to_candidate_formation_boundary
+    canonical_unit: Bq m^-2
+    role: external_or_existing_inventory_readout
+    owner: plant.tfwt_v3_or_future_reviewed_successor
+  P:
+    meaning: precursor_activity_inventory
+    canonical_unit: Bq m^-2
+    role: prognostic_candidate_state
+    owner: future_v4_obt_package
+  B_x:
+    meaning: exchangeable_OBT_activity_inventory
+    canonical_unit: Bq m^-2
+    role: prognostic_candidate_state
+    owner: future_v4_obt_package
+  B_n:
+    meaning: nonexchangeable_OBT_activity_inventory
+    canonical_unit: Bq m^-2
+    role: prognostic_candidate_state
+    owner: future_v4_obt_package
+  B_total:
+    meaning: aggregate_OBT_activity_inventory_readout
+    canonical_unit: Bq m^-2
+    role: derived_diagnostic
+    persisted_restart_state: false
+  u_P:
+    meaning: precursor_activity_formation_flux
+    canonical_unit: Bq m^-2 s^-1
+    role: derived_source_flux
+  rate_parameters:
+    names:
+      - k_f0
+      - k_PB
+      - k_P_other
+      - k_xn
+      - k_x
+      - k_n
+    canonical_unit: s^-1
+    role: candidate_symbolic_parameter
+    numerical_values_allowed_in_v4_1: false
+  response_functions:
+    names:
+      - phi_daynight
+      - phi_photo
+      - phi_temp
+    canonical_unit: '1'
+    numerical_functions_allowed_in_v4_1: false
+  d:
+    meaning: explicit_day_night_state
+    role: external_forcing
+  A:
+    meaning: measured_or_explicitly_typed_photosynthetic_activity_forcing
+    role: external_forcing
+    unit_required_by_case: true
+  L:
+    meaning: light_or_PAR_forcing
+    role: external_forcing
+    unit_required_by_case: true
+  T_leaf:
+    meaning: leaf_temperature
+    canonical_unit: K
+    role: external_forcing
+  stage:
+    meaning: declared_crop_or_phenological_stage
+    canonical_unit: '1'
+    role: external_forcing_or_typed_category
+
+conservation_contract:
+  internal_transfers:
+    - J_P_to_Bx
+    - J_Bx_to_Bn
+  internal_transfer_sign_rule: >-
+    Every internal transfer appears exactly once as a source and once as a sink
+    with equal magnitude and opposite sign in the composite ledger.
+  external_sources:
+    - u_P
+  external_losses:
+    - J_P_other
+    - J_Bx_other
+    - J_Bn_other
+  composite_storage: 'P + B_x + B_n'
+  composite_balance_residual_target: zero_within_reviewed_numerical_tolerance
+  p7_8b2_rate_relation:
+    symbolic_relation: 'k_P = k_PB + k_P_other'
+    k_PB_nonnegative: true
+    k_P_other_nonnegative: true
+    implies_k_PB_le_k_P: true
+    numerical_values_allowed_in_v4_1: false
+  transfer_double_counting: FORBIDDEN
+  aggregate_B_is_additional_storage: false
+
+forcing_contract:
+  day_night_state:
+    timestamp_alignment_required: true
+    transition_convention_required: true
+    implicit_solar_or_clock_inference: FORBIDDEN_UNLESS_SEPARATELY_REVIEWED
+  activity_forcing:
+    measured_vs_prognostic_discriminator_required: true
+    two_interpretations_may_be_mixed: false
+    provenance_required: true
+  leaf_temperature:
+    provenance_required: true
+  crop_stage:
+    provenance_required: true
+  missing_required_future_forcing: FAIL_CLOSED
+  mapping_from_existing_day_night_multiplier: FORBIDDEN
+
+state_ownership:
+  future_v4_obt_package_owns:
+    - P
+    - B_x
+    - B_n
+  future_v4_obt_package_does_not_own:
+    - T
+    - day_night_state
+    - activity_forcing
+    - light_or_PAR
+    - leaf_temperature
+    - crop_stage
+  B_total_is_diagnostic_only: true
+  tfwt_to_obt_transfer_must_have_single_application_owner: true
+  downstream_food_or_dose_readout_may_mutate_candidate_states: false
+
+restart_contract:
+  future_restart_schema_version_required: true
+  required_persistent_states:
+    - P
+    - B_x
+    - B_n
+  B_total_must_be_recomputed_from_components: true
+  forcing_values_need_not_be_persisted_but_identity_and_time_alignment_must_be_reproducible: true
+  missing_component_state: FAIL_CLOSED
+  baseline_B_to_component_partition_without_evidence: FORBIDDEN
+  restart_equivalence_required_before_implementation: true
+
+validation_case_contract:
+  required_observations:
+    - TFWT_trajectory
+    - exchangeable_OBT_trajectory
+    - nonexchangeable_OBT_trajectory
+    - aggregate_OBT_trajectory_or_reconcilable_components
+    - day_night_state
+    - leaf_temperature
+    - crop_stage
+    - activity_or_PAR_context
+  required_context:
+    - tissue_scope
+    - mass_basis
+    - area_basis
+    - timestamp_and_interval_semantics
+    - replicate_id
+    - provenance_for_each_quantitative_variable
+  preregistered_metrics:
+    - precursor_or_formation_boundary_identifiability_metric_when_observable
+    - Bx_trajectory_error
+    - Bn_trajectory_error
+    - aggregate_OBT_trajectory_error
+    - component_and_total_conservation_residual
+    - out_of_sample_replicate_error
+    - restart_equivalence_error
+  baseline_comparison_required: true
+  baseline_model: v3_frozen_baseline_reduced_first_order_OBT
+  aggregate_only_data_sufficient_for_component_validation: false
+  synthetic_cases_are_biological_validation: false
+
+failure_policy:
+  missing_mass_basis: FAIL_CLOSED_FOR_COMPARISON
+  missing_tissue_scope: FAIL_CLOSED_FOR_COMPARISON
+  missing_required_forcing: FAIL_CLOSED
+  missing_component_observation_for_component_validation: CASE_INVALID
+  nonfinite_state_or_flux: FAIL_CLOSED
+  negative_rate_parameter: FAIL_CLOSED_IF_FUTURE_VALUE_IS_EVER_PROPOSED
+  hidden_component_partition: FORBIDDEN
+  inferred_parameter_from_production_arithmetic: FORBIDDEN
+
+hard_boundaries:
+  production_solver_changed: false
+  runtime_candidate_state_activated: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  numerical_coupling_changed: false
+  physical_validation_complete: false
+  v3_physics_ready: false
