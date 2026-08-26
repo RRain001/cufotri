@@ -1,0 +1,452 @@
+schema_version: v1
+stage: V4_SYSTEM_PHYSICS_GAP_SENSITIVITY_AUDIT_R1
+status: PASS_STRUCTURAL_AUDIT
+repository: RRain001/CTEAS_ufotri
+base_main_sha: ae315f9e3f1108c9e527508728e28a6fbbce75e7
+branch: codex/v4-system-physics-gap-sensitivity-audit-r1
+
+source_records:
+  parameter_feasibility: docs/v3/parameter_evidence/parameter_validation_feasibility.yaml
+  redesign_priority: docs/v3/physics/p7_6d_redesign_priority_matrix.yaml
+  later_priority_registry: docs/v3/physics/p7_8a_redesign_priority_registry.yaml
+  roadmap_reset: docs/v4/governance/v4_system_roadmap_reset_r1.yaml
+  atmos_exchange_contract: docs/v4/contracts/v4_system_atmos_exchange_contract.yaml
+  pipeline_runner: src/cteas_ufotri/v3_pipeline/pipeline_runner.py
+  pipeline_reference_test: tests/integration/test_v3_pipeline.py
+
+prior_evidence_counts:
+  mapped_parameter_count: 26
+  assessment_record_count: 27
+  validation_feasible: 4
+  validation_feasible_with_limitations: 8
+  physics_redesign_required: 9
+  not_importable: 4
+  insufficient_information: 1
+  validated_parameters: 1
+  active_parameters: 0
+
+interpretation_rules:
+  prior_scientific_priority_is_numeric_sensitivity_result: false
+  structural_reach_is_empirical_uncertainty: false
+  synthetic_screening_is_physical_validation: false
+  large_external_endpoint_scaling_is_environmental_physics_priority: false
+  missing_equation_may_receive_guessed_sensitivity_score: false
+  combined_scalar_priority_score_created: false
+
+structural_reach_classes:
+  - DIRECT_SAME_STEP
+  - DELAYED_MULTI_STEP
+  - DIAGNOSTIC_ONLY_FIXED_INVENTORY
+  - PRESENT_BUT_INACTIVE
+  - SUBSYSTEM_ONLY_NOT_INTEGRATED
+  - EXTERNAL_ENDPOINT_SCALING
+
+perturbation_eligibility_classes:
+  - RUNNABLE_CURRENT_PIPELINE
+  - RUNNABLE_STATE_BASIS_REVIEW_REQUIRED
+  - RUNNABLE_PROVISIONAL_ABSTRACTION_ONLY
+  - NOT_INTEGRATED_CURRENT_PIPELINE
+  - NO_EFFECT_CURRENT_EQUATION
+  - EXTERNAL_SCENARIO_ANALYTIC
+
+physics_gap_dispositions:
+  - ADVANCE_NUMERICAL_SCREENING
+  - ADVANCE_EVIDENCE_AFTER_SCREENING
+  - HOLD_REDESIGN_REQUIRED
+  - HOLD_NOT_INTEGRATED
+  - KEEP_EXTERNAL_GOVERNANCE
+  - KEEP_VALIDATED_CONSTANT
+  - DEFER_CURRENT_STRUCTURAL_ZERO
+
+call_graph_invariants:
+  leaf_exchange_equation: J_leaf = g_ex * (C_air - C_eq)
+  leaf_exchange_velocity: g_ex = 1 / (r_a + r_b + r_c)
+  dynamic_resistance_from_current_temperature_humidity_wind: false
+  soil_pipeline_transport_flux_exposed: false
+  tfwt_pipeline_water_loss_flux_exposed: false
+  tfwt_pipeline_transformation_flux_exposed: false
+  root_reads_soil_snapshot: STEP_START
+  obt_reads_tfwt_snapshot: POST_LEAF_PRE_ROOT
+  food_readout_mutates_plant_state: false
+  intake_is_endpoint_readout: true
+  dose_is_endpoint_readout: true
+
+system_inputs:
+  - input_id: atmos.air_hto_concentration
+    subsystem: atmosphere
+    input_class: FORCING
+    evidence_class: EXTERNAL_SCENARIO_OR_MODEL_OUTPUT
+    current_runtime_entry: AtmosphericHTOForcing.air_hto_concentration
+    structural_reach:
+      - DIRECT_SAME_STEP
+    downstream_path: leaf_exchange -> TFWT -> OBT -> food -> intake -> dose
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    physical_interpretation: FORCING_SENSITIVITY_NOT_PARAMETER_VALIDATION
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: atmos.surface_deposition_flux
+    subsystem: atmosphere
+    input_class: FORCING
+    evidence_class: EXTERNAL_SCENARIO_OR_MODEL_OUTPUT
+    current_runtime_entry: AtmosphericHTOForcing.deposition_flux
+    structural_reach:
+      - DIRECT_SAME_STEP_TO_SOIL
+      - DELAYED_MULTI_STEP_TO_ROOT_PLANT_DOSE
+    downstream_path: soil_state -> later root_uptake -> later TFWT/OBT -> food -> intake -> dose
+    same_step_root_effect: false
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    producer_binding_status: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+    physical_interpretation: REPLAY_OR_SYNTHETIC_SCREENING_UNTIL_REAL_BINDING_CLOSES
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: atmos.temperature
+    subsystem: atmosphere
+    input_class: COFORCING
+    evidence_class: EXTERNAL_SCENARIO_OR_MODEL_OUTPUT
+    current_runtime_entry: AtmosphericHTOForcing.temperature
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    reason: Current leaf flux receives a precomputed resistance and OBT temperature extension field is not wired from the atmospheric forcing.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: atmos.relative_humidity
+    subsystem: atmosphere
+    input_class: COFORCING
+    evidence_class: EXTERNAL_SCENARIO_OR_MODEL_OUTPUT
+    current_runtime_entry: AtmosphericHTOForcing.humidity
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    reason: Current signed leaf exchange does not recompute resistance from humidity.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: atmos.wind_speed
+    subsystem: atmosphere
+    input_class: COFORCING
+    evidence_class: EXTERNAL_SCENARIO_OR_MODEL_OUTPUT
+    current_runtime_entry: AtmosphericHTOForcing.wind_speed
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    reason: Current signed leaf exchange uses a precomputed ResistanceState and does not recompute aerodynamic resistance from wind speed.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: atmos.precipitation_rate
+    subsystem: atmosphere
+    input_class: COFORCING
+    evidence_class: EXTERNAL_SCENARIO_OR_MODEL_OUTPUT
+    current_runtime_entry: AtmosphericHTOForcing.precipitation
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    reason: Soil adapter passes only the already-resolved deposition flux; precipitation does not independently alter the current soil equation.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: leaf.equilibrium_air_concentration
+    subsystem: leaf_exchange
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: UNRESOLVED_SCENARIO_OR_BOUNDARY_INPUT
+    current_runtime_entry: V3PipelineParameters.equilibrium_air_concentration_bq_m3
+    structural_reach: [DIRECT_SAME_STEP]
+    downstream_path: leaf_exchange -> TFWT -> OBT -> food -> intake -> dose
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: leaf.total_resistance
+    component_parameter_ids: [leaf.r_a, leaf.r_b, leaf.r_c]
+    subsystem: leaf_exchange
+    input_class: CURRENT_PIPELINE_PARAMETER_GROUP
+    evidence_class: VALIDATION_FEASIBLE_COMPONENTS_PROVISIONAL
+    current_runtime_entry: V3PipelineParameters.resistance
+    structural_reach: [DIRECT_SAME_STEP]
+    downstream_path: exchange_velocity -> leaf_flux -> TFWT -> OBT -> food -> intake -> dose
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    screening_rule: Screen total resistance first; component-specific perturbation requires component-specific uncertainty because the current equation depends only on their sum.
+    disposition: ADVANCE_EVIDENCE_AFTER_SCREENING
+
+  - input_id: leaf.growth_stage_response
+    parameter_id: leaf.growth_stage
+    subsystem: leaf_exchange
+    input_class: RESERVED_OR_METADATA
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: HOLD_REDESIGN_REQUIRED
+
+  - input_id: soil.tritium_half_life
+    subsystem: soil
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: VALIDATED_PHYSICAL_CONSTANT
+    current_runtime_entry: SoilParameters.tritium_half_life_s
+    structural_reach:
+      - DIRECT_SAME_STEP_TO_SOIL
+      - DELAYED_MULTI_STEP_TO_ROOT_PLANT_DOSE
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    disposition: KEEP_VALIDATED_CONSTANT
+    note: Numerical perturbation may be used only as a software response check, not as a justification to reopen the validated constant.
+
+  - input_id: soil.water_content
+    subsystem: soil
+    input_class: STATE_BASIS_INPUT
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    current_runtime_entry: SoilState.soil_water_content
+    structural_reach: [DIRECT_SAME_STEP_TO_ROOT, DELAYED_MULTI_STEP_TO_OBT_DOSE]
+    equation_role: C_soil = M_soil / water_content
+    perturbation_eligibility: RUNNABLE_STATE_BASIS_REVIEW_REQUIRED
+    held_fixed_requirement: Must declare whether soil inventory or concentration is held fixed.
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: soil.layer_depth
+    subsystem: soil
+    input_class: STATE_METADATA
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    current_runtime_entry: SoilState.layer_depth_m
+    structural_reach: [DIAGNOSTIC_ONLY_FIXED_INVENTORY]
+    reason: Current storage and concentration arithmetic does not use layer_depth_m directly.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: soil.transport_flux
+    subsystem: soil
+    input_class: SUBSYSTEM_FORCING
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    subsystem_entry: SoilForcing.transport_flux_bq_m2_s
+    pipeline_exposed: false
+    structural_reach: [SUBSYSTEM_ONLY_NOT_INTEGRATED]
+    perturbation_eligibility: NOT_INTEGRATED_CURRENT_PIPELINE
+    disposition: HOLD_NOT_INTEGRATED
+
+  - input_id: root.k_root
+    subsystem: root_uptake
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: RootParameters.k_root_m_s
+    structural_reach:
+      - DIRECT_SAME_STEP_TO_FINAL_TFWT
+      - DELAYED_MULTI_STEP_TO_OBT_DOSE
+    same_step_obt_effect: false
+    equation_role: J_root = k_root * C_soil
+    perturbation_eligibility: RUNNABLE_PROVISIONAL_ABSTRACTION_ONLY
+    interpretation_rule: A large screening response supports redesign priority; it does not validate the one-layer effective velocity.
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: tfwt.water_content
+    subsystem: TFWT
+    input_class: STATE_BASIS_INPUT
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    current_runtime_entry: TFWTState.water_content_kg_m2
+    structural_reach: [DIAGNOSTIC_ONLY_FIXED_INVENTORY]
+    reason: OBT and food consume authoritative TFWT inventory; water content only changes TFWT concentration when inventory is held fixed.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: tfwt.water_loss_flux
+    subsystem: TFWT
+    input_class: SUBSYSTEM_FORCING
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    subsystem_entry: TFWTStorageSolver.advance.water_loss_flux_bq_m2_s
+    pipeline_exposed: false
+    structural_reach: [SUBSYSTEM_ONLY_NOT_INTEGRATED]
+    perturbation_eligibility: NOT_INTEGRATED_CURRENT_PIPELINE
+    disposition: HOLD_NOT_INTEGRATED
+
+  - input_id: tfwt.transformation_flux
+    subsystem: TFWT
+    input_class: SUBSYSTEM_FORCING
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    subsystem_entry: TFWTStorageSolver.advance.transformation_flux_bq_m2_s
+    pipeline_exposed: false
+    structural_reach: [SUBSYSTEM_ONLY_NOT_INTEGRATED]
+    perturbation_eligibility: NOT_INTEGRATED_CURRENT_PIPELINE
+    disposition: HOLD_NOT_INTEGRATED
+
+  - input_id: obt.kf
+    subsystem: OBT
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    current_runtime_entry: OBTParameters.kf_s
+    structural_reach: [DIRECT_SAME_STEP]
+    downstream_path: OBT_inventory_and_TFWT_loss -> food -> intake -> dose
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    disposition: ADVANCE_EVIDENCE_AFTER_SCREENING
+
+  - input_id: obt.kr
+    subsystem: OBT
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: VALIDATION_FEASIBLE_WITH_LIMITATIONS
+    current_runtime_entry: OBTParameters.kr_s
+    structural_reach: [DIRECT_SAME_STEP]
+    downstream_path: OBT_inventory -> food -> intake -> dose
+    perturbation_eligibility: RUNNABLE_CURRENT_PIPELINE
+    disposition: ADVANCE_EVIDENCE_AFTER_SCREENING
+
+  - input_id: obt.daylight_multiplier
+    subsystem: OBT
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: OBTParameters.daylight_multiplier
+    structural_reach: [DIRECT_SAME_STEP]
+    perturbation_eligibility: RUNNABLE_PROVISIONAL_ABSTRACTION_ONLY
+    identifiability_requirement: Requires daylight intervals.
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: obt.nighttime_multiplier
+    subsystem: OBT
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: OBTParameters.nighttime_multiplier
+    structural_reach: [DIRECT_SAME_STEP]
+    perturbation_eligibility: RUNNABLE_PROVISIONAL_ABSTRACTION_ONLY
+    identifiability_requirement: Requires nighttime intervals and a nondegenerate nonzero screening baseline if elasticity is used.
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: obt.photosynthetic_activity
+    subsystem: OBT
+    input_class: RESERVED_FORCING_FIELD
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: PlantBiologicalForcing.photosynthetic_activity
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: HOLD_REDESIGN_REQUIRED
+
+  - input_id: obt.temperature_response
+    subsystem: OBT
+    input_class: RESERVED_FORCING_FIELD
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: PlantBiologicalForcing.temperature_k
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: HOLD_REDESIGN_REQUIRED
+
+  - input_id: obt.growth_stage_response
+    subsystem: OBT
+    input_class: RESERVED_FORCING_FIELD
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: PlantBiologicalForcing.growth_stage
+    structural_reach: [PRESENT_BUT_INACTIVE]
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: HOLD_REDESIGN_REQUIRED
+
+  - input_id: obt.plant_mass
+    subsystem: OBT
+    input_class: STATE_BASIS_INPUT
+    evidence_class: MASS_BASIS_CONTRACT_REQUIRED_OR_LIMITED
+    current_runtime_entry: OBTState.plant_mass_kg_m2
+    structural_reach: [DIAGNOSTIC_ONLY_FIXED_INVENTORY]
+    reason: Current food solver consumes OBT inventory, not OBT concentration.
+    perturbation_eligibility: NO_EFFECT_CURRENT_EQUATION
+    disposition: DEFER_CURRENT_STRUCTURAL_ZERO
+
+  - input_id: food.harvest_fraction
+    subsystem: food_transfer
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: HarvestParameters.harvest_fraction
+    structural_reach: [DIRECT_SAME_STEP]
+    equation_role: OBT food transfer fraction at endpoint harvest event.
+    perturbation_eligibility: RUNNABLE_PROVISIONAL_ABSTRACTION_ONLY
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: food.tfwt_harvest_fraction
+    subsystem: food_transfer
+    input_class: CURRENT_PIPELINE_PARAMETER
+    evidence_class: PHYSICS_REDESIGN_REQUIRED
+    current_runtime_entry: HarvestParameters.tfwt_harvest_fraction
+    structural_reach: [DIRECT_SAME_STEP]
+    perturbation_eligibility: RUNNABLE_PROVISIONAL_ABSTRACTION_ONLY
+    identifiability_requirement: Must use a non-null screening value when assessing direct TFWT food reach.
+    disposition: ADVANCE_NUMERICAL_SCREENING
+
+  - input_id: food.harvest_area
+    subsystem: food_transfer
+    input_class: EXTERNAL_SCENARIO_GEOMETRY
+    evidence_class: SCENARIO_INPUT
+    current_runtime_entry: HarvestParameters.harvest_area_m2
+    structural_reach: [EXTERNAL_ENDPOINT_SCALING]
+    perturbation_eligibility: EXTERNAL_SCENARIO_ANALYTIC
+    disposition: KEEP_EXTERNAL_GOVERNANCE
+
+  - input_id: intake.annual_consumption_amount
+    subsystem: intake
+    input_class: EXTERNAL_EXPOSURE_SCENARIO
+    evidence_class: NOT_IMPORTABLE_EXTERNAL_EXPOSURE_HABIT
+    current_runtime_entry: ConsumptionParameters.annual_consumption_amount
+    structural_reach: [EXTERNAL_ENDPOINT_SCALING]
+    equation_role: intake = food_activity / food_mass * annual_consumption
+    perturbation_eligibility: EXTERNAL_SCENARIO_ANALYTIC
+    exact_scaling: DIRECT_LINEAR
+    disposition: KEEP_EXTERNAL_GOVERNANCE
+
+  - input_id: intake.food_product_mass
+    subsystem: intake
+    input_class: EXTERNAL_PRODUCT_BASIS
+    evidence_class: INSUFFICIENT_INFORMATION_FOR_UFOTRI_MAPPING
+    current_runtime_entry: ConsumptionParameters.food_product_mass_kg
+    structural_reach: [EXTERNAL_ENDPOINT_SCALING]
+    perturbation_eligibility: EXTERNAL_SCENARIO_ANALYTIC
+    exact_scaling: INVERSE_LINEAR_AT_FIXED_FOOD_ACTIVITY
+    disposition: KEEP_EXTERNAL_GOVERNANCE
+
+  - input_id: dose.dose_coefficient
+    subsystem: dose
+    input_class: EXTERNAL_DOSIMETRY
+    evidence_class: NOT_IMPORTABLE_EXTERNAL_REGULATORY_DOSIMETRY
+    current_runtime_entry: DoseParameters.dose_coefficient
+    structural_reach: [EXTERNAL_ENDPOINT_SCALING]
+    perturbation_eligibility: EXTERNAL_SCENARIO_ANALYTIC
+    exact_scaling: DIRECT_LINEAR
+    disposition: KEEP_EXTERNAL_GOVERNANCE
+
+initial_state_screening:
+  separate_from_parameter_priority: true
+  records:
+    - state_id: initial.soil_inventory
+      structural_reach: [DIRECT_SAME_STEP_TO_ROOT, DELAYED_MULTI_STEP_TO_OBT_DOSE]
+      eligibility: RUNNABLE_CURRENT_PIPELINE
+    - state_id: initial.tfwt_inventory
+      structural_reach: [DIRECT_SAME_STEP]
+      eligibility: RUNNABLE_CURRENT_PIPELINE
+    - state_id: initial.obt_inventory
+      structural_reach: [DIRECT_SAME_STEP]
+      eligibility: RUNNABLE_CURRENT_PIPELINE
+
+subsystem_dispositions:
+  atmosphere:
+    current_decision: ADVANCE_NUMERICAL_SCREENING
+    physical_blocker: REAL_SURFACE_DEPOSITION_FLUX_BINDING_UNCONFIRMED
+  soil:
+    current_decision: KEEP_CURRENT_ONE_LAYER_FOR_SCREENING
+    future_decision: HOLD_THREE_LAYER_IMPLEMENTATION_PENDING_SCREENING_AND_CONTRACT
+  leaf_exchange:
+    current_decision: ADVANCE_CURRENT_RESISTANCE_SCREENING
+    dynamic_stomatal_response: HOLD_AT_R4
+  TFWT:
+    current_decision: KEEP_CURRENT
+    nonintegrated_losses: HOLD_NOT_INTEGRATED
+  OBT:
+    current_decision: ADVANCE_KF_KR_AND_BASELINE_MULTIPLIER_SCREENING
+    mechanistic_extensions: HOLD_REDESIGN_REQUIRED
+  root_uptake:
+    current_decision: ADVANCE_BASELINE_ABSTRACTION_SCREENING
+    physical_redesign: HOLD_LAYERED_ROOT_WATER_FLUX_IMPLEMENTATION
+  food_transfer:
+    current_decision: ADVANCE_ENDPOINT_ABSTRACTION_SCREENING
+    continuous_food_chain: HOLD_REDESIGN_REQUIRED
+  intake:
+    current_decision: KEEP_EXTERNAL_GOVERNANCE
+  dose:
+    current_decision: KEEP_EXTERNAL_GOVERNANCE
+
+hard_invariants:
+  numerical_sensitivity_results_available: false
+  physical_uncertainty_ranking_available: false
+  three_layer_soil_implemented: false
+  leaf_r5_authorized: false
+  real_cteas_atmos_coupling_active: false
+  solver_changes_authorized: false
+  numerical_coupling_changes_authorized: false
+  active_parameters: 0
+  calibration_started: false
+  v3_physics_ready: false
+
+exit_state:
+  structural_audit_complete: true
+  next_stage: V4_SYSTEM_SENSITIVITY_SCREENING_EXECUTION_R1
+  next_stage_scope: VALIDATION_SCRIPT_AND_SYNTHETIC_REPLAY_EXECUTION_ONLY

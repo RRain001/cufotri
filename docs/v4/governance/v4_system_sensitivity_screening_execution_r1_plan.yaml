@@ -1,0 +1,168 @@
+schema_version: v1
+stage: V4_SYSTEM_SENSITIVITY_SCREENING_EXECUTION_R1_PLAN
+status: PREREGISTERED_NOT_EXECUTED
+parent_audit: docs/v4/governance/v4_system_physics_gap_sensitivity_audit_r1.yaml
+
+purpose: >-
+  Quantify computational influence inside the frozen V3/V3.1 baseline without claiming
+  empirical uncertainty or physical validation. The execution is a software screening step.
+
+execution_boundary:
+  production_src_changes_allowed: false
+  pipeline_equation_changes_allowed: false
+  numerical_coupling_changes_allowed: false
+  parameter_activation_allowed: false
+  calibration_allowed: false
+  real_cteas_atmos_binding_required: false
+  allowed_forcing_sources:
+    - SYNTHETIC_TEST_ONLY
+    - REPLAY
+
+reference_case:
+  source_template: tests/integration/test_v3_pipeline.py
+  source_template_status: SYNTHETIC_SOFTWARE_FIXTURE
+  minimum_intervals: 4
+  reason_for_multistep: >-
+    Root reads step-start soil and OBT reads post-leaf/pre-root TFWT, so at least two intervals
+    are required to expose delayed deposition/root propagation. Four intervals are preferred to
+    avoid a one-transition-only ranking.
+  time_step_semantics: USE_FROZEN_P7_5_P7_5B_INTERVAL_START_FORCING
+  required_profiles:
+    - profile_id: OBT_ONLY_ENDPOINT
+      tfwt_food_component_required: false
+      purpose: preserve the existing reference food endpoint and isolate OBT-mediated dose reach
+    - profile_id: MIXED_OBT_TFWT_ENDPOINT
+      tfwt_food_component_required: true
+      purpose: expose direct TFWT-to-food reach separately from OBT-mediated reach
+    - profile_id: DAY_NIGHT_SEQUENCE
+      contains_daylight_interval: true
+      contains_nighttime_interval: true
+      purpose: make daylight and nighttime baseline multipliers separately identifiable
+
+outputs:
+  primary:
+    - final_committed_dose_sv
+    - final_food_total_inventory_bq
+    - final_food_obt_inventory_bq
+    - final_food_tfwt_inventory_bq
+  state_diagnostics:
+    - final_soil_inventory_bq_m2
+    - final_tfwt_inventory_bq_m2
+    - final_obt_inventory_bq_m2
+    - per_step_root_transfer_bq_m2
+    - per_step_leaf_exchange_input_bq_m2
+    - per_step_obt_formation_bq_m2
+  invariants:
+    - soil_balance_residual
+    - root_balance_residual
+    - tfwt_balance_residual
+    - obt_balance_residual
+    - food_balance_residual
+    - restart_equivalence
+    - finite_nonnegative_continuous_inventories
+
+screening_methods:
+  structural_zero_verification:
+    required: true
+    method: paired_run_exact_or_tolerance_checked_no_effect
+    eligible_inputs:
+      - atmos.temperature
+      - atmos.relative_humidity
+      - atmos.wind_speed
+      - atmos.precipitation_rate
+      - soil.layer_depth
+      - tfwt.water_content
+      - obt.plant_mass
+      - obt.photosynthetic_activity
+      - obt.temperature_response
+      - obt.growth_stage_response
+    held_fixed_basis_required: true
+
+  local_numeric_response:
+    required: true
+    method: SYMMETRIC_SCALE_AWARE_FINITE_DIFFERENCE_WHERE_DOMAIN_ALLOWS
+    relative_step: TBD_EXECUTION_PREFLIGHT
+    relative_step_is_physical_uncertainty: false
+    convergence_check_required: true
+    convergence_steps: TBD_EXECUTION_PREFLIGHT_AT_LEAST_TWO
+    eligible_inputs:
+      - atmos.air_hto_concentration
+      - atmos.surface_deposition_flux
+      - leaf.equilibrium_air_concentration
+      - leaf.total_resistance
+      - soil.water_content
+      - root.k_root
+      - obt.kf
+      - obt.kr
+      - obt.daylight_multiplier
+      - obt.nighttime_multiplier
+      - food.harvest_fraction
+      - food.tfwt_harvest_fraction
+      - initial.soil_inventory
+      - initial.tfwt_inventory
+      - initial.obt_inventory
+    zero_baseline_rule: USE_ABSOLUTE_OR_ONE_SIDED_RESPONSE_WITH_EXPLICIT_REASON_NOT_LOG_ELASTICITY
+    bounded_fraction_rule: NEVER_PERTURB_OUTSIDE_VALID_DOMAIN
+
+  analytic_endpoint_scaling:
+    required: true
+    inputs:
+      intake.annual_consumption_amount:
+        relation: DIRECT_LINEAR
+      intake.food_product_mass:
+        relation: INVERSE_LINEAR_AT_FIXED_FOOD_ACTIVITY
+      dose.dose_coefficient:
+        relation: DIRECT_LINEAR
+      food.harvest_area:
+        relation: DIRECT_LINEAR_AT_FIXED_AREAL_PLANT_INVENTORY
+    interpretation: EXTERNAL_SCENARIO_OR_GEOMETRY_ONLY
+
+not_screened_end_to_end_until_reopened:
+  - soil.transport_flux
+  - tfwt.water_loss_flux
+  - tfwt.transformation_flux
+  - three_layer_soil_hydrology
+  - root.layered_water_flux_model
+  - leaf.dynamic_stomatal_response
+  - obt.photosynthesis_model
+  - obt.temperature_response_model
+  - obt.two_pool_model
+  - food.continuous_transfer_model
+
+range_policy:
+  empirical_uncertainty_ranges_available: false
+  global_sobol_or_monte_carlo_authorized: false
+  arbitrary_literature_range_import: forbidden
+  test_fixture_values_may_define_physical_range: false
+  future_global_analysis_requires:
+    - reviewed_parameter_or_forcing_range_source
+    - basis_and_applicability_match
+    - distribution_or_bound_rationale
+    - correlation_decision
+    - independent_review
+
+ranking_policy:
+  produce_numeric_influence_table: true
+  produce_physical_uncertainty_ranking: false
+  combine_external_scenario_with_environmental_physics_rank: false
+  high_baseline_influence_can_validate_parameter: false
+  high_baseline_influence_can_prioritize_evidence_or_redesign: true
+  zero_current_influence_can_reject_future_mechanism: false
+
+execution_deliverables:
+  - deterministic_screening_script
+  - machine_readable_results
+  - human_readable_report
+  - exact_command_and_environment_record
+  - conservation_and_restart_results
+  - independent_review
+
+exit_gate:
+  required_before_any_physics_reprioritization:
+    - all_preregistered_profiles_execute
+    - local_response_step_convergence_review
+    - structural_zero_checks_pass_or_are_explained
+    - conservation_and_restart_pass
+    - external_scenario_results_separated
+    - provisional_abstractions_labeled
+    - independent_review_pass
