@@ -81,6 +81,7 @@ jobs:
             tests/v4/test_v4_1_data_state_contracts.py \
             tests/v4/test_v4_2_leaf_readiness.py \
             tests/v4/test_v4_2_leaf_evidence_acquisition_r1.py \
+            tests/v4/test_v4_2_leaf_evidence_file_audit_r2_handoff.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
