@@ -1,0 +1,217 @@
+schema_version: v1
+stage: V4_SYSTEM_SENSITIVITY_SCREENING_EXECUTION_R1
+status: PASS_SOFTWARE_SCREENING
+result_kind: SYNTHETIC_LOCAL_COMPUTATIONAL_SCREENING
+empirical_validation: false
+physical_uncertainty_ranking: NOT_AVAILABLE
+
+execution_identity:
+  pull_request: 21
+  exact_pr_head_sha: 6a4c87b4daeef672451e14d42a7935401e58c476
+  protected_integration_run_id: 32947990894
+  protected_integration_job_id: 98112824987
+  actions_checkout_merge_sha: 8ee97771618bc3952fd9d8fb947a252aecad0267
+  python: 3.12.14
+  platform: Linux-6.17.0-1022-azure-x86_64-with-glibc2.39
+  execution_time_utc: '2026-08-26T08:32:32Z'
+  note: >-
+    GitHub pull_request workflows execute a synthetic merge ref. The exact reviewed
+    branch head is recorded separately above and must not be confused with the
+    Actions checkout merge SHA.
+
+first_attempt_record:
+  head_sha: 9bbed395dd972908969abfdc1a4f4da9bdf39680
+  protected_run_id: 32947355143
+  result: FAIL_SYNTHETIC_FIXTURE_NUMERICAL_CONDITIONING
+  portable_suite: '1158 passed, 1 failed, 1 skipped, 57 deselected'
+  failure: soil_decay_balance_became_negative
+  root_cause: >-
+    The test-only soil half-life of 1.0e10 s created a large equilibrium-inventory
+    subtraction in the frozen analytic soil solver and exposed floating-point
+    cancellation in the synthetic fixture. This was not treated as a physical
+    model failure or repaired inside production code.
+  remediation: >-
+    Replace only the repository-controlled synthetic half-life with 1000 s and
+    remove hand-entered absolute expected outputs from the verification test.
+  production_solver_modified: false
+
+corrected_execution:
+  synthetic_soil_half_life_s: 1000.0
+  half_life_is_physical_parameter_selection: false
+  half_life_is_calibration: false
+  portable_suite: '1159 passed, 1 skipped, 57 deselected'
+  explicit_frozen_boundary_suite: '238 passed'
+  screening_status: PASS_SOFTWARE_SCREENING
+  finite_difference_relative_steps: [0.01, 0.005]
+  finite_difference_steps_are_physical_uncertainty: false
+  convergence_abs_tolerance: 0.001
+
+profile_outputs:
+  OBT_ONLY_ENDPOINT:
+    final_committed_dose_sv: 1.4377914010978703
+    final_food_total_inventory_bq: 7.188957005489351
+    final_food_obt_inventory_bq: 7.188957005489351
+    final_food_tfwt_inventory_bq: 0.0
+    final_soil_inventory_bq_m2: 66.21213925251114
+    final_tfwt_inventory_bq_m2: 76.08985005115275
+    final_obt_inventory_bq_m2: 11.981595009148919
+  MIXED_OBT_TFWT_ENDPOINT:
+    final_committed_dose_sv: 6.003182404167035
+    final_food_total_inventory_bq: 30.015912020835174
+    final_food_obt_inventory_bq: 7.188957005489351
+    final_food_tfwt_inventory_bq: 22.826955015345824
+    final_soil_inventory_bq_m2: 66.21213925251114
+    final_tfwt_inventory_bq_m2: 76.08985005115275
+    final_obt_inventory_bq_m2: 11.981595009148919
+  DAY_NIGHT_SEQUENCE:
+    final_committed_dose_sv: 5.735860613837632
+    final_food_total_inventory_bq: 28.67930306918816
+    final_food_obt_inventory_bq: 4.465695819858928
+    final_food_tfwt_inventory_bq: 24.213607249329232
+    final_soil_inventory_bq_m2: 66.21213925251114
+    final_tfwt_inventory_bq_m2: 80.71202416443077
+    final_obt_inventory_bq_m2: 7.442826366431547
+    per_step_root_transfer_bq_m2:
+      - 4.0
+      - 4.568912239538759
+      - 5.077003491233113
+      - 5.530775975118544
+      - 5.93603677511244
+      - 6.297972154281791
+    per_step_leaf_exchange_input_bq_m2:
+      - 8.333333333333334
+      - 8.333333333333334
+      - 8.333333333333334
+      - 8.333333333333334
+      - 8.333333333333334
+      - 8.333333333333334
+    per_step_obt_formation_bq_m2:
+      - 0.5333333333333333
+      - 1.0053333333333334
+      - 0.37030245572872095
+      - 0.5007027994170983
+      - 2.537347458029784
+      - 0.7516570910116059
+
+invariants:
+  deterministic_repeat_equal: true
+  restart_equivalence: true
+  max_abs_balance_residual: 0.0
+  finite_nonnegative_continuous_inventories: true
+  all_structural_zero_checks_pass: true
+  all_local_response_steps_converged: true
+
+structural_zero_verification:
+  atmos.temperature: 0.0
+  atmos.relative_humidity: 0.0
+  atmos.wind_speed: 0.0
+  atmos.precipitation_rate: 0.0
+  soil.layer_depth: 0.0
+  tfwt.water_content: 0.0
+  obt.plant_mass: 0.0
+  obt.photosynthetic_activity: 0.0
+  obt.temperature_response: 0.0
+  obt.growth_stage_response: 0.0
+  unit: max_abs_output_delta
+
+fine_step_local_dose_elasticity:
+  relative_step: 0.005
+  interpretation: LOCAL_COMPUTATIONAL_INFLUENCE_NOT_PHYSICAL_UNCERTAINTY
+  values:
+    atmos.air_hto_concentration: 0.6708504225382111
+    atmos.surface_deposition_flux: 0.13931494707300363
+    leaf.equilibrium_air_concentration: -0.11180840375635304
+    leaf.total_resistance: -0.5590559951818248
+    soil.water_content: -0.27619228454260397
+    root.k_root: 0.27618828866895934
+    obt.kf: 0.054704888212375076
+    obt.kr: -0.005228899290358803
+    obt.daylight_multiplier: 0.038809547823146114
+    obt.nighttime_multiplier: 0.015895339545299602
+    food.harvest_fraction: 0.1557114483948719
+    food.tfwt_harvest_fraction: 0.8442885516051023
+    initial.soil_inventory: 0.20305031876909718
+    initial.tfwt_inventory: 0.05918738402677428
+    initial.obt_inventory: 0.03940533134902429
+
+local_step_convergence_max_abs_change:
+  atmos.air_hto_concentration: 2.8632651805082787e-13
+  atmos.surface_deposition_flux: 6.439293542825908e-13
+  leaf.equilibrium_air_concentration: 2.8640978477767476e-13
+  leaf.total_resistance: 4.310204142066176e-05
+  soil.water_content: 1.6720645470924556e-05
+  root.k_root: 7.871587858754303e-07
+  obt.kf: 4.1525380245488464e-08
+  obt.kr: 1.030277592406481e-09
+  obt.daylight_multiplier: 8.218258518155608e-09
+  obt.nighttime_multiplier: 3.5656844143971966e-10
+  food.harvest_fraction: 7.743805596760467e-15
+  food.tfwt_harvest_fraction: 3.097522238704187e-14
+  initial.soil_inventory: 6.653566586578563e-13
+  initial.tfwt_inventory: 6.682709940974974e-13
+  initial.obt_inventory: 2.864375403532904e-13
+
+external_endpoint_scaling:
+  intake.annual_consumption_amount:
+    dose_elasticity: 0.9999999999999897
+    classification: EXTERNAL_SCENARIO_OR_GEOMETRY_ONLY
+  intake.food_product_mass:
+    dose_elasticity: -1.0000250006250018
+    classification: EXTERNAL_SCENARIO_OR_GEOMETRY_ONLY
+  dose.dose_coefficient:
+    dose_elasticity: 0.9999999999999742
+    classification: EXTERNAL_SCENARIO_OR_GEOMETRY_ONLY
+  food.harvest_area:
+    dose_elasticity: 0.9999999999999897
+    classification: EXTERNAL_SCENARIO_OR_GEOMETRY_ONLY
+
+interpretation_boundaries:
+  local_elasticity_is_global_sensitivity: false
+  local_elasticity_is_physical_uncertainty: false
+  synthetic_profile_is_empirical_validation: false
+  endpoint_fraction_magnitude_proves_food_physics: false
+  numerical_influence_validates_parameter_semantics: false
+  structural_zero_proves_real_world_irrelevance: false
+  six_interval_deposition_response_proves_low_long_term_importance: false
+
+system_findings:
+  - id: ROOT_SOIL_RATIO_CONFOUNDING
+    evidence: >-
+      root.k_root dose elasticity is +0.276188 while soil.water_content is
+      -0.276192 under the same frozen profile, consistent with the current
+      J_root = k_root * M_soil / W_soil abstraction. Do not calibrate or interpret
+      k_root independently of the soil-water and root-state boundary.
+  - id: LEAF_CURRENT_PATH_HIGH_COMPUTATIONAL_REACH
+    evidence: >-
+      Air HTO concentration and total resistance show large opposite-direction
+      local influence in the frozen leaf flux path. This does not remove the R4
+      empirical-evidence hold for a dynamic stomatal model.
+  - id: FOOD_ENDPOINT_DEFINITION_DOMINATES_MIXED_PROFILE
+    evidence: >-
+      The provisional TFWT harvest fraction has dose elasticity 0.844289 in the
+      mixed endpoint. This demonstrates endpoint-definition dependence, not
+      validation of the current food-transfer physics.
+  - id: DEPOSITION_SHORT_HORIZON_IS_DELAYED
+    evidence: >-
+      Surface deposition reaches soil immediately but has dose elasticity only
+      0.139315 over this six-interval screen because the frozen operator split
+      makes root uptake read step-start soil. This result must not be extrapolated
+      to long-duration environmental importance.
+
+roadmap_decision:
+  leaf_r5_authorized: false
+  global_uncertainty_analysis_authorized: false
+  production_parameter_ranking_authorized: false
+  soil_root_layered_implementation_authorized: false
+  next_stage: V4_ROOT_SOIL_LAYERED_BOUNDARY_DECISION_R1
+  next_stage_scope: CONTROL_PLANE_ONLY
+
+hard_boundaries:
+  production_src_changed: false
+  solver_physics_changed: false
+  numerical_coupling_changed: false
+  parameter_activation: false
+  calibration: false
+  real_cteas_atmos_binding: false
+  active_parameters: 0
+  v3_physics_ready: false
