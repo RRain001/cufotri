@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-import math
 
 import pytest
 
@@ -44,8 +43,12 @@ def test_canonical_three_layer_geometry_and_reference_water_basis() -> None:
         ("L2", 0.05, 0.15),
         ("L3", 0.15, 0.30),
     )
-    assert tuple(layer.thickness_m for layer in state.layers) == (0.05, 0.10, 0.15)
-    assert tuple(layer.water_inventory_m for layer in state.layers) == (0.0125, 0.025, 0.0375)
+    assert tuple(layer.thickness_m for layer in state.layers) == pytest.approx(
+        (0.05, 0.10, 0.15)
+    )
+    assert tuple(layer.water_inventory_m for layer in state.layers) == pytest.approx(
+        (0.0125, 0.025, 0.0375)
+    )
     assert state.total_water_inventory_m == pytest.approx(0.075)
     assert state.total_hto_inventory_bq_m2 == pytest.approx(60.0)
     assert state.layers[0].hto_concentration_bq_m3_water == pytest.approx(800.0)
