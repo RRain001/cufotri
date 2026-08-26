@@ -1,0 +1,158 @@
+schema_version: v1
+stage: V4-2
+round: R1
+registry_id: V4_2_LEAF_EVIDENCE_ACQUISITION_R1
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 702ce51fccc167127b7a318f3d8652c064e73aef
+branch: codex/v4-2-leaf-evidence-acquisition-r1
+status: HOLD_FILE_LEVEL_EVIDENCE_AUDIT_REQUIRED
+
+objective: >-
+  Identify public empirical datasets that can satisfy the V4-2 matched leaf
+  evidence packet for dynamic stomatal-response review. This round performs
+  source triage only. It does not admit a dataset, calibrate a model, select
+  coefficients, or authorize solver implementation.
+
+full_packet_minimum_requirements:
+  - observed_stomatal_conductance_or_leaf_surface_resistance
+  - light_or_PAR
+  - VPD_or_explicit_humidity_to_VPD_basis
+  - leaf_temperature
+  - dataset_bound_growth_stage_ontology
+  - crop_identity
+  - timestamp_and_interval_semantics
+  - replicate_or_independent_group_identity
+  - quantitative_units
+  - variable_level_provenance
+  - matched_records_or_explicit_alignment_contract
+
+admission_rule: >-
+  Search-result metadata, article methods, or semantic compatibility alone are
+  insufficient for admission. A candidate becomes a full empirical packet only
+  after file-level audit proves all required variables, row/group alignment,
+  units, provenance, ontology identity, and split eligibility.
+
+candidates:
+  - candidate_id: MONNENS_2023_SOYBEAN_VPD_DRYAD
+    priority: 1
+    species: Glycine max
+    source_dataset_doi: 10.5061/dryad.h18931zrh
+    source_dataset_url: https://datadryad.org/dataset/doi:10.5061/dryad.h18931zrh
+    related_article_doi: 10.1111/nph.18929
+    public_file: Monnens_et_al_All_data_Dryad.xlsx
+    proven_from_public_metadata_or_article:
+      - soybean_two_elite_genotypes
+      - LI_6800_leaf_gas_exchange
+      - stomatal_conductance_gsw_measured
+      - VPD_manipulated_under_controlled_conditions
+      - temperature_held_constant_in_controlled_VPD_runs
+      - PAR_held_constant_in_controlled_VPD_runs
+      - field_gas_exchange_used_temperature_RH_and_light_tracking
+      - public_Dryad_dataset_exists
+    unresolved_for_packet_admission:
+      - per_observation_leaf_temperature_column_not_yet_file_verified
+      - per_observation_PAR_or_light_column_not_yet_file_verified
+      - timestamp_or_interval_semantics_not_yet_file_verified
+      - replicate_or_independent_group_field_not_yet_file_verified
+      - dataset_specific_growth_stage_field_and_ontology_not_yet_verified
+      - two_point_or_limited_VPD_design_may_not_support_full_response_domain
+    disposition: PRIORITY_FILE_LEVEL_AUDIT_REQUIRED
+    full_packet_admitted: false
+    implementation_authorization_contribution: NONE_UNTIL_FILE_AUDIT
+
+  - candidate_id: TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD
+    priority: 2
+    species: Glycine max
+    source_dataset_doi: 10.5061/dryad.2gd3b
+    source_dataset_url: https://datadryad.org/dataset/doi:10.5061/dryad.2gd3b
+    related_article_doi: 10.1104/pp.16.01940
+    public_files:
+      - CE_GasExchangeParameters.csv
+      - Field_GasExchangeParameters.csv
+      - README_for_CE_GasExchangeParameters.txt
+      - README_for_Field_GasExchangeParameters.txt
+    proven_from_public_metadata_or_article:
+      - soybean_multiple_cultivars
+      - stomatal_conductance_measured
+      - controlled_and_field_gas_exchange_tables_exist
+      - explicit_field_growth_stages_late_vegetative_V4_V5
+      - explicit_field_growth_stages_early_reproductive_R2_R4
+      - explicit_field_growth_stage_late_reproductive_R6
+      - controlled_environment_measurements_before_flowering
+      - standardized_irradiance_used_in_methods
+    unresolved_for_packet_admission:
+      - row_level_VPD_not_yet_verified
+      - row_level_leaf_temperature_not_yet_verified
+      - row_level_time_alignment_not_yet_verified
+      - dynamic_light_or_VPD_response_coverage_not_established
+      - gas_exchange_tables_may_be_endpoint_or_curve_summary_rather_than_dynamic_driver_response
+    disposition: COMPONENT_EVIDENCE_STAGE_STRONG_FILE_AUDIT_REQUIRED
+    full_packet_admitted: false
+    implementation_authorization_contribution: NONE_UNTIL_FILE_AUDIT
+
+  - candidate_id: RIZZO_2026_STOMATAL_CALIBRATION_DRYAD
+    priority: 3
+    species:
+      - Vigna unguiculata
+      - Cercis canadensis
+      - Juglans_sp
+    source_dataset_doi: 10.5061/dryad.5x69p8djr
+    source_dataset_url: https://datadryad.org/dataset/doi:10.5061/dryad.5x69p8djr
+    related_article_doi: 10.1111/nph.70949
+    proven_from_public_metadata_or_article:
+      - stomatal_conductance_gs_or_gsw
+      - leaf_temperature
+      - PPFD_or_light
+      - VPD_or_leaf_VPD
+      - timestamps
+      - species_identity
+      - leaf_identifiers_or_multiple_leaf_sampling
+      - explicit_light_response_curves
+      - explicit_VPD_response_curves
+      - steady_state_measurement_protocol
+    limitations_for_current_target:
+      - not_soybean
+      - no_dataset_bound_growth_stage_ontology_identified_in_public_metadata
+      - cannot_substitute_cross_species_parameter_values
+    disposition: METHOD_AND_PROTOCOL_BENCHMARK_NOT_FINAL_SOYBEAN_PACKET
+    full_packet_admitted: false
+    implementation_authorization_contribution: METHODS_ONLY
+
+  - candidate_id: PEIRONE_2018_SOYBEAN_GREENHOUSE
+    priority: 4
+    species: Glycine max
+    article_doi: 10.3389/fpls.2018.00587
+    proven_from_public_article:
+      - soybean_greenhouse_phenotyping
+      - stomatal_conductance_measured_at_multiple_days_after_emergence
+      - leaf_temperature_measured_at_multiple_days_after_emergence
+      - transpiration_response_to_VPD_characterized
+      - genotype_and_treatment_structure_present
+    unresolved_or_incompatible:
+      - public_machine_readable_raw_dataset_not_identified_in_R1_search
+      - stomatal_conductance_and_leaf_temperature_not_proven_as_same_record_alignment
+      - PAR_not_proven_in_matched_records
+      - DAE_is_not_by_itself_an_admitted_growth_stage_ontology
+    disposition: SECONDARY_CONTEXT_ONLY_PENDING_RAW_DATA_DISCOVERY
+    full_packet_admitted: false
+    implementation_authorization_contribution: NONE
+
+round_r1_decision:
+  full_empirical_packet_found: false
+  matched_validation_dataset_admitted: false
+  dataset_specific_stage_ontology_admitted: false
+  empirical_response_domains_admitted: false
+  calibration_started: false
+  leaf_implementation_authorized: false
+  candidate_parameter_values_admitted: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+next_actions:
+  - perform_file_level_audit_of_MONNENS_2023_SOYBEAN_VPD_DRYAD
+  - perform_file_level_audit_of_TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD
+  - preserve_RIZZO_2026_as_methodological_benchmark_only
+  - search_for_additional_soybean_or_legume_datasets_only_if_priority_file_audits_cannot_close_packet
+  - do_not_start_solver_implementation
