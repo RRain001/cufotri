@@ -1,0 +1,101 @@
+schema_version: v1
+stage: V4-2
+contract_id: V4_2_LEAF_RESPONSE_DOMAIN_ADMISSION
+item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: DOMAIN_ADMISSION_RULE_DEFINED_NO_EMPIRICAL_DOMAIN_ADMITTED
+implementation_authorized: false
+
+purpose: >-
+  Define how empirical support domains for light/PAR, VPD, leaf temperature and
+  growth stage may be declared for a future stomatal response. V4-2 does not
+  guess bounds, fit response shapes, or authorize extrapolation.
+
+candidate_forcings:
+  light_or_PAR:
+    dimensional_basis: source_specific_explicit_unit
+    numeric_domain_allowed: true
+  VPD:
+    canonical_unit: Pa
+    numeric_domain_allowed: true
+  T_leaf:
+    canonical_unit: K
+    numeric_domain_allowed: true
+  stage:
+    canonical_unit: '1'
+    domain_type: dataset_bound_categorical_membership
+
+numeric_domain_record_required_fields:
+  - variable_name
+  - source_id
+  - source_locator
+  - revision
+  - declared_unit
+  - lower_support_boundary
+  - upper_support_boundary
+  - boundary_derivation_rule
+  - included_replicates_or_groups
+  - timestamp_window
+
+categorical_domain_record_required_fields:
+  - variable_name
+  - ontology_id
+  - ontology_revision
+  - admitted_stage_ids
+  - source_id
+  - source_locator
+  - included_replicates_or_groups
+
+admission_policy:
+  empirical_observations_required: true
+  synthetic_values_may_define_empirical_domain: false
+  production_solver_outputs_may_define_empirical_domain: false
+  literature_range_without_case_applicability_review: FORBIDDEN
+  convenient_default_bounds: FORBIDDEN
+  unitless_normalized_input_without_source_scale: FORBIDDEN
+  domain_derivation_rule_must_be_preregistered: true
+  domain_boundary_estimator_selected_here: false
+  note: >-
+    V4-2 intentionally does not choose min/max, quantile or other support
+    estimators. The estimator must be preregistered with the concrete dataset
+    before implementation review.
+
+multivariate_support_policy:
+  independent_univariate_bounds_imply_joint_support: false
+  joint_support_or_condition_coverage_must_be_reported: true
+  cross_condition_generalization_groups_must_be_declared: true
+  missing_joint_support_assessment: IMPLEMENTATION_GATE_HOLD
+
+runtime_failure_policy_for_future_implementation:
+  forcing_outside_admitted_domain: FAIL_CLOSED
+  unknown_stage_category: FAIL_CLOSED
+  missing_domain_identity: FAIL_CLOSED
+  domain_revision_mismatch: FAIL_CLOSED
+  silent_clipping: FORBIDDEN
+  silent_extrapolation: FORBIDDEN
+  fallback_to_v3_without_explicit_profile_selection: FORBIDDEN
+
+current_domain_status:
+  light_or_PAR: NOT_ADMITTED_NO_MATCHED_PACKET
+  VPD: NOT_ADMITTED_NO_MATCHED_PACKET
+  T_leaf: NOT_ADMITTED_NO_MATCHED_PACKET
+  stage: NOT_ADMITTED_NO_DATASET_SPECIFIC_ONTOLOGY
+  any_empirical_response_domain_ready: false
+
+implementation_gate:
+  required_before_authorization:
+    - matched_empirical_evidence_packet_complete
+    - dataset_specific_stage_ontology_instantiated
+    - numeric_domain_records_bound_to_empirical_provenance
+    - joint_support_or_condition_coverage_assessed
+    - domain_derivation_rule_preregistered
+    - independent_item_review_pass
+  current_result: HOLD
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  candidate_parameter_values_admitted: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
