@@ -1,0 +1,223 @@
+schema_version: v1
+stage: V4-2
+round: R3B
+registry_id: V4_2_LEAF_AUTHOR_DATA_ACQUISITION_R3B
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 224ee3bdda21a3f81676333cfbe841cb9e53c5a2
+branch: codex/v4-2-leaf-author-data-acquisition-r3b
+status: READY_FOR_AUTHOR_CONTACT_NOT_SENT
+
+objective: >-
+  Prepare a fail-closed author-held raw-data acquisition path after R3A showed
+  that public soybean datasets do not independently close the V4-2 dynamic
+  stomatal-response empirical packet. This stage defines request content,
+  source identity, provenance, file-integrity and response-admission rules.
+  It does not contact authors, admit data, fit parameters, calibrate a model,
+  or authorize solver implementation.
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+contact_scope:
+  actual_contact_performed: false
+  email_or_message_sent: false
+  response_received: false
+  raw_author_file_received: false
+  note: >-
+    External communication requires a separate explicit action. R3B control-plane
+    preparation alone must never be interpreted as an author contact or consent.
+
+allowed_response_states:
+  - NOT_CONTACTED
+  - REQUEST_PREPARED
+  - REQUEST_SENT_AWAITING_RESPONSE
+  - NO_RESPONSE
+  - AUTHOR_DECLINED
+  - AUTHOR_DATA_UNAVAILABLE
+  - DATA_RECEIVED_PENDING_INTEGRITY_AUDIT
+  - DATA_RECEIVED_INCOMPLETE
+  - DATA_RECEIVED_COMPLETE_CANDIDATE
+
+allowed_file_admission_states:
+  - NOT_RECEIVED
+  - RECEIVED_UNVERIFIED
+  - HOLD_IDENTITY_AMBIGUOUS
+  - HOLD_VERSION_AMBIGUOUS
+  - HOLD_INTEGRITY_MISMATCH
+  - HOLD_REQUIRED_FIELDS_MISSING
+  - READY_FOR_FILE_LEVEL_AUDIT
+
+required_raw_record_fields:
+  target:
+    - absolute_gsw_or_equivalent_rc
+    - target_unit
+    - target_measurement_basis
+  drivers:
+    - PAR_or_Q
+    - VPDleaf_or_equivalent_direct_VPD
+    - Tleaf
+  vpd_derivation_fallback_if_direct_vpd_absent:
+    - sample_or_leaf_chamber_H2O_mole_fraction
+    - pressure
+    - Tleaf
+    - explicit_humidity_variable_definition
+    - explicit_row_level_alignment
+  alignment_and_identity:
+    - timestamp_or_elapsed_time
+    - sampling_interval_semantics
+    - plant_or_biological_replicate_id
+    - leaf_or_measurement_position_if_available
+    - treatment_or_protocol_identity
+    - developmental_stage_or_source_bound_stage_context
+  provenance:
+    - instrument_model
+    - instrument_export_or_software_version_if_available
+    - source_file_name
+    - file_generation_or_export_date_if_available
+    - variable_definitions_and_units
+
+file_integrity_requirements:
+  - preserve_received_bytes_without_editing
+  - record_original_filename
+  - record_byte_size
+  - compute_sha256
+  - compute_md5_for_cross_check_when_useful
+  - record_transfer_channel
+  - record_receive_date
+  - record_sender_identity_as_declared
+  - record_dataset_or_experiment_identity
+  - record_author_declared_revision_or_version_if_available
+  - keep_raw_author_files_out_of_git_repository
+
+chain_of_custody_rules:
+  - never_overwrite_received_raw_file
+  - derive_analysis_copy_only_after_hashing_original
+  - record_any_conversion_or_decompression_as_separate_artifact
+  - do_not_manually_transcribe_missing_columns_into_raw_data
+  - do_not_merge_rows_from_public_and_author_files_without_explicit_alignment_contract
+  - do_not_join_different_experiments_to_close_missing_packet_fields
+
+admission_rules:
+  source_identity: >-
+    The sender or transfer context must unambiguously identify the article,
+    experiment and requested measurement domain. A generic lab spreadsheet or
+    unrelated experiment is HOLD_IDENTITY_AMBIGUOUS.
+  version_identity: >-
+    If multiple exports or revisions are supplied, every file must retain a
+    revision/version relation. Silent replacement is prohibited.
+  integrity: >-
+    Hash the exact received bytes before inspection. Any later altered copy is a
+    derived artifact and cannot replace the original hash record.
+  row_alignment: >-
+    Required target and drivers must coexist in the same row domain or have an
+    explicit source-supported key/alignment contract. Similar timestamps or the
+    same crop do not establish alignment.
+  declared_constants: >-
+    A protocol constant may be admitted only when the author/source explicitly
+    binds it to every admitted target row and no finer-grained raw field conflicts.
+  vpd_derivation: >-
+    If VPD is absent, derivation is admissible only from complete row-aligned
+    humidity, pressure and leaf-temperature inputs using a separately documented
+    equation. Range midpoint substitution is prohibited.
+  stage: >-
+    Developmental stage must be bound by the source to the audited experiment or
+    record group. Do not infer V/R stage from age or date alone.
+  no_stitching: >-
+    Mostofa target records, Zandalinas records, Tejera driver records and all
+    other experiments remain separate evidence domains unless a future
+    evidence-composition model is independently reviewed.
+
+request_targets:
+  - request_id: MOSTOFA_2025_RAW_LI680X_REQUEST
+    priority: 1
+    candidate_id: MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD
+    article_doi: 10.1073/pnas.2502360122
+    public_dataset_doi: 10.5061/dryad.51c59zwkh
+    experiment_anchor: >-
+      Soybean wound-response experiment corresponding to public workbook Fig 3d,
+      where 150 absolute gsw records at exact 5-second cadence were confirmed in R3A.
+    current_gap:
+      - row_aligned_VPD_or_humidity_inputs
+      - row_aligned_Tleaf
+      - row_bound_PAR_or_Q
+      - biological_replicate_or_plant_identity
+      - file_bound_R1_stage_context
+      - raw_instrument_provenance
+    requested_material:
+      - original_LI_6800_or_LI_680X_export_for_Fig3d_measurements
+      - metadata_or_notes_mapping_raw_runs_to_Fig3d
+      - variable_dictionary_if_export_headers_are_not_self_describing
+    desired_fields:
+      - gsw
+      - VPDleaf_or_VpdL
+      - Tleaf
+      - PAR_or_Q
+      - sample_H2O_and_reference_H2O_if_available
+      - pressure
+      - elapsed_time_or_timestamp
+      - plant_or_leaf_or_replicate_identifier
+      - treatment_or_wounding_marker
+      - developmental_stage_context
+    response_state: REQUEST_PREPARED
+    file_admission_state: NOT_RECEIVED
+
+  - request_id: ZANDALINAS_2020_RAW_LI6800_REQUEST
+    priority: 2
+    candidate_id: ZANDALINAS_2020_SOYBEAN_SYSTEMIC_STOMATAL_RESPONSE
+    article_doi: 10.1104/pp.20.00511
+    public_dataset_doi: NOT_ESTABLISHED
+    experiment_anchor: >-
+      Simultaneous upper/lower soybean-leaf measurements made with two LI-6800
+      systems during the reported light-step systemic stomatal-response experiment.
+    current_gap:
+      - public_raw_LI_6800_exports_not_found
+      - row_aligned_VPD_or_humidity_inputs_not_established
+      - timestamp_and_independent_group_identifiers_not_established
+    requested_material:
+      - original_exports_from_both_LI_6800_systems_for_the_same_experimental_runs
+      - run_pairing_or_synchronization_metadata
+      - variable_dictionary_if_needed
+    desired_fields:
+      - gsw
+      - VPDleaf_or_VpdL
+      - Tleaf
+      - PAR_or_Q
+      - sample_H2O_and_reference_H2O_if_available
+      - pressure
+      - elapsed_time_or_timestamp
+      - paired_instrument_or_leaf_identity
+      - plant_or_biological_replicate_identifier
+      - treatment_or_light_step_marker
+      - developmental_context
+    response_state: REQUEST_PREPARED
+    file_admission_state: NOT_RECEIVED
+
+request_message_requirements:
+  - identify_article_and_exact_experiment
+  - request_original_instrument_export_not_reconstructed_summary
+  - explain_that_only_existing_raw_records_are_requested
+  - state_that_partial_data_are_acceptable_and_will_be_reported_as_partial
+  - request_variable_dictionary_or_export_notes_if_available
+  - avoid_asking_author_to_fabricate_missing_metadata
+  - avoid_requesting_model_coefficients_or_pre_fitted_response_functions
+  - avoid_implying_that_data_will_automatically_validate_the_model
+
+exit_policy:
+  if_no_author_data_received: >-
+    Remain HOLD. Do not lower the packet contract and do not start solver implementation.
+  if_partial_data_received: >-
+    Hash and audit the received files. Record DATA_RECEIVED_INCOMPLETE when any
+    blocking packet field remains absent or ambiguous.
+  if_complete_candidate_received: >-
+    Record DATA_RECEIVED_COMPLETE_CANDIDATE, then create a separate immutable
+    file-level audit stage. Do not directly authorize model implementation.
+  if_author_data_path_exhausted: >-
+    Escalate to a separately reviewed prospective soybean experiment design or
+    evidence-composition design. Neither is authorized by this R3B contract.
