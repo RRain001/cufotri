@@ -1,0 +1,167 @@
+schema_version: v1
+stage: V4-2
+round: R3
+registry_id: V4_2_LEAF_EVIDENCE_ACQUISITION_R3
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 079238804bd0a43892806780ac5d68f5feccee7f
+branch: codex/v4-2-leaf-evidence-acquisition-r3
+status: IN_PROGRESS_BROADENED_EMPIRICAL_SEARCH
+
+objective: >-
+  Broaden empirical evidence acquisition after R2 established that the two
+  highest-priority public soybean datasets do not contain a complete matched
+  dynamic stomatal-response packet. Prefer a single soybean experiment with
+  row-aligned gsw (or rc), VPD, PAR/light, Tleaf, stage/group identity, units,
+  provenance, and independent-group semantics. Do not use cross-dataset
+  stitching to manufacture completeness.
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+search_order:
+  - public_single_experiment_soybean_raw_records
+  - public_single_experiment_soybean_processed_but_row_aligned_records
+  - author_available_soybean_raw_LI_COR_logs
+  - non_soybean_complete_packets_for_methodology_only
+  - evidence_composition_design_only_after_explicit_separate_review
+
+admission_minimum:
+  - absolute_observed_gsw_or_rc
+  - VPD_or_full_humidity_derivation_inputs
+  - PAR_or_light
+  - Tleaf
+  - dataset_bound_stage_or_explicit_developmental_context
+  - crop_identity
+  - timestamp_or_interval_semantics
+  - independent_group_identity
+  - units
+  - variable_level_provenance
+  - matched_row_or_explicit_alignment_contract
+
+r3_candidates:
+  - candidate_id: MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD
+    species: Glycine max
+    dataset_doi: 10.5061/dryad.51c59zwkh
+    article_doi: 10.1073/pnas.2502360122
+    priority: 1
+    public_file: Raw_data_Mostofa_et_al._2025.xlsx
+    public_evidence_summary:
+      - soybean_Williams_82
+      - reproductive_stage_R1_declared
+      - LI_6800_used
+      - gsw_recorded_every_5_seconds
+      - PAR_declared_1000_umol_m2_s
+      - chamber_temperature_declared_30_C
+      - water_vapor_declared_22_to_26_mmol_mol
+      - CO2_declared_420_umol_mol
+      - public_Dryad_workbook
+    unresolved:
+      - workbook_sheet_and_column_structure_not_file_audited
+      - per_record_Tleaf_not_yet_verified
+      - per_record_VPD_or_full_humidity_inputs_not_yet_verified
+      - replicate_and_timestamp_alignment_not_yet_verified
+      - applicability_of_declared_constants_to_each_gsw_record_not_yet_verified
+    disposition: PRIORITY_FILE_LEVEL_AUDIT_REQUIRED
+    full_packet_admitted: false
+
+  - candidate_id: TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD
+    species: Glycine max
+    dataset_doi: 10.5061/dryad.pk0p2ngst
+    article_doi: 10.1093/jxb/erae057
+    priority: 2
+    public_file: ACiMethod_4.0_RepositoryData.csv
+    public_evidence_summary:
+      - soybean_included
+      - LI_6800_measurements
+      - row_level_Tleaf
+      - row_level_PAR
+      - row_level_VPDleaf
+      - row_level_elapsed_time
+      - RunID_independent_record_identity
+      - six_biological_replicates_for_soybean
+    unresolved:
+      - public_README_column_list_does_not_include_gsw_or_rc
+      - soybean_developmental_stage_not_yet_established
+      - exact_file_headers_need_byte_level_confirmation
+    disposition: DRIVER_RICH_COMPONENT_EVIDENCE_FILE_AUDIT_REQUIRED
+    full_packet_admitted: false
+
+  - candidate_id: ZANDALINAS_2020_SOYBEAN_SYSTEMIC_STOMATAL_RESPONSE
+    species: Glycine max
+    article_doi: 10.1104/pp.20.00511
+    priority: 3
+    public_evidence_summary:
+      - two_LI_6800_systems_used_simultaneously
+      - continuous_gsw_transpiration_photosynthesis_and_leaf_temperature
+      - light_step_40_to_1500_umol_m2_s
+      - at_least_three_plants_per_treatment
+      - four_week_old_same_developmental_stage_soybean
+    unresolved:
+      - raw_LI_6800_log_availability_not_established
+      - VPD_or_humidity_record_availability_not_established
+      - public_supplement_contains_methods_and_design_but_no_raw_log_repository_found
+    disposition: PRIORITY_AUTHOR_OR_RAW_DATA_DISCOVERY
+    full_packet_admitted: false
+
+  - candidate_id: HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD
+    species: Glycine max
+    dataset_doi: 10.5061/dryad.q573n5tgj
+    priority: 4
+    public_evidence_summary:
+      - public_Dryad_dataset
+      - soybean_stomatal_conductance_analysis_files
+      - multiple_figure_level_csv_files
+      - raw_data_claimed_by_dataset_description
+    unresolved:
+      - exact_gsw_driver_columns_not_file_audited
+      - VPD_PAR_Tleaf_stage_and_group_alignment_not_established
+    disposition: FILE_LEVEL_TRIAGE_REQUIRED
+    full_packet_admitted: false
+
+  - candidate_id: SOYBEAN_WATERLOGGING_2026_COMPONENT
+    species: Glycine max
+    priority: 5
+    public_evidence_summary:
+      - soybean_gsw_and_Tleaf_measured
+      - explicit_vegetative_and_reproductive_stage_treatments
+      - supplemental_physiology_data_reported
+    unresolved:
+      - LI_600_not_LI_6800
+      - VPD_PAR_or_light_row_alignment_not_established
+      - public_raw_instrument_records_not_established
+    disposition: COMPONENT_EVIDENCE_ONLY_PENDING_DATA_DISCOVERY
+    full_packet_admitted: false
+
+  - candidate_id: RIZZO_BAILEY_2026_METHODS_BENCHMARK
+    species: mixed_non_soybean
+    dataset_doi: 10.5061/dryad.5x69p8djr
+    priority: methodology_only
+    public_evidence_summary:
+      - public_LI_6800_IRGA_files
+      - gsw
+      - VPDleaf
+      - Tleaf
+      - ambient_light_or_PPFD
+      - timestamps_and_species_identity
+    disposition: COMPLETE_VARIABLE_METHODS_BENCHMARK_NOT_SOYBEAN_PARAMETER_SOURCE
+    full_packet_admitted: false
+
+r2_findings_preserved:
+  monnens_2023: HOLD_REQUIRED_FIELDS_MISSING
+  tomeo_rosenthal_2018: HOLD_REQUIRED_FIELDS_MISSING
+  cross_dataset_stitching: FORBIDDEN_WITHOUT_SEPARATE_REVIEW
+
+next_gate: >-
+  Audit Mostofa 2025 and Tejera-Nieves/Walker 2024 source files first, then the
+  Helicoverpa Dryad figure/raw files. In parallel continue discovery of author-held
+  Zandalinas LI-6800 logs. Determine whether any single soybean source can satisfy
+  the V4-2 empirical packet. If none does, prepare an explicit decision between
+  author-data acquisition, prospective experiment design, or a separately reviewed
+  evidence-composition model. Do not lower packet requirements silently.
