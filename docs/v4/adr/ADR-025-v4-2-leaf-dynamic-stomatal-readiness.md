@@ -2,9 +2,22 @@
 
 ## Status
 
-Accepted as a **readiness HOLD** decision. This ADR authorizes evidence and
-ontology preparation only. It does not authorize production implementation of
-the dynamic stomatal response.
+Accepted after technical verification as a **readiness HOLD** decision. This ADR
+authorizes evidence and ontology preparation only. It does not authorize
+production implementation of the dynamic stomatal response.
+
+Reviewed content head:
+
+`890c3b4d7ee1a1f90047a9e4b71d9cdd17d15b0f`
+
+Verification:
+
+```text
+V3 Remediation CI 32925575057 = PASS
+V3 Protected Integration Gate 32925575051 = PASS
+portable suite = 1063 passed / 1 skipped / 57 deselected
+explicit invariants = 142 passed
+```
 
 ## Context
 
@@ -34,8 +47,9 @@ V4-2 freezes four pre-implementation boundaries:
 2. light/PAR, VPD, leaf-temperature and stage response domains must be derived
    from a concrete matched empirical packet using a preregistered support rule;
 3. the empirical packet must contain an observed stomatal-conductance or
-   leaf/surface-resistance target together with matched forcing/context,
-   timestamps, independent-group identity, units and provenance;
+   leaf/surface-resistance target with explicit measurement basis, matched
+   forcing/context, timestamps, independent-group identity, units and
+   provenance;
 4. calibration/model selection and final empirical validation must use
    explicitly separated independent groups, with the final holdout excluded
    from response-domain estimation and post-hoc threshold tuning.
@@ -43,6 +57,9 @@ V4-2 freezes four pre-implementation boundaries:
 The specialized packet schema is:
 
 `schemas/v4/v4_leaf_empirical_evidence_packet.schema.json`.
+
+Relationships that cross JSON fields are governed by an additional
+application-level validator contract; schema validity alone is insufficient.
 
 ## Growth-stage boundary
 
@@ -64,7 +81,8 @@ create an empirical domain.
 
 Independent univariate ranges do not prove joint multivariate support. A future
 packet must document joint condition coverage or an equivalent preregistered
-support assessment.
+support assessment. Response-domain support records cannot use final-validation
+groups.
 
 A future runtime implementation must fail closed outside its admitted domain;
 silent clipping or extrapolation is not an accepted default.
@@ -78,6 +96,17 @@ or experimental group is not sufficient for final validation.
 
 Synthetic cases remain software verification only.
 
+## Technical-review corrections
+
+Technical review strengthened the evidence boundary without changing runtime
+physics:
+
+1. target measurement basis and canonical target/VPD/leaf-temperature/stage
+   units are machine checked;
+2. group/ontology/unit/support-order relationships require application-level
+   cross-field validation in addition to JSON Schema;
+3. response-domain support groups must be disjoint from final-validation groups.
+
 ## Current evidence disposition
 
 No checked-in packet currently satisfies the matched leaf evidence contract.
@@ -87,6 +116,7 @@ has been admitted. Physical validation has not been executed.
 Therefore the item remains:
 
 ```ini
+V4_2_TECHNICAL_READINESS_GATE = PASS_READINESS_CONTROL_PLANE
 V4_2_LEAF_STATUS = HOLD_EMPIRICAL_EVIDENCE_REQUIRED
 CONTROL_PLANE_PREPARATION = COMPLETE
 LEAF_IMPLEMENTATION_AUTHORIZED = FALSE
