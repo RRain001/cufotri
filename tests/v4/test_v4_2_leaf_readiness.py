@@ -11,7 +11,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_MAIN = "61dfee175d5b16fe358417e0beba75a776d6f394"
-CONTENT_TIP = "61fddb0a7a5795e1d6a0dd3296bb58e52f7aecd0"
+CONTENT_TIP = "9f5cf8d47bfff7a01964ca5896f65c5d3270f7b9"
 READINESS = ROOT / "docs/v4/leaf/v4_2_leaf_dynamic_stomatal_readiness.yaml"
 ONTOLOGY = ROOT / "docs/v4/leaf/v4_2_growth_stage_ontology_contract.yaml"
 DOMAIN = ROOT / "docs/v4/leaf/v4_2_response_domain_admission.yaml"
@@ -323,11 +323,15 @@ def test_leaf_empirical_packet_schema_accepts_complete_reference_packet() -> Non
         "missing_target_measurement_basis",
         "wrong_target_unit",
         "missing_light",
+        "wrong_light_role",
         "wrong_vpd_unit",
+        "wrong_vpd_role",
         "missing_leaf_temperature",
         "wrong_leaf_temperature_unit",
+        "wrong_leaf_temperature_role",
         "missing_growth_stage",
         "wrong_growth_stage_unit",
+        "wrong_growth_stage_role",
         "missing_vpd_basis",
         "wrong_vpd_domain_unit",
         "wrong_tleaf_domain_unit",
@@ -347,22 +351,30 @@ def test_leaf_empirical_packet_schema_fails_closed_on_missing_or_incompatible_ev
         packet["variables"][0]["provenance"]["declared_unit"] = "mm s^-1"
     elif mutation == "missing_light":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "PAR"]
+    elif mutation == "wrong_light_role":
+        next(item for item in packet["variables"] if item["name"] == "PAR")["role"] = "OBSERVATION"
     elif mutation == "wrong_vpd_unit":
         item = next(item for item in packet["variables"] if item["name"] == "VPD")
         item["unit"] = "kPa"
         item["provenance"]["declared_unit"] = "kPa"
+    elif mutation == "wrong_vpd_role":
+        next(item for item in packet["variables"] if item["name"] == "VPD")["role"] = "CONTEXT"
     elif mutation == "missing_leaf_temperature":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "leaf_temperature"]
     elif mutation == "wrong_leaf_temperature_unit":
         item = next(item for item in packet["variables"] if item["name"] == "leaf_temperature")
         item["unit"] = "degC"
         item["provenance"]["declared_unit"] = "degC"
+    elif mutation == "wrong_leaf_temperature_role":
+        next(item for item in packet["variables"] if item["name"] == "leaf_temperature")["role"] = "OBSERVATION"
     elif mutation == "missing_growth_stage":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "growth_stage"]
     elif mutation == "wrong_growth_stage_unit":
         item = next(item for item in packet["variables"] if item["name"] == "growth_stage")
         item["unit"] = "stage-code"
         item["provenance"]["declared_unit"] = "stage-code"
+    elif mutation == "wrong_growth_stage_role":
+        next(item for item in packet["variables"] if item["name"] == "growth_stage")["role"] = "FORCING"
     elif mutation == "missing_vpd_basis":
         packet["variables"] = [item for item in packet["variables"] if item["name"] != "VPD"]
         packet["variables"].append(variable("relative_humidity", "FORCING", "%"))
