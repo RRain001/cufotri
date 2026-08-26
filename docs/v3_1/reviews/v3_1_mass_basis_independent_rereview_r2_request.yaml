@@ -1,0 +1,132 @@
+schema_version: v1
+stage: V3.1
+review_id: V3_1_MASS_BASIS_INDEPENDENT_REREVIEW_R2
+review_type: REVIEWER_INDEPENDENT_REREVIEW
+status: PENDING_INDEPENDENT_REREVIEW
+repository: RRain001/CTEAS_ufotri
+
+review_target:
+  implementation_pr: 3
+  prior_rereview_pr: 5
+  implementation_branch: codex/v3-1-mass-basis-contract
+  rereview_branch: codex/v3-1-mass-basis-independent-rereview-r2
+  frozen_target_sha: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+  baseline_main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+
+prior_independent_rereview_r1:
+  reviewer: codex-local-gpt-5.6-luna
+  review_id: LOCAL_CODEX_GPT56LUNA_V3_1_REREVIEW_R1
+  review_pr: 5
+  reviewed_sha: e28fd18033984e9fda252aa87b81b399b60ece1e
+  review_branch_head: d2014f584a3fa6fc373bf32a6477e950ace01b5a
+  verdict: HOLD_REMEDIATION_REQUIRED
+  blocking_finding: >-
+    validate_conversion_proposal returned IDENTITY_ONLY for same-basis
+    contracts before validating EVIDENCE_DECLARED / conversion_evidence_id,
+    permitting declared evidence binding to be bypassed.
+
+remediation_evidence:
+  code_test_workflow_head: cc5aabe0c331664a005ac3ec0579c993e1397757
+  final_documentation_head: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+  remediation_ci_run: 32916837652
+  remediation_ci: PASS
+  protected_integration_gate_run: 32916837645
+  protected_integration_gate: PASS
+  portable_suite: 1000_PASSED_1_SKIPPED_57_DESELECTED
+  explicit_invariants: 79_PASSED
+  final_head_remediation_ci_run: 32917177880
+  final_head_remediation_ci: PASS
+  final_head_protected_integration_gate_run: 32917177883
+  final_head_protected_integration_gate: PASS
+  remediation_report: docs/v3_1/reports/v3_1_mass_basis_luna_r1_remediation.md
+
+reviewer_independence:
+  must_not_be_implementation_author: true
+  reviewer_identity: null
+
+required_checks:
+  - id: PRIOR_BLOCKER_WHITESPACE_SCHEMA_PARITY
+    blocking: true
+    expected: PASS
+    question: >-
+      Does JSON Schema reject whitespace-only values for every serialized text
+      field that Python _require_text rejects after stripping?
+  - id: NO_NUMERICAL_BASIS_CONVERSION
+    blocking: true
+    expected: NO
+    question: >-
+      Does any V3.1 code infer or execute fresh/dry/water/hydrogen numerical
+      conversion or introduce a hidden conversion multiplier?
+  - id: EXPLICIT_SOURCE_TARGET_PAIRING
+    blocking: true
+    expected: YES
+    question: Does evidence require explicit source/target matched pair records?
+  - id: PAIR_REUSE_FAIL_CLOSED
+    blocking: true
+    expected: YES
+    question: >-
+      Are self-pairs, duplicate pair IDs, and measurement reuse across source
+      and target positions rejected?
+  - id: EVIDENCE_TISSUE_SCOPE_BINDING
+    blocking: true
+    expected: YES
+    question: Must evidence tissue scope match both compared contracts?
+  - id: EVIDENCE_AREA_BASIS_BINDING
+    blocking: true
+    expected: YES
+    question: Must evidence area basis match both compared contracts?
+  - id: CROSS_BASIS_EVIDENCE_ID_BINDING
+    blocking: true
+    expected: YES
+    question: >-
+      For a valid cross-basis proposal, is a conflicting contract-level
+      conversion_evidence_id rejected on either source or target?
+  - id: SAME_BASIS_EVIDENCE_STATE_BYPASS
+    blocking: true
+    expected: PASS
+    question: >-
+      Is clean same-basis identity admitted while same-basis conversion
+      proposals carrying EVIDENCE_DECLARED or a supplied cross-basis evidence
+      object fail closed, with require_direct_comparison remaining available
+      for true direct same-basis comparison?
+  - id: PYTHON_SCHEMA_BOUNDARY
+    blocking: true
+    expected: YES
+    question: >-
+      Is the persisted MassBasisContract schema semantically aligned with the
+      Python contract, with evidence-record persistence explicitly out of V3.1 scope?
+  - id: FROZEN_RUNTIME_ISOLATION
+    blocking: true
+    expected: YES
+    question: >-
+      Are pre-existing leaf, TFWT, OBT, soil, root, food, exposure, P7.5, and
+      P7.5B runtime semantics unchanged?
+  - id: P7_8B2_SCOPE_COMPLIANCE
+    blocking: true
+    expected: YES
+    question: >-
+      Is the change still limited to the V3.1 contract without parameter
+      activation, calibration, physical-validation claims, or V4 physics?
+
+reviewer_verdict:
+  allowed_statuses:
+    - PASS_INDEPENDENT_REREVIEW
+    - PASS_WITH_NONBLOCKING_NOTES
+    - HOLD_REMEDIATION_REQUIRED
+    - REJECT
+  status: PENDING_INDEPENDENT_REREVIEW
+  reviewed_sha: null
+  reviewer_identity: null
+  review_id: null
+  review_date: null
+  blocking_findings: []
+  nonblocking_notes: []
+
+exit_policy:
+  implementation_pr_merge_ready: false
+  main_merge_authorized_by_this_request: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  v4_implementation_authorized: false
