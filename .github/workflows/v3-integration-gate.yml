@@ -70,6 +70,8 @@ jobs:
             tests/architecture/test_v3_current_remediation_invariants.py \
             tests/architecture/test_v3_protected_integration_review.py \
             tests/architecture/test_v3_1_mass_basis_isolation.py \
+            tests/architecture/test_v3_1_independent_rereview_r2_handoff.py \
+            tests/architecture/test_v3_1_main_merge_closure.py \
             tests/integration/test_v3_pipeline_composite_conservation.py \
             tests/v3/test_p7_7b_synthetic_benchmarks.py \
             tests/v3/test_p7_8a_physics_redesign_governance.py \
