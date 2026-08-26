@@ -32,6 +32,7 @@ state_contract:
 forcing_contract:
   interval_start_explicit_fluxes: true
   surface_water_input: true
+  surface_water_loss: true
   surface_hto_deposition: true
   l1_l2_water_flux_signed_downward_positive: true
   l1_l2_hto_flux_signed_downward_positive: true
@@ -41,6 +42,7 @@ forcing_contract:
   surface_reemission_hto_sink: true
   explicit_root_sink_slots_by_layer: true
   root_sink_derivation_in_core: false
+  surface_evaporation_derivation_in_core: false
   water_to_hto_flux_derivation_in_core: false
 
 solver_contract:
@@ -64,6 +66,7 @@ not_implemented:
   - soil_water_potential_curve
   - rainfall_to_interlayer_flux_model
   - capillary_flux_model
+  - surface_evaporation_rate_model
   - layer_resolved_root_uptake_derivation
   - ufotri_0_4_percent_per_hour_runtime_activation
   - ufotri_20_80_root_fraction_runtime_activation
@@ -77,6 +80,7 @@ verification_required:
   - state_restart_round_trip
   - downward_interlayer_conservation
   - upward_interlayer_conservation
+  - explicit_surface_water_loss_balance
   - external_input_sink_global_balance
   - overdraw_fail_closed
   - v3_v4_type_isolation

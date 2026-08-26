@@ -107,6 +107,7 @@ def test_external_inputs_sinks_and_decay_close_global_balance() -> None:
     solver = ThreeLayerSoilStorageSolver(tritium_half_life_s=1000.0)
     forcing = ThreeLayerSoilForcing(
         surface_water_input_m_s=1.0e-6,
+        surface_water_loss_m_s=3.0e-7,
         surface_deposition_flux_bq_m2_s=5.0e-3,
         lower_boundary_water_loss_m_s=2.0e-7,
         lower_boundary_hto_loss_bq_m2_s=2.0e-4,
@@ -117,12 +118,26 @@ def test_external_inputs_sinks_and_decay_close_global_balance() -> None:
     result = solver.advance(state, forcing, 60.0)
     balance = result.global_balance
     assert balance.external_water_input_m == pytest.approx(6.0e-5)
-    assert balance.external_water_loss_m == pytest.approx(3.6e-5)
+    assert balance.external_water_loss_m == pytest.approx(5.4e-5)
+    assert result.layer_balances[0].water_loss_m == pytest.approx(2.4e-5)
     assert balance.external_hto_input_bq_m2 == pytest.approx(0.3)
     assert balance.external_hto_loss_bq_m2 == pytest.approx(0.054)
     assert abs(balance.water_residual_m) < 1e-14
     assert abs(balance.hto_residual_bq_m2) < 1e-11
     assert balance.decay_loss_bq_m2 > 0.0
+
+
+def test_surface_water_loss_is_explicit_fail_closed_boundary() -> None:
+    state = reference_state()
+    solver = ThreeLayerSoilStorageSolver(tritium_half_life_s=1000.0)
+    with pytest.raises(SoilV4InputError, match="exhausts layer water"):
+        solver.advance(
+            state,
+            ThreeLayerSoilForcing(surface_water_loss_m_s=1.0),
+            1.0,
+        )
+    with pytest.raises(SoilV4InputError):
+        ThreeLayerSoilForcing(surface_water_loss_m_s=-1.0e-6)
 
 
 def test_fail_closed_on_layer_water_or_hto_overdraw() -> None:

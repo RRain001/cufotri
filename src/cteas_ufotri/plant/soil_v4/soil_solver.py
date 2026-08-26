@@ -38,6 +38,7 @@ class ThreeLayerSoilForcing:
     """
 
     surface_water_input_m_s: float = 0.0
+    surface_water_loss_m_s: float = 0.0
     surface_deposition_flux_bq_m2_s: float = 0.0
     l1_l2_water_flux_m_s: float = 0.0
     l1_l2_hto_flux_bq_m2_s: float = 0.0
@@ -55,6 +56,7 @@ class ThreeLayerSoilForcing:
         require_unit(self.water_flux_unit, WATER_FLUX_UNIT, field="water_flux")
         require_unit(self.hto_flux_unit, HTO_FLUX_UNIT, field="hto_flux")
         require_nonnegative(self.surface_water_input_m_s, field="surface_water_input_m_s")
+        require_nonnegative(self.surface_water_loss_m_s, field="surface_water_loss_m_s")
         require_nonnegative(
             self.surface_deposition_flux_bq_m2_s,
             field="surface_deposition_flux_bq_m2_s",
@@ -221,7 +223,7 @@ class ThreeLayerSoilStorageSolver:
             w23_down,
         )
         water_losses = (
-            w12_down + root_w[0],
+            forcing.surface_water_loss_m_s + w12_down + root_w[0],
             w12_up + w23_down + root_w[1],
             w23_up + root_w[2] + forcing.lower_boundary_water_loss_m_s,
         )
@@ -299,7 +301,9 @@ class ThreeLayerSoilStorageSolver:
         total_water_change = next_state.total_water_inventory_m - state.total_water_inventory_m
         external_water_input = forcing.surface_water_input_m_s * interval
         external_water_loss = (
-            sum(root_w) + forcing.lower_boundary_water_loss_m_s
+            forcing.surface_water_loss_m_s
+            + sum(root_w)
+            + forcing.lower_boundary_water_loss_m_s
         ) * interval
         total_hto_change = next_state.total_hto_inventory_bq_m2 - state.total_hto_inventory_bq_m2
         external_hto_input = forcing.surface_deposition_flux_bq_m2_s * interval
