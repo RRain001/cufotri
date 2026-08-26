@@ -1,8 +1,9 @@
 # V4-2 R3B author-held raw-data request template
 
-This template is a governance artifact. It has **not** been sent to any author.
-Use it only after the exact corresponding author/contact channel has been
-verified from the article or institutional source.
+This template is retained as a provenance artifact for a path that the project
+has explicitly chosen **not to pursue**. It has **not** been sent to any author.
+Do not send or reuse it unless a future project decision reopens the author-data
+path and separately verifies the corresponding author/contact channel.
 
 ## Subject
 
