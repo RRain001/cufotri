@@ -1,0 +1,199 @@
+schema_version: v1
+stage: V4_SYSTEM_ATMOS_EXCHANGE_CONTRACT
+status: PASS_CONTROL_PLANE_CONTRACT_FROZEN
+repository: RRain001/CTEAS_ufotri
+base_main_sha: ec31dd43d5f8085b783d3ebb26949d9ff932f402
+branch: codex/v4-system-atmos-exchange-contract-r1
+
+compatibility_snapshot:
+  cteas_ufotri:
+    atmospheric_forcing_blob_sha: 76500c048caac1d9d1bce8a463560adc91d521a0
+    atmospheric_metadata_blob_sha: 97c47e99bde50af1b8c1a8934bc197bc35cfedb9
+    atmospheric_validation_blob_sha: 2255d2c5871205639aad9505e32fea2df9f54441
+    current_runtime_changed: false
+  cteas_atmos:
+    repository: RRain001/CTEAS-Atmos
+    reference_sha: 341d9d6b3b45b6e2416e09aec0b381adf137fd3e
+    time_contract: UTC_HALF_OPEN_INTERVAL_WITH_EXPLICIT_TEMPORAL_MEANING
+    receptor_concentration_contract: RADIONUCLIDE_BQ_M3
+    deposition_ledger_contract: PER_PUFF_INTERVAL_AMOUNT_NOT_SURFACE_FLUX
+    reviewed_records:
+      - ARCHITECTURE.md
+      - docs/adr/0063-gaussian-puff-concentration-receptor-sampling-v1.md
+      - docs/adr/0067-basic-dry-wet-deposition-and-activity-ledger-v1.md
+
+record_contract:
+  one_record_represents: ONE_SPATIAL_SUPPORT_OVER_ONE_POSITIVE_INTERVAL
+  chemical_identity: HTO
+  excluded_chemical_identities:
+    - HT
+    - DT
+    - T2
+    - TOTAL_TRITIUM_UNSPECIFIED_MIXTURE
+
+  time:
+    interval: HALF_OPEN_START_INCLUSIVE_END_EXCLUSIVE
+    timezone: UTC
+    start_required: true
+    end_required: true
+    end_must_be_after_start: true
+    normalized_value_semantics: INTERVAL_REPRESENTATIVE_MEAN_OR_RATE
+    v3_timestamp_mapping: INTERVAL_START
+    implicit_local_time: FORBIDDEN
+    silent_resampling: FORBIDDEN
+    nearest_time_substitution: FORBIDDEN
+
+  spatial_support:
+    location_id_required: true
+    allowed_support_kinds:
+      - POINT_RECEPTOR
+      - GRID_CELL_CENTER
+    air_sampling_height_required: true
+    vertical_reference_required: true
+    grid_or_receptor_identity_required: true
+    concentration_and_meteorology_colocation_required: true_or_explicit_reconciliation
+    hidden_height_assumption: FORBIDDEN
+
+  required_quantities:
+    air_hto_concentration:
+      canonical_unit: Bq m^-3
+      quantity_semantics: AIR_ACTIVITY_CONCENTRATION_HTO
+      nonnegative: true
+      source_product_requirement: TYPED_RECEPTOR_OR_GRID_CONCENTRATION
+    surface_deposition_flux_total:
+      canonical_unit: Bq m^-2 s^-1
+      quantity_semantics: HTO_SURFACE_ACTIVITY_FLUX_TOTAL
+      nonnegative: true
+      source_product_requirement: TRUE_SURFACE_OR_RECEPTOR_DEPOSITION_FLUX
+    air_temperature:
+      canonical_unit: K
+      positive: true
+      quantity_semantics: AIR_TEMPERATURE
+    relative_humidity:
+      canonical_unit: '1'
+      range: [0.0, 1.0]
+      quantity_semantics: RELATIVE_HUMIDITY_FRACTION
+    wind_speed:
+      canonical_unit: m s^-1
+      nonnegative: true
+      quantity_semantics: HORIZONTAL_WIND_SPEED
+    precipitation_rate:
+      canonical_unit: m s^-1
+      nonnegative: true
+      quantity_semantics: PRECIPITATION_RATE
+
+  deposition_components:
+    dry_surface_flux:
+      canonical_unit: Bq m^-2 s^-1
+      required: false
+    wet_surface_flux:
+      canonical_unit: Bq m^-2 s^-1
+      required: false
+    normalized_total_rule: >-
+      The normalized total surface deposition flux is required. It may be a direct surface product
+      or an explicitly recorded dry-plus-wet surface-flux sum. No implicit derivation is allowed.
+    allowed_total_derivation_kinds:
+      - DIRECT_SURFACE_PRODUCT
+      - EXPLICIT_DRY_PLUS_WET_SUM
+    forbidden_substitutes:
+      - STAGE18_DRY_DEPOSITED_LEDGER_AMOUNT_BQ
+      - STAGE18_WET_DEPOSITED_LEDGER_AMOUNT_BQ
+      - PUFF_INVENTORY_LOSS_WITH_HIDDEN_AREA
+      - ACCUMULATED_BQ_M2_RELABELED_AS_RATE
+      - REMOVAL_COEFFICIENT_RELABELED_AS_FLUX
+      - SILENT_ZERO_WHEN_FLUX_PRODUCT_UNAVAILABLE
+
+  meteorological_coforcing:
+    may_originate_from_cteas_atmos_accepted_input_dataset: true
+    may_originate_from_separate_reviewed_aligned_source: true
+    cteas_atmos_solver_must_derive_meteorology: false
+    per_variable_source_provenance_required: true
+
+source_kinds:
+  allowed:
+    - CTEAS_ATMOS
+    - REPLAY
+    - SYNTHETIC_TEST
+  replay_must_be_labeled: true
+  synthetic_must_be_labeled: true
+  synthetic_is_empirical_validation: false
+  replay_is_live_production_coupling: false
+
+provenance_contract:
+  required_fields:
+    - producer_model
+    - producer_revision
+    - source_dataset
+    - artifact_sha256_or_explicit_not_applicable_reason
+    - source_variable_map
+    - spatial_reference
+    - temporal_semantics
+    - unit_declarations
+    - transformation_log
+  silent_unit_conversion: FORBIDDEN
+  silent_species_conversion: FORBIDDEN
+  silent_spatial_reconciliation: FORBIDDEN
+  silent_temporal_reconciliation: FORBIDDEN
+
+quality_contract:
+  allowed_statuses:
+    - PROVISIONAL
+    - REVIEWED
+    - ACCEPTED
+    - SYNTHETIC_TEST_ONLY
+  required_value_missing: FAIL_CLOSED
+  nan_or_inf: FAIL_CLOSED
+  ambiguous_unit: FAIL_CLOSED
+  ambiguous_species: FAIL_CLOSED
+  ambiguous_temporal_meaning: FAIL_CLOSED
+  ambiguous_spatial_support: FAIL_CLOSED
+  silent_zero_fill: FORBIDDEN
+  silent_forward_fill: FORBIDDEN
+  silent_clipping: FORBIDDEN
+
+v3_adapter_mapping:
+  implementation_authorized: false
+  current_runtime_remains_authority: true
+  fields:
+    start_utc: AtmosphericHTOForcing.timestamp
+    air_hto_concentration_bq_m3: AtmosphericHTOForcing.air_hto_concentration
+    surface_deposition_flux_total_bq_m2_s: AtmosphericHTOForcing.deposition_flux
+    air_temperature_k: AtmosphericHTOForcing.temperature
+    relative_humidity: AtmosphericHTOForcing.humidity
+    wind_speed_m_s: AtmosphericHTOForcing.wind_speed
+    precipitation_rate_m_s: AtmosphericHTOForcing.precipitation
+    location_identity: AtmosphericHTOForcing.location
+  adapter_may_change_solver_physics: false
+  adapter_may_change_p7_5_time_semantics: false
+
+producer_binding:
+  contract_definition: FROZEN
+  cteas_atmos_time_semantics: COMPATIBLE
+  cteas_atmos_concentration_semantics: COMPATIBLE
+  cteas_atmos_surface_deposition_flux_product: UNCONFIRMED
+  real_binding_status: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+  real_cteas_atmos_coupling_active: false
+  unblock_requires:
+    - identifiable_cteas_atmos_surface_flux_product
+    - exact_quantity_and_unit_match
+    - spatial_support_and_height_review
+    - interval_semantics_review
+    - provenance_mapping
+    - adapter_test_against_frozen_record_contract
+    - independent_cross_project_review
+
+hard_invariants:
+  v3_atmos_runtime_changed: false
+  solver_changes_authorized: false
+  numerical_coupling_changes_authorized: false
+  real_cteas_atmos_coupling_active: false
+  puff_ledger_amount_as_surface_flux: FORBIDDEN
+  active_parameters: 0
+  calibration_started: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+exit_state:
+  exchange_contract_frozen: true
+  real_producer_binding_complete: false
+  next_stage: V4_SYSTEM_PHYSICS_GAP_SENSITIVITY_AUDIT

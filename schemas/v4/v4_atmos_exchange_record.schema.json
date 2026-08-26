@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cteas-ufotri/schemas/v4/v4_atmos_exchange_record.schema.json",
+  "title": "CTEAS Atmos to UFOTRI V4 exchange record",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "source_kind",
+    "chemical_identity",
+    "interval",
+    "spatial_support",
+    "air_hto_concentration_bq_m3",
+    "surface_deposition",
+    "air_temperature_k",
+    "relative_humidity",
+    "wind_speed_m_s",
+    "precipitation_rate_m_s",
+    "provenance",
+    "quality_status"
+  ],
+  "properties": {
+    "contract_version": {"const": "v1"},
+    "source_kind": {
+      "enum": ["CTEAS_ATMOS", "REPLAY", "SYNTHETIC_TEST"]
+    },
+    "chemical_identity": {"const": "HTO"},
+    "interval": {
+      "type": "object",
+      "required": ["start_utc", "end_utc", "semantics"],
+      "properties": {
+        "start_utc": {"type": "string", "format": "date-time"},
+        "end_utc": {"type": "string", "format": "date-time"},
+        "semantics": {"const": "HALF_OPEN_INTERVAL_REPRESENTATIVE_MEAN_OR_RATE"}
+      },
+      "additionalProperties": false
+    },
+    "spatial_support": {
+      "type": "object",
+      "required": ["location_id", "support_kind", "air_sampling_height_m", "vertical_reference"],
+      "properties": {
+        "location_id": {"type": "string", "minLength": 1},
+        "support_kind": {"enum": ["POINT_RECEPTOR", "GRID_CELL_CENTER"]},
+        "receptor_id": {"type": "string", "minLength": 1},
+        "grid_id": {"type": "string", "minLength": 1},
+        "cell_id": {"type": "string", "minLength": 1},
+        "latitude_deg": {"type": "number", "minimum": -90.0, "maximum": 90.0},
+        "longitude_deg": {"type": "number", "minimum": -180.0, "maximum": 180.0},
+        "air_sampling_height_m": {"type": "number"},
+        "vertical_reference": {"type": "string", "minLength": 1},
+        "spatial_reference": {"type": "string", "minLength": 1}
+      },
+      "oneOf": [
+        {"required": ["receptor_id"]},
+        {"required": ["grid_id", "cell_id"]},
+        {"required": ["latitude_deg", "longitude_deg"]}
+      ],
+      "additionalProperties": false
+    },
+    "air_hto_concentration_bq_m3": {"type": "number", "minimum": 0.0},
+    "surface_deposition": {
+      "type": "object",
+      "required": ["total_flux_bq_m2_s", "total_derivation_kind"],
+      "properties": {
+        "total_flux_bq_m2_s": {"type": "number", "minimum": 0.0},
+        "dry_flux_bq_m2_s": {"type": "number", "minimum": 0.0},
+        "wet_flux_bq_m2_s": {"type": "number", "minimum": 0.0},
+        "total_derivation_kind": {
+          "enum": ["DIRECT_SURFACE_PRODUCT", "EXPLICIT_DRY_PLUS_WET_SUM"]
+        },
+        "derivation_record": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "total_derivation_kind": {"const": "EXPLICIT_DRY_PLUS_WET_SUM"}
+            },
+            "required": ["total_derivation_kind"]
+          },
+          "then": {
+            "required": ["dry_flux_bq_m2_s", "wet_flux_bq_m2_s", "derivation_record"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "air_temperature_k": {"type": "number", "exclusiveMinimum": 0.0},
+    "relative_humidity": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "wind_speed_m_s": {"type": "number", "minimum": 0.0},
+    "precipitation_rate_m_s": {"type": "number", "minimum": 0.0},
+    "provenance": {
+      "type": "object",
+      "required": [
+        "producer_model",
+        "producer_revision",
+        "source_dataset",
+        "artifact_identity",
+        "source_variable_map",
+        "spatial_reference",
+        "temporal_semantics",
+        "unit_declarations",
+        "transformation_log"
+      ],
+      "properties": {
+        "producer_model": {"type": "string", "minLength": 1},
+        "producer_revision": {"type": "string", "minLength": 1},
+        "source_dataset": {"type": "string", "minLength": 1},
+        "artifact_identity": {"type": "string", "minLength": 1},
+        "source_variable_map": {"type": "object"},
+        "spatial_reference": {"type": "string", "minLength": 1},
+        "temporal_semantics": {"type": "string", "minLength": 1},
+        "unit_declarations": {"type": "object"},
+        "transformation_log": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "quality_status": {
+      "enum": ["PROVISIONAL", "REVIEWED", "ACCEPTED", "SYNTHETIC_TEST_ONLY"]
+    }
+  },
+  "additionalProperties": false
+}
