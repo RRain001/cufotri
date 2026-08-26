@@ -128,5 +128,5 @@ def test_exit_policy_requires_separate_audit_before_any_implementation_decision(
     policy = _registry()["exit_policy"]
     assert "Remain HOLD" in policy["if_no_author_data_received"]
     assert "DATA_RECEIVED_INCOMPLETE" in policy["if_partial_data_received"]
-    assert "separate immutable\nfile-level audit stage" in policy["if_complete_candidate_received"]
+    assert "separate immutable file-level audit stage" in policy["if_complete_candidate_received"]
     assert "Neither is authorized" in policy["if_author_data_path_exhausted"]
