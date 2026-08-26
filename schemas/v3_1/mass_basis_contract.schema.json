@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas-ufotri.local/schemas/v3_1/mass_basis_contract.schema.json",
+  "title": "CTEAS UFOTRI V3.1 Mass Basis Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject_id",
+    "mass_basis",
+    "tissue_scope",
+    "area_basis",
+    "provenance",
+    "conversion_status",
+    "conversion_evidence_id",
+    "version"
+  ],
+  "properties": {
+    "subject_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+    "mass_basis": {
+      "enum": ["fresh_mass", "dry_mass", "water_mass", "hydrogen_mass"]
+    },
+    "tissue_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "identifier"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "whole_plant",
+            "edible_tissue",
+            "leaf",
+            "root",
+            "stem",
+            "grain",
+            "fruit",
+            "harvest_product",
+            "custom"
+          ]
+        },
+        "identifier": {"type": ["string", "null"], "minLength": 1, "pattern": ".*\\S.*"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "custom"}}},
+          "then": {
+            "properties": {
+              "identifier": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"}
+            }
+          }
+        }
+      ]
+    },
+    "area_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "identifier"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "ground_area",
+            "leaf_area",
+            "harvest_area",
+            "not_applicable",
+            "custom"
+          ]
+        },
+        "identifier": {"type": ["string", "null"], "minLength": 1, "pattern": ".*\\S.*"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "custom"}}},
+          "then": {
+            "properties": {
+              "identifier": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"}
+            }
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_locator", "revision", "note"],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "source_locator": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "revision": {"type": "string", "minLength": 1, "pattern": ".*\\S.*"},
+        "note": {"type": ["string", "null"], "minLength": 1, "pattern": ".*\\S.*"}
+      }
+    },
+    "conversion_status": {
+      "enum": [
+        "not_requested",
+        "identity_only",
+        "evidence_declared",
+        "blocked_missing_evidence"
+      ]
+    },
+    "conversion_evidence_id": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
+    "version": {"const": "v3.1-mass-basis-v1"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"conversion_status": {"const": "evidence_declared"}}},
+      "then": {
+        "properties": {
+          "conversion_evidence_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": ".*\\S.*"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "conversion_evidence_id": {"type": "null"}
+        }
+      }
+    }
+  ]
+}

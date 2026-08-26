@@ -36,6 +36,9 @@ def test_review_contract_preserves_verified_runtime_candidate() -> None:
     assert lineage["verified_runtime_candidate_sha"] == (
         "8d5bff32a6fd43b3109f59f086170d89a0e9a8cd"
     )
+    assert lineage["final_review_head_sha"] == (
+        "0fcc3f11835df05167b5496e3b1f55ee32c4702f"
+    )
     assert lineage["merge_base_equals_main_base"] is True
     assert lineage["candidate_ahead_of_main_at_review_entry"] == 44
     assert lineage["candidate_behind_main_at_review_entry"] == 0
@@ -50,18 +53,22 @@ def test_review_contract_preserves_verified_runtime_candidate() -> None:
     assert frozen["v3_physics_ready"] is False
 
 
-def test_main_base_and_verified_candidate_are_ancestors_of_review_head() -> None:
+def test_main_base_and_verified_candidate_are_ancestors_of_frozen_review_head() -> None:
     payload = yaml.safe_load(REVIEW.read_text(encoding="utf-8"))
     lineage = payload["lineage"]
-    git("merge-base", "--is-ancestor", lineage["main_base_sha"], "HEAD")
-    git("merge-base", "--is-ancestor", lineage["verified_runtime_candidate_sha"], "HEAD")
-    assert git("merge-base", lineage["main_base_sha"], "HEAD") == lineage["main_base_sha"]
+    review_head = lineage["final_review_head_sha"]
+    git("merge-base", "--is-ancestor", lineage["main_base_sha"], review_head)
+    git("merge-base", "--is-ancestor", lineage["verified_runtime_candidate_sha"], review_head)
+    assert git("merge-base", lineage["main_base_sha"], review_head) == lineage["main_base_sha"]
+    git("merge-base", "--is-ancestor", review_head, "HEAD")
 
 
-def test_review_only_changes_governance_ci_tests_and_docs_after_verified_candidate() -> None:
+def test_review_only_changed_governance_ci_tests_and_docs_before_frozen_review_head() -> None:
     payload = yaml.safe_load(REVIEW.read_text(encoding="utf-8"))
-    entry = payload["lineage"]["verified_runtime_candidate_sha"]
-    changed = set(git("diff", "--name-only", f"{entry}..HEAD").splitlines())
+    lineage = payload["lineage"]
+    entry = lineage["verified_runtime_candidate_sha"]
+    review_head = lineage["final_review_head_sha"]
+    changed = set(git("diff", "--name-only", f"{entry}..{review_head}").splitlines())
 
     assert changed
     forbidden_prefixes = (
