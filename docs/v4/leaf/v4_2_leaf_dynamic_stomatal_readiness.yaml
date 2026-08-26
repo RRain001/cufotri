@@ -1,7 +1,7 @@
 schema_version: v1
 stage: V4-2
 item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
-status: HOLD_EVIDENCE_ACQUISITION_REQUIRED
+status: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
 repository: RRain001/CTEAS_ufotri
 
 entry_state:
@@ -16,6 +16,13 @@ entry_state:
   active_parameters: 0
   calibration_started: false
   v3_physics_ready: false
+
+v4_2_control_plane_artifacts:
+  stage_ontology_contract: docs/v4/leaf/v4_2_growth_stage_ontology_contract.yaml
+  response_domain_admission: docs/v4/leaf/v4_2_response_domain_admission.yaml
+  validation_protocol: docs/v4/leaf/v4_2_validation_protocol.yaml
+  evidence_acquisition_requirements: docs/v4/leaf/v4_2_evidence_acquisition_requirements.yaml
+  evidence_packet_schema: schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
 
 readiness_gates:
   equation_and_unit_contract:
@@ -45,20 +52,35 @@ readiness_gates:
       - no_new_persistent_leaf_state
       - forcing_identity_and_timestamp_must_be_reproducible
       - v3_frozen_baseline_remains_default_and_rollback
-  growth_stage_ontology:
-    status: HOLD_NOT_FROZEN
+  growth_stage_ontology_contract:
+    status: PASS_DATASET_BOUND_RULE_DEFINED
+    evidence:
+      - docs/v4/leaf/v4_2_growth_stage_ontology_contract.yaml
+    limitations:
+      - no_dataset_specific_ontology_instance_present
+      - no_cross_dataset_mapping_admitted
+  dataset_specific_growth_stage_ontology:
+    status: HOLD_NOT_AVAILABLE
     blocker: >-
-      Existing V3 evidence classifies growth stage as a conceptual analogue and
-      explicitly states that the stage ontology and stage-dependent resistance
-      equation are missing. No universal V4 stage category mapping is admitted.
-    required_action: DEFINE_DATASET_BOUND_STAGE_ONTOLOGY_WITH_PROVENANCE
-  response_domain_contract:
-    status: HOLD_NOT_FROZEN
+      The ontology rules are frozen, but no concrete matched empirical dataset
+      has supplied a provenance-bound stage ontology instance.
+  response_domain_admission_rule:
+    status: PASS_RULE_DEFINED
+    evidence:
+      - docs/v4/leaf/v4_2_response_domain_admission.yaml
+    notes:
+      - no_domain_boundary_estimator_selected_without_data
+      - extrapolation_and_silent_clipping_forbidden
+  empirical_response_domains:
+    status: HOLD_NOT_AVAILABLE
     blocker: >-
-      The selected response functions require declared domains and bounds for
-      light/PAR, VPD, leaf temperature and stage. Repository evidence does not
-      establish those empirical domains.
-    required_action: FREEZE_DOMAINS_FROM_MATCHED_VALIDATION_DATA_NOT_GUESSED_DEFAULTS
+      No matched empirical packet currently establishes support for light/PAR,
+      VPD, leaf temperature, stage membership, or their joint condition coverage.
+  evidence_packet_contract:
+    status: PASS_SCHEMA_AND_REQUIREMENTS_DEFINED
+    evidence:
+      - docs/v4/leaf/v4_2_evidence_acquisition_requirements.yaml
+      - schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
   matched_validation_dataset:
     status: HOLD_NOT_AVAILABLE_IN_REPOSITORY
     required_variables:
@@ -69,7 +91,7 @@ readiness_gates:
       - growth_stage_with_declared_ontology
       - crop_identity
       - timestamp_and_interval_semantics
-      - replicate_id
+      - replicate_or_independent_group_id
       - provenance_and_unit_for_each_quantitative_variable
     preferred_context:
       - r_a_or_aerodynamic_context
@@ -79,15 +101,20 @@ readiness_gates:
       - TFWT_or_exchange_flux_when_available
     repository_search_result: >-
       No checked-in dataset or validation packet satisfying the V4-1 empirical
-      validation envelope and the matched leaf-variable requirements was found
-      during the V4-2 readiness audit.
-  preregistered_validation_metrics:
-    status: PASS_CONTRACT_DEFINED_NOT_EXECUTED
+      validation envelope and the V4-2 matched leaf requirements was found.
+  preregistered_validation_protocol:
+    status: PASS_PROTOCOL_DEFINED_NOT_EXECUTED
+    evidence:
+      - docs/v4/leaf/v4_2_validation_protocol.yaml
     required_metrics:
       - conductance_or_resistance_trajectory_error
       - reciprocal_identity_residual
       - domain_and_bound_violation_count
       - cross_condition_generalization_error
+    notes:
+      - calibration_and_final_validation_group_overlap_forbidden
+      - final_holdout_cannot_define_response_domain
+      - thresholds_must_be_dataset_specific_and_preregistered
     physical_validation_executed: false
   independent_item_review:
     status: HOLD_NOT_STARTED
@@ -109,18 +136,18 @@ existing_evidence_interpretation:
     value_selected_or_activated: false
   leaf_growth_stage:
     validation_feasibility: PHYSICS_REDESIGN_REQUIRED
-    blocker: STAGE_ONTOLOGY_AND_EQUATION_MISSING
+    blocker: STAGE_ONTOLOGY_AND_EQUATION_MISSING_IN_V3
   interpretation_rule: >-
     Semantic role/unit compatibility of r_a, r_b and r_c creates a future
     validation pathway; it does not validate a dynamic stomatal response or
     authorize importing a parameter value.
 
 allowed_next_work:
-  - define_dataset_bound_growth_stage_ontology_contract
-  - define_evidence_acquisition_packet_and_required_variable_metadata
-  - register_candidate_response_domains_only_when_supported_by_matched_data
-  - pre_register_validation_metrics_and_holdout_structure
-  - perform_independent_item_review_after_evidence_packet_is_complete
+  - acquire_or_register_matched_empirical_leaf_dataset
+  - instantiate_dataset_specific_growth_stage_ontology
+  - preregister_dataset_specific_response_domain_derivation_rule
+  - declare_disjoint_calibration_and_final_validation_groups_if_calibration_is_used
+  - perform_independent_item_review_after_empirical_packet_is_complete
 
 forbidden_next_work:
   - production_solver_implementation
@@ -129,8 +156,10 @@ forbidden_next_work:
   - treating_r_c_semantic_mapping_as_dynamic_response_validation
   - treating_synthetic_data_as_physical_validation
   - silent_stage_mapping_between_incompatible_crop_taxonomies
+  - response_domain_guessing
+  - final_holdout_leakage
   - parameter_activation
-  - calibration
+  - calibration_before_empirical_packet_and_split_preregistration
 
 hard_invariants:
   leaf_implementation_authorized: false
@@ -145,12 +174,14 @@ hard_invariants:
   physical_validation_complete: false
 
 exit_policy:
-  readiness_gate_result: HOLD_EVIDENCE_ACQUISITION_REQUIRED
-  may_start_evidence_and_ontology_preparation: true
+  readiness_gate_result: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
+  control_plane_preparation_complete: true
+  may_start_evidence_acquisition: true
   may_start_leaf_solver_implementation: false
   may_activate_leaf_candidate_parameters: false
   next_review_after:
-    - growth_stage_ontology_frozen
-    - response_domains_evidence_bound
-    - matched_empirical_dataset_packet_complete
-    - preregistered_metrics_frozen
+    - matched_empirical_evidence_packet_complete
+    - dataset_specific_growth_stage_ontology_instantiated
+    - empirical_response_domains_bound_to_packet
+    - validation_split_and_acceptance_rules_preregistered
+    - independent_item_review_pass
