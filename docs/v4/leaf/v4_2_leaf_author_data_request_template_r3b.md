@@ -15,7 +15,7 @@ Dear Dr. [corresponding author],
 I am conducting a research-method validation study on dynamic soybean stomatal
 response and am reviewing the raw gas-exchange evidence underlying your paper:
 
-**[article title]**  
+**[article title]**
 DOI: **[article DOI]**
 
 I am specifically interested in the original LI-6800/LI-680X export associated
