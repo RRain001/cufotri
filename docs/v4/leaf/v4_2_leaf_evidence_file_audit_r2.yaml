@@ -1,0 +1,193 @@
+schema_version: v1
+stage: V4-2
+round: R2
+packet_id: V4_2_LEAF_EVIDENCE_FILE_AUDIT_R2
+repository: RRain001/CTEAS_ufotri
+base_main_sha: e1bd2460fe242fe93f13b3d3a2f74607c9448544
+branch: codex/v4-2-leaf-evidence-file-audit-r2
+status: COMPLETE_HOLD_REQUIRED_FIELDS_MISSING
+
+purpose: >-
+  Perform read-only file-level audit of the two highest-priority soybean
+  empirical evidence candidates selected in R1. The audit may classify evidence
+  and construct provenance/column matrices only. It must not implement a solver,
+  fit coefficients, calibrate the model, activate parameters, or claim physical
+  validation.
+
+reference_contracts:
+  readiness_gate: docs/v4/leaf/v4_2_leaf_dynamic_stomatal_readiness.yaml
+  evidence_requirements: docs/v4/leaf/v4_2_evidence_acquisition_requirements.yaml
+  specialized_schema: schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
+  r1_registry: docs/v4/leaf/v4_2_leaf_evidence_acquisition_r1.yaml
+
+classification_enum:
+  - DIRECT_COLUMN
+  - DECLARED_CONSTANT_WITH_PROVENANCE
+  - EXPLICIT_DERIVATION_SUPPORTED
+  - MISSING
+  - AMBIGUOUS
+
+admission_rules:
+  direct_column: >-
+    The source file contains a column or field whose semantics and unit are
+    established by the file, README, repository metadata, or associated article.
+  declared_constant_with_provenance: >-
+    A forcing is constant over the admitted observation set and the source
+    methods explicitly declare its value, unit, and applicability to those rows.
+    Convenience defaults are forbidden.
+  explicit_derivation_supported: >-
+    The source provides all required inputs and an explicitly reviewed physical
+    conversion relation. Derived values must preserve row alignment and
+    provenance. Silent unit or humidity conversions are forbidden.
+  missing: The required field cannot be established from the audited source.
+  ambiguous: >-
+    Candidate information exists but row alignment, unit, semantics, scope, or
+    provenance cannot be proven.
+
+required_packet_fields:
+  - field_id: observed_stomatal_conductance_or_leaf_surface_resistance
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: target_measurement_basis
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: light_or_PAR
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: VPD_or_explicit_humidity_to_VPD_basis
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: leaf_temperature
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: dataset_bound_growth_stage_ontology
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: crop_identity
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: timestamp_and_interval_semantics
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: replicate_or_independent_group_identity
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: quantitative_units
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: variable_level_provenance
+    blocking_if: [MISSING, AMBIGUOUS]
+  - field_id: matched_records_or_explicit_alignment_contract
+    blocking_if: [MISSING, AMBIGUOUS]
+
+candidate_audits:
+  - candidate_id: MONNENS_2023_SOYBEAN_VPD_DRYAD
+    priority: 1
+    dataset_doi: 10.5061/dryad.h18931zrh
+    dataset_url: https://datadryad.org/dataset/doi:10.5061/dryad.h18931zrh
+    related_article_doi: 10.1111/nph.18929
+    files_required:
+      - file_name: Monnens_et_al_All_data_Dryad.xlsx
+        source_size: 38.69_KB
+        source_checksum: NOT_EXPOSED_IN_R1_METADATA
+        local_sha256: PENDING
+        workbook_sheets: PENDING
+    audit_questions:
+      - identify_all_sheet_names_and_dimensions
+      - identify_exact_target_column_and_measurement_basis
+      - identify_VPD_column_or_source_supported_derivation
+      - identify_leaf_temperature_column_or_source_declared_constant_scope
+      - identify_PAR_or_light_column_or_source_declared_constant_scope
+      - identify_timestamp_or_interval_semantics
+      - identify_genotype_plant_leaf_and_replicate_fields
+      - identify_growth_stage_field_and_source_ontology
+      - quantify_missingness_for_required_fields
+      - determine_whether_required_fields_are_row_matched
+      - determine_independent_group_candidates_without_row_leakage
+      - determine_observed_VPD_PAR_Tleaf_support_without_final_holdout
+    result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2_result.yaml
+
+  - candidate_id: TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD
+    priority: 2
+    dataset_doi: 10.5061/dryad.2gd3b
+    dataset_url: https://datadryad.org/dataset/doi:10.5061/dryad.2gd3b
+    mirror_record: https://zenodo.org/records/5022524
+    related_article_doi: 10.1104/pp.16.01940
+    files_required:
+      - file_name: CE_GasExchangeParameters.csv
+        source_md5: 30b955a1b12b22bf4e80353f8aaa7315
+        local_sha256: PENDING
+      - file_name: Field_GasExchangeParameters.csv
+        source_md5: e9f7043885e7097448d37efaf92f9733
+        local_sha256: PENDING
+      - file_name: README_for_CE_GasExchangeParameters.txt
+        source_md5: 68cbfb56e9f656e5573713f9a1fdd761
+        local_sha256: PENDING
+      - file_name: README_for_Field_GasExchangeParameters.txt
+        source_md5: 07ce6434d693d28fc756ec6649e3ed01
+        local_sha256: PENDING
+    stage_context_from_related_study:
+      field_late_vegetative: V4_V5
+      field_early_reproductive: R2_R4
+      field_late_reproductive: R6
+      controlled_environment: before_flowering
+      rule: >-
+        These article-level stage descriptions are component evidence only. R2
+        must prove how audited gas-exchange rows map to a dataset-specific stage
+        ontology before stage can be admitted.
+    audit_questions:
+      - verify_source_md5_for_all_four_files
+      - record_exact_headers_row_counts_and_missingness
+      - identify_exact_stomatal_conductance_column_and_unit
+      - identify_light_or_PAR_and_whether_dynamic_or_constant
+      - identify_VPD_or_humidity_inputs_and_units
+      - identify_leaf_temperature_and_unit
+      - identify_row_level_stage_or_a_proven_row_to_stage_mapping
+      - identify_cultivar_plant_leaf_replicate_or_other_independent_group_fields
+      - identify_timestamp_or_measurement_interval_semantics
+      - determine_if_tables_are_endpoint_parameters_or_matched_driver_response_records
+      - determine_empirical_response_domain_support
+    result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2_result.yaml
+
+cross_dataset_rule: >-
+  The two candidates cannot be combined into one matched empirical packet merely
+  because both are soybean. Joint-response support, row alignment, stage
+  semantics, and independent-group structure must be established within an
+  admitted packet or through a separately reviewed evidence-composition model.
+
+required_r2_outputs:
+  - docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2_result.yaml
+  - docs/v4/reports/v4_2_leaf_evidence_file_audit_r2_result.md
+  - tests/v4/test_v4_2_leaf_evidence_file_audit_r2.py
+
+result_yaml_required_sections:
+  - environment
+  - source_file_hashes
+  - source_file_inventory
+  - per_candidate_field_matrix
+  - missingness_and_alignment
+  - independent_group_assessment
+  - response_domain_assessment
+  - stage_ontology_assessment
+  - schema_packet_feasibility
+  - blockers
+  - nonblocking_notes
+  - final_verdict
+
+allowed_final_verdicts:
+  - PASS_ONE_COMPLETE_EMPIRICAL_PACKET_CANDIDATE
+  - HOLD_COMPONENT_EVIDENCE_ONLY
+  - HOLD_REQUIRED_FIELDS_MISSING
+  - HOLD_ALIGNMENT_OR_PROVENANCE_AMBIGUOUS
+
+pass_condition: >-
+  PASS_ONE_COMPLETE_EMPIRICAL_PACKET_CANDIDATE requires at least one candidate
+  to establish every blocking required packet field using DIRECT_COLUMN,
+  DECLARED_CONSTANT_WITH_PROVENANCE, or EXPLICIT_DERIVATION_SUPPORTED, with
+  row/group alignment and dataset-specific stage ontology proven. PASS does not
+  authorize solver implementation; it only permits construction and independent
+  review of a concrete empirical packet.
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
