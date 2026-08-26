@@ -2,7 +2,7 @@ schema_version: v1
 stage: V3.1
 review_id: V3_1_MASS_BASIS_INDEPENDENT_REREVIEW_R2
 review_type: REVIEWER_INDEPENDENT_REREVIEW
-status: PENDING_INDEPENDENT_REREVIEW
+status: PASS_INDEPENDENT_REREVIEW
 repository: RRain001/CTEAS_ufotri
 
 review_target:
@@ -42,48 +42,109 @@ remediation_evidence:
 
 reviewer_independence:
   must_not_be_implementation_author: true
-  reviewer_identity: null
+  reviewer_identity: codex-local-gpt-5.6-luna
 
 required_checks:
   - id: PRIOR_BLOCKER_WHITESPACE_SCHEMA_PARITY
     blocking: true
     expected: PASS
+    result: PASS
+    evidence: >-
+      Reviewer-owned adversarial probes attacked subject_id,
+      tissue_scope.identifier (leaf and custom), area_basis.identifier
+      (ground_area and custom), provenance.source_id/source_locator/revision/note,
+      and conversion_evidence_id with "", " ", "   ", "\t", "\n", " \t\n ".
+      Python _require_text raised BasisContractError for every attack, and the
+      identical serialized payloads were rejected by jsonschema against
+      schemas/v3_1/mass_basis_contract.schema.json (minLength 1 + .*\S.*
+      pattern plus evidence_declared conditional). Focused whitespace tests:
+      5 passed.
     question: >-
       Does JSON Schema reject whitespace-only values for every serialized text
       field that Python _require_text rejects after stripping?
   - id: NO_NUMERICAL_BASIS_CONVERSION
     blocking: true
     expected: NO
+    result: CONFIRMED_ABSENT
+    evidence: >-
+      Repo-wide src search found no conversion_factor, water_fraction,
+      moisture_fraction, dry_matter_fraction, hydrogen_fraction, or
+      composition_factor; the only multiplier hits are pre-existing OBT
+      day/night formation-rate parameters outside V3.1 scope and blob-identical
+      to baseline. AST analysis of contract.py found no BinOp/AugAssign/numeric
+      UnaryOp outside type annotations and no float/int/round/sum calls.
+      BasisConversionEvidence rejects same source/target basis, so a same-basis
+      conversion record cannot even be constructed.
     question: >-
       Does any V3.1 code infer or execute fresh/dry/water/hydrogen numerical
       conversion or introduce a hidden conversion multiplier?
   - id: EXPLICIT_SOURCE_TARGET_PAIRING
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      PairedMeasurement declares required pair_id, source_measurement_id, and
+      target_measurement_id with no defaults; dataclass field inspection and
+      positional construction confirmed all three bind explicitly.
     question: Does evidence require explicit source/target matched pair records?
   - id: PAIR_REUSE_FAIL_CLOSED
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      Probes rejected self-pairs, duplicate pair_id values, a measurement
+      reused as source in two pairs, reused as target in two pairs, a source
+      reused as another pair's target, a target reused as another pair's
+      source, and reversed duplicate pair content; one legitimate multi-pair
+      evidence object still constructs.
     question: >-
       Are self-pairs, duplicate pair IDs, and measurement reuse across source
       and target positions rejected?
   - id: EVIDENCE_TISSUE_SCOPE_BINDING
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      validate_conversion_proposal requires evidence.tissue_scope equality with
+      the source contract after enforcing source/target scope agreement;
+      kind mismatch and custom-identifier mismatch probes both raised
+      BasisCompatibilityError while matching custom identifiers passed.
     question: Must evidence tissue scope match both compared contracts?
   - id: EVIDENCE_AREA_BASIS_BINDING
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      validate_conversion_proposal requires evidence.area_basis equality with
+      the source contract; kind mismatch and custom plot-identifier mismatch
+      probes both raised BasisCompatibilityError.
     question: Must evidence area basis match both compared contracts?
   - id: CROSS_BASIS_EVIDENCE_ID_BINDING
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      On a valid fresh->dry proposal: missing evidence failed closed; source
+      declared-ID mismatch, target declared-ID mismatch, and source/target
+      declaring different IDs all raised; both contracts declaring the matching
+      ID returned EVIDENCE_DECLARED; swapped-direction and wrong-side basis
+      evidence objects also raised.
     question: >-
       For a valid cross-basis proposal, is a conflicting contract-level
       conversion_evidence_id rejected on either source or target?
   - id: SAME_BASIS_EVIDENCE_STATE_BYPASS
     blocking: true
     expected: PASS
+    result: PASS_R1_BLOCKER_REMEDIATED
+    evidence: >-
+      All six scenarios independently reproduced: clean same-basis returns
+      IDENTITY_ONLY; source-declared, target-declared, supplied-evidence, and
+      declared-plus-supplied same-basis proposals all fail closed;
+      require_direct_comparison still admits true mass/tissue/area-equal
+      comparison without consuming declared evidence state. Source inspection
+      confirms validate_conversion_proposal contains exactly two returns and
+      both same-basis guards execute before the identity return; no early-return
+      bypass remains.
     question: >-
       Is clean same-basis identity admitted while same-basis conversion
       proposals carrying EVIDENCE_DECLARED or a supplied cross-basis evidence
@@ -92,18 +153,49 @@ required_checks:
   - id: PYTHON_SCHEMA_BOUNDARY
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      Programmatic schema/python comparison verified enum value lists
+      (mass_basis, tissue kinds, area kinds, conversion_status), the eight
+      required top-level fields, nullability of identifier/note/
+      conversion_evidence_id, closed additionalProperties at every object
+      level, version const, and whitespace patterns. schemas/v3_1 contains only
+      mass_basis_contract.schema.json and no persisted-schema claim exists for
+      PairedMeasurement or BasisConversionEvidence records in the schema or the
+      contract yaml.
     question: >-
       Is the persisted MassBasisContract schema semantically aligned with the
       Python contract, with evidence-record persistence explicitly out of V3.1 scope?
   - id: FROZEN_RUNTIME_ISOLATION
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      Independent git diff d24aa03..95f7880 shows only two modified files
+      (.github/workflows/v3-integration-gate.yml CI additions and tightened
+      tests/architecture/test_v3_protected_integration_review.py), plus new
+      V3.1-only docs/schema/src/tests. Every src file under v3/exposure/intake/
+      dose/pipeline is blob-identical between baseline and target; leaf, TFWT,
+      OBT, soil, root, food, harvest, intake, dose, v3_pipeline, P7.5/P7.5B
+      related tests, configs/, validation/, and era5/ trees are unchanged.
+      The eight isolation-test pinned blob SHAs were reproduced from git
+      rev-parse, not taken from the test.
     question: >-
       Are pre-existing leaf, TFWT, OBT, soil, root, food, exposure, P7.5, and
       P7.5B runtime semantics unchanged?
   - id: P7_8B2_SCOPE_COMPLIANCE
     blocking: true
     expected: YES
+    result: PASS
+    evidence: >-
+      No V4 physics, dynamic stomata, two-pool OBT, root water-flux, soil
+      hydrology, TFWT turnover, hybrid food transfer, calibration, parameter
+      activation, or physical-validation declaration appears anywhere in the
+      V3.1 diff. ADR-022 and the contract yaml declare ACTIVE_PARAMETERS = 0,
+      CALIBRATION_STARTED = FALSE, UFOTRI_ACTIVE_DATABASE = FALSE,
+      V3_PHYSICS_READY = FALSE, V4_IMPLEMENTATION_AUTHORIZED = FALSE, and
+      evidence_declared_is_physical_validation = false; p7_8b2 governance test
+      passes unchanged inside the explicit invariant set.
     question: >-
       Is the change still limited to the V3.1 contract without parameter
       activation, calibration, physical-validation claims, or V4 physics?
@@ -114,16 +206,33 @@ reviewer_verdict:
     - PASS_WITH_NONBLOCKING_NOTES
     - HOLD_REMEDIATION_REQUIRED
     - REJECT
-  status: PENDING_INDEPENDENT_REREVIEW
-  reviewed_sha: null
-  reviewer_identity: null
-  review_id: null
-  review_date: null
+  status: PASS_INDEPENDENT_REREVIEW
+  reviewed_sha: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+  reviewer_identity: codex-local-gpt-5.6-luna
+  review_id: LOCAL_CODEX_GPT56LUNA_V3_1_REREVIEW_R2
+  review_date: 2026-08-26
   blocking_findings: []
-  nonblocking_notes: []
+  nonblocking_notes:
+    - >-
+      R1 macOS P7.7B checked-in registry mismatch did not reproduce in this R2
+      local run (tests/v3/test_p7_7b_synthetic_benchmarks.py passed inside both
+      the portable suite and the explicit invariant set); it is retained as
+      NONBLOCKING_CROSS_PLATFORM_TECHNICAL_DEBT from R1 and is neither a
+      physical-validation failure nor success.
+    - >-
+      Pre-existing NumPy/netCDF binary-compatibility RuntimeWarning in
+      tests/unit/test_era5_reader.py::test_netcdf_mapping persists locally and
+      is documented in the remediation report.
+    - >-
+      Local verification ran Python 3.14.6 on macOS arm64 while CI uses 3.12 on
+      Ubuntu; both environments produce passing suites, so no version-specific
+      behavior was introduced by V3.1.
+    - >-
+      Reviewer adversarial probe script lives outside the repository
+      (/private/tmp) so only verdict artifacts are committed to this branch.
 
 exit_policy:
-  implementation_pr_merge_ready: false
+  implementation_pr_merge_ready: true
   main_merge_authorized_by_this_request: false
   active_parameters: 0
   calibration_started: false
