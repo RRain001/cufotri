@@ -9,6 +9,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 PACKET = ROOT / "docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2.yaml"
 HANDOFF = ROOT / "docs/v4/reports/v4_2_leaf_evidence_file_audit_r2_handoff.md"
+RESULT = ROOT / "docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2_result.yaml"
 
 BASE_MAIN = "e1bd2460fe242fe93f13b3d3a2f74607c9448544"
 PACKET_DOCS_TIP = "442b553d6173d9fd62d33b0591613e4d7f03b593"
@@ -22,9 +23,15 @@ def _packet() -> dict:
     return yaml.safe_load(PACKET.read_text(encoding="utf-8"))
 
 
-def test_r2_starts_pending_and_cannot_authorize_implementation() -> None:
+def test_r2_completed_as_hold_and_cannot_authorize_implementation() -> None:
     data = _packet()
-    assert data["status"] == "PENDING_LOCAL_FILE_LEVEL_AUDIT"
+    assert data["status"] == "COMPLETE_HOLD_REQUIRED_FIELDS_MISSING"
+    result = yaml.safe_load(RESULT.read_text(encoding="utf-8"))
+    assert result["final_verdict"] == "HOLD_REQUIRED_FIELDS_MISSING"
+    assert result["audited_handoff_head"] == (
+        "92ad5af675621e745f6831f26338f2410190a136"
+    )
+    assert data["base_main_sha"] == BASE_MAIN
     invariants = data["hard_invariants"]
     assert invariants["leaf_implementation_authorized"] is False
     assert invariants["solver_implementation_started"] is False

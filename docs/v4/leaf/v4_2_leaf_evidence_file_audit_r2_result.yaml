@@ -1,0 +1,367 @@
+schema_version: v1
+stage: V4-2
+round: R2
+result_id: V4_2_LEAF_EVIDENCE_FILE_AUDIT_R2_RESULT
+repository: RRain001/CTEAS_ufotri
+audit_branch: codex/v4-2-leaf-evidence-file-audit-r2
+audited_handoff_head: 92ad5af675621e745f6831f26338f2410190a136
+base_main_sha: e1bd2460fe242fe93f13b3d3a2f74607c9448544
+audit_date: 2026-08-26
+
+environment:
+  python: 3.14.6
+  pandas: 3.0.5
+  openpyxl: 3.1.5
+  platform: macOS 26.4 arm64
+  method: >-
+    Direct byte-level inspection of downloaded source files with openpyxl/pandas.
+    No OCR was used. No fitting, calibration, coefficient estimation, or model
+    selection was performed; Stage 7 output is dataset characterization only.
+
+source_file_hashes:
+  - candidate_id: MONNENS_2023_SOYBEAN_VPD_DRYAD
+    dataset_doi: 10.5061/dryad.h18931zrh
+    resolved_source_url: https://datadryad.org/downloads/file_stream/2220653
+    retrieval_note: >-
+      Dryad API download requires a bearer token; the public file_stream
+      endpoint was reached after solving the site's Anubis proof-of-work
+      browser check. Bytes verified as xlsx (PK zip header).
+    download_date: 2026-08-26
+    files:
+      - file_name: Monnens_et_al_All_data_Dryad.xlsx
+        byte_size: 38689
+        md5: a4f69d2088981df440372a058fc1dfe6
+        sha256: b12f6a5a368883906237914597c9355f97b067db6ca987a21e12eaa3207d8580
+        source_md5_published: NOT_EXPOSED_IN_R1_METADATA
+        md5_match: NOT_APPLICABLE
+      - file_name: Dryad_README.md
+        byte_size: 1966
+        sha256: 790b6400271168917b05d9590a49f989a386d39a2c0eec4040ec4420a55aa73f
+        role: dataset_provenance_readme
+  - candidate_id: TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD
+    dataset_doi: 10.5061/dryad.2gd3b
+    resolved_source_url: https://zenodo.org/api/records/5022524/files/{file_name}/content
+    mirror_record: https://zenodo.org/records/5022524
+    retrieval_note: >-
+      Downloaded from the Zenodo mirror because Dryad API downloads require an
+      authenticated bearer token. Mirror checksums shown on the Zenodo record
+      equal the Dryad-published MD5 values before download; local MD5 recomputed
+      after download.
+    download_date: 2026-08-26
+    files:
+      - file_name: CE_GasExchangeParameters.csv
+        byte_size: 15518
+        md5_local: 30b955a1b12b22bf4e80353f8aaa7315
+        md5_published: 30b955a1b12b22bf4e80353f8aaa7315
+        md5_match: true
+        sha256: 8244ca6215c84764d4f895ee2f2675d9e86c396f15d67f4efc04f942acd4ca10
+      - file_name: Field_GasExchangeParameters.csv
+        byte_size: 26781
+        md5_local: e9f7043885e7097448d37efaf92f9733
+        md5_published: e9f7043885e7097448d37efaf92f9733
+        md5_match: true
+        sha256: eab1bb271d13f59ea4686fb122d5277723668915fde2df8e6ed350014e262fd3
+      - file_name: README_for_CE_GasExchangeParameters.txt
+        byte_size: 1317
+        md5_local: 68cbfb56e9f656e5573713f9a1fdd761
+        md5_published: 68cbfb56e9f656e5573713f9a1fdd761
+        md5_match: true
+        sha256: 77fd75123f0264bc8c7ff07ceb4ad23b65b254486d1e7253fd484e6bbb43531f
+      - file_name: README_for_Field_GasExchangeParameters.txt
+        byte_size: 1675
+        md5_local: 07ce6434d693d28fc756ec6649e3ed01
+        md5_published: 07ce6434d693d28fc756ec6649e3ed01
+        md5_match: true
+        sha256: 7ed7fcb989240c298c4e116419be7e6a3a5e493e15d6a20bd3a426982a27eb47
+
+source_file_inventory:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD:
+    Monnens_et_al_All_data_Dryad.xlsx:
+      sheets:
+        - name: Figure 1
+          dimension: A2:G24
+          content: hydrogen production with/without nodules, per plant rows
+        - name: Figure 2
+          dimension: A1:D293
+          content: hydrogen production per plant/root/nodule mass normalizations
+        - name: Figure 3
+          dimension: A2:E37
+          content: hydrogen production Morning/Afternoon x Sand/Soil
+        - name: Figure 4
+          dimension: A2:O87
+          content: transpiration rate (mol m-2 s-1) Morning/Afternoon x Sand/Soil
+        - name: Figure 5
+          dimension: A1:D56
+          content: >-
+            hydrogen production at four declared VPD/temperature conditions:
+            0.5 kPa 25C, 2.0 kPa 25C, 0.8 kPa 30C, 3.0 kPa 30C
+        - name: Figure 6
+          dimension: A2:D54
+          content: >-
+            per-plant fold increases Low-to-High VPD for hydrogen production,
+            transpiration rate, CO2 assimilation rate, stomatal conductance
+      key_observation: >-
+        The workbook contains no numeric VPD column, no absolute stomatal
+        conductance values, no leaf-temperature column, and no PAR/light
+        column in any sheet. VPD and temperature exist only inside Figure 5
+        column-header labels; stomatal conductance appears only as Figure 6
+        fold-increase ratios.
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD:
+    CE_GasExchangeParameters.csv:
+      shape: 71 rows x 21 cols
+      identity_columns: [cultivar, repl]
+      target_column: ss_gs
+      driver_columns_present: []
+    Field_GasExchangeParameters.csv:
+      shape: 89 rows x 29 cols
+      identity_columns: [cultivar, locRow, locCol, camp]
+      target_column: ss_gs
+      stage_column: camp
+      driver_columns_present: []
+    key_observation: >-
+      Both tables are steady-state gas-exchange parameter summaries (one row
+      per plant or plant-occasion). No VPD, PAR/light, RH/humidity,
+      leaf-temperature, or fine-grained timestamp columns exist. press400 is
+      ambient atmospheric pressure (kPa), not VPD.
+
+per_candidate_field_matrix:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD:
+    - field_id: observed_stomatal_conductance_or_leaf_surface_resistance
+      classification: MISSING
+      source_file: Monnens_et_al_All_data_Dryad.xlsx
+      sheet_or_table: Figure 6 column D
+      exact_column_or_constant: Fold increase in stomatal  conductance
+      unit: dimensionless_ratio
+      measurement_basis: fold_increase_endpoint
+      row_alignment: none_possible_without_raw_values
+      missing_count: 1_of_46_rows_n_a
+      provenance: figure_tab_mapping_only
+      notes: >-
+        Absolute observed gsw values are absent from the entire workbook; only
+        Low-to-High VPD fold-increase ratios per plant exist.
+    - field_id: target_measurement_basis
+      classification: AMBIGUOUS
+      exact_column_or_constant: Fold increase in stomatal  conductance
+      notes: >-
+        Header names the quantity but does not define baseline condition,
+        denominator pairing, or whether conductance is to water vapor.
+    - field_id: light_or_PAR
+      classification: MISSING
+      notes: >-
+        No PAR/light column or constant in any sheet or in the Dryad README.
+        Article-level PAR claims were not independently audited and cannot be
+        admitted for these rows under the admission rules.
+    - field_id: VPD_or_explicit_humidity_to_VPD_basis
+      classification: AMBIGUOUS
+      exact_column_or_constant: Figure 5 headers (0.5/2.0 kPa at 25C; 0.8/3.0 kPa at 30C)
+      notes: >-
+        VPD levels are declared only as column-header treatment labels. There
+        is no numeric VPD column, the Figure 6 conductance fold is not bound to
+        a specific low/high pair, and temperature co-varies across the two
+        pairs (25C vs 30C).
+    - field_id: leaf_temperature
+      classification: AMBIGUOUS
+      exact_column_or_constant: Figure 5 headers (25C / 30C)
+      notes: Air-versus-leaf basis unstated; no temperature attaches to Figure 6 ratio rows.
+    - field_id: dataset_bound_growth_stage_ontology
+      classification: MISSING
+      notes: No growth-stage information anywhere in workbook or README.
+    - field_id: crop_identity
+      classification: DIRECT_COLUMN
+      exact_column_or_constant: Genotype MN1312CN / Genotype CZ1418LL block labels
+      unit: genotype_label
+      notes: Species Glycine max established by dataset metadata and article DOI.
+    - field_id: timestamp_and_interval_semantics
+      classification: AMBIGUOUS
+      exact_column_or_constant: Morning / Afternoon header fragments (Figures 3-4 only)
+      notes: No dates, clock times, or interval semantics; nothing attaches to Figure 6.
+    - field_id: replicate_or_independent_group_identity
+      classification: AMBIGUOUS
+      notes: One implicit row per plant under genotype blocks (23+23) but no plant ID column.
+    - field_id: quantitative_units
+      classification: DIRECT_COLUMN
+      exact_column_or_constant: mL plant-1 hr-1; mol m-2 s-1; dimensionless fold
+      notes: Units present in headers for the quantities actually tabulated.
+    - field_id: variable_level_provenance
+      classification: AMBIGUOUS
+      notes: Figure-tab provenance exists; per-variable measurement-basis provenance for the conductance ratios does not.
+    - field_id: matched_records_or_explicit_alignment_contract
+      classification: MISSING
+      notes: Raw low-/high-VPD conductance values are absent, so ratios cannot be aligned to drivers.
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD:
+    - field_id: observed_stomatal_conductance_or_leaf_surface_resistance
+      classification: DIRECT_COLUMN
+      source_file: CE_GasExchangeParameters.csv + Field_GasExchangeParameters.csv
+      sheet_or_table: ss_gs
+      exact_column_or_constant: ss_gs
+      unit: undeclared_in_README
+      measurement_basis: steady_state_conductance_to_water_vapor
+      row_alignment: per_plant_CE / per_plant_occasion_Field
+      missing_count: 0_of_71_CE / 0_of_89_Field
+      provenance: README_for_CE + README_for_Field
+      notes: >-
+        Real measured per-plant conductance endpoints exist in both tables
+        (CE range 0.1546-0.4213; Field range 0.0988-0.5848).
+    - field_id: target_measurement_basis
+      classification: DIRECT_COLUMN
+      exact_column_or_constant: ss_gs (H2O basis); gsco2 = ss_gs/1.6 (CO2 basis)
+      provenance: README definitions
+    - field_id: light_or_PAR
+      classification: MISSING
+      notes: No PAR/light column in either table; no applicable declared constant in READMEs.
+    - field_id: VPD_or_explicit_humidity_to_VPD_basis
+      classification: MISSING
+      notes: >-
+        No VPD, RH, humidity, or air/moisture column exists. press400 is
+        atmospheric pressure (95.9-101.0 kPa), not a humidity measure. No
+        explicit humidity-to-VPD derivation inputs are provided.
+    - field_id: leaf_temperature
+      classification: MISSING
+      notes: No leaf-temperature or chamber-temperature column in either table.
+    - field_id: dataset_bound_growth_stage_ontology
+      classification: EXPLICIT_DERIVATION_SUPPORTED
+      source_file: Field_GasExchangeParameters.csv
+      sheet_or_table: camp
+      exact_column_or_constant: camp in {july, aug, sept}
+      provenance: >-
+        README_for_Field states camp identifies measurement month AND maps
+        july==lateVegetative (article V4/V5), aug==earlyReproductive
+        (article R2-R4), sept==lateReproductive (article R6).
+      row_alignment: direct_row_attribute
+      notes: >-
+        This is a dataset-internal row-level mapping, stronger than
+        article-context-only evidence. CE table has no stage field (MISSING there).
+    - field_id: crop_identity
+      classification: DIRECT_COLUMN
+      exact_column_or_constant: cultivar (12 CE codes; 8 Field codes)
+      notes: Glycine max established by README and article.
+    - field_id: timestamp_and_interval_semantics
+      classification: AMBIGUOUS
+      exact_column_or_constant: camp month labels (Field); none (CE)
+      notes: Month granularity only; no date/time or interval semantics.
+    - field_id: replicate_or_independent_group_identity
+      classification: DIRECT_COLUMN
+      exact_column_or_constant: CE cultivar+repl (71 unique); Field cultivar+locRow+locCol (31 plots)
+      missing_count: 0 duplicate identities in CE
+    - field_id: quantitative_units
+      classification: AMBIGUOUS
+      notes: >-
+        READMEs define column semantics but declare almost no units (only
+        press400 kPa). Units would require article-text verification, which is
+        outside the audited file set.
+    - field_id: variable_level_provenance
+      classification: DIRECT_COLUMN
+      provenance: READMEs define every column including which values are estimated (gm).
+    - field_id: matched_records_or_explicit_alignment_contract
+      classification: MISSING
+      notes: >-
+        Tables are ENDPOINT_OR_FITTED_PARAMETER_SUMMARY (one steady-state row
+        per plant/occasion). Driver variables are unrecorded, so matched
+        driver-response records cannot exist in these files.
+
+missingness_and_alignment:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD:
+    blocking_missing: [observed_stomatal_conductance, light_or_PAR, stage_ontology, matched_records]
+    blocking_ambiguous: [target_measurement_basis, VPD_binding_to_conductance_rows, leaf_temperature_basis, timestamps, replicate_ids, variable_provenance]
+    n_a_counts:
+      figure6_MN1312CN: {rows: 23, stomatal_na: 0, assimilation_na: 1}
+      figure6_CZ1418LL: {rows: 23, stomatal_na: 1, transpiration_na: 1}
+    row_alignment: FAIL
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD:
+    blocking_missing: [light_or_PAR, VPD_or_humidity_basis, leaf_temperature]
+    blocking_ambiguous: [quantitative_units, timestamp_semantics]
+    also_missing_in_CE_only: [growth_stage]
+    row_alignment: FAIL_AS_DRIVER_RESPONSE_PACKET
+    note: >-
+      Target-column missingness itself is zero (ss_gs complete in both tables);
+      the failure is absence of driver columns, not missing conductance values.
+
+independent_group_assessment:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD:
+    figure6_plant_rows: {MN1312CN: 23, CZ1418LL: 23}
+    id_quality: IMPLICIT_ROWS_ONLY_NO_IDS
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD:
+    ce_independent_plants: 71
+    ce_cultivars: 12
+    ce_duplicate_identity_count: 0
+    field_plots: 31
+    field_cultivars: 8
+    field_observations_per_plot: {"3": 27, "2": 4}
+    group_structure: REPEATED_MEASURES_PER_PLOT_ACROSS_MONTHS
+
+response_domain_assessment:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD: TWO_CONDITION_CONTRAST
+  monnens_detail: >-
+    Declared header pairs are 0.5-to-2.0 kPa at 25C and 0.8-to-3.0 kPa at 30C;
+    temperature is confounded across pairs and the conductance endpoint is a
+    fold increase, so even the contrast is not a clean VPD-only manipulation
+    for conductance rows.
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD: INSUFFICIENT_SUPPORT
+  tomeo_detail: >-
+    Single steady-state endpoint per plant/occasion with zero driver columns;
+    no VPD/PAR/Tleaf domain can be characterized from the files at all.
+
+stage_ontology_assessment:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD: MISSING
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD_FIELD: SUPPORTED_CAMP_MAPPING
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD_CE: MISSING
+  detail: >-
+    Field camp->stage mapping is dataset-bound and row-level (README-documented),
+    satisfying the stage requirement for Field rows only.
+
+cross_dataset_stitching_check:
+  performed: true
+  result: NOT_ATTEMPTED_AND_FORBIDDEN
+  note: >-
+    The two datasets have no natural row alignment; each was judged strictly on
+    its own files per the cross_dataset_rule.
+
+schema_packet_feasibility:
+  MONNENS_2023_SOYBEAN_VPD_DRYAD: INFEASIBLE
+  TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD: INFEASIBLE
+  detail: >-
+    Neither candidate can populate response_domain_records with matched driver
+    values, instantiate time_contract beyond month labels, or (for Monnens and
+    Tomeo CE) bind a dataset-specific stage ontology. Packet construction would
+    require fabricating or importing driver data, which the fail-closed rules
+    forbid.
+
+blockers:
+  - BLOCKER_TOMEO_DRIVER_COLUMNS_ABSENT
+  - BLOCKER_MONNENS_ABSOLUTE_CONDUCTANCE_ABSENT
+  - BLOCKER_MONNENS_PAR_LIGHT_MISSING
+  - BLOCKER_MATCHED_DRIVER_RESPONSE_RECORDS_ABSENT_BOTH
+  - BLOCKER_STAGE_ONTOLOGY_INCOMPLETE_MONNENS_AND_CE
+  - BLOCKER_UNITS_NOT_DECLARED_IN_TOMEO_FILES
+
+nonblocking_notes:
+  - >-
+    Tomeo Field camp->stage mapping is genuine reusable component evidence for
+    any future dataset that adds driver columns.
+  - >-
+    All four Tomeo published MD5 values match local bytes exactly; the Zenodo
+    mirror preserves the Dryad publication revision (no SOURCE_VERSION_MISMATCH).
+  - >-
+    Monnens header-declared VPD contrast design remains valuable if raw
+    LI-6800 logs can be obtained from authors in a later round.
+  - >-
+    Dryad now gates API/file downloads behind bearer-token auth plus an Anubis
+    proof-of-work browser check; retrieval paths are recorded in
+    source_file_hashes for reproducibility.
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+final_verdict: HOLD_REQUIRED_FIELDS_MISSING
+verdict_scope: BOTH_CANDIDATES_AUDITED_SEPARATELY_NO_STITCHING
+next_round_requirement: >-
+  A future round must obtain per-record driver data (VPD/PAR/Tleaf) with
+  absolute observed conductance in one dataset, or author-supplied raw logs,
+  before packet construction can be attempted.

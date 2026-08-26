@@ -5,7 +5,7 @@ packet_id: V4_2_LEAF_EVIDENCE_FILE_AUDIT_R2
 repository: RRain001/CTEAS_ufotri
 base_main_sha: e1bd2460fe242fe93f13b3d3a2f74607c9448544
 branch: codex/v4-2-leaf-evidence-file-audit-r2
-status: PENDING_LOCAL_FILE_LEVEL_AUDIT
+status: COMPLETE_HOLD_REQUIRED_FIELDS_MISSING
 
 purpose: >-
   Perform read-only file-level audit of the two highest-priority soybean
@@ -95,8 +95,9 @@ candidate_audits:
       - determine_whether_required_fields_are_row_matched
       - determine_independent_group_candidates_without_row_leakage
       - determine_observed_VPD_PAR_Tleaf_support_without_final_holdout
-    result: PENDING
-    full_packet_candidate: PENDING
+    result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2_result.yaml
 
   - candidate_id: TOMEO_ROSENTHAL_2018_SOYBEAN_DRYAD
     priority: 2
@@ -138,8 +139,9 @@ candidate_audits:
       - identify_timestamp_or_measurement_interval_semantics
       - determine_if_tables_are_endpoint_parameters_or_matched_driver_response_records
       - determine_empirical_response_domain_support
-    result: PENDING
-    full_packet_candidate: PENDING
+    result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r2_result.yaml
 
 cross_dataset_rule: >-
   The two candidates cannot be combined into one matched empirical packet merely
