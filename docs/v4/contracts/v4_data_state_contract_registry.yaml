@@ -1,7 +1,7 @@
 schema_version: v1
 stage: V4-1
 item_id: V4_DATA_AND_STATE_CONTRACTS
-status: CONTRACTS_DEFINED_PENDING_REVIEW
+status: PASS_CONTROL_PLANE_CONTRACT_REVIEW
 repository: RRain001/CTEAS_ufotri
 
 source_authorization:
@@ -15,6 +15,35 @@ source_selection:
   coupling_decision: docs/v3/physics/p7_8b2_coupling_decision.yaml
   validation_dependency: docs/v3/physics/p7_8b2_validation_dependency.yaml
   v3_1_mass_basis_contract: docs/v3_1/contracts/mass_basis_contract.yaml
+
+review_evidence:
+  reviewed_content_head: 27ddffeaa2d88aac34f197ce2a4bcf3a67f42ec6
+  focused_remediation_ci:
+    run_id: 32923288035
+    status: PASS
+  protected_integration_gate:
+    run_id: 32923288127
+    status: PASS
+    portable_suite: 1036_PASSED_1_SKIPPED_57_DESELECTED
+    explicit_invariants: 115_PASSED
+  prior_test_governance_finding:
+    status: REMEDIATED
+    prior_run_id: 32923036669
+    finding: >-
+      The V4-1 stage-scope test froze a content tip that already contained the
+      V4-1 test file, but the expected changed-file set omitted that test path.
+      The failure was governance-only; the remaining portable suite reported
+      1035 passed, 1 skipped, and 57 deselected.
+    remediation_head: 27ddffeaa2d88aac34f197ce2a4bcf3a67f42ec6
+    contract_or_runtime_semantics_changed_by_remediation: false
+  semantic_review_finding:
+    status: REMEDIATED_BEFORE_FINAL_REVIEW
+    finding: >-
+      An intermediate OBT draft over-specified the unresolved precursor source
+      as a multiplicative response product and introduced an unnecessary
+      k_P_other symbol. The final contract keeps u_P functional form unresolved
+      and decomposes k_P P using the already selected k_P and k_PB only.
+    final_rule: 'J_P_other = (k_P - k_PB) * P with 0 <= k_PB <= k_P'
 
 contract_documents:
   common: docs/v4/contracts/v4_common_data_contract.yaml
@@ -81,6 +110,7 @@ candidate_contracts:
     contract: docs/v4/contracts/obt_formation_package_contract.yaml
     coupling_classification: INTERFACE_EXTENSION
     equation_contract_status: SYMBOLIC_CONTRACT_DEFINED_WITH_CONSERVATION_LEDGER
+    precursor_source_functional_form_status: UNRESOLVED_REQUIRES_ITEM_SPECIFIC_REVIEW
     state_ownership_status: DEFINED
     validation_case_contract_status: DEFINED
     restart_contract_status: DEFINED
@@ -129,12 +159,14 @@ hard_invariants:
   physical_validation_complete: false
 
 exit_gate:
-  required_before_v4_1_can_be_called_reviewed:
-    - dimensional_contract_tests_pass
-    - state_ownership_conflict_tests_pass
-    - restart_completeness_contract_tests_pass
-    - validation_case_schema_tests_pass
-    - frozen_runtime_isolation_pass
-    - contract_review_pass
+  dimensional_contract_tests_pass: true
+  state_ownership_conflict_tests_pass: true
+  restart_completeness_contract_tests_pass: true
+  validation_case_schema_tests_pass: true
+  frozen_runtime_isolation_pass: true
+  contract_review_pass: true
+  v4_1_control_plane_review_pass: true
   independent_model_implementation_review_satisfied_by_v4_1: false
   selected_model_implementation_authorized_by_v4_1: false
+  next_roadmap_item: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+  next_roadmap_item_status: ITEM_SPECIFIC_REVIEW_AND_AUTHORIZATION_REQUIRED
