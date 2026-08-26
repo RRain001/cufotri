@@ -1,0 +1,95 @@
+schema_version: v1
+stage: V4-2
+contract_id: V4_2_LEAF_EVIDENCE_ACQUISITION_REQUIREMENTS
+item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: REQUIREMENTS_DEFINED_EVIDENCE_NOT_ACQUIRED
+packet_schema: schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
+
+required_target:
+  any_of:
+    - stomatal_conductance
+    - leaf_surface_resistance
+  observation_role_required: true
+  measurement_basis_must_be_explicit: true
+  unit_and_provenance_required: true
+
+required_forcings:
+  light:
+    any_of: [light, PAR]
+    unit_must_be_source_explicit: true
+  humidity:
+    preferred: VPD
+    VPD_canonical_unit: Pa
+    alternatives:
+      - relative_humidity
+      - specific_humidity
+    alternative_requires_explicit_vpd_derivation_contract: true
+  leaf_temperature:
+    variable: leaf_temperature
+    canonical_unit: K
+  growth_stage:
+    variable: growth_stage
+    dataset_specific_ontology_required: true
+
+required_context:
+  - crop_identity
+  - timestamp_and_interval_semantics
+  - replicate_or_independent_group_identity
+  - dataset_revision
+  - source_locator
+
+preferred_component_context:
+  - r_a
+  - r_b
+  - wind_speed
+  - leaf_geometry
+  - exchange_flux
+  - TFWT
+preferred_context_is_blocking_for_packet_validity: false
+
+measurement_and_provenance_policy:
+  quantitative_variable_requires_unit: true
+  quantitative_variable_requires_provenance: true
+  source_id_required: true
+  source_locator_required: true
+  revision_required: true
+  timestamp_basis_required: true
+  instrument_or_method_should_be_recorded_when_available: true
+  inferred_observation_from_candidate_solver: FORBIDDEN
+  software_expectation_as_empirical_observation: FORBIDDEN
+
+independence_policy:
+  independent_grouping_unit_required: true
+  final_validation_groups_required: true
+  calibration_and_final_validation_overlap: FORBIDDEN
+  final_holdout_used_for_domain_estimation: false
+  random_row_split_across_same_group_for_final_validation: FORBIDDEN
+
+response_domain_evidence_required:
+  - light_or_PAR
+  - VPD
+  - T_leaf
+  - stage
+numeric_domain_boundary_derivation_rule_must_be_preregistered: true
+joint_condition_coverage_assessment_required: true
+
+current_repository_availability:
+  complete_packet_found: false
+  checked_in_matched_dynamic_stomatal_dataset_found: false
+  dataset_specific_stage_ontology_found: false
+  empirical_response_domains_found: false
+  physical_validation_executed: false
+
+admission_rule:
+  evidence_packet_complete_does_not_equal_physical_validation_pass: true
+  evidence_packet_complete_does_not_activate_parameters: true
+  implementation_authorization_requires_independent_item_review: true
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  candidate_parameter_values_admitted: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
