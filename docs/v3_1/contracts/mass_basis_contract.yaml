@@ -1,9 +1,12 @@
 schema_version: v1
 stage: V3.1
 item_id: V3_1_MASS_BASIS_CONTRACT
-status: PASS_LUNA_R1_REMEDIATION_PENDING_INDEPENDENT_REREVIEW_R2
+status: PASS_INDEPENDENT_REREVIEW_MAIN_MERGED
+
 baseline:
-  main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+  pre_v3_1_main_sha: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+  implementation_sha: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+  main_merge_sha: 43eabee5fc5029441c00cc0221d84bf887bc4660
   profile: v3_frozen_baseline
   runtime_default_changed: false
 
@@ -47,11 +50,6 @@ comparison_policy:
     conversion_proposal_result_without_cross_basis_state: identity_only
     conversion_proposal_supplied_evidence_forbidden: true
     conversion_proposal_evidence_declared_state_forbidden: true
-    rationale: >-
-      Cross-basis evidence metadata is not applicable to an identity proposal.
-      Same-basis records that carry unrelated conversion evidence metadata may
-      still be compared through require_direct_comparison; the conversion
-      proposal gate must not silently consume or bypass that metadata.
   cross_mass_basis:
     default: FAIL_CLOSED
     explicit_source_target_pairs_required: true
@@ -66,10 +64,6 @@ comparison_policy:
     default: FAIL_CLOSED
 
 conversion_evidence_contract:
-  purpose: >-
-    Record that a proposed cross-basis relation has explicit provenance,
-    matching tissue/area scope, and explicit matched source/target measurement
-    pairs. It does not contain or calculate a conversion factor.
   paired_measurement_representation: explicit_source_target_pair_records
   minimum_pair_count: 1
   pair_id_unique: true
@@ -79,6 +73,7 @@ conversion_evidence_contract:
   area_basis_bound: true
   source_target_direction_must_match: true
   declared_contract_evidence_id_must_match: true
+  numerical_conversion_factor_present: false
   parameter_activation: false
   calibration: false
 
@@ -105,38 +100,19 @@ isolation:
   existing_food_state_changed: false
   existing_obt_state_changed: false
   active_parameters: 0
+  calibration_started: false
   ufotri_active_database: false
   v3_physics_ready: false
 
 review_history:
-  prior_reviewed_head: cfcdc3128a01f753f30dd8e710d5c1802db9d0dc
-  prior_review_status: SUPERSEDED_BY_SECOND_ADVERSARIAL_REVIEW
-  second_review_trigger_head: 87fc9b2e3226ad028133e070bfd7b89d803adcfb
-  second_review_finding: >-
-    Flat paired_measurement_ids did not prove source/target pairing, evidence
-    was not bound to tissue/area scope, and proposal validation did not enforce
-    consistency with a declared conversion_evidence_id.
-  paired_evidence_remediation_head: f1bdce343e667274c67f5af15ab4520b226122e6
-  paired_evidence_remediation_ci_run: 32808331504
-  paired_evidence_integration_gate_run: 32808331423
-  paired_evidence_portable_suite: 989_PASSED_1_SKIPPED_57_DESELECTED
-  paired_evidence_explicit_invariants: 68_PASSED
-  first_independent_review:
-    reviewer: github-copilot-code-review
-    review_pr: 4
+  paired_evidence_adversarial_finding:
+    status: REMEDIATED
+    remediation_head: f1bdce343e667274c67f5af15ab4520b226122e6
+  github_copilot_whitespace_review:
+    status: HOLD_REMEDIATED
     reviewed_target: 4664e4c09f20bbfd48c5d1c750efafeb6d6e9643
     review_id: PRR_kwDOTiMPdM8AAAABKupe9g
-    status: HOLD_REMEDIATION_REQUIRED
-    finding: >-
-      JSON Schema accepted whitespace-only serialized strings that the Python
-      _require_text contract rejected after stripping.
-  schema_whitespace_remediation_head: 6926ebf405b976ef58c66e17f6bfc0aacca551dd
-  schema_whitespace_remediation_ci_run: 32809809259
-  schema_whitespace_remediation_ci: PASS
-  schema_whitespace_integration_gate_run: 32809809310
-  schema_whitespace_integration_gate: PASS
-  schema_whitespace_portable_suite: 994_PASSED_1_SKIPPED_57_DESELECTED
-  schema_whitespace_explicit_invariants: 73_PASSED
+    remediation_head: 6926ebf405b976ef58c66e17f6bfc0aacca551dd
   luna_independent_rereview_r1:
     reviewer: codex-local-gpt-5.6-luna
     review_pr: 5
@@ -145,33 +121,43 @@ review_history:
     review_id: LOCAL_CODEX_GPT56LUNA_V3_1_REREVIEW_R1
     status: HOLD_REMEDIATION_REQUIRED
     finding: >-
-      validate_conversion_proposal returned IDENTITY_ONLY for same-basis
-      contracts before checking EVIDENCE_DECLARED / conversion_evidence_id,
-      permitting missing or conflicting declared evidence binding to be bypassed.
-  luna_r1_identity_evidence_remediation_head: cc5aabe0c331664a005ac3ec0579c993e1397757
-  luna_r1_remediation_ci_run: 32916837652
-  luna_r1_remediation_ci: PASS
-  luna_r1_integration_gate_run: 32916837645
-  luna_r1_integration_gate: PASS
-  luna_r1_portable_suite: 1000_PASSED_1_SKIPPED_57_DESELECTED
-  luna_r1_explicit_invariants: 79_PASSED
-  luna_r1_remediation_report: docs/v3_1/reports/v3_1_mass_basis_luna_r1_remediation.md
-  technical_rereview: PASS
-  formal_external_independent_rereview: PENDING_R2
-  prior_technical_review_report: docs/v3_1/reports/v3_1_mass_basis_contract_technical_review.md
+      Same-basis IDENTITY_ONLY returned before declared evidence binding checks.
+    remediation_head: cc5aabe0c331664a005ac3ec0579c993e1397757
+    remediation_ci_run: 32916837652
+    integration_gate_run: 32916837645
+  luna_independent_rereview_r2:
+    reviewer: codex-local-gpt-5.6-luna
+    review_pr: 6
+    reviewed_target: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+    review_branch_head: 7a06733f3201cc60c4c6599799892899cdb61d7f
+    review_id: LOCAL_CODEX_GPT56LUNA_V3_1_REREVIEW_R2
+    status: PASS_INDEPENDENT_REREVIEW
+    blocking_findings: 0
+  final_implementation_exact_head_ci:
+    remediation_ci_run: 32917177880
+    remediation_ci: PASS
+    protected_integration_gate_run: 32917177883
+    protected_integration_gate: PASS
+  main_merge:
+    pr: 3
+    merge_method: merge
+    merge_sha: 43eabee5fc5029441c00cc0221d84bf887bc4660
+    parent_old_main: d24aa03b00dcb586a2d93e678f42cb7853b7c078
+    parent_implementation: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+    merge_tree_matches_implementation: true
 
 exit_gate:
   completed:
-    - remediation_contract_tests_pass
-    - schema_tests_pass
+    - contract_review_pass
+    - dimensional_and_semantic_review_pass
     - whitespace_schema_python_parity_pass
     - explicit_pairing_and_scope_binding_pass
     - same_basis_evidence_state_bypass_remediated
     - frozen_runtime_blob_isolation_pass
-    - luna_r1_remediation_exact_code_head_ci_pass
-    - dimensional_and_semantic_rereview_pass
-  pending:
-    - final_documentation_head_exact_ci_pass
+    - final_implementation_exact_head_ci_pass
     - independent_rereview_r2_pass
-  merge_ready: false
+    - main_merge_completed_without_tree_drift
+  pending: []
+  v3_1_exit_gate_pass: true
+  main_merge_completed: true
   implementation_authorizes_v4: false
