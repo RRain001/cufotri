@@ -39,7 +39,7 @@ readiness_gates:
       - docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
     notes:
       - no_new_persistent_leaf_candidate_state
-      - L_VPD_T_leaf_stage_are_external_forcings
+      - L_VPD_T_leaf_stage_are_external_typed_inputs
       - g_s_r_c_r_tot_g_ex_are_derived_diagnostics
   dimensional_and_failure_tests:
     status: PASS_CONTRACT_LEVEL_ONLY
@@ -81,6 +81,11 @@ readiness_gates:
     evidence:
       - docs/v4/leaf/v4_2_evidence_acquisition_requirements.yaml
       - schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
+    notes:
+      - target_measurement_basis_is_required
+      - target_and_canonical_forcing_units_are_machine_checked
+      - application_level_cross_field_validation_is_required
+      - response_domain_groups_must_exclude_final_validation_groups
   matched_validation_dataset:
     status: HOLD_NOT_AVAILABLE_IN_REPOSITORY
     required_variables:
@@ -142,6 +147,24 @@ existing_evidence_interpretation:
     validation pathway; it does not validate a dynamic stomatal response or
     authorize importing a parameter value.
 
+technical_review:
+  reviewed_content_head: 890c3b4d7ee1a1f90047a9e4b71d9cdd17d15b0f
+  remediation_ci_run: 32925575057
+  remediation_ci: PASS
+  protected_integration_gate_run: 32925575051
+  protected_integration_gate: PASS
+  portable_current_suite: 1063_PASSED_1_SKIPPED_57_DESELECTED
+  explicit_current_and_frozen_invariants: 142_PASSED
+  compile_and_import: PASS
+  ancestry_and_diff_hygiene: PASS
+  runtime_isolation: PASS
+  review_corrections:
+    - target_measurement_basis_and_canonical_units_made_machine_enforced
+    - application_level_cross_field_validation_required_beyond_json_schema
+    - response_domain_support_groups_forbidden_from_using_final_holdout
+  technical_gate_result: PASS_READINESS_CONTROL_PLANE
+  scientific_gate_result: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
+
 allowed_next_work:
   - acquire_or_register_matched_empirical_leaf_dataset
   - instantiate_dataset_specific_growth_stage_ontology
@@ -176,6 +199,7 @@ hard_invariants:
 exit_policy:
   readiness_gate_result: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
   control_plane_preparation_complete: true
+  control_plane_technical_review_pass: true
   may_start_evidence_acquisition: true
   may_start_leaf_solver_implementation: false
   may_activate_leaf_candidate_parameters: false
