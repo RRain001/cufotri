@@ -49,6 +49,7 @@
     "preregistered_metrics": {
       "type": "array",
       "minItems": 4,
+      "uniqueItems": true,
       "items": {"$ref": "#/$defs/metric"}
     },
     "notes": {"type": "string"}
@@ -107,6 +108,7 @@
         "stage_records": {
           "type": "array",
           "minItems": 1,
+          "uniqueItems": true,
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -160,6 +162,7 @@
         },
         "role": {"type": "string", "enum": ["OBSERVATION", "FORCING", "CONTEXT", "GEOMETRY"]},
         "unit": {"$ref": "#/$defs/nonblank"},
+        "measurement_basis": {"$ref": "#/$defs/nonblank"},
         "provenance": {"$ref": "#/$defs/provenance"},
         "independent_group_field": {"$ref": "#/$defs/nonblank"},
         "missing_data_policy": {"type": "string", "enum": ["FAIL_CLOSED", "CASE_INVALID", "SEPARATELY_REVIEWED_IMPUTATION"]}
@@ -190,7 +193,7 @@
         "lower_support_boundary": {"type": "number"},
         "upper_support_boundary": {"type": "number"},
         "boundary_derivation_rule": {"$ref": "#/$defs/nonblank"},
-        "included_groups": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonblank"}},
+        "included_groups": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}},
         "timestamp_window": {"$ref": "#/$defs/nonblank"}
       }
     },
@@ -206,7 +209,7 @@
         "admitted_stage_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}},
         "source_id": {"$ref": "#/$defs/nonblank"},
         "source_locator": {"$ref": "#/$defs/nonblank"},
-        "included_groups": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/nonblank"}}
+        "included_groups": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}}
       }
     },
     "domainRecord": {
@@ -250,8 +253,34 @@
   "allOf": [
     {
       "anyOf": [
-        {"properties": {"variables": {"contains": {"properties": {"name": {"const": "stomatal_conductance"}, "role": {"const": "OBSERVATION"}}, "required": ["name", "role"]}}}},
-        {"properties": {"variables": {"contains": {"properties": {"name": {"const": "leaf_surface_resistance"}, "role": {"const": "OBSERVATION"}}, "required": ["name", "role"]}}}}
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {
+                  "name": {"const": "stomatal_conductance"},
+                  "role": {"const": "OBSERVATION"},
+                  "unit": {"const": "m s^-1"}
+                },
+                "required": ["name", "role", "unit", "measurement_basis"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {
+                  "name": {"const": "leaf_surface_resistance"},
+                  "role": {"const": "OBSERVATION"},
+                  "unit": {"const": "s m^-1"}
+                },
+                "required": ["name", "role", "unit", "measurement_basis"]
+              }
+            }
+          }
+        }
       ]
     },
     {
@@ -261,14 +290,37 @@
       ]
     },
     {
-      "properties": {"variables": {"contains": {"properties": {"name": {"const": "leaf_temperature"}}, "required": ["name"]}}}
+      "properties": {
+        "variables": {
+          "contains": {
+            "properties": {"name": {"const": "leaf_temperature"}, "unit": {"const": "K"}},
+            "required": ["name", "unit"]
+          }
+        }
+      }
     },
     {
-      "properties": {"variables": {"contains": {"properties": {"name": {"const": "growth_stage"}}, "required": ["name"]}}}
+      "properties": {
+        "variables": {
+          "contains": {
+            "properties": {"name": {"const": "growth_stage"}, "unit": {"const": "1"}},
+            "required": ["name", "unit"]
+          }
+        }
+      }
     },
     {
       "anyOf": [
-        {"properties": {"variables": {"contains": {"properties": {"name": {"const": "VPD"}}, "required": ["name"]}}}},
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"const": "VPD"}, "unit": {"const": "Pa"}},
+                "required": ["name", "unit"]
+              }
+            }
+          }
+        },
         {
           "required": ["vpd_basis"],
           "properties": {
@@ -283,16 +335,44 @@
       ]
     },
     {
-      "properties": {"response_domain_records": {"contains": {"properties": {"variable_name": {"const": "light_or_PAR"}}, "required": ["variable_name"]}}}
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "light_or_PAR"}},
+            "required": ["variable_name"]
+          }
+        }
+      }
     },
     {
-      "properties": {"response_domain_records": {"contains": {"properties": {"variable_name": {"const": "VPD"}}, "required": ["variable_name"]}}}
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "VPD"}, "declared_unit": {"const": "Pa"}},
+            "required": ["variable_name", "declared_unit"]
+          }
+        }
+      }
     },
     {
-      "properties": {"response_domain_records": {"contains": {"properties": {"variable_name": {"const": "T_leaf"}}, "required": ["variable_name"]}}}
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "T_leaf"}, "declared_unit": {"const": "K"}},
+            "required": ["variable_name", "declared_unit"]
+          }
+        }
+      }
     },
     {
-      "properties": {"response_domain_records": {"contains": {"properties": {"variable_name": {"const": "stage"}}, "required": ["variable_name"]}}}
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "stage"}},
+            "required": ["variable_name"]
+          }
+        }
+      }
     },
     {
       "properties": {
