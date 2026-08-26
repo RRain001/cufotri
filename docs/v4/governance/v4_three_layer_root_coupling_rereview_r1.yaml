@@ -1,0 +1,139 @@
+schema_version: v1
+stage: V4_THREE_LAYER_ROOT_COUPLING_REREVIEW_R1
+status: PASS_CONTROL_PLANE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 0a24a97ec6d3d52cb51230a7c754c004b36d5ebb
+branch: codex/v4-three-layer-root-coupling-rereview-r1
+
+purpose: >-
+  Re-review the frozen P7.5/P7.5B soil-root-TFWT coupling before any V4 root
+  implementation, as required by the V4 root water-flux contract.
+
+ufotri_evidence:
+  source: KfK_4605_manual
+  original_source_code_available: false
+  three_layer_root_depth_m:
+    L1: [0.00, 0.05]
+    L2: [0.05, 0.15]
+    L3: [0.15, 0.30]
+  long_term_ingestion_reference:
+    layer_water_uptake_fraction: [0.20, 0.40, 0.40]
+    transfer_rate_d_minus_1_reference: [0.026, 0.026, 0.017]
+    equations: [57, 58, 59, 60]
+    status: REFERENCE_EVIDENCE_NOT_ACTIVE_PARAMETERIZATION
+  short_term_secondary_reference:
+    root_uptake_control: plant_transpiration
+    transpiration_to_root_uptake_delay_h: 3.0
+    status: REFERENCE_EVIDENCE_NOT_RUNTIME_ACTIVATION
+  semantic_boundary: >-
+    The short-term transpiration-driven approximately 3 h lag and the long-term
+    daily-mean three-layer 20/40/40 transfer-rate system are distinct UFOTRI
+    model contexts and must not be silently collapsed into one constant model.
+
+selected_root_flux_contract:
+  authoritative_soil_state: interval_start_three_layer_state_S_n
+  per_layer_equation: J_root_i = q_w_i * C_w_i(S_n)
+  q_w_unit: m_s_minus_1
+  c_w_unit: Bq_m_minus_3_water
+  j_root_unit: Bq_m_minus_2_s_minus_1
+  q_w_nonnegative: true
+  q_w_timestamp_required: true
+  q_w_provenance_required: true
+  q_w_generation_inside_root_solver: false
+  implicit_rate_to_velocity_conversion: forbidden
+  guessed_q_w: forbidden
+  concentration_basis: authoritative_layer_water_inventory
+
+ownership:
+  root_v4_core:
+    mutates_soil: false
+    mutates_tfwt: false
+    owns:
+      - per_layer_water_uptake_flux
+      - per_layer_hto_uptake_flux
+      - integrated_per_layer_transfer_ledger
+      - total_transfer_ledger
+  soil_v4:
+    owns_application_of_root_water_sink: true
+    owns_application_of_root_hto_sink: true
+    apply_each_root_sink_exactly_once: true
+  tfwt_boundary:
+    future_gain_must_equal_soil_hto_root_loss: true
+    apply_transfer_exactly_once: true
+  double_application: forbidden
+
+profile_boundary:
+  short_term_dynamic:
+    q_w_source: EXTERNAL_TRANSPIRATION_RESOLVED_FORCING
+    three_hour_lag_owner: upstream_forcing_preparation_or_future_buffer_contract
+    root_solver_history_buffer: false
+    active: false
+  long_term_ufotri_reference:
+    q_w_partition_reference: [0.20, 0.40, 0.40]
+    layer_rate_reference_d_minus_1: [0.026, 0.026, 0.017]
+    active: false
+  arbitrary_external_layer_flux:
+    allowed_for_testing_and_future_reviewed_forcing: true
+    provenance_required: true
+
+p7_5_p7_5b_review:
+  v3_frozen_behavior:
+    soil_source_for_root: step_start_S_n
+    obt_before_root_tfwt_gain: true
+    root_soil_reconciliation_after_obt: true
+  v3_default_changed: false
+  v4_pipeline_integration_authorized: false
+  exact_ufotri_software_operator_order_recoverable: false
+  reason: ORIGINAL_UFOTRI_SOURCE_CODE_UNAVAILABLE
+  future_v4_integration_candidates:
+    - id: PRESERVE_V3_POST_OBT_ROOT_GAIN
+      description: preserve current one-step root-to-OBT lag while using layer-resolved root fluxes
+    - id: ROOT_GAIN_BEFORE_OBT
+      description: include same-interval root HTO gain in TFWT before OBT formation
+  selection_status: COMPARISON_REQUIRED_NOT_SELECTED
+  required_before_pipeline_selection:
+    - single_application_proof
+    - soil_tfwt_transfer_conservation
+    - timestep_refinement
+    - restart_equivalence
+    - deterministic_repeat
+    - multi_step_root_to_obt_lag_comparison
+    - explicit_profile_time_basis
+
+next_authorization:
+  stage: V4_THREE_LAYER_ROOT_FLUX_CORE_IMPLEMENTATION_R1
+  scope: ISOLATED_ROOT_SUBSYSTEM_ONLY
+  authorized:
+    - typed_layer_water_flux_forcing
+    - typed_per_layer_root_flux_result
+    - q_w_i_times_C_w_i_equation
+    - conservation_ledger
+    - ufotri_reference_profile_fixture
+    - fail_closed_units_time_provenance
+  forbidden:
+    - pipeline_v4_integration
+    - changing_v3_root_v3
+    - changing_v3_pipeline
+    - activating_20_40_40_as_default_physical_parameterization
+    - activating_reference_transfer_rates_as_default
+    - implementing_hidden_three_hour_delay
+    - deriving_transpiration
+    - full_richards_darcy
+    - calibration
+    - parameter_activation
+
+hard_invariants:
+  active_parameters: 0
+  calibration_started: false
+  leaf_r5_authorized: false
+  real_cteas_atmos_coupling_active: false
+  v3_default_profile_changed: false
+  v4_pipeline_integration_authorized: false
+  full_richards_darcy_authorized: false
+  physical_validation_complete: false
+
+exit_state:
+  rereview_complete: true
+  root_flux_core_implementation_authorized: true
+  pipeline_operator_split_selected: false
+  next_stage: V4_THREE_LAYER_ROOT_FLUX_CORE_IMPLEMENTATION_R1
