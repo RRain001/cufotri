@@ -1,0 +1,227 @@
+schema_version: v1
+stage: V4-2
+round: R4
+registry_id: V4_2_LEAF_PROSPECTIVE_EXPERIMENT_DESIGN_R4
+repository: RRain001/CTEAS_ufotri
+base_main_sha: d6a4bcb7bcdbe6634235cea016b76c39dd9ca664
+branch: codex/v4-2-leaf-prospective-experiment-design-r4
+status: READY_FOR_FEASIBILITY_REVIEW_NOT_EXECUTED
+
+objective: >-
+  Define a prospective soybean gas-exchange experiment that could generate one
+  internally aligned empirical packet for the V4-2 dynamic stomatal-response
+  candidate. This is a control-plane design only. No experiment has been run,
+  no response function has been fitted, no parameter has been calibrated, and
+  no solver implementation is authorized.
+
+hard_invariants:
+  experiment_executed: false
+  empirical_packet_collected: false
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+scientific_target:
+  crop: Glycine_max
+  target_variable: stomatal_conductance_to_water_vapor
+  preferred_symbol: gsw
+  canonical_unit: mol_m-2_s-1
+  alternative_target: leaf_surface_resistance
+  alternative_canonical_unit: s_m-1
+  target_basis_rule: >-
+    The instrument/export definition and measurement basis must be explicit.
+    Reciprocal conversion between conductance and resistance is admissible only
+    for positive values under a separately documented compatible basis.
+
+candidate_response_contract:
+  symbolic_form: g_s = g_s,max * F_light(L) * F_vpd(VPD) * F_temp(T_leaf) * F_stage(s)
+  numerical_parameter_values_selected: false
+  functional_forms_selected: false
+  kinetic_model_added: false
+  note: >-
+    R4 designs evidence collection for this candidate only. It does not choose
+    response-function equations, coefficients, a g_s,max value, or a transient ODE.
+
+mandatory_same_record_fields:
+  target:
+    - gsw_or_compatible_rc
+    - target_unit
+    - target_measurement_basis
+  drivers:
+    - PAR_or_PPFD
+    - VPDleaf_or_equivalent_direct_leaf_VPD
+    - Tleaf
+  timing:
+    - timestamp_or_elapsed_time
+    - sampling_interval_semantics
+  identity:
+    - plant_id
+    - leaf_or_measurement_position_id
+    - run_id
+    - treatment_or_condition_id
+    - developmental_stage_id
+    - crop_identity
+  provenance:
+    - instrument_model
+    - instrument_serial_or_instrument_id_if_available
+    - instrument_software_or_export_version_if_available
+    - source_file_name
+    - variable_definitions_and_units
+
+vpd_fallback_if_direct_vpd_absent:
+  required_row_aligned_inputs:
+    - sample_or_leaf_chamber_H2O_mole_fraction
+    - pressure
+    - Tleaf
+    - explicit_humidity_variable_definition
+  rule: >-
+    VPD may be derived only from complete row-aligned inputs under a preregistered
+    equation. Chamber humidity ranges, midpoint substitution, or air temperature
+    substituted for Tleaf are prohibited.
+
+experimental_unit_and_replication:
+  independent_biological_unit: plant
+  repeated_measurement_unit: time_record_nested_within_plant
+  pseudoreplication_rule: >-
+    Individual LI-COR rows are repeated observations and must never be counted as
+    independent biological replicates.
+  biological_replicates_per_condition: TBD_FEASIBILITY_AND_PRECISION_REVIEW
+  blocking_requirement: >-
+    Replication must be sufficient to allocate independent plants to calibration
+    and final validation groups. Exact counts must be preregistered before execution.
+
+factor_coverage:
+  light:
+    variable: PAR_or_PPFD
+    role: continuous_driver
+    minimum_distinct_support_levels_for_candidate_shape_review: 3
+    exact_levels: TBD_FEASIBILITY_REVIEW
+  vpd:
+    variable: VPDleaf
+    role: continuous_driver
+    minimum_distinct_support_levels_for_candidate_shape_review: 3
+    exact_levels: TBD_FEASIBILITY_REVIEW
+  leaf_temperature:
+    variable: Tleaf
+    role: continuous_driver
+    minimum_distinct_support_levels_for_candidate_shape_review: 3
+    exact_levels: TBD_FEASIBILITY_REVIEW
+  developmental_stage:
+    role: typed_categorical_driver
+    minimum_distinct_stage_categories_for_stage_effect_review: 2
+    exact_stage_categories: TBD_CROP_AND_FEASIBILITY_REVIEW
+    ontology_rule: >-
+      Use source-bound soybean developmental-stage identifiers. Do not infer stage
+      from calendar date or plant age without an explicit mapping contract.
+
+factor_design_rule: >-
+  Driver effects must not be perfectly confounded. Light, VPD and Tleaf coverage
+  must contain enough crossed or otherwise identifiable support that one driver
+  is not deterministically encoded by another. The exact response-surface,
+  factorial, blocked or sequential design is deferred to feasibility review.
+
+condition_order_and_randomization:
+  plant_assignment: RANDOMIZED_OR_BLOCK_RANDOMIZED_WHERE_FEASIBLE
+  condition_order: RANDOMIZED_OR_COUNTERBALANCED_WITHIN_PROTOCOL_CONSTRAINTS
+  instrument_order_effect: MUST_BE_RECORDED_AND_REVIEWED
+  time_of_day_or_batch: MUST_BE_RECORDED
+  prohibition:
+    - do_not_assign_all_high_VPD_records_to_one_batch_only
+    - do_not_assign_all_low_light_records_to_one_growth_stage_only
+    - do_not_treat_run_order_as_biology
+
+measurement_protocol:
+  raw_export_required: true
+  direct_Tleaf_required: true
+  direct_PAR_or_PPFD_required: true
+  direct_VPDleaf_preferred: true
+  measured_values_preferred_over_setpoints: true
+  setpoint_and_measured_value_must_be_distinguished: true
+  condition_transition_records_retained: true
+  steady_state_or_stabilization_rule: TBD_PREREGISTRATION_BEFORE_EXECUTION
+  missing_record_policy: FAIL_CLOSED_NO_SILENT_IMPUTATION
+  note: >-
+    Time-resolved records around controlled condition transitions should be
+    retained even if later analysis uses preregistered plateau windows. R4 does
+    not define a stomatal kinetic model.
+
+split_and_holdout_contract:
+  split_unit: plant
+  calibration_groups_and_final_validation_groups_must_be_disjoint: true
+  row_random_split_within_same_plant_for_final_validation: forbidden
+  final_validation_used_for_response_domain_estimation: false
+  final_validation_used_for_model_selection: false
+  final_validation_used_for_threshold_tuning: false
+  final_validation_used_for_preprocessing_tuning: false
+  group_assignment_time: BEFORE_ANY_PARAMETER_FIT
+  out_of_domain_challenge_if_used: SEPARATE_FROM_PRIMARY_IN_DOMAIN_FINAL_VALIDATION
+
+response_domain_contract:
+  primary_domain_source: calibration_or_design_setpoints_with_measured_confirmation
+  empirical_domain_must_use_measured_values: true
+  univariate_bounds_do_not_prove_joint_support: true
+  joint_condition_coverage_must_be_reported: true
+  silent_clipping_or_extrapolation: forbidden
+  final_holdout_records_used_to_define_domain: false
+
+preregistration_requirements_before_execution:
+  - exact_factor_levels_or_design_points
+  - biological_replicate_count_and_precision_or_power_rationale
+  - stage_categories_and_dataset_bound_ontology
+  - randomization_or_counterbalancing_plan
+  - stabilization_or_plateau_extraction_rule
+  - calibration_and_final_validation_group_assignment_rule
+  - response_domain_estimator
+  - metric_statistics
+  - metric_acceptance_thresholds
+  - missing_data_exclusion_rules
+  - instrument_quality_control_rules
+  - VPD_derivation_equation_if_needed
+
+required_metric_families:
+  - conductance_or_resistance_trajectory_error
+  - reciprocal_identity_residual
+  - domain_and_bound_violation_count
+  - cross_condition_generalization_error
+
+metric_status:
+  exact_statistics_selected: false
+  acceptance_thresholds_selected: false
+  reason: >-
+    Numerical metric definitions and thresholds must be preregistered only after
+    experimental feasibility and measurement precision are reviewed, and before
+    any parameter fitting.
+
+file_and_provenance_rules:
+  raw_instrument_files_preserved_unchanged: true
+  sha256_required_before_processing: true
+  raw_files_committed_to_git: false
+  derived_clean_table_must_reference_raw_hashes: true
+  all_unit_conversions_must_be_explicit: true
+  raw_and_derived_artifacts_must_not_share_identity: true
+  instrument_export_header_or_variable_dictionary_required: true
+
+execution_gate:
+  current_decision: HOLD_EXPERIMENT_EXECUTION_PENDING_FEASIBILITY_REVIEW
+  pass_requires:
+    - factor_levels_frozen
+    - replicate_plan_frozen
+    - instrument_availability_confirmed
+    - stage_plan_frozen
+    - split_and_holdout_plan_frozen
+    - metrics_and_thresholds_preregistered
+    - data_file_schema_frozen
+  pass_does_not_authorize_solver: true
+
+exit_policy:
+  if_feasibility_review_passes: >-
+    Create a separate experiment-execution readiness stage. Do not start model
+    calibration or solver implementation merely because the design is feasible.
+  if_required_instrument_outputs_cannot_be_collected: >-
+    Remain HOLD and revise the evidence strategy explicitly. Do not substitute
+    cross-dataset composition or literature ranges without a separate review.
