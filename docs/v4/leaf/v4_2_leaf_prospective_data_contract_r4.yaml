@@ -1,0 +1,176 @@
+schema_version: v1
+stage: V4-2
+round: R4
+contract_id: V4_2_LEAF_PROSPECTIVE_DATA_CONTRACT_R4
+status: DESIGN_ONLY_NOT_COLLECTED
+
+record_key:
+  required_components:
+    - experiment_id
+    - run_id
+    - plant_id
+    - developmental_stage_id
+    - condition_id
+    - record_index_or_timestamp
+  uniqueness_rule: >-
+    The composite key must identify one measurement record without relying on row
+    order alone. Any duplicate-key resolution must be explicit and provenance-preserving.
+
+required_columns:
+  - id: gsw
+    role: observed_target
+    canonical_unit: mol_m-2_s-1
+    required: true
+    missing_policy: FAIL_CLOSED
+    notes: absolute stomatal conductance to water vapor; normalized or fold-change values are not substitutes
+  - id: target_measurement_basis
+    role: target_metadata
+    canonical_unit: dimensionless_typed_metadata
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: PAR_or_PPFD
+    role: forcing
+    canonical_unit: umol_photons_m-2_s-1
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: VPDleaf
+    role: forcing
+    canonical_unit: Pa
+    required: true_or_explicit_derivation
+    missing_policy: FAIL_CLOSED_UNLESS_DERIVATION_CONTRACT_COMPLETE
+  - id: Tleaf
+    role: forcing
+    canonical_unit: K
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: elapsed_time_or_timestamp
+    role: timing
+    canonical_unit: seconds_or_offset_aware_timestamp
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: plant_id
+    role: independent_group
+    canonical_unit: typed_identifier
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: leaf_or_measurement_position_id
+    role: nested_identity
+    canonical_unit: typed_identifier
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: developmental_stage_id
+    role: typed_categorical_driver
+    canonical_unit: dimensionless_typed_category
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: condition_id
+    role: protocol_identity
+    canonical_unit: typed_identifier
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: run_id
+    role: run_identity
+    canonical_unit: typed_identifier
+    required: true
+    missing_policy: FAIL_CLOSED
+  - id: instrument_id
+    role: provenance
+    canonical_unit: typed_identifier
+    required: true
+    missing_policy: FAIL_CLOSED
+
+optional_but_strongly_preferred_columns:
+  - sample_H2O_mole_fraction
+  - reference_H2O_mole_fraction
+  - chamber_pressure
+  - CO2_sample_or_reference
+  - stomatal_ratio_or_leaf_side_metadata
+  - chamber_setpoint_PAR
+  - chamber_setpoint_humidity_or_VPD
+  - chamber_setpoint_temperature
+  - batch_id
+  - time_of_day
+  - operator_id
+  - quality_flag
+
+setpoint_vs_measurement_semantics:
+  rule: >-
+    Setpoints and measured fields must be stored as separate variables. A chamber
+    temperature setpoint is not Tleaf, and a humidity/VPD setpoint is not a measured
+    leaf VPD unless the instrument semantics explicitly define it as such.
+
+vpd_derivation_contract:
+  allowed_only_if_direct_VPDleaf_absent: true
+  required_inputs:
+    - row_aligned_humidity_variable
+    - humidity_variable_definition_and_unit
+    - chamber_pressure
+    - Tleaf
+  required_metadata:
+    - derivation_equation_id
+    - derivation_equation_text_or_reference
+    - input_column_mapping
+    - output_unit
+  prohibited:
+    - range_midpoint_substitution
+    - air_temperature_substituted_for_Tleaf_without_review
+    - condition_level_humidity_range_broadcast_to_rows
+
+stage_ontology_contract:
+  ontology_id_required: true
+  ontology_revision_required: true
+  crop_required: Glycine_max
+  source_stage_field_required: true
+  mapping_table_required_if_source_label_differs_from_admitted_stage_id: true
+  calendar_date_only_mapping: forbidden_without_explicit_source_supported_mapping
+  plant_age_only_mapping: forbidden_without_explicit_source_supported_mapping
+
+split_metadata:
+  required_per_plant:
+    - analysis_role
+  allowed_analysis_roles:
+    - CALIBRATION
+    - FINAL_VALIDATION
+    - OPTIONAL_OUT_OF_DOMAIN_CHALLENGE
+  final_validation_plant_in_calibration: false
+  final_validation_rows_used_for_domain_estimation: false
+
+raw_file_manifest_required_fields:
+  - raw_file_id
+  - original_filename
+  - byte_size
+  - sha256
+  - instrument_id
+  - export_or_software_version_if_available
+  - generation_or_export_timestamp_if_available
+  - experiment_id
+  - acquisition_date
+
+clean_table_manifest_required_fields:
+  - derived_file_id
+  - source_raw_file_ids
+  - source_raw_sha256_values
+  - transformation_script_or_process_id
+  - transformation_revision
+  - unit_conversion_log
+  - row_exclusion_log
+  - output_sha256
+
+quality_rules:
+  silent_imputation: forbidden
+  silent_row_drop: forbidden
+  silent_unit_conversion: forbidden
+  silent_clipping: forbidden
+  duplicate_record_key: FAIL_CLOSED
+  missing_required_provenance: FAIL_CLOSED
+  target_driver_alignment_ambiguous: FAIL_CLOSED
+
+admission_status:
+  current: NOT_COLLECTED
+  complete_packet_possible_only_if:
+    - all_required_fields_resolved
+    - same_record_alignment_proven
+    - independent_plant_groups_proven
+    - stage_ontology_proven
+    - raw_file_provenance_and_hashes_recorded
+    - calibration_and_validation_roles_frozen_before_fit
