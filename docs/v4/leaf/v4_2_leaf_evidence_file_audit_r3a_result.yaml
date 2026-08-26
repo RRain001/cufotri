@@ -1,0 +1,458 @@
+schema_version: v1
+stage: V4-2
+round: R3A
+result_id: V4_2_LEAF_EVIDENCE_FILE_AUDIT_R3A_RESULT
+repository: RRain001/CTEAS_ufotri
+audit_branch: codex/v4-2-leaf-evidence-file-audit-r3a
+base_main_sha: 3e7ec58b19752da9eef018a80875d0a90bd6164f
+audited_handoff_head: c154b93d1165f1df675526409dcd35fc01625f3f
+audit_date: 2026-08-26
+
+environment:
+  python: 3.14.6
+  pandas: 3.0.5
+  openpyxl: 3.1.5
+  platform: macOS 26.4 arm64
+  method: >-
+    Byte-level inspection of downloaded source files with openpyxl/pandas plus
+    static reading of R scripts. No OCR, no model fitting, no coefficient
+    estimation, no calibration, and no functional-form selection.
+
+source_file_hashes:
+  - candidate_id: MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD
+    dataset_doi: 10.5061/dryad.51c59zwkh
+    article_doi: 10.1073/pnas.2502360122
+    repository: Dryad (datadryad.org)
+    resolved_source_url: https://datadryad.org/downloads/file_stream/{4070411,4070412}
+    retrieval_note: >-
+      Dryad API downloads require a bearer token; files retrieved via the
+      public file_stream endpoint after solving the site's Anubis
+      proof-of-work browser challenge.
+    dataset_version: Dryad version 364535
+    download_date: 2026-08-26
+    published_checksum: NOT_EXPOSED_BY_REPOSITORY_API
+    files:
+      - file_name: Raw_data_Mostofa_et_al._2025.xlsx
+        byte_size: 87814
+        md5: b5debc8f97717e4212a076ada0a379a8
+        sha256: fad62781b2187c6d23c7f24ec2ad8a968c52f33ff0432fa66e95ca0cd18e7fe4
+      - file_name: README.md
+        byte_size: 8664
+        sha256: 936b0b6f072eaf36dafea5a0576745f97e6f9ae8b63db84d75bef42b3379549b
+  - candidate_id: TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD
+    dataset_doi: 10.5061/dryad.pk0p2ngst
+    article_doi: 10.1093/jxb/erae057
+    repository: Dryad (datadryad.org)
+    resolved_source_url: https://datadryad.org/downloads/file_stream/{2841389,2841396}
+    retrieval_note: >-
+      Large CSV required two Anubis-challenged range requests; final size
+      matches the Dryad-declared byte count exactly.
+    dataset_version: Dryad version 282714
+    download_date: 2026-08-26
+    published_checksum: NOT_EXPOSED_BY_REPOSITORY_API
+    files:
+      - file_name: ACiMethod_4.0_RepositoryData.csv
+        byte_size: 1937146
+        md5: 1234835252d74750129dbec7d7b633df
+        sha256: f00ccde98bc1c9a91b7507d4b8301a28c0fabb5f9bbaea4483f8f791a050748d
+      - file_name: README.md
+        byte_size: 2453
+        sha256: 76be24857200c89c66262bf61dc50d15e478beb329bdeec2273a0eb87e5015a1
+  - candidate_id: HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD
+    dataset_doi: 10.5061/dryad.q573n5tgj
+    article_doi: 10.1111/nph.17214
+    repository: Dryad (datadryad.org)
+    resolved_source_url: https://datadryad.org/downloads/file_stream/{563118,563125,563102,563110,563108}
+    dataset_version: Dryad version 102013
+    download_date: 2026-08-26
+    published_checksum: NOT_EXPOSED_BY_REPOSITORY_API
+    files:
+      - file_name: Fig1e.data.csv
+        byte_size: 5543
+        md5: d6fca671150648981fb991091f2c343d
+        sha256: e9e87cfd914c96d63749c605d2325ca617ececfa5fa33dbf0ae7f4f791e594be
+      - file_name: README.txt
+        byte_size: 6802
+        sha256: af04ba9230e7149c167537d11b49f7d221ebe34f14a9cdd9ef3901e13943d487
+      - file_name: Stomatal_aperture.R
+        byte_size: 14823
+        sha256: b34add0092bbe5f9c72815cae5b98b84c49329c5454df32b811d607d5a7a92be
+        role: >-
+          Audited as closest available script. The governance-required
+          Stomatal_conductance.R does not exist in the repository despite being
+          listed in README.txt (see provenance gap note).
+      - file_name: FigS3ab.data.csv
+        byte_size: 6474
+        sha256: 254f274de02cb8025135c9eb7ce040ee281da634fda274ed1425c2f9d401e365
+        role: optional_context_experiment_B
+      - file_name: FigS3cd.data.csv
+        byte_size: 13659
+        sha256: c30891e36d2cd259225c1b1a2a30afe5bc86a987d87ec4f77b44aa85d25b947a
+        role: optional_context_experiment_B
+
+source_file_inventory:
+  MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD:
+    workbook_sheets:
+      names: [Fig 2c, Fig 2d, Fig 2e, Fig 3a, Fig 3b, Fig 3c, "Fig 3d", Fig 3g,
+              Fig 3h, Fig 4b, Fig 4c, Fig 5a, Fig 5b, Fig 5d, "Fig 5f, 5g",
+              Fig S9a, Fig S9b, Fig S10]
+      hidden_sheets: []
+      merged_cell_regions_present: true
+      formula_cells_total: 454
+      formula_examples: ["Fig 3a B3 =A3/60 (unit conversion)", "Fig 3a F3 =AVERAGE(C3:E3)"]
+    target_sheet_Fig3d:
+      title_row: Photosynthesis and stomatal conductance in soybean leaves after wounding
+      headers: [' Time(min)', 'A (μmol m-2 s-1)', 'gsw (mol m-2 s-1)']
+      data_rows: 150
+      time_span_min: [0.0, 12.416666666666666]
+      time_step_minutes: 0.083333
+      time_step_seconds_exact: 5.0
+      gsw_min: 0.0308
+      gsw_max: 0.1284
+      gsw_missing: 0
+      A_min: 1.324
+      A_max: 10.000
+      series_count: 1
+      plant_or_replicate_columns: none
+      condition_columns: none
+    other_gsw_sources_in_workbook: none
+    key_observation: >-
+      Exactly one absolute stomatal-conductance time series exists in the whole
+      workbook (single trace, 150 points at an exact 5-second cadence). No
+      Tleaf, VPD, PAR, humidity, CO2, plant-ID or replicate column exists in
+      any sheet. Article-level chamber conditions are not restated anywhere in
+      the audited files.
+  TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD:
+    ACiMethod_4.0_RepositoryData.csv:
+      shape: 19601 rows x 10 cols
+      columns: [Species, Protocol, RunID, Elapsed, A, Ci, Tleaf, CO2_r, PAR, VPDleaf]
+      conductance_or_resistance_columns: NONE
+      soybean_rows: 3282
+      soybean_RunIDs: 23
+      soybean_protocols: {DAT: 2940, SplitUpDown: 120, SplitDownUp: 120, Monotonic: 102}
+      soybean_ranges:
+        Tleaf_c: [26.332, 30.222]
+        PAR_umol_m2_s: [1499.725, 1500.275]
+        VPDleaf_kpa: [1.138, 1.658]
+        Elapsed_s_max: 22246.5
+        missing_all_driver_columns: 0
+    readme_semantics: >-
+      README declares every column with units (A μmol CO2 m-2 s-1, Ci μmol CO2,
+      Tleaf degC thermocouple, PAR μmol photon m-2 s-1, VPDleaf kPa, Elapsed s),
+      defines RunID as unique species+treatment+replicate combination, and
+      states 6 biological replicates for soybean (10 for tobacco).
+    key_observation: >-
+      Complete row-aligned driver set (Tleaf/PAR/VPDleaf/Elapsed/RunID) with
+      explicit units exists, but the table contains assimilation only; no
+      stomatal-conductance or resistance column of any spelling is present.
+  HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD:
+    Fig1e_data_csv:
+      shape: 180 rows x 6 cols
+      columns: [Plant ID, Treatment, Time, Left measurement, Right measurement, Mean]
+      treatments: {GOX: 60, Control: 60, Buffer: 60}
+      plants_unique: 30
+      design: one treatment per plant, six repeated time points each
+      time_values: [1, 3, 5, 7, 24, 48]
+      time_unit_declared_in_file: false
+      value_range_mean_column: [115.6, 402.1]
+      unit_declared_in_file: false
+      quantity_declared_in_file: false
+    experiment_B_optional_files:
+      FigS3ab_shape: 83 rows x 8 cols over 3 trials
+      FigS3cd_shape: 165 rows x 8 cols over 5 trials
+      columns_include_units: >-
+        Left/Right photosynthesis (μmol m-2 s-1), Left/Right conductance
+        (mol m-2 s-1), Means
+      mean_conductance_ranges: {FigS3ab: [-0.0074, 0.5602], FigS3cd: [-0.2718, 0.3184]}
+    script_audit:
+      Stomatal_conductance_R_listed_in_README: true
+      Stomatal_conductance_R_present_in_repository: false
+      Stomatal_aperture_R_reads_fig1e: false
+      any_available_script_reads_fig1e: false
+      aperture_script_summary: >-
+        Stomatal_aperture.R reads Fig2a/Fig2b data (microscopy apertures) and
+        performs ANOVA/emmeans grouping; it does not touch Fig1e and confirms
+        aperture analysis is a separate quantity from conductance.
+
+candidate_results:
+  - candidate_id: MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD
+    instrument_semantics: LI-6800-style gas exchange per article; workbook itself does not state instrument
+    experiment_identity: single wound-response trace on soybean leaves (article Williams 82, stage R1 not file-bound)
+    packet_result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    field_matrix:
+      - field_id: observed_stomatal_conductance_or_leaf_surface_resistance
+        classification: DIRECT_COLUMN
+        source_file: Raw_data_Mostofa_et_al._2025.xlsx
+        sheet_or_table: Fig 3d
+        exact_column_or_constant: 'gsw (mol m-2 s-1)'
+        unit: mol m-2 s-1
+        measurement_basis: absolute_stomatal_conductance_to_water_vapor
+        row_alignment: single_time_series_rows_3_to_152
+        missing_count: 0_of_150
+        provenance: sheet title + header + Dryad README Figure 3d description
+        notes: Absolute values, not ratios or figure summaries.
+      - field_id: target_measurement_basis
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: gsw header + mol m-2 s-1 unit
+        notes: LI-COR gsw convention (water-vapor basis); basis consistent with article instrument claim but instrument is not stated inside the file.
+      - field_id: light_or_PAR
+        classification: MISSING
+        notes: No PAR column or constant in any sheet or the dataset README; article-level 1000 μmol m-2 s-1 was not audited from article text and is not bound to these rows by any audited file.
+      - field_id: VPD_or_explicit_humidity_to_VPD_basis
+        classification: MISSING
+        notes: >-
+          No VPD/humidity column. The declared water-vapor range 22-26 mmol/mol
+          is a protocol span, not a per-record value; without per-row H2O mole
+          fraction, Tleaf and pressure, exact row-level VPD derivation is
+          impossible. Range midpoint substitution is forbidden.
+      - field_id: leaf_temperature
+        classification: MISSING
+        notes: >-
+          No Tleaf column. The 30 degC chamber/block temperature is neither
+          recorded per row nor explicitly declared as actual leaf temperature
+          for these records, so DECLARED_CONSTANT_WITH_PROVENANCE is not admissible.
+      - field_id: dataset_bound_growth_stage_or_explicit_developmental_context
+        classification: AMBIGUOUS
+        notes: >-
+          R1 stage and Williams 82 cultivar come from article/Dryad-page context;
+          no audited file binds stage to the Fig 3d records.
+      - field_id: crop_identity
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: sheet title 'soybean leaves' + dataset README
+        unit: species_name
+      - field_id: timestamp_and_interval_semantics
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: "' Time(min)' column"
+        unit: minutes
+        row_alignment: uniform 0.083333 min steps = exactly 5 s across all 150 rows
+        notes: >-
+          Interval semantics proven from data itself; elapsed-time semantics only
+          (no wall-clock timestamps).
+      - field_id: replicate_or_independent_group_identity
+        classification: MISSING
+        notes: Single trace with no plant/leaf/rePLICATE identifier; n=1 series cannot define independent groups.
+      - field_id: quantitative_units
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: header units for A and gsw
+      - field_id: variable_level_provenance
+        classification: AMBIGUOUS
+        notes: Figure-tab mapping exists, but measurement conditions (instrument settings) for this trace are documented nowhere in the audited files.
+      - field_id: matched_records_or_explicit_alignment_contract
+        classification: MISSING
+        notes: A and gsw are row-aligned within the trace, but driver variables (VPD/PAR/Tleaf) have no records to align.
+    response_domain: WOUND_RESPONSE_TIME_SERIES_NOT_DRIVER_RESPONSE
+    response_domain_detail: >-
+      The dynamic axis is wounding time at fixed (but unrecorded) chamber
+      conditions; there is no VPD/light/temperature response domain.
+    stage_result: AMBIGUOUS_ARTICLE_CONTEXT_ONLY
+    group_result: SINGLE_SERIES_NO_GROUPS
+    row_alignment_result: INTERNAL_ONLY_NO_DRIVER_ALIGNMENT
+    blocking_findings:
+      - BLOCKER_NO_PER_ROW_OR_DECLARED_APPLICABLE_VPD_HUMIDITY
+      - BLOCKER_NO_TLEAF_COLUMN_OR_BOUND_CONSTANT
+      - BLOCKER_NO_PAR_COLUMN_OR_BOUND_CONSTANT
+      - BLOCKER_SINGLE_TRACE_NO_INDEPENDENT_GROUP_IDENTITY
+      - BLOCKER_STAGE_NOT_FILE_BOUND
+    nonblocking_findings:
+      - COMPONENT_ABSOLUTE_GSW_AT_EXACT_5S_CADENCE_EXISTS
+
+  - candidate_id: TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD
+    instrument_semantics: LI-6800 (README/article); thermocouple Tleaf; units declared per column
+    experiment_identity: multi-species A/Ci protocol comparison; RunID = species+treatment+replicate
+    packet_result: HOLD_COMPONENT_EVIDENCE_ONLY
+    full_packet_candidate: false
+    field_matrix:
+      - field_id: observed_stomatal_conductance_or_leaf_surface_resistance
+        classification: MISSING
+        source_file: ACiMethod_4.0_RepositoryData.csv
+        sheet_or_table: whole CSV (19601 rows)
+        exact_column_or_constant: none
+        missing_count: ALL
+        notes: >-
+          Exhaustive spelling search (gsw/gs/cond/conduct/stom/resist/rc/GH2O/
+          Trmmol) finds no conductance or resistance column. Published LI-6800
+          capability does not imply the published table preserved it.
+      - field_id: target_measurement_basis
+        classification: MISSING
+        notes: No target variable exists; A (assimilation) is the only measured physiology column.
+      - field_id: light_or_PAR
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: PAR
+        unit: μmol photon m-2 s-1
+        measurement_basis: per-row measured value
+        missing_count: 0_of_19601
+        notes: Soybean rows sit at 1499.7-1500.3 (effectively constant 1500).
+      - field_id: VPD_or_explicit_humidity_to_VPD_basis
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: VPDleaf
+        unit: kPa
+        measurement_basis: per-row leaf VPD
+        missing_count: 0
+        notes: Soybean range 1.138-1.658 kPa.
+      - field_id: leaf_temperature
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: Tleaf
+        unit: degC (thermocouple, per README)
+        missing_count: 0
+        notes: Soybean range 26.332-30.222 degC, continuous per-row values.
+      - field_id: dataset_bound_growth_stage_or_explicit_developmental_context
+        classification: MISSING
+        notes: Neither README nor CSV carries developmental stage; age/date-to-stage inference is forbidden.
+      - field_id: crop_identity
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: Species column (Soybean rows = 3282)
+      - field_id: timestamp_and_interval_semantics
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: Elapsed (seconds since start of measurement, per README)
+        notes: Per-row elapsed times present; cadence irregular because points are Ci setpoints, not a fixed-interval series.
+      - field_id: replicate_or_independent_group_identity
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: RunID (= unique species+treatment+replicate per README)
+        notes: 23 soybean RunIDs across four protocols; README states 6 biological reps for soybean.
+      - field_id: quantitative_units
+        classification: DIRECT_COLUMN
+        provenance: README declares units for every column
+      - field_id: variable_level_provenance
+        classification: DIRECT_COLUMN
+        provenance: README column definitions + RunID construction rule
+      - field_id: matched_records_or_explicit_alignment_contract
+        classification: MISSING
+        notes: >-
+          Drivers are perfectly row-aligned with A, but the stomatal target is
+          absent, so no driver-response matched record pair can be formed.
+    response_domain: A_CI_PROTOCOL_DOMAIN_NOT_STOMATAL
+    stage_result: MISSING
+    group_result: PROVEN_RUNID_STRUCTURE
+    row_alignment_result: DRIVERS_ALIGNED_TARGET_ABSENT
+    blocking_findings:
+      - BLOCKER_NO_CONDUCTANCE_OR_RESISTANCE_COLUMN
+    nonblocking_findings:
+      - COMPONENT_FULL_ROW_ALIGNED_TLEAF_PAR_VPDEAF_WITH_UNITS_AND_GROUPS
+
+  - candidate_id: HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD
+    instrument_semantics: >-
+      Two distinct experiment domains: Fig1e time-course (quantity/unit undeclared
+      in files; porometer-or-aperture ambiguity unresolved) versus FigS3ab/cd
+      LI-6800-style gas exchange with explicit units. Instrument-boundary rule
+      forbids merging them absent an explicit alignment contract, which does not exist.
+    experiment_identity: >-
+      EXPERIMENT_A = Fig1e 30 plants x {GOX, Control, Buffer} x 6 time points;
+      EXPERIMENT_B = FigS3ab/cd trials with left/right leaflet gas exchange.
+    packet_result: HOLD_REQUIRED_FIELDS_MISSING
+    full_packet_candidate: false
+    field_matrix:
+      - field_id: observed_stomatal_conductance_or_leaf_surface_resistance
+        classification: AMBIGUOUS
+        source_file: Fig1e.data.csv
+        sheet_or_table: Mean column
+        exact_column_or_constant: Mean
+        unit: UNDECLARED
+        measurement_basis: UNDECLARED
+        missing_count: 0_of_180
+        provenance: >-
+          File has no header units or quantity statement; the README-listed
+          analysis script Stomatal_conductance.R is absent from the repository,
+          so normalization/aggregation semantics cannot be verified.
+        notes: >-
+          Values 115.6-402.1 are compatible with either porometer mmol m-2 s-1
+          or microscope aperture micrometers; both interpretations exist in this
+          dataset family. Target identity cannot be established from audited bytes.
+      - field_id: target_measurement_basis
+        classification: AMBIGUOUS
+        notes: Left/right paired measurements averaged; basis undocumented.
+      - field_id: light_or_PAR
+        classification: MISSING
+      - field_id: VPD_or_explicit_humidity_to_VPD_basis
+        classification: MISSING
+      - field_id: leaf_temperature
+        classification: MISSING
+      - field_id: dataset_bound_growth_stage_or_explicit_developmental_context
+        classification: MISSING
+        notes: No stage information in any audited file; species-per-figure also undeclared.
+      - field_id: crop_identity
+        classification: AMBIGUOUS
+        notes: >-
+          Dataset covers soybean AND tomato; no audited file states which species
+          Fig1e reports. Article context suggests soybean, but files do not bind it.
+      - field_id: timestamp_and_interval_semantics
+        classification: AMBIGUOUS
+        exact_column_or_constant: Time in {1,3,5,7,24,48}
+        notes: Unit (hours) implied by article context only; unequal intervals; no date/time anchors.
+      - field_id: replicate_or_independent_group_identity
+        classification: DIRECT_COLUMN
+        exact_column_or_constant: Plant ID (30 unique; one treatment per plant; 6 repeats each)
+      - field_id: quantitative_units
+        classification: MISSING
+        notes: No unit declared for any Fig1e column in any audited file.
+      - field_id: variable_level_provenance
+        classification: AMBIGUOUS
+        notes: README lists an analysis script that is not in the repository; processing chain unverifiable.
+      - field_id: matched_records_or_explicit_alignment_contract
+        classification: MISSING
+        notes: No driver columns in EXPERIMENT_A; EXPERIMENT_B has different trial structure with no alignment contract to Fig1e.
+    response_domain: TREATMENT_X_TIME_ENDPOINTS_NO_DRIVER_DOMAIN
+    stage_result: MISSING
+    group_result: PLANT_ID_PROVEN_BUT_SPECIES_UNBOUND
+    row_alignment_result: NO_DRIVERS_TO_ALIGN
+    blocking_findings:
+      - BLOCKER_TARGET_QUANTITY_AND_UNITS_UNDECLARED
+      - BLOCKER_ANALYSIS_SCRIPT_LISTED_BUT_ABSENT
+      - BLOCKER_SPECIES_BINDING_TO_FIG1E_ABSENT_FROM_FILES
+      - BLOCKER_NO_PAR_VPD_TLEAF_ANYWHERE
+    nonblocking_findings:
+      - COMPONENT_EXPERIMENT_B_HAS_UNITED_CONDUCTANCE_BUT_NO_TIME_AXIS_AND_SEPARATE_TRIAL_STRUCTURE
+
+cross_dataset_rule:
+  applied: true
+  stitching_attempts: 0
+  note: >-
+    Mostofa gsw + Tejera drivers, Helicoverpa gs + Mostofa conditions, and all
+    analogous combinations were not attempted. Each candidate judged strictly
+    alone.
+
+declared_constant_applicability:
+  mostofa_article_conditions: NOT_ADMISSIBLE_THIS_ROUND
+  detail: >-
+    PAR 1000 μmol m-2 s-1, chamber 30 degC, CO2 420 μmol mol-1 and water vapor
+    22-26 mmol mol-1 are article-level claims that appear nowhere in the audited
+    files; no audited file establishes their applicability to the Fig 3d rows,
+    so DECLARED_CONSTANT_WITH_PROVENANCE cannot be granted under the
+    constant-admission rule.
+  tejera_par_effectively_constant_observed: true
+  detail_tejera: >-
+    Unlike Mostofa, Tejera PAR constancy is observed per-row inside the file
+    (1499.7-1500.3), which is direct evidence rather than external declaration.
+
+vpd_derivation_assessment:
+  mostofa: IMPOSSIBLE_MISSING_PER_ROW_INPUTS
+  tejera: NOT_REQUIRED_DIRECT_COLUMN_PRESENT
+  helicoverpa: IMPOSSIBLE_NO_HUMIDITY_TEMPERATURE_INPUTS
+
+schema_packet_feasibility:
+  MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD: INFEASIBLE
+  TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD: INFEASIBLE
+  HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD: INFEASIBLE
+  detail: >-
+    No single candidate supplies both an absolute conductance target and
+    row-aligned VPD/PAR/Tleaf with groups and stage binding, so no concrete
+    packet can be constructed without fabrication or cross-dataset stitching.
+
+final_verdict: HOLD_REQUIRED_FIELDS_MISSING
+verdict_scope: THREE_CANDIDATES_AUDITED_SEPARATELY_NO_STITCHING
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  solver_implementation_started: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  active_parameters: 0
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+next_round_guidance: >-
+  Highest-value follow-up remains author-provided raw LI-680X logs for the
+  Mostofa wound-response experiment (which would carry per-row Tleaf/Vpd/PAR/
+  gsw together), or a new dataset combining absolute conductance with complete
+  row-aligned drivers and group/stage metadata.

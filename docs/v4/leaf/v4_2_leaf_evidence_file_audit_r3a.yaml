@@ -5,7 +5,7 @@ registry_id: V4_2_LEAF_EVIDENCE_FILE_AUDIT_R3A
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 3e7ec58b19752da9eef018a80875d0a90bd6164f
 branch: codex/v4-2-leaf-evidence-file-audit-r3a
-status: PENDING_LOCAL_FILE_LEVEL_AUDIT
+status: COMPLETE_HOLD_REQUIRED_FIELDS_MISSING
 
 objective: >-
   Perform byte-level audit of the highest-value R3 public soybean candidates.
@@ -75,7 +75,9 @@ candidate_audits:
       - Does_the_declared_PAR_condition_apply_to_the_same_gsw_records
       - Are_replicate_or_plant_identifiers_available
       - Can_R1_stage_be_bound_to_the_audited_records_without_guessing
+    result: HOLD_REQUIRED_FIELDS_MISSING
     full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
 
   - candidate_id: TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD
     priority: 2
@@ -99,7 +101,9 @@ candidate_audits:
       - Is_soybean_developmental_stage_available_from_data_README_protocol_or_article
       - Are_units_and_measurement_basis_explicit
     expected_risk: public_README_column_list_does_not_include_gsw_or_rc
+    result: HOLD_COMPONENT_EVIDENCE_ONLY
     full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
 
   - candidate_id: HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD
     priority: 3
@@ -122,7 +126,9 @@ candidate_audits:
       - Are_PAR_VPD_Tleaf_or_derivation_inputs_present_and_row_aligned
       - Is_growth_or_developmental_stage_source_bound_to_these_records
       - Do_optional_LI_6800_files_contain_soybean_records_relevant_to_the_same_experiment
+    result: HOLD_REQUIRED_FIELDS_MISSING
     full_packet_candidate: false
+    audit_evidence: docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml
 
 cross_dataset_rule: >-
   Never combine target variables from one dataset with forcing, stage, or group

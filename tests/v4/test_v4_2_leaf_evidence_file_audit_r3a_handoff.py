@@ -19,7 +19,22 @@ def test_r3a_handoff_is_pending_file_audit() -> None:
     assert data["stage"] == "V4-2"
     assert data["round"] == "R3A"
     assert data["base_main_sha"] == "3e7ec58b19752da9eef018a80875d0a90bd6164f"
-    assert data["status"] == "PENDING_LOCAL_FILE_LEVEL_AUDIT"
+
+
+def test_r3a_completed_as_hold_with_all_candidates_rejected() -> None:
+    data = _request()
+    assert data["status"] == "COMPLETE_HOLD_REQUIRED_FIELDS_MISSING"
+    expected = {
+        "MOSTOFA_2025_CRYPTIC_ISOPRENE_SOYBEAN_DRYAD": "HOLD_REQUIRED_FIELDS_MISSING",
+        "TEJERA_NIEVES_WALKER_2024_ACI_SOYBEAN_DRYAD": "HOLD_COMPONENT_EVIDENCE_ONLY",
+        "HELICOVERPA_ZEA_SALIVA_SOYBEAN_STOMATAL_DRYAD": "HOLD_REQUIRED_FIELDS_MISSING",
+    }
+    for item in data["candidate_audits"]:
+        assert item["result"] == expected[item["candidate_id"]]
+        assert item["full_packet_candidate"] is False
+        assert item["audit_evidence"] == (
+            "docs/v4/leaf/v4_2_leaf_evidence_file_audit_r3a_result.yaml"
+        )
 
 
 def test_r3a_packet_docs_tip_is_frozen_pre_result_boundary() -> None:
