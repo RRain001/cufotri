@@ -1,0 +1,140 @@
+schema_version: v1
+stage: V4-1
+item_id: V4_DATA_AND_STATE_CONTRACTS
+status: CONTRACTS_DEFINED_PENDING_REVIEW
+repository: RRain001/CTEAS_ufotri
+
+source_authorization:
+  p7_8c_record: docs/v3/physics/p7_8c_v4_implementation_authorization.yaml
+  p7_8c_main_sha: 175c5d7ed7fbec916485aa44c0ae733d330b661f
+  authorization_status: AUTHORIZED_CONTROL_PLANE_ONLY
+
+source_selection:
+  selection_registry: docs/v3/physics/p7_8b2_physics_selection.yaml
+  architecture_roadmap: docs/v3/physics/p7_8b2_architecture_roadmap.yaml
+  coupling_decision: docs/v3/physics/p7_8b2_coupling_decision.yaml
+  validation_dependency: docs/v3/physics/p7_8b2_validation_dependency.yaml
+  v3_1_mass_basis_contract: docs/v3_1/contracts/mass_basis_contract.yaml
+
+contract_documents:
+  common: docs/v4/contracts/v4_common_data_contract.yaml
+  leaf: docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+  obt: docs/v4/contracts/obt_formation_package_contract.yaml
+  root: docs/v4/contracts/root_water_flux_contract.yaml
+  validation_case_schema: schemas/v4/v4_validation_case_envelope.schema.json
+
+scope:
+  control_plane_only: true
+  production_runtime_changes: false
+  solver_equation_implementation: false
+  runtime_state_activation: false
+  existing_state_serialization_changes: false
+  numerical_coupling_changes: false
+  p7_5_semantics_changes: false
+  p7_5b_semantics_changes: false
+  candidate_parameter_values_admitted: false
+  calibration_started: false
+  physical_validation_claimed: false
+
+common_contract:
+  profile_policy:
+    default_profile: v3_frozen_baseline
+    rollback_profile: v3_frozen_baseline
+    future_profiles_opt_in_only: true
+    missing_future_required_fields: FAIL_CLOSED
+    automatic_v3_to_v4_state_conversion: FORBIDDEN
+  provenance:
+    required_fields:
+      - source_id
+      - source_locator
+      - revision
+      - variable_name
+      - declared_unit
+      - timestamp_basis
+    source_assumption_is_observation: false
+    production_arithmetic_is_expected_data: false
+    synthetic_trajectory_is_empirical_validation: false
+  timestamp:
+    required: true
+    timezone_or_offset_required: true
+    interval_alignment_required: true
+    implicit_local_time_forbidden: true
+  missing_data:
+    required_variable_missing: CASE_INVALID_FAIL_CLOSED
+    imputation_default: FORBIDDEN_UNLESS_SEPARATELY_REVIEWED
+  parameter_policy:
+    symbolic_descriptors_allowed: true
+    numerical_values_allowed_in_v4_1: false
+    inferred_default_values_forbidden: true
+    parameter_activation_allowed: false
+
+candidate_contracts:
+  - item_id: LEAF_DYNAMIC_STOMATAL_RESPONSE
+    contract: docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+    coupling_classification: INTERFACE_EXTENSION
+    equation_contract_status: SYMBOLIC_CONTRACT_DEFINED
+    state_ownership_status: DEFINED
+    validation_case_contract_status: DEFINED
+    restart_contract_status: DEFINED_NO_PERSISTENT_CANDIDATE_STATE
+    implementation_authorized: false
+  - item_id: OBT_FORMATION_PACKAGE
+    contract: docs/v4/contracts/obt_formation_package_contract.yaml
+    coupling_classification: INTERFACE_EXTENSION
+    equation_contract_status: SYMBOLIC_CONTRACT_DEFINED_WITH_CONSERVATION_LEDGER
+    state_ownership_status: DEFINED
+    validation_case_contract_status: DEFINED
+    restart_contract_status: DEFINED
+    implementation_authorized: false
+  - item_id: ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+    contract: docs/v4/contracts/root_water_flux_contract.yaml
+    coupling_classification: NUMERICAL_COUPLING_CHANGE_REQUIRED
+    equation_contract_status: SYMBOLIC_CONTRACT_DEFINED
+    state_ownership_status: DEFINED
+    validation_case_contract_status: DEFINED
+    restart_contract_status: DEFINED
+    p7_5_p7_5b_re_review_required_before_implementation: true
+    implementation_authorized: false
+
+state_ownership_invariants:
+  single_owner_per_prognostic_state: true
+  forcing_is_not_owned_state: true
+  derived_diagnostic_is_not_restart_state: true
+  transfer_flux_applied_exactly_once: true
+  downstream_readout_cannot_mutate_environmental_state: true
+
+restart_invariants:
+  future_profile_restart_version_must_be_explicit: true
+  all_future_prognostic_states_must_be_restart_complete: true
+  derived_diagnostics_need_not_be_persisted: true
+  v3_scalar_state_to_v4_multistate_auto_mapping: forbidden
+  missing_future_restart_field: FAIL_CLOSED
+
+validation_contract:
+  envelope_schema: schemas/v4/v4_validation_case_envelope.schema.json
+  case_must_name_candidate_item: true
+  case_must_name_baseline_profile: true
+  independent_observation_provenance_required: true
+  replicate_identifier_required: true
+  timestamp_alignment_required: true
+  variable_unit_declaration_required: true
+  preregistered_metrics_required: true
+  synthetic_cases_may_verify_software_only: true
+
+hard_invariants:
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  v4_selected_model_implementation_authorized: false
+  physical_validation_complete: false
+
+exit_gate:
+  required_before_v4_1_can_be_called_reviewed:
+    - dimensional_contract_tests_pass
+    - state_ownership_conflict_tests_pass
+    - restart_completeness_contract_tests_pass
+    - validation_case_schema_tests_pass
+    - frozen_runtime_isolation_pass
+    - contract_review_pass
+  independent_model_implementation_review_satisfied_by_v4_1: false
+  selected_model_implementation_authorized_by_v4_1: false
