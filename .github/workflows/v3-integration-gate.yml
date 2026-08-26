@@ -76,4 +76,5 @@ jobs:
             tests/v3/test_p7_8b1_redesign_specification.py \
             tests/v3/test_p7_8b2_physics_selection.py \
             tests/v3_1/test_mass_basis_contract.py \
-            tests/v3_1/test_mass_basis_schema_whitespace.py
+            tests/v3_1/test_mass_basis_schema_whitespace.py \
+            tests/v3_1/test_mass_basis_identity_evidence_gate.py
