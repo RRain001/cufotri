@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
 import json
 from pathlib import Path
 import subprocess
@@ -12,7 +11,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE_MAIN = "175c5d7ed7fbec916485aa44c0ae733d330b661f"
-CONTENT_TIP = "c9f4455892c7d242012f63086c0e297c75e2b77d"
+CONTENT_TIP = "a47ac41a48a691b6b24aea0b948abf4533a9ed60"
 REGISTRY = ROOT / "docs/v4/contracts/v4_data_state_contract_registry.yaml"
 COMMON = ROOT / "docs/v4/contracts/v4_common_data_contract.yaml"
 LEAF = ROOT / "docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml"
@@ -142,34 +141,45 @@ def test_leaf_contract_is_dimensionally_typed_and_has_no_new_restart_state() -> 
     assert data["implementation_authorized"] is False
 
 
-def test_obt_contract_has_explicit_internal_transfer_conservation() -> None:
+def test_obt_contract_has_explicit_internal_transfer_conservation_without_new_rate() -> None:
     data = load_yaml(OBT)
     q = data["quantity_contracts"]
     for state in ("P", "B_x", "B_n", "B_total"):
         assert q[state]["canonical_unit"] == "Bq m^-2"
     assert q["u_P"]["canonical_unit"] == "Bq m^-2 s^-1"
+    assert q["u_P"]["functional_form_selected_in_v4_1"] is False
     assert q["rate_parameters"]["canonical_unit"] == "s^-1"
+    assert set(q["rate_parameters"]["names"]) == {"k_f0", "k_P", "k_PB", "k_xn", "k_x", "k_n"}
+    assert "k_P_other" not in q["rate_parameters"]["names"]
     assert q["rate_parameters"]["numerical_values_allowed_in_v4_1"] is False
+    descriptors = q["response_function_descriptors"]
+    assert descriptors["product_or_other_composition_selected_in_v4_1"] is False
     conservation = data["conservation_contract"]
     assert conservation["internal_transfers"] == ["J_P_to_Bx", "J_Bx_to_Bn"]
     assert set(conservation["external_losses"]) == {"J_P_other", "J_Bx_other", "J_Bn_other"}
     assert conservation["aggregate_B_is_additional_storage"] is False
     relation = conservation["p7_8b2_rate_relation"]
-    assert relation["symbolic_relation"] == "k_P = k_PB + k_P_other"
-    assert relation["implies_k_PB_le_k_P"] is True
+    assert relation["symbolic_relation"] == "J_P_other = (k_P - k_PB) * P"
+    assert relation["constraint"] == "0 <= k_PB <= k_P"
+    assert relation["additional_precursor_loss_parameter_introduced"] is False
     assert relation["numerical_values_allowed_in_v4_1"] is False
+    forcing = data["forcing_contract"]["precursor_source_functional_composition"]
+    assert forcing["status"] == "UNRESOLVED_REQUIRES_ITEM_SPECIFIC_REVIEW"
+    assert forcing["multiplicative_response_product_assumed"] is False
+    assert forcing["additive_or_other_composition_assumed"] is False
 
-    # Pure software algebra check with arbitrary values. These are not physical
-    # parameters or calibration values; they only verify transfer cancellation.
-    P, bx = 4.0, 3.0
+    # Pure software algebra check with arbitrary values. These values are not
+    # physical parameters or calibration values; they only test cancellation.
+    P, bx, bn = 4.0, 3.0, 2.0
     u_p = 7.0
-    k_pb, k_p_other, k_xn, k_x, k_n = 0.2, 0.1, 0.3, 0.05, 0.04
+    k_p, k_pb, k_xn, k_x, k_n = 0.3, 0.2, 0.3, 0.05, 0.04
+    assert 0.0 <= k_pb <= k_p
     j_p_bx = k_pb * P
-    j_p_other = k_p_other * P
+    j_p_other = (k_p - k_pb) * P
     j_bx_bn = k_xn * bx
     j_bx_other = k_x * bx
-    j_bn_other = k_n * 2.0
-    d_p = u_p - j_p_bx - j_p_other
+    j_bn_other = k_n * bn
+    d_p = u_p - k_p * P
     d_bx = j_p_bx - j_bx_bn - j_bx_other
     d_bn = j_bx_bn - j_bn_other
     composite = d_p + d_bx + d_bn
