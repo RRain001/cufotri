@@ -16,15 +16,17 @@ def _registry() -> dict:
     return yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
 
 
-def test_r3b_is_request_preparation_not_external_contact() -> None:
+def test_r3b_is_closed_without_external_contact() -> None:
     data = _registry()
     assert data["base_main_sha"] == "224ee3bdda21a3f81676333cfbe841cb9e53c5a2"
-    assert data["status"] == "READY_FOR_AUTHOR_CONTACT_NOT_SENT"
+    assert data["status"] == "CLOSED_AUTHOR_CONTACT_NOT_PURSUED"
     scope = data["contact_scope"]
     assert scope["actual_contact_performed"] is False
     assert scope["email_or_message_sent"] is False
     assert scope["response_received"] is False
     assert scope["raw_author_file_received"] is False
+    assert scope["project_decision_not_to_contact_authors"] is True
+    assert scope["next_stage"] == "V4_2_PROSPECTIVE_SOYBEAN_EXPERIMENT_DESIGN"
 
 
 def test_response_and_file_admission_states_are_fail_closed() -> None:
@@ -92,7 +94,7 @@ def test_vpd_and_declared_constant_rules_reject_range_substitution() -> None:
     assert "explicit source-supported key/alignment contract" in rules["row_alignment"]
 
 
-def test_request_template_asks_for_raw_export_without_fabricating_metadata() -> None:
+def test_request_template_is_preserved_but_unsent() -> None:
     text = TEMPLATE.read_text(encoding="utf-8")
     assert "original LI-6800/LI-680X export" in text
     assert "partial raw export is still useful" in text
@@ -102,8 +104,10 @@ def test_request_template_asks_for_raw_export_without_fabricating_metadata() -> 
     assert "has **not** been sent" in text
 
 
-def test_review_keeps_solver_and_calibration_blocked() -> None:
+def test_review_closes_author_path_and_keeps_solver_blocked() -> None:
     text = REVIEW.read_text(encoding="utf-8")
+    assert "CLOSED_AUTHOR_CONTACT_NOT_PURSUED" in text
+    assert "prospective soybean experiment design" in text
     for line in (
         "LEAF_IMPLEMENTATION_AUTHORIZED = FALSE",
         "SOLVER_IMPLEMENTATION_STARTED = FALSE",
@@ -124,9 +128,12 @@ def test_review_keeps_solver_and_calibration_blocked() -> None:
     assert invariants["physical_validation_complete"] is False
 
 
-def test_exit_policy_requires_separate_audit_before_any_implementation_decision() -> None:
+def test_exit_policy_moves_to_prospective_design_without_implementation() -> None:
     policy = _registry()["exit_policy"]
     assert "Remain HOLD" in policy["if_no_author_data_received"]
     assert "DATA_RECEIVED_INCOMPLETE" in policy["if_partial_data_received"]
     assert "separate immutable file-level audit stage" in policy["if_complete_candidate_received"]
-    assert "Neither is authorized" in policy["if_author_data_path_exhausted"]
+    exhausted = policy["if_author_data_path_exhausted"]
+    assert "chosen not to pursue author-held data" in exhausted
+    assert "prospective soybean experiment design" in exhausted
+    assert "Evidence-composition remains unauthorized" in exhausted
