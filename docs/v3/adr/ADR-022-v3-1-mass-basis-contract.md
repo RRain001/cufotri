@@ -2,8 +2,9 @@
 
 ## Status
 
-Accepted, with evidence-binding remediation incorporated on
-`codex/v3-1-mass-basis-contract` before independent review.
+Accepted as the V3.1 contract design, with Luna R1 identity/evidence remediation
+incorporated on `codex/v3-1-mass-basis-contract`. Formal independent rereview
+R2 remains required before merge.
 
 ## Context
 
@@ -39,6 +40,28 @@ are identical. Cross-basis comparison fails closed. A separate
 has explicit provenance and matched measurements; V3.1 stores no numerical
 conversion factor and performs no numerical conversion.
 
+### Same-basis identity versus conversion-proposal governance
+
+V3.1 deliberately separates direct comparison from conversion-proposal
+validation.
+
+`require_direct_comparison()` is the API for a true same-basis comparison. It
+requires identical mass, tissue, and area bases and does not consume
+cross-basis conversion evidence metadata.
+
+`validate_conversion_proposal()` governs a proposed basis relation. When the
+source and target have the same mass basis, it may return `IDENTITY_ONLY` only
+if no `BasisConversionEvidence` object is supplied and neither contract uses
+`conversion_status = EVIDENCE_DECLARED` for that proposal path. A same-basis
+conversion proposal carrying a cross-basis evidence object or declared
+evidence state fails closed rather than silently ignoring that state.
+
+This rule avoids inventing a same-basis `BasisConversionEvidence`; that record
+is intentionally valid only when source and target mass bases differ. Records
+that happen to carry conversion evidence metadata can still be directly
+compared through `require_direct_comparison()` when their actual bases and
+scopes are identical.
+
 ### Evidence binding
 
 A cross-basis evidence record must be scoped to the exact `TissueScope` and
@@ -59,14 +82,15 @@ pairs. A flat list of unrelated IDs is not sufficient evidence of pairing.
 
 If a `MassBasisContract` already declares
 `conversion_status = EVIDENCE_DECLARED`, its `conversion_evidence_id` must
-match the evidence record supplied to proposal validation. Possessing or
-matching an evidence record still does **not** validate a numerical conversion
-relation.
+match the evidence record supplied to a valid cross-basis proposal. Possessing
+or matching an evidence record still does **not** validate a numerical
+conversion relation.
 
 Custom tissue or area scopes require explicit identifiers. Missing provenance,
 untyped enum values, mismatched tissue scope, mismatched area basis, missing
 cross-basis evidence, malformed or reused measurement pairs, mismatched
-evidence IDs, and reversed conversion direction all fail closed.
+evidence IDs, reversed conversion direction, and evidence attached to an
+identity conversion proposal all fail closed.
 
 ## Scientific boundary
 
@@ -99,7 +123,8 @@ change:
 The implementation must provide:
 
 1. unit tests for immutable typed contracts and fail-closed behavior;
-2. negative tests for evidence pairing, evidence scope, and evidence-ID binding;
+2. negative tests for evidence pairing, evidence scope, evidence-ID binding,
+   and same-basis identity/evidence-state bypasses;
 3. JSON Schema validation for serialized mass-basis metadata;
 4. an isolation test that locks the frozen V3 solver and pipeline Git blobs;
 5. the existing portable integration suite;
@@ -115,6 +140,24 @@ and proposal validation did not enforce consistency with a declared evidence
 ID. The earlier technical-review PASS was therefore superseded and remediation
 was required before the independent-review branch could be opened.
 
+A first external GitHub Copilot review of target
+`4664e4c09f20bbfd48c5d1c750efafeb6d6e9643` found that JSON Schema admitted
+whitespace-only text that Python `_require_text()` rejected after stripping.
+That finding was remediated and independently preserved as a HOLD review.
+
+Local GPT-5.6 Luna rereview R1 then reviewed target
+`e28fd18033984e9fda252aa87b81b399b60ece1e` and returned
+`HOLD_REMEDIATION_REQUIRED`: `validate_conversion_proposal()` returned
+`IDENTITY_ONLY` for same-basis records before checking a declared evidence
+state. The review is preserved at
+`d2014f584a3fa6fc373bf32a6477e950ace01b5a`.
+
+The identity/evidence-state remediation is verified at code/test/workflow head
+`cc5aabe0c331664a005ac3ec0579c993e1397757` by V3 Remediation CI run
+`32916837652` and V3 Protected Integration Gate run `32916837645`.
+The portable suite reports `1000 passed, 1 skipped, 57 deselected`; the
+explicit invariant suite reports `79 passed`.
+
 ## Consequences
 
 V3.1 creates an auditable boundary for future empirical validation and V4 OBT
@@ -122,7 +165,7 @@ work without pretending that cross-basis physics is already known. V4 remains
 unauthorized by this ADR.
 
 ```ini
-V3_1_MASS_BASIS_CONTRACT = REMEDIATION_IN_PROGRESS
+V3_1_MASS_BASIS_CONTRACT = PASS_LUNA_R1_REMEDIATION_PENDING_R2
 SOLVER_EQUATIONS_CHANGED = FALSE
 NUMERICAL_COUPLING_CHANGED = FALSE
 ACTIVE_PARAMETERS = 0
