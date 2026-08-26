@@ -285,16 +285,34 @@
     },
     {
       "anyOf": [
-        {"properties": {"variables": {"contains": {"properties": {"name": {"const": "light"}}, "required": ["name"]}}}},
-        {"properties": {"variables": {"contains": {"properties": {"name": {"const": "PAR"}}, "required": ["name"]}}}}
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"const": "light"}, "role": {"const": "FORCING"}},
+                "required": ["name", "role"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"const": "PAR"}, "role": {"const": "FORCING"}},
+                "required": ["name", "role"]
+              }
+            }
+          }
+        }
       ]
     },
     {
       "properties": {
         "variables": {
           "contains": {
-            "properties": {"name": {"const": "leaf_temperature"}, "unit": {"const": "K"}},
-            "required": ["name", "unit"]
+            "properties": {"name": {"const": "leaf_temperature"}, "role": {"const": "FORCING"}, "unit": {"const": "K"}},
+            "required": ["name", "role", "unit"]
           }
         }
       }
@@ -303,8 +321,8 @@
       "properties": {
         "variables": {
           "contains": {
-            "properties": {"name": {"const": "growth_stage"}, "unit": {"const": "1"}},
-            "required": ["name", "unit"]
+            "properties": {"name": {"const": "growth_stage"}, "role": {"const": "CONTEXT"}, "unit": {"const": "1"}},
+            "required": ["name", "role", "unit"]
           }
         }
       }
@@ -315,8 +333,8 @@
           "properties": {
             "variables": {
               "contains": {
-                "properties": {"name": {"const": "VPD"}, "unit": {"const": "Pa"}},
-                "required": ["name", "unit"]
+                "properties": {"name": {"const": "VPD"}, "role": {"const": "FORCING"}, "unit": {"const": "Pa"}},
+                "required": ["name", "role", "unit"]
               }
             }
           }
@@ -326,8 +344,8 @@
           "properties": {
             "variables": {
               "contains": {
-                "properties": {"name": {"enum": ["relative_humidity", "specific_humidity"]}},
-                "required": ["name"]
+                "properties": {"name": {"enum": ["relative_humidity", "specific_humidity"]}, "role": {"const": "FORCING"}},
+                "required": ["name", "role"]
               }
             }
           }
