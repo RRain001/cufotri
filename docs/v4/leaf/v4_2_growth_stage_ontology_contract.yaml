@@ -1,0 +1,101 @@
+schema_version: v1
+stage: V4-2
+contract_id: V4_2_LEAF_GROWTH_STAGE_ONTOLOGY
+item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: DATASET_BOUND_ONTOLOGY_CONTRACT_DEFINED
+implementation_authorized: false
+
+purpose: >-
+  Define how crop or phenological stage metadata may be admitted into a future
+  dynamic stomatal response without inventing a universal stage taxonomy or
+  silently translating incompatible source taxonomies.
+
+scope:
+  control_plane_only: true
+  production_runtime_changed: false
+  solver_changed: false
+  parameter_values_admitted: false
+  calibration_started: false
+
+ontology_identity_contract:
+  required_fields:
+    - ontology_id
+    - ontology_revision
+    - source_id
+    - source_locator
+    - crop_identity
+    - source_stage_field
+    - source_stage_unit_or_category_basis
+  blank_text_forbidden: true
+  provenance_required: true
+  dataset_bound: true
+  universal_cross_crop_ontology_selected: false
+
+stage_record_contract:
+  required_fields:
+    - source_stage_value
+    - admitted_stage_id
+    - semantic_label
+    - provenance_locator
+  admitted_stage_id_must_be_unique_within_ontology: true
+  source_stage_value_must_be_unique_within_ontology: true
+  one_source_value_to_multiple_admitted_stages: FORBIDDEN
+  multiple_source_values_to_one_admitted_stage: >-
+    ALLOWED_ONLY_IF_EXPLICITLY_DECLARED_AND_JUSTIFIED_IN_THE_DATASET_ONTOLOGY
+  stage_ordering:
+    default: UNORDERED_CATEGORICAL
+    ordinal_interpretation_allowed_only_if_source_defines_order: true
+    inferred_numeric_spacing_between_stages: FORBIDDEN
+  interpolation_between_stage_categories: FORBIDDEN_UNLESS_SEPARATELY_REVIEWED
+
+cross_dataset_mapping_policy:
+  automatic_mapping: FORBIDDEN
+  label_string_equality_implies_semantic_equivalence: false
+  numeric_code_equality_implies_semantic_equivalence: false
+  cross_crop_mapping_requires_explicit_review: true
+  cross_ontology_mapping_requires:
+    - source_ontology_id_and_revision
+    - target_ontology_id_and_revision
+    - explicit_mapping_table
+    - semantic_justification
+    - provenance
+  missing_mapping: FAIL_CLOSED
+
+forcing_contract:
+  runtime_role: external_typed_category
+  timestamp_alignment_required: true
+  replicate_binding_required: true
+  crop_identity_binding_required: true
+  ontology_identity_must_travel_with_stage_value: true
+  missing_stage_when_required_by_selected_response: FAIL_CLOSED
+  unknown_stage_value: FAIL_CLOSED
+
+validation_boundary:
+  stage_effect_may_be_evaluated_only_with_matched_empirical_observations: true
+  stage_metadata_alone_validates_dynamic_stomatal_response: false
+  synthetic_stage_labels_are_physical_validation: false
+  stage_categories_may_not_be_created_to_improve_fit_post_hoc: true
+  preregistration_required_before_model_comparison: true
+
+forbidden_shortcuts:
+  - vegetation_period_to_growth_stage_without_explicit_mapping
+  - calendar_month_to_stage_without_source_evidence
+  - day_of_year_to_stage_without_source_evidence
+  - source_numeric_code_to_ordinal_distance_without_source_definition
+  - universal_stage_defaults
+  - silent_cross_crop_stage_translation
+  - parameter_activation
+
+readiness_condition:
+  contract_defined: true
+  dataset_specific_ontology_instantiated: false
+  implementation_gate_satisfied: false
+  reason: MATCHED_EMPIRICAL_DATASET_AND_DATASET_SPECIFIC_ONTOLOGY_NOT_YET_PRESENT
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false

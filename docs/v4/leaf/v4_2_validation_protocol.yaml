@@ -1,0 +1,109 @@
+schema_version: v1
+stage: V4-2
+protocol_id: V4_2_LEAF_DYNAMIC_STOMATAL_VALIDATION
+item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: PROTOCOL_DEFINED_NOT_EXECUTED
+implementation_authorized: false
+
+purpose: >-
+  Freeze the validation design required before a dynamic stomatal response may
+  be implemented or activated. This protocol defines separation, metrics and
+  evidence roles; it performs no calibration and contains no parameter values.
+
+baseline_contract:
+  required_baseline_profile: v3_frozen_baseline
+  baseline_relation: 'r_tot = r_a + r_b + r_c; g_ex = 1/r_tot'
+  candidate_must_be_compared_against_baseline: true
+  baseline_parameter_activation_changed: false
+
+evidence_roles:
+  empirical_validation:
+    independent_observation_required: true
+    software_expectation_allowed_as_observation: false
+    synthetic_data_allowed_as_physical_validation: false
+  synthetic_software_verification:
+    allowed_purposes:
+      - dimensional_consistency
+      - reciprocal_identity
+      - missing_forcing_fail_closed
+      - out_of_domain_fail_closed
+      - deterministic_profile_selection
+    physical_validation_claim_allowed: false
+
+split_and_leakage_policy:
+  independent_grouping_unit_must_be_declared: true
+  grouping_examples_are_nonbinding:
+    - biological_replicate
+    - experiment_run
+    - site_or_chamber
+    - crop_stage_block
+  random_row_split_across_same_independent_group: FORBIDDEN_FOR_FINAL_VALIDATION
+  calibration_group_and_final_validation_group_overlap: FORBIDDEN
+  response_domain_estimation_from_final_holdout: FORBIDDEN
+  metric_or_model_selection_from_final_holdout: FORBIDDEN
+  preprocessing_leakage_from_final_holdout: FORBIDDEN
+  if_no_calibration_is_performed:
+    final_validation_group_still_must_be_declared: true
+  split_rule_must_be_preregistered_before_candidate_fit: true
+
+required_observation_targets:
+  any_of:
+    - observed_stomatal_conductance
+    - observed_leaf_or_surface_resistance
+  target_unit_must_be_explicit: true
+  reciprocal_conversion_between_g_s_and_r_c:
+    permitted_only_when_measurement_basis_is_compatible: true
+    zero_or_nonpositive_values: FAIL_CLOSED
+    conversion_must_be_declared_in_protocol: true
+
+required_forcings_and_context:
+  - light_or_PAR
+  - VPD_or_explicit_humidity_basis
+  - leaf_temperature
+  - growth_stage_with_ontology_identity
+  - crop_identity
+  - timestamp_and_interval_semantics
+  - replicate_or_independent_group_id
+  - provenance_and_unit_for_each_quantitative_variable
+
+preregistered_metrics:
+  - metric_id: conductance_or_resistance_trajectory_error
+    role: PRIMARY_PREDICTION_ERROR
+    exact_statistic: DATASET_PROTOCOL_MUST_DECLARE_BEFORE_FIT
+  - metric_id: reciprocal_identity_residual
+    role: SOFTWARE_AND_DIMENSIONAL_INVARIANT
+    exact_statistic: ABSOLUTE_OR_RELATIVE_TOLERANCE_MUST_BE_DECLARED
+  - metric_id: domain_and_bound_violation_count
+    role: FAIL_CLOSED_AUDIT
+    exact_statistic: COUNT
+  - metric_id: cross_condition_generalization_error
+    role: GENERALIZATION_DIAGNOSTIC
+    exact_statistic: GROUPING_AND_AGGREGATION_MUST_BE_DECLARED_BEFORE_FIT
+
+acceptance_rule_policy:
+  thresholds_selected_in_v4_2: false
+  thresholds_must_be_evidence_and_use_case_justified: true
+  post_hoc_threshold_relaxation: FORBIDDEN
+  physical_validation_pass_without_preregistered_thresholds: FORBIDDEN
+
+calibration_boundary:
+  calibration_started: false
+  candidate_response_shapes_selected: false
+  candidate_parameter_values_selected: false
+  calibration_before_complete_evidence_packet: FORBIDDEN
+  calibration_before_domain_and_split_preregistration: FORBIDDEN
+  activation_from_calibration_fit_alone: FORBIDDEN
+
+review_boundary:
+  technical_review_required_after_concrete_packet: true
+  independent_item_review_required: true
+  explicit_item_level_implementation_authorization_required: true
+  current_review_status: HOLD_WAITING_FOR_EMPIRICAL_PACKET
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false

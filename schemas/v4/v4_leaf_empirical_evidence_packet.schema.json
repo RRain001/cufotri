@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas.example/schemas/v4/v4_leaf_empirical_evidence_packet.schema.json",
+  "title": "CTEAS UFOTRI V4-2 leaf empirical evidence packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "packet_id",
+    "candidate_item",
+    "case_type",
+    "dataset",
+    "crop_identity",
+    "stage_ontology",
+    "time_contract",
+    "independent_groups",
+    "variables",
+    "response_domain_records",
+    "validation_split",
+    "preregistered_metrics"
+  ],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "packet_id": {"$ref": "#/$defs/nonblank"},
+    "candidate_item": {"const": "LEAF_DYNAMIC_STOMATAL_RESPONSE"},
+    "case_type": {"const": "EMPIRICAL_VALIDATION"},
+    "dataset": {"$ref": "#/$defs/dataset"},
+    "crop_identity": {"$ref": "#/$defs/cropIdentity"},
+    "stage_ontology": {"$ref": "#/$defs/stageOntology"},
+    "time_contract": {"$ref": "#/$defs/timeContract"},
+    "independent_groups": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/nonblank"}
+    },
+    "variables": {
+      "type": "array",
+      "minItems": 4,
+      "items": {"$ref": "#/$defs/variable"}
+    },
+    "vpd_basis": {"$ref": "#/$defs/vpdBasis"},
+    "response_domain_records": {
+      "type": "array",
+      "minItems": 4,
+      "items": {"$ref": "#/$defs/domainRecord"}
+    },
+    "validation_split": {"$ref": "#/$defs/validationSplit"},
+    "preregistered_metrics": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/metric"}
+    },
+    "notes": {"type": "string"}
+  },
+  "$defs": {
+    "nonblank": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_locator", "revision", "variable_name", "declared_unit", "timestamp_basis"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonblank"},
+        "source_locator": {"$ref": "#/$defs/nonblank"},
+        "revision": {"$ref": "#/$defs/nonblank"},
+        "variable_name": {"$ref": "#/$defs/nonblank"},
+        "declared_unit": {"$ref": "#/$defs/nonblank"},
+        "timestamp_basis": {"$ref": "#/$defs/nonblank"},
+        "method": {"type": "string"},
+        "instrument": {"type": "string"},
+        "uncertainty_basis": {"type": "string"}
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset_id", "dataset_revision", "source_locator", "license_or_access_basis"],
+      "properties": {
+        "dataset_id": {"$ref": "#/$defs/nonblank"},
+        "dataset_revision": {"$ref": "#/$defs/nonblank"},
+        "source_locator": {"$ref": "#/$defs/nonblank"},
+        "license_or_access_basis": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "cropIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["crop_id", "source_taxonomy", "source_locator"],
+      "properties": {
+        "crop_id": {"$ref": "#/$defs/nonblank"},
+        "source_taxonomy": {"$ref": "#/$defs/nonblank"},
+        "source_locator": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "stageOntology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ontology_id", "ontology_revision", "source_stage_field", "stage_records"],
+      "properties": {
+        "ontology_id": {"$ref": "#/$defs/nonblank"},
+        "ontology_revision": {"$ref": "#/$defs/nonblank"},
+        "source_stage_field": {"$ref": "#/$defs/nonblank"},
+        "stage_records": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_stage_value", "admitted_stage_id", "semantic_label", "provenance_locator"],
+            "properties": {
+              "source_stage_value": {"$ref": "#/$defs/nonblank"},
+              "admitted_stage_id": {"$ref": "#/$defs/nonblank"},
+              "semantic_label": {"$ref": "#/$defs/nonblank"},
+              "provenance_locator": {"$ref": "#/$defs/nonblank"}
+            }
+          }
+        }
+      }
+    },
+    "timeContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timezone_or_offset", "interval_semantics", "alignment_rule"],
+      "properties": {
+        "timezone_or_offset": {"$ref": "#/$defs/nonblank"},
+        "interval_semantics": {
+          "type": "string",
+          "enum": ["start", "end", "midpoint", "instantaneous", "interval_mean"]
+        },
+        "alignment_rule": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "unit", "provenance", "independent_group_field", "missing_data_policy"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "stomatal_conductance",
+            "leaf_surface_resistance",
+            "light",
+            "PAR",
+            "VPD",
+            "relative_humidity",
+            "specific_humidity",
+            "leaf_temperature",
+            "growth_stage",
+            "r_a",
+            "r_b",
+            "wind_speed",
+            "exchange_flux",
+            "TFWT"
+          ]
+        },
+        "role": {"type": "string", "enum": ["OBSERVATION", "FORCING", "CONTEXT", "GEOMETRY"]},
+        "unit": {"$ref": "#/$defs/nonblank"},
+        "measurement_basis": {"$ref": "#/$defs/nonblank"},
+        "provenance": {"$ref": "#/$defs/provenance"},
+        "independent_group_field": {"$ref": "#/$defs/nonblank"},
+        "missing_data_policy": {"type": "string", "enum": ["FAIL_CLOSED", "CASE_INVALID", "SEPARATELY_REVIEWED_IMPUTATION"]}
+      }
+    },
+    "vpdBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_variable", "conversion_rule", "saturation_vapor_pressure_rule", "temperature_variable"],
+      "properties": {
+        "source_variable": {"type": "string", "enum": ["relative_humidity", "specific_humidity"]},
+        "conversion_rule": {"$ref": "#/$defs/nonblank"},
+        "saturation_vapor_pressure_rule": {"$ref": "#/$defs/nonblank"},
+        "temperature_variable": {"type": "string", "enum": ["leaf_temperature"]}
+      }
+    },
+    "numericDomainRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain_type", "variable_name", "source_id", "source_locator", "revision", "declared_unit", "lower_support_boundary", "upper_support_boundary", "boundary_derivation_rule", "included_groups", "timestamp_window"],
+      "properties": {
+        "domain_type": {"const": "NUMERIC"},
+        "variable_name": {"type": "string", "enum": ["light_or_PAR", "VPD", "T_leaf"]},
+        "source_id": {"$ref": "#/$defs/nonblank"},
+        "source_locator": {"$ref": "#/$defs/nonblank"},
+        "revision": {"$ref": "#/$defs/nonblank"},
+        "declared_unit": {"$ref": "#/$defs/nonblank"},
+        "lower_support_boundary": {"type": "number"},
+        "upper_support_boundary": {"type": "number"},
+        "boundary_derivation_rule": {"$ref": "#/$defs/nonblank"},
+        "included_groups": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}},
+        "timestamp_window": {"$ref": "#/$defs/nonblank"}
+      }
+    },
+    "categoricalDomainRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain_type", "variable_name", "ontology_id", "ontology_revision", "admitted_stage_ids", "source_id", "source_locator", "included_groups"],
+      "properties": {
+        "domain_type": {"const": "CATEGORICAL"},
+        "variable_name": {"const": "stage"},
+        "ontology_id": {"$ref": "#/$defs/nonblank"},
+        "ontology_revision": {"$ref": "#/$defs/nonblank"},
+        "admitted_stage_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}},
+        "source_id": {"$ref": "#/$defs/nonblank"},
+        "source_locator": {"$ref": "#/$defs/nonblank"},
+        "included_groups": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}}
+      }
+    },
+    "domainRecord": {
+      "oneOf": [
+        {"$ref": "#/$defs/numericDomainRecord"},
+        {"$ref": "#/$defs/categoricalDomainRecord"}
+      ]
+    },
+    "validationSplit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grouping_unit", "calibration_groups", "final_validation_groups", "split_rule", "final_holdout_used_for_domain_estimation"],
+      "properties": {
+        "grouping_unit": {"$ref": "#/$defs/nonblank"},
+        "calibration_groups": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}},
+        "final_validation_groups": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/nonblank"}},
+        "split_rule": {"$ref": "#/$defs/nonblank"},
+        "final_holdout_used_for_domain_estimation": {"const": false}
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "definition", "aggregation_rule", "acceptance_rule_status"],
+      "properties": {
+        "metric_id": {
+          "type": "string",
+          "enum": [
+            "conductance_or_resistance_trajectory_error",
+            "reciprocal_identity_residual",
+            "domain_and_bound_violation_count",
+            "cross_condition_generalization_error"
+          ]
+        },
+        "definition": {"$ref": "#/$defs/nonblank"},
+        "aggregation_rule": {"$ref": "#/$defs/nonblank"},
+        "acceptance_rule_status": {"type": "string", "enum": ["PREREGISTERED", "PENDING_DATASET_SPECIFIC_PREREGISTRATION"]}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "anyOf": [
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {
+                  "name": {"const": "stomatal_conductance"},
+                  "role": {"const": "OBSERVATION"},
+                  "unit": {"const": "m s^-1"}
+                },
+                "required": ["name", "role", "unit", "measurement_basis"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {
+                  "name": {"const": "leaf_surface_resistance"},
+                  "role": {"const": "OBSERVATION"},
+                  "unit": {"const": "s m^-1"}
+                },
+                "required": ["name", "role", "unit", "measurement_basis"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "anyOf": [
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"const": "light"}, "role": {"const": "FORCING"}},
+                "required": ["name", "role"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"const": "PAR"}, "role": {"const": "FORCING"}},
+                "required": ["name", "role"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "variables": {
+          "contains": {
+            "properties": {"name": {"const": "leaf_temperature"}, "role": {"const": "FORCING"}, "unit": {"const": "K"}},
+            "required": ["name", "role", "unit"]
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "variables": {
+          "contains": {
+            "properties": {"name": {"const": "growth_stage"}, "role": {"const": "CONTEXT"}, "unit": {"const": "1"}},
+            "required": ["name", "role", "unit"]
+          }
+        }
+      }
+    },
+    {
+      "anyOf": [
+        {
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"const": "VPD"}, "role": {"const": "FORCING"}, "unit": {"const": "Pa"}},
+                "required": ["name", "role", "unit"]
+              }
+            }
+          }
+        },
+        {
+          "required": ["vpd_basis"],
+          "properties": {
+            "variables": {
+              "contains": {
+                "properties": {"name": {"enum": ["relative_humidity", "specific_humidity"]}, "role": {"const": "FORCING"}},
+                "required": ["name", "role"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "light_or_PAR"}},
+            "required": ["variable_name"]
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "VPD"}, "declared_unit": {"const": "Pa"}},
+            "required": ["variable_name", "declared_unit"]
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "T_leaf"}, "declared_unit": {"const": "K"}},
+            "required": ["variable_name", "declared_unit"]
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "response_domain_records": {
+          "contains": {
+            "properties": {"variable_name": {"const": "stage"}},
+            "required": ["variable_name"]
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "preregistered_metrics": {
+          "allOf": [
+            {"contains": {"properties": {"metric_id": {"const": "conductance_or_resistance_trajectory_error"}}, "required": ["metric_id"]}},
+            {"contains": {"properties": {"metric_id": {"const": "reciprocal_identity_residual"}}, "required": ["metric_id"]}},
+            {"contains": {"properties": {"metric_id": {"const": "domain_and_bound_violation_count"}}, "required": ["metric_id"]}},
+            {"contains": {"properties": {"metric_id": {"const": "cross_condition_generalization_error"}}, "required": ["metric_id"]}}
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+schema_version: v1
+stage: V4-2
+item_id: V4_LEAF_DYNAMIC_STOMATAL_RESPONSE
+status: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
+repository: RRain001/CTEAS_ufotri
+
+entry_state:
+  main_sha: 61dfee175d5b16fe358417e0beba75a776d6f394
+  v4_1_status: PASS_CONTROL_PLANE_CONTRACT_REVIEW
+  source_contract: docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+  baseline_profile: v3_frozen_baseline
+  baseline_resistance_chain: 'r_tot = r_a + r_b + r_c; g_ex = 1/r_tot'
+  candidate_relation: 'g_s = g_s_max * F_light(L) * F_vpd(VPD) * F_temp(T_leaf) * F_stage(stage); r_c = 1/g_s'
+  production_runtime_changed: false
+  implementation_started: false
+  active_parameters: 0
+  calibration_started: false
+  v3_physics_ready: false
+
+v4_2_control_plane_artifacts:
+  stage_ontology_contract: docs/v4/leaf/v4_2_growth_stage_ontology_contract.yaml
+  response_domain_admission: docs/v4/leaf/v4_2_response_domain_admission.yaml
+  validation_protocol: docs/v4/leaf/v4_2_validation_protocol.yaml
+  evidence_acquisition_requirements: docs/v4/leaf/v4_2_evidence_acquisition_requirements.yaml
+  evidence_packet_schema: schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
+
+readiness_gates:
+  equation_and_unit_contract:
+    status: PASS_SYMBOLIC_CONTRACT_ONLY
+    evidence:
+      - docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+    limitations:
+      - response_function_shapes_not_selected
+      - g_s_max_value_not_selected
+      - closed_stomata_zero_conductance_numerical_policy_not_selected
+  state_and_forcing_ownership:
+    status: PASS_CONTRACT_DEFINED
+    evidence:
+      - docs/v4/contracts/leaf_dynamic_stomatal_contract.yaml
+    notes:
+      - no_new_persistent_leaf_candidate_state
+      - L_VPD_T_leaf_stage_are_external_typed_inputs
+      - g_s_r_c_r_tot_g_ex_are_derived_diagnostics
+  dimensional_and_failure_tests:
+    status: PASS_CONTRACT_LEVEL_ONLY
+    limitations:
+      - no_candidate_response_function_exists_to_test_numerically
+      - no_empirical_domain_bounds_exist
+  restart_and_compatibility:
+    status: PASS_CONTRACT_DEFINED
+    notes:
+      - no_new_persistent_leaf_state
+      - forcing_identity_and_timestamp_must_be_reproducible
+      - v3_frozen_baseline_remains_default_and_rollback
+  growth_stage_ontology_contract:
+    status: PASS_DATASET_BOUND_RULE_DEFINED
+    evidence:
+      - docs/v4/leaf/v4_2_growth_stage_ontology_contract.yaml
+    limitations:
+      - no_dataset_specific_ontology_instance_present
+      - no_cross_dataset_mapping_admitted
+  dataset_specific_growth_stage_ontology:
+    status: HOLD_NOT_AVAILABLE
+    blocker: >-
+      The ontology rules are frozen, but no concrete matched empirical dataset
+      has supplied a provenance-bound stage ontology instance.
+  response_domain_admission_rule:
+    status: PASS_RULE_DEFINED
+    evidence:
+      - docs/v4/leaf/v4_2_response_domain_admission.yaml
+    notes:
+      - no_domain_boundary_estimator_selected_without_data
+      - extrapolation_and_silent_clipping_forbidden
+  empirical_response_domains:
+    status: HOLD_NOT_AVAILABLE
+    blocker: >-
+      No matched empirical packet currently establishes support for light/PAR,
+      VPD, leaf temperature, stage membership, or their joint condition coverage.
+  evidence_packet_contract:
+    status: PASS_SCHEMA_AND_REQUIREMENTS_DEFINED
+    evidence:
+      - docs/v4/leaf/v4_2_evidence_acquisition_requirements.yaml
+      - schemas/v4/v4_leaf_empirical_evidence_packet.schema.json
+    notes:
+      - target_measurement_basis_is_required
+      - target_and_canonical_forcing_units_are_machine_checked
+      - application_level_cross_field_validation_is_required
+      - response_domain_groups_must_exclude_final_validation_groups
+  matched_validation_dataset:
+    status: HOLD_NOT_AVAILABLE_IN_REPOSITORY
+    required_variables:
+      - observed_stomatal_conductance_or_leaf_surface_resistance
+      - light_or_PAR
+      - VPD_or_explicit_humidity_basis
+      - leaf_temperature
+      - growth_stage_with_declared_ontology
+      - crop_identity
+      - timestamp_and_interval_semantics
+      - replicate_or_independent_group_id
+      - provenance_and_unit_for_each_quantitative_variable
+    preferred_context:
+      - r_a_or_aerodynamic_context
+      - r_b_or_boundary_layer_context
+      - leaf_geometry
+      - wind_or_micrometeorology
+      - TFWT_or_exchange_flux_when_available
+    repository_search_result: >-
+      No checked-in dataset or validation packet satisfying the V4-1 empirical
+      validation envelope and the V4-2 matched leaf requirements was found.
+  preregistered_validation_protocol:
+    status: PASS_PROTOCOL_DEFINED_NOT_EXECUTED
+    evidence:
+      - docs/v4/leaf/v4_2_validation_protocol.yaml
+    required_metrics:
+      - conductance_or_resistance_trajectory_error
+      - reciprocal_identity_residual
+      - domain_and_bound_violation_count
+      - cross_condition_generalization_error
+    notes:
+      - calibration_and_final_validation_group_overlap_forbidden
+      - final_holdout_cannot_define_response_domain
+      - thresholds_must_be_dataset_specific_and_preregistered
+    physical_validation_executed: false
+  independent_item_review:
+    status: HOLD_NOT_STARTED
+  explicit_item_level_implementation_authorization:
+    status: HOLD_NOT_GRANTED
+
+existing_evidence_interpretation:
+  leaf_r_a:
+    validation_feasibility: VALIDATION_FEASIBLE
+    role: aerodynamic_resistance
+    value_selected_or_activated: false
+  leaf_r_b:
+    validation_feasibility: VALIDATION_FEASIBLE
+    role: boundary_layer_resistance
+    value_selected_or_activated: false
+  leaf_r_c:
+    validation_feasibility: VALIDATION_FEASIBLE
+    role: canopy_or_surface_resistance
+    value_selected_or_activated: false
+  leaf_growth_stage:
+    validation_feasibility: PHYSICS_REDESIGN_REQUIRED
+    blocker: STAGE_ONTOLOGY_AND_EQUATION_MISSING_IN_V3
+  interpretation_rule: >-
+    Semantic role/unit compatibility of r_a, r_b and r_c creates a future
+    validation pathway; it does not validate a dynamic stomatal response or
+    authorize importing a parameter value.
+
+technical_review:
+  reviewed_content_head: 890c3b4d7ee1a1f90047a9e4b71d9cdd17d15b0f
+  remediation_ci_run: 32925575057
+  remediation_ci: PASS
+  protected_integration_gate_run: 32925575051
+  protected_integration_gate: PASS
+  portable_current_suite: 1063_PASSED_1_SKIPPED_57_DESELECTED
+  explicit_current_and_frozen_invariants: 142_PASSED
+  compile_and_import: PASS
+  ancestry_and_diff_hygiene: PASS
+  runtime_isolation: PASS
+  review_corrections:
+    - target_measurement_basis_and_canonical_units_made_machine_enforced
+    - application_level_cross_field_validation_required_beyond_json_schema
+    - response_domain_support_groups_forbidden_from_using_final_holdout
+  technical_gate_result: PASS_READINESS_CONTROL_PLANE
+  scientific_gate_result: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
+
+allowed_next_work:
+  - acquire_or_register_matched_empirical_leaf_dataset
+  - instantiate_dataset_specific_growth_stage_ontology
+  - preregister_dataset_specific_response_domain_derivation_rule
+  - declare_disjoint_calibration_and_final_validation_groups_if_calibration_is_used
+  - perform_independent_item_review_after_empirical_packet_is_complete
+
+forbidden_next_work:
+  - production_solver_implementation
+  - choosing_response_function_coefficients_from_convenience_defaults
+  - importing_unreviewed_UFOTRI_values
+  - treating_r_c_semantic_mapping_as_dynamic_response_validation
+  - treating_synthetic_data_as_physical_validation
+  - silent_stage_mapping_between_incompatible_crop_taxonomies
+  - response_domain_guessing
+  - final_holdout_leakage
+  - parameter_activation
+  - calibration_before_empirical_packet_and_split_preregistration
+
+hard_invariants:
+  leaf_implementation_authorized: false
+  production_solver_changed: false
+  runtime_state_serialization_changed: false
+  numerical_coupling_changed: false
+  candidate_parameter_values_admitted: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  physical_validation_complete: false
+
+exit_policy:
+  readiness_gate_result: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
+  control_plane_preparation_complete: true
+  control_plane_technical_review_pass: true
+  may_start_evidence_acquisition: true
+  may_start_leaf_solver_implementation: false
+  may_activate_leaf_candidate_parameters: false
+  next_review_after:
+    - matched_empirical_evidence_packet_complete
+    - dataset_specific_growth_stage_ontology_instantiated
+    - empirical_response_domains_bound_to_packet
+    - validation_split_and_acceptance_rules_preregistered
+    - independent_item_review_pass
