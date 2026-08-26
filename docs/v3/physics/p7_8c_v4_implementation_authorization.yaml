@@ -1,0 +1,167 @@
+schema_version: v1
+stage: P7.8C
+status: PASS_CONTRACT_PREPARATION_AUTHORIZATION
+repository: RRain001/CTEAS_ufotri
+
+source_records:
+  p7_8b2_selection: docs/v3/physics/p7_8b2_physics_selection.yaml
+  p7_8b2_roadmap: docs/v3/physics/p7_8b2_architecture_roadmap.yaml
+  p7_8b2_validation_dependency: docs/v3/physics/p7_8b2_validation_dependency.yaml
+  p7_8b2_policy: docs/v3/adr/ADR-021-v3-physics-selection-policy.md
+  v3_1_contract: docs/v3_1/contracts/mass_basis_contract.yaml
+  v3_1_merge_closure: docs/v3_1/reports/v3_1_main_merge_closure.md
+
+entry_state:
+  main_sha: 3103d82c5cad3ead37a827f4970e8d649a1107dc
+  v3_1_exit_gate_pass: true
+  v3_1_main_merged: true
+  v3_1_implementation_sha: 95f78801d0fa3b507e6bd76249b192adf8b107cb
+  v3_1_independent_r2_sha: 7a06733f3201cc60c4c6599799892899cdb61d7f
+  current_profile: v3_frozen_baseline
+  current_profile_remains_default: true
+  current_profile_remains_rollback_target: true
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+
+gate_interpretation:
+  rule: >-
+    P7.8C may authorize preparation of the V4 data/state/equation/validation
+    contracts because that work is control-plane only. It may not authorize a
+    selected future model implementation until that model has the reviewed
+    equation/unit contract, state ownership, dimensional/conservation/restart
+    evidence, validation dataset/case contract, applicable coupling review,
+    independent review, and explicit item-level implementation authorization
+    required by P7.8B-2 and ADR-021.
+  control_plane_contract_work_is_model_implementation: false
+  contract_preparation_may_change_solver_equations: false
+  contract_preparation_may_change_runtime_state_serialization: false
+  contract_preparation_may_change_numerical_coupling: false
+  contract_preparation_may_activate_parameters: false
+
+required_before_selected_model_implementation:
+  - equation_and_unit_contract
+  - dimensional_audit
+  - state_ownership_contract
+  - basis_timestamp_and_provenance_rules
+  - dimensional_and_conservation_tests
+  - restart_and_compatibility_tests
+  - validation_dataset_and_case_contract
+  - preregistered_validation_metrics
+  - coupling_review_when_pipeline_or_numerical_boundary_changes
+  - independent_review
+  - explicit_item_level_implementation_authorization
+
+authorization_decision:
+  v4_data_and_state_contracts:
+    item_id: V4_DATA_AND_STATE_CONTRACTS
+    status: AUTHORIZED_CONTROL_PLANE_ONLY
+    implementation_order: 1
+    allowed_changes:
+      - typed equation_and_unit_contract_documents
+      - typed state_ownership_and_scope_contracts
+      - forcing_unit_timestamp_and_provenance_contracts
+      - validation_dataset_and_case_schemas
+      - restart_and_compatibility_schema_design
+      - conservation_identity_and_failure_contract_tests
+      - coupling_impact_classification_and_review_packets
+    forbidden_changes:
+      - production_solver_equations
+      - runtime_candidate_state_activation
+      - default_profile_change
+      - existing_state_serialization_change
+      - p7_5_or_p7_5b_semantics_change
+      - numerical_coupling_change
+      - candidate_parameter_values
+      - calibration
+      - physical_validation_claim
+    rationale: >-
+      V3.1 has closed the mass-basis prerequisite. The next roadmap item exists
+      specifically to create the remaining pre-implementation contracts. It is
+      not a future-model implementation and cannot make a candidate runtime
+      admissible.
+
+  leaf_dynamic_stomatal_response:
+    item_id: LEAF_DYNAMIC_STOMATAL_RESPONSE
+    status: HOLD_PREREQUISITES_INCOMPLETE
+    implementation_authorized: false
+    missing_or_unclosed_gates:
+      - reviewed_item_specific_equation_and_unit_contract
+      - state_and_forcing_ownership_contract
+      - dimensional_and_failure_tests_for_response_domains
+      - restart_and_compatibility_contract
+      - matched_validation_dataset_and_case_contract
+      - independent_item_review
+      - explicit_item_level_implementation_authorization
+    coupling_classification: INTERFACE_EXTENSION
+
+  obt_formation_package:
+    item_id: OBT_FORMATION_PACKAGE
+    status: HOLD_PREREQUISITES_INCOMPLETE
+    implementation_authorized: false
+    satisfied_prerequisites:
+      - v3_1_mass_basis_contract
+    missing_or_unclosed_gates:
+      - reviewed_precursor_two_pool_equation_and_unit_contract
+      - P_Bx_Bn_state_ownership_and_aggregate_readout_contract
+      - component_and_total_conservation_tests
+      - restart_and_compatibility_contract
+      - matched_time_resolved_validation_dataset_and_case_contract
+      - preregistered_pool_and_aggregate_metrics
+      - independent_item_review
+      - explicit_item_level_implementation_authorization
+    coupling_classification: INTERFACE_EXTENSION
+
+  root_uptake_water_flux_boundary:
+    item_id: ROOT_UPTAKE_WATER_FLUX_BOUNDARY
+    status: HOLD_PREREQUISITES_INCOMPLETE
+    implementation_authorized: false
+    missing_or_unclosed_gates:
+      - reviewed_layer_water_flux_equation_and_unit_contract
+      - soil_root_tfwt_state_ownership_contract
+      - layer_and_global_conservation_tests
+      - restart_refinement_and_failure_tests
+      - layer_resolved_validation_dataset_and_case_contract
+      - p7_5_p7_5b_numerical_coupling_review
+      - independent_item_review
+      - explicit_item_level_implementation_authorization
+    coupling_classification: NUMERICAL_COUPLING_CHANGE_REQUIRED
+
+unchanged_or_deferred:
+  soil_full_hydrology:
+    status: INSUFFICIENT_EVIDENCE
+    implementation_authorized: false
+  tfwt_dynamic_water_turnover:
+    status: INSUFFICIENT_EVIDENCE
+    implementation_authorized: false
+  food_continuous_or_hybrid_transfer:
+    status: INSUFFICIENT_EVIDENCE
+    implementation_authorized: false
+  obt_organ_specific_growth:
+    status: REJECTED
+    implementation_authorized: false
+
+hard_invariants:
+  implementation_started: false
+  solver_changes_authorized: false
+  numerical_coupling_changes_authorized: false
+  p7_5_semantics_changed: false
+  p7_5b_semantics_changed: false
+  current_v3_runtime_changed_by_p7_8c: false
+  active_parameters: 0
+  calibration_started: false
+  ufotri_active_database: false
+  v3_physics_ready: false
+  v4_selected_model_implementation_authorized: false
+  physical_validation_complete: false
+
+exit_state:
+  p7_8c_gate_opened: true
+  contract_preparation_authorized: true
+  next_item: V4_DATA_AND_STATE_CONTRACTS
+  next_item_scope: CONTROL_PLANE_ONLY
+  leaf_model_implementation_authorized: false
+  obt_model_implementation_authorized: false
+  root_model_implementation_authorized: false
+  v4_physics_implementation_authorized: false
