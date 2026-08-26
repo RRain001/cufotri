@@ -38,6 +38,8 @@ The core intentionally does not derive hydrology. The forcing boundary supplies 
 - surface HTO re-emission sink from L1;
 - explicit per-layer root water/HTO sink slots.
 
+Every forcing bundle now carries an explicit UTC timestamp with fixed `interval_semantics="start"`. The solver rejects any forcing whose timestamp does not equal the current three-layer state timestamp. This closes the V4 common time-contract requirement before pipeline integration rather than relying on caller convention.
+
 Inter-layer signs are positive downward. Negative values are allowed and represent upward transport, consistent with the UFOTRI manual's statement that capillary forces may move water toward the upper layers in dry conditions.
 
 The soil core does not infer HTO transport from water flux, derive a Darcy flux, solve a Richards equation, infer rainfall percolation, calculate surface evaporation, or calculate root uptake. Those physical closures remain separate stages. Surface water loss and HTO re-emission are separate explicit forcing fields; no silent concentration or phase relation is assumed between them.
@@ -50,15 +52,23 @@ Both per-layer and global balances are returned. Surface water loss is included 
 
 Restart is provided directly on the three-layer state through mapping/JSON round-trip; it is intentionally not wired into `V3SimulationState` yet.
 
+## UFOTRI root evidence retained for the next stage
+
+KfK 4605 distinguishes the short-term summary that roughly 20% of root water comes from the top 5 cm and 80% from deeper soil from the explicit three-layer ingestion-compartment model in Chapter 3.3.2. In the latter, the root uptake distribution is explicitly 20% from 0–5 cm, 40% from 5–15 cm, and 40% from 15–30 cm. Equation (57) converts total plant uptake and the layer hydrogen inventory into a layer transfer rate; Equations (58)–(60) give reference rates of approximately 0.026, 0.026 and 0.017 d^-1 for the manual's reference inventories.
+
+Those values and fractions are retained as UFOTRI reference evidence only in this soil-core stage. They are not activated here. `V4_THREE_LAYER_ROOT_WATER_UPTAKE_R1` must implement the transpiration-controlled root boundary separately and must preserve provenance/status for any selected runtime profile.
+
 ## What this stage does not claim
 
-This is an architecture/solver-core implementation, not physical validation. It does not select or calibrate inter-layer transport rates, soil hydraulic properties, surface evaporation rates, the UFOTRI 0.4% h^-1 short-term deeper-transport reference, or the UFOTRI 20%/80% root-water split.
+This is an architecture/solver-core implementation, not physical validation. It does not select or calibrate inter-layer transport rates, soil hydraulic properties, surface evaporation rates, the UFOTRI 0.4% h^-1 short-term deeper-transport reference, or the UFOTRI 20/40/40 root-water distribution as an active parameterization.
 
 It does not implement full Richards/Darcy hydrology. KfK 4605 presents the Darcy-continuity nonlinear unsaturated-flow equation as physical background and then explicitly states that such complex models cannot be used in the UFOTRI application; the baseline therefore remains a simplified layer-compartment transport model.
 
 ## Independent audit remediation
 
 The first branch head exposed all explicit HTO surface-loss semantics but omitted an explicit surface water-loss boundary from the authoritative water inventory. The independent audit rejected that asymmetry for a conservative three-layer state. R1 therefore adds `surface_water_loss_m_s`, validates it as a non-negative explicit forcing, applies it only to L1, includes it in layer/global water ledgers, and tests both conservation and fail-closed overdraw. This is a storage-boundary repair, not a new hydrology model.
+
+A second audit check compared the implementation against the already-frozen V4 common time contract. The original forcing object had no timestamp despite claiming interval-start semantics. R1 therefore requires an explicit UTC forcing timestamp and exact alignment with `state.timestamp`; this is a contract repair only and does not change the numerical equations.
 
 ## Gate
 
