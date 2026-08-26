@@ -63,7 +63,7 @@ mandatory_same_record_fields:
     - plant_id
     - leaf_or_measurement_position_id
     - run_id
-    - treatment_or_condition_id
+    - condition_id
     - developmental_stage_id
     - crop_identity
   provenance:
