@@ -40,26 +40,41 @@ values remain absent.
 ## OBT review
 
 The OBT contract uses `P`, `B_x`, and `B_n` as candidate activity inventories
-`[Bq m^-2]`. It explicitly separates precursor-to-`B_x` transfer from other
-precursor loss:
+`[Bq m^-2]`. A first V4-1 draft over-specified the unresolved precursor source
+as a product of day/night, photosynthetic and temperature response functions
+and introduced `k_P_other` as an extra symbolic parameter. That was rejected in
+technical review because P7.8B-2 selected only a generic
+`u_P(T,A,d,s,T_leaf,...)` source boundary and the existing candidate rates.
+
+The corrected contract keeps the source functional form unresolved and retains
+the selected `k_P` and `k_PB` notation. Conservation is made explicit without
+adding a parameter:
 
 ```text
 J_P_to_Bx = k_PB P
-J_P_other = k_P_other P
-k_P = k_PB + k_P_other
+J_P_other = (k_P - k_PB) P
+0 <= k_PB <= k_P
 ```
 
-This removes the conservation ambiguity in treating `k_P P` as a sink while
-using `k_PB P` as a separate source. Internal transfers cancel exactly in the
-composite `P + B_x + B_n` ledger. `B_total = B_x + B_n` is a diagnostic, not a
-fourth storage state.
+with
 
-No rate or response-function value is admitted. Aggregate-only OBT observations
-are explicitly insufficient to validate the component pools.
+```text
+dP/dt   = u_P - k_P P
+dB_x/dt = J_P_to_Bx - J_Bx_to_Bn - J_Bx_other
+dB_n/dt = J_Bx_to_Bn - J_Bn_other
+```
 
-Result: conservation contract is coherent and auditable; biological
-implementation remains held pending data, identifiability, numerical tests and
-independent review.
+Internal transfers therefore cancel exactly in the composite
+`P + B_x + B_n` ledger. `B_total = B_x + B_n` is a diagnostic, not a fourth
+storage state.
+
+No rate, response-function value, or response-function composition is admitted.
+Aggregate-only OBT observations are explicitly insufficient to validate the
+component pools.
+
+Result: conservation and scope contracts are coherent and auditable;
+biological implementation remains held pending source-function selection,
+data, identifiability, numerical tests and independent review.
 
 ## Root review
 
@@ -104,9 +119,9 @@ scope test freezes this boundary against the V4-1 content tip.
 
 ## Review status
 
-The document review finds the contracts internally coherent subject to the
-repository tests and exact-head CI. Passing those checks will close V4-1 as a
-**control-plane contract review only**. It will not satisfy any candidate
+The document review finds the corrected contracts internally coherent subject
+to the repository tests and exact-head CI. Passing those checks will close V4-1
+as a **control-plane contract review only**. It will not satisfy any candidate
 model's independent implementation review.
 
 ```ini
