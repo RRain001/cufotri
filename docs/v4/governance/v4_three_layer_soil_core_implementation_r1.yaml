@@ -30,7 +30,10 @@ state_contract:
   restart_json_round_trip: true
 
 forcing_contract:
-  interval_start_explicit_fluxes: true
+  timestamp_required: true
+  timestamp_basis: UTC
+  interval_semantics: start
+  state_forcing_timestamp_alignment: EXACT_FAIL_CLOSED
   surface_water_input: true
   surface_water_loss: true
   surface_hto_deposition: true
@@ -69,7 +72,7 @@ not_implemented:
   - surface_evaporation_rate_model
   - layer_resolved_root_uptake_derivation
   - ufotri_0_4_percent_per_hour_runtime_activation
-  - ufotri_20_80_root_fraction_runtime_activation
+  - ufotri_20_40_40_root_fraction_runtime_activation
   - pipeline_v4_integration
   - default_profile_switch
   - parameter_calibration
@@ -81,6 +84,7 @@ verification_required:
   - downward_interlayer_conservation
   - upward_interlayer_conservation
   - explicit_surface_water_loss_balance
+  - interval_start_timestamp_alignment
   - external_input_sink_global_balance
   - overdraw_fail_closed
   - v3_v4_type_isolation
