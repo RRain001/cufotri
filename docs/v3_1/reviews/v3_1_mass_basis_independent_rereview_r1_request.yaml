@@ -2,7 +2,7 @@ schema_version: v1
 stage: V3.1
 review_id: V3_1_MASS_BASIS_INDEPENDENT_REREVIEW_R1
 review_type: REVIEWER_INDEPENDENT_REREVIEW
-status: PENDING_INDEPENDENT_REREVIEW
+status: HOLD_REMEDIATION_REQUIRED
 repository: RRain001/CTEAS_ufotri
 
 review_target:
@@ -39,7 +39,7 @@ remediation_evidence:
 reviewer_independence:
   must_not_be_implementation_author: true
   prior_copilot_reviewer_is_acceptable_independent_reviewer: true
-  reviewer_identity: null
+  reviewer_identity: codex-local-gpt-5.6-luna
 
 required_checks:
   - id: PRIOR_BLOCKER_WHITESPACE_SCHEMA_PARITY
@@ -101,13 +101,23 @@ reviewer_verdict:
     - PASS_WITH_NONBLOCKING_NOTES
     - HOLD_REMEDIATION_REQUIRED
     - REJECT
-  status: PENDING_INDEPENDENT_REREVIEW
-  reviewed_sha: null
-  reviewer_identity: null
-  review_id: null
-  review_date: null
-  blocking_findings: []
-  nonblocking_notes: []
+  status: HOLD_REMEDIATION_REQUIRED
+  reviewed_sha: e28fd18033984e9fda252aa87b81b399b60ece1e
+  reviewer_identity: codex-local-gpt-5.6-luna
+  review_id: LOCAL_CODEX_GPT56LUNA_V3_1_REREVIEW_R1
+  review_date: 2026-08-26
+  blocking_findings:
+    - >-
+      validate_conversion_proposal returns IDENTITY_ONLY before checking
+      conversion_evidence_id when source and target share the same mass basis;
+      EVIDENCE_DECLARED contracts can therefore bypass missing or conflicting
+      evidence-ID binding.
+  nonblocking_notes:
+    - >-
+      The local portable suite reported 993 passed, 1 skipped, 57 deselected,
+      and 1 failed because the unchanged P7.7B checked-in synthetic benchmark
+      registry did not equal a fresh execution; the V3.1 source diff does not
+      touch that test, validation module, or result registry.
 
 exit_policy:
   implementation_pr_merge_ready: false
