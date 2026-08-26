@@ -79,6 +79,7 @@ jobs:
             tests/v3/test_p7_8b2_physics_selection.py \
             tests/v3/test_p7_8c_v4_implementation_authorization.py \
             tests/v4/test_v4_1_data_state_contracts.py \
+            tests/v4/test_v4_2_leaf_readiness.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
