@@ -5,15 +5,16 @@ registry_id: V4_2_LEAF_AUTHOR_DATA_ACQUISITION_R3B
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 224ee3bdda21a3f81676333cfbe841cb9e53c5a2
 branch: codex/v4-2-leaf-author-data-acquisition-r3b
-status: READY_FOR_AUTHOR_CONTACT_NOT_SENT
+status: CLOSED_AUTHOR_CONTACT_NOT_PURSUED
 
 objective: >-
-  Prepare a fail-closed author-held raw-data acquisition path after R3A showed
-  that public soybean datasets do not independently close the V4-2 dynamic
-  stomatal-response empirical packet. This stage defines request content,
-  source identity, provenance, file-integrity and response-admission rules.
-  It does not contact authors, admit data, fit parameters, calibrate a model,
-  or authorize solver implementation.
+  Preserve the fail-closed author-held raw-data acquisition contract after R3A
+  showed that public soybean datasets do not independently close the V4-2
+  dynamic stomatal-response empirical packet. The request content, provenance,
+  integrity and admission rules remain documented, but the project has explicitly
+  decided not to contact authors or pursue author-held raw data. The next reviewed
+  path is prospective soybean experiment design. This stage does not admit data,
+  fit parameters, calibrate a model, or authorize solver implementation.
 
 hard_invariants:
   leaf_implementation_authorized: false
@@ -30,9 +31,12 @@ contact_scope:
   email_or_message_sent: false
   response_received: false
   raw_author_file_received: false
+  project_decision_not_to_contact_authors: true
+  next_stage: V4_2_PROSPECTIVE_SOYBEAN_EXPERIMENT_DESIGN
   note: >-
-    External communication requires a separate explicit action. R3B control-plane
-    preparation alone must never be interpreted as an author contact or consent.
+    External author contact is not being pursued. The prepared request contract is
+    retained only as provenance for the rejected evidence path and must not be
+    interpreted as an author contact, consent, response, or data receipt.
 
 allowed_response_states:
   - NOT_CONTACTED
@@ -219,5 +223,6 @@ exit_policy:
     Record DATA_RECEIVED_COMPLETE_CANDIDATE, then create a separate immutable
     file-level audit stage. Do not directly authorize model implementation.
   if_author_data_path_exhausted: >-
-    Escalate to a separately reviewed prospective soybean experiment design or
-    evidence-composition design. Neither is authorized by this R3B contract.
+    The project has explicitly chosen not to pursue author-held data. Close R3B
+    without contact and proceed to a separately reviewed prospective soybean
+    experiment design. Evidence-composition remains unauthorized.
