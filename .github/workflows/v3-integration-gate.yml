@@ -89,6 +89,7 @@ jobs:
             tests/v4/test_v4_2_leaf_author_data_acquisition_r3b.py \
             tests/v4/test_v4_2_leaf_prospective_experiment_design_r4.py \
             tests/v4/test_v4_system_roadmap_reset_r1.py \
+            tests/v4/test_v4_system_atmos_exchange_contract.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
