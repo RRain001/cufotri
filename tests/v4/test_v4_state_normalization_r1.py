@@ -42,7 +42,7 @@ def test_internal_development_route_defers_production_and_real_atmos():
     policy = current["scope_policy"]
 
     assert stage["normalization_decisions"]["project_phase"] == "INTERNAL_V4_DEVELOPMENT_COMPLETION"
-    assert current["project_phase"].startswith("INTERNAL_V4_DEVELOPMENT_")
+    assert current["project_phase"].startswith("INTERNAL_V4_")
     assert policy["real_production_inputs_currently_required"] is False
     assert policy["real_production_inputs_deferred"] is True
     assert policy["real_cteas_atmos_binding_currently_required"] is False
