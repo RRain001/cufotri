@@ -1,0 +1,196 @@
+schema_version: v1
+stage: V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1
+status: PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 8588d9e59916c89c2dfa4007dbedfea39b2d2e9f
+branch: codex/v4-system-replay-input-orchestration-implementation-r1
+
+authorization:
+  source_decision: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
+  decision_merge_sha: 8588d9e59916c89c2dfa4007dbedfea39b2d2e9f
+  decision_no_drift_verified: true
+  implementation_scope_authorized: true
+
+implementation:
+  opt_in_only: true
+  new_module: src/cteas_ufotri/v4_integration/replay_input_orchestration.py
+  existing_four_module_integrator_modified: false
+  v3_default_pipeline_modified: false
+  component_solver_equations_modified: false
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  input_envelope:
+    type: V4ReplayIntervalInput
+    common_interval: UTC_HALF_OPEN_START_INCLUSIVE_END_EXCLUSIVE
+    area_basis: soil_surface_area
+    spatial_reconciliation: IDENTICAL_SUPPORT_ONLY_R1
+    explicit_per_domain_provenance: true
+  orchestrator:
+    type: V4ReplayInputSystemOrchestrator
+    owns:
+      - fail_closed_input_alignment
+      - atmos_total_surface_deposition_to_l1_mapping
+      - baseline_leaf_exchange_composition
+      - tfwt_leaf_intermediate
+      - obt_after_leaf_before_root
+      - root_plan_from_interval_start_soil
+      - single_root_plan_application_to_soil
+      - endpoint_tfwt_reconciliation
+      - coupled_conservation_ledger
+    does_not_own:
+      - atmospheric_dispersion
+      - hydrology_generation
+      - dynamic_stomata
+      - root_q_w_generation
+      - food_intake_dose
+      - parameter_activation
+      - calibration
+      - real_cteas_atmos_binding
+
+input_ownership:
+  atmosphere_replay:
+    owns:
+      - air_hto_concentration
+      - total_surface_deposition_flux
+      - temperature
+      - relative_humidity
+      - wind_speed
+      - precipitation_rate
+      - atmospheric_provenance
+    deposition_mapping: SURFACE_DEPOSITION_FLUX_TO_L1_ONLY
+    precipitation_to_infiltration: FORBIDDEN
+  soil_external:
+    provenance_carried_by_envelope: true
+    base_surface_deposition_must_be_zero: true
+    base_root_slots_must_be_zero: true
+    explicit_transport_terms_preserved: true
+  root_q_w:
+    source_type: ThreeLayerRootWaterFluxForcingV4
+    provenance_type: RootWaterFluxProvenanceV4
+    independent_from_atmos_provenance: true
+    inferred_from_atmos_meteorology: false
+  biological:
+    source_type: PlantBiologicalForcing
+    provenance_carried_by_envelope: true
+  leaf:
+    baseline_resistance_only: true
+    explicit_equilibrium_air_concentration: true
+    provenance_carried_by_envelope: true
+    dynamic_leaf_r5: false
+
+interval_order:
+  - VALIDATE_ALL_INPUTS_AND_PROVENANCE
+  - MAP_ATMOS_TOTAL_DEPOSITION_TO_SOIL_L1
+  - COMPUTE_BASELINE_SIGNED_LEAF_EXCHANGE
+  - ADVANCE_TFWT_WITH_LEAF_EXCHANGE
+  - ADVANCE_OBT_FROM_LEAF_UPDATED_TFWT
+  - PLAN_ROOT_FROM_INTERVAL_START_SOIL
+  - ADVANCE_SOIL_WITH_EXACT_ROOT_PLAN_ONCE
+  - RECONCILE_ENDPOINT_TFWT_WITH_POST_OBT_ROOT_GAIN
+
+conservation:
+  leaf_exchange_is_signed_external_transfer: true
+  plant_identity: leaf_signed_plus_root_minus_obt_external_loss_minus_storage_change
+  coupled_identity: soil_external_input_plus_leaf_signed_minus_soil_nonroot_loss_minus_soil_decay_minus_obt_external_loss_minus_storage_change
+  root_is_internal_to_coupled_system: true
+  root_plan_applied_once: true
+  soil_root_water_identity_checked: true
+  soil_root_hto_identity_checked: true
+
+acceptance_gates:
+  zero_leaf_exchange_equivalence:
+    required: true
+    reference: V4SoilRootTFWTOBTIntegrator
+    comparison:
+      - endpoint_state
+      - root_plan
+      - applied_soil_forcing
+      - soil_result
+      - obt_result
+      - core_balance_residuals
+  nonzero_leaf_before_obt: required
+  root_gain_post_obt: required
+  signed_leaf_reemission_conservation: required
+  atmos_deposition_to_l1_only: required
+  precipitation_not_infiltration: required
+  explicit_soil_transport_preserved: required
+  provenance_independence: required
+  deterministic_repeat: required
+  restart_equivalence: required
+  fail_closed_time_spatial_area_ownership: required
+  machine_harness: scripts/v4/run_replay_input_orchestration_r1.py
+
+implementation_exact_head_gate:
+  complete: true
+  head_sha: dc309089d667fbd4ca0ab5ca4498b75b02a909d1
+  protected_gate:
+    run_id: 33031238577
+    status: SUCCESS
+  remediation:
+    run_id: 33031238565
+    status: SUCCESS
+  portable_suite:
+    passed: 1245
+    skipped: 1
+    deselected: 57
+  frozen_boundary_suite:
+    passed: 313
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+  replay_invariants:
+    atmos_deposition_mapped_to_l1_surface: true
+    coupled_balance_closed: true
+    deterministic_repeat: true
+    plant_balance_closed: true
+    precipitation_not_inferred_as_soil_water: true
+    restart_equivalence: true
+    root_gain_post_obt: true
+    root_provenance_independent: true
+    same_interval_leaf_exchange_reaches_obt: true
+    zero_leaf_exchange_equivalence: true
+  evidence_scope: SOFTWARE_AND_NUMERICAL_INTEGRATION_ONLY
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+governance_closure:
+  written: true
+  source_implementation_head: dc309089d667fbd4ca0ab5ca4498b75b02a909d1
+  production_source_changed_by_closure: false
+  workflow_semantics_changed_by_closure: false
+  functional_tests_changed_by_closure: false
+  machine_harness_changed_by_closure: false
+  solver_or_runtime_semantics_changed_by_closure: false
+  closure_exact_head_gate_complete: false
+  status: AWAITING_CLOSURE_EXACT_HEAD_GATE
+
+hard_invariants:
+  v3_default_profile_changed: false
+  existing_v4_four_module_integrator_changed: false
+  existing_component_solver_equations_changed: false
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  active_parameters: 0
+  calibration_started: false
+  leaf_r5_authorized: false
+  food_intake_dose_v4_integration_authorized: false
+  full_soil_hydrology_authorized: false
+  plant_water_dynamics_authorized: false
+  root_q_w_inferred_from_atmos: false
+  real_cteas_atmos_coupling_active: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+closure_rule:
+  governance_closure_required_after_first_exact_head_pass: true
+  closure_exact_head_gate_required: true
+  expected_head_merge_required: true
+  post_merge_no_drift_required: true
+
+exit_state:
+  implementation_written: true
+  implementation_exact_head_gate_complete: true
+  governance_closure_written: true
+  governance_closure_exact_head_gate_complete: false
+  merge_authorized: false
+  next_stage_after_successful_merge: SYSTEM_LEVEL_POST_ORCHESTRATION_REVIEW
