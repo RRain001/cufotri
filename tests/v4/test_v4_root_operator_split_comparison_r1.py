@@ -90,8 +90,7 @@ def test_area_basis_and_ufotri_reference_boundaries_remain_explicit(comparison_r
     assert comparison_result["area_basis_conversion"] is False
     assert comparison_result["ufotri_reference_profile_active"] is False
     assert comparison_result["three_hour_delay_active"] is False
-    hard = comparison_result["hard_boundaries"]
-    assert hard == {
+    assert comparison_result["hard_boundaries"] == {
         "production_pipeline_changed": False,
         "v3_changed": False,
         "parameter_activation": False,
@@ -100,22 +99,27 @@ def test_area_basis_and_ufotri_reference_boundaries_remain_explicit(comparison_r
     }
 
 
-def test_governance_keeps_integration_closed_until_machine_gate() -> None:
+def test_governance_records_pass_selection_but_keeps_pipeline_closed_until_merge() -> None:
     data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
-    assert data["status"] == "COMPARISON_IMPLEMENTED_AWAITING_MACHINE_GATE"
+    assert data["status"] == "PASS_OPERATOR_SPLIT_SELECTION"
     assert data["candidates"] == [POST, PRE]
-    assert data["selection_rule"]["if_all_gates_pass"] == POST
-    assert data["selection_rule"]["otherwise"] == "HOLD_NO_SELECTION"
+    assert data["machine_gate"]["result"] == "PASS_SELECTION"
+    assert data["machine_gate"]["both_candidates_monotonic_timestep_refinement"] is True
+    assert data["machine_gate"]["single_application_and_conservation"] is True
+    assert data["machine_gate"]["restart_equivalence"] is True
+    assert data["machine_gate"]["deterministic_repeat"] is True
+    assert data["selection"]["selected_candidate"] == POST
     assert data["integration_boundary"]["future_soil_root_tfwt_obt_integration_authorized_now"] is False
     assert data["integration_boundary"]["silent_soil_area_to_plant_area_conversion"] == "forbidden"
     assert data["hard_invariants"]["active_parameters"] == 0
     assert data["hard_invariants"]["physical_validation_complete"] is False
 
 
-def test_adr_and_report_do_not_claim_physical_validation() -> None:
+def test_adr_and_report_record_decision_without_physical_validation_claim() -> None:
     adr = ADR.read_text(encoding="utf-8")
     report = REPORT.read_text(encoding="utf-8")
-    assert "Status: Proposed pending exact-head machine gate" in adr
-    assert "Synthetic error magnitude is not used as physical evidence" in adr
-    assert "does not modify a production pipeline" in report
-    assert "no physical validation claim is made" in report
+    assert "Status: Accepted after machine-gated comparison" in adr
+    assert "Synthetic error magnitude is not treated as physical evidence" in adr
+    assert "`PASS_OPERATOR_SPLIT_SELECTION`" in report
+    assert "did not modify a production pipeline" in report
+    assert "no physical-validation claim" in report

@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_ROOT_OPERATOR_SPLIT_COMPARISON_R1
-status: COMPARISON_IMPLEMENTED_AWAITING_MACHINE_GATE
+status: PASS_OPERATOR_SPLIT_SELECTION
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 63b924d0878c2fbfae2e371ca9032497c3228d81
 branch: codex/v4-root-operator-split-comparison-r1
@@ -18,43 +18,48 @@ candidates:
   - PRESERVE_V3_POST_OBT_ROOT_GAIN
   - ROOT_GAIN_BEFORE_OBT
 
-comparison_harness:
-  path: scripts/v4/run_root_operator_split_comparison_r1.py
-  forcing_source: explicit_synthetic_q_w
-  q_w_generation: none
-  ufotri_reference_profile_active: false
-  short_term_three_hour_delay_active: false
+machine_gate:
+  first_pass_head_sha: 5e30686b18df1c36f3d56bcd893da38ffdf0842c
+  result: PASS_SELECTION
+  portable_suite: "1204 passed, 1 skipped, 57 deselected"
+  frozen_boundary_suite: "283 passed"
+  both_candidates_monotonic_timestep_refinement: true
+  single_application_and_conservation: true
+  restart_equivalence: true
+  deterministic_repeat: true
+  root_to_obt_lag_difference_explicit: true
   empirical_validation: false
   physical_accuracy_claim: false
-  common_area_basis: soil_surface_area
-  area_basis_conversion: false
 
-required_gates:
-  - both_candidates_monotonic_timestep_refinement
-  - single_application_and_conservation
-  - restart_equivalence
-  - deterministic_repeat
-  - root_to_obt_lag_difference_explicit
-
-selection_rule:
-  if_all_gates_pass: PRESERVE_V3_POST_OBT_ROOT_GAIN
-  otherwise: HOLD_NO_SELECTION
+selection:
+  selected_candidate: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  pre_obt_candidate_disposition: NOT_SELECTED_RIGHT_BIASED_LIE_SPLIT
   basis:
     - interval_start_state_semantics
     - root_transfer_is_interval_integrated_not_interval_start_state
     - do_not_make_full_interval_root_transfer_available_for_entire_same_interval
     - preserve_frozen_p7_5b_order_when_no_gate_requires_change
     - synthetic_error_ranking_is_not_physical_evidence
-  pre_obt_candidate_if_post_selected: NOT_SELECTED_RIGHT_BIASED_LIE_SPLIT
+
+comparison_harness:
+  path: scripts/v4/run_root_operator_split_comparison_r1.py
+  forcing_source: explicit_synthetic_q_w
+  q_w_generation: none
+  ufotri_reference_profile_active: false
+  short_term_three_hour_delay_active: false
+  common_area_basis: soil_surface_area
+  area_basis_conversion: false
 
 integration_boundary:
   future_soil_root_tfwt_obt_integration_authorized_now: false
+  authorization_condition: merge_this_decision_after_new_exact_head_ci_and_no_drift
   future_area_basis_rule: identical_basis_or_explicit_adapter
   silent_soil_area_to_plant_area_conversion: forbidden
 
-next_gate_if_machine_passes:
+next_gate_after_merge:
   stage: V4_SOIL_ROOT_TFWT_OBT_INTEGRATION_R1
-  authorization_requires_exact_head_merge_of_this_decision: true
+  opt_in_only: true
+  v3_default_path_must_remain_unchanged: true
 
 hard_invariants:
   active_parameters: 0

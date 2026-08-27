@@ -2,58 +2,58 @@
 
 ## Status
 
-`COMPARISON_IMPLEMENTED_AWAITING_MACHINE_GATE`
+`PASS_OPERATOR_SPLIT_SELECTION`
 
-This stage compares the two root→TFWT→OBT operator orders frozen by the merged coupling rereview. It does not modify a production pipeline.
+This stage compared the two root→TFWT→OBT operator orders frozen by the merged coupling rereview. It did not modify a production pipeline.
 
-## Candidates
+## Machine result
+
+The PR exact-head machine gate returned:
+
+- `V4_ROOT_OPERATOR_SPLIT_STATUS=PASS_SELECTION`
+- portable suite: `1204 passed, 1 skipped, 57 deselected`
+- frozen-boundary suite: `283 passed`
+- both candidates monotonic timestep refinement: PASS
+- single-application and coupled conservation: PASS
+- deterministic repeat: PASS
+- JSON restart equivalence: PASS
+- root-pulse lag discrimination: PASS
+
+The comparison used explicit synthetic three-layer root-water forcing and one declared `soil_surface_area` basis. No soil-area/plant-area conversion was inferred.
+
+## Selected order
 
 `PRESERVE_V3_POST_OBT_ROOT_GAIN`
 
-- OBT consumes the interval-start TFWT state.
-- The root HTO transfer accumulated during the interval is added to endpoint TFWT after OBT reconciliation.
-- A root-only pulse therefore cannot contribute to OBT during its first coarse interval; the lag contracts under timestep refinement.
+OBT consumes interval-start TFWT. The HTO root transfer accumulated during the interval enters endpoint TFWT after OBT reconciliation.
 
-`ROOT_GAIN_BEFORE_OBT`
+The alternative `ROOT_GAIN_BEFORE_OBT` also converged and conserved mass, but it was not selected because it exposes the complete interval-integrated root transfer to the same interval's OBT source as though that transfer were already available at interval start. Under the current explicit first-order architecture this is a right-biased Lie split.
 
-- The complete interval-integrated root transfer is first added to TFWT.
-- OBT then consumes that augmented TFWT as constant over the same interval.
-- A root-only pulse therefore contributes immediately to OBT, but the full transfer accumulated over the interval is treated as available to the OBT source for the entire interval.
+A root-only pulse made the distinction explicit. In the first coarse interval, the post-OBT candidate had non-zero root transfer but zero OBT formation; the pre-OBT candidate formed OBT immediately. The post-OBT one-step lag contracts under timestep refinement.
 
-## Machine comparison
+The selection is based on numerical time semantics and continuity with frozen P7.5B. Synthetic error ranking is not physical evidence.
 
-`scripts/v4/run_root_operator_split_comparison_r1.py` runs both candidates on the same explicit synthetic three-layer root-water forcing. It exercises the merged `root_v4` transfer plan, the `soil_v4` root sink slots, and the existing TFWT/OBT state/solver APIs without changing them.
+## Integration authorization boundary
 
-The machine gate requires:
+This decision does **not** itself turn on a V4 pipeline. Only after this PR passes a new exact-head CI and is merged without drift may a new isolated `V4_SOIL_ROOT_TFWT_OBT_INTEGRATION_R1` branch be created.
 
-1. exact soil-root transfer identity and coupled soil+plant conservation;
-2. monotonic timestep refinement for both candidates;
-3. deterministic repeat;
-4. JSON restart equivalence;
-5. an explicit pulse test proving the candidate-specific root→OBT lag behavior.
+That next stage must remain opt-in and preserve:
 
-The comparison uses an explicitly common `soil_surface_area` basis. No soil-area/plant-area geometry conversion is inferred.
-
-## Conditional decision
-
-If every machine gate passes, R1 selects `PRESERVE_V3_POST_OBT_ROOT_GAIN` for the next opt-in V4 integration stage. This is based on the frozen interval-start software semantics and continuity with P7.5B, not on a claim that a synthetic benchmark establishes biological truth.
-
-The `ROOT_GAIN_BEFORE_OBT` candidate is then classified as a right-biased Lie split: it exposes the whole interval-integrated root gain to the OBT source for that same full interval. It is not deleted as a concept; it simply is not selected for the current explicit first-order coupling architecture.
-
-If any gate fails, selection remains HOLD and no integration is authorized.
-
-## Explicit exclusions
-
-- UFOTRI 20/40/40 is not active.
-- 0.026/0.026/0.017 d^-1 reference rates are not active.
-- the short-term ~3 h delay is not active;
-- no transpiration or hydrology model is introduced;
-- no V3 path is modified;
-- no real CTEAS-Atmos forcing is used;
-- no physical validation claim is made.
+- V3 default path unchanged;
+- active parameters = 0;
+- no calibration;
+- no Leaf R5;
+- no UFOTRI 20/40/40 runtime activation;
+- no 0.026/0.026/0.017 d^-1 runtime defaults;
+- no short-term ~3 h delay activation;
+- no transpiration/hydrology generation inside root core;
+- no real CTEAS-Atmos binding;
+- no silent soil-area/plant-area conversion;
+- no physical-validation claim.
 
 ```ini
-V4_ROOT_OPERATOR_SPLIT_COMPARISON_R1 = COMPARISON_IMPLEMENTED_AWAITING_MACHINE_GATE
+V4_ROOT_OPERATOR_SPLIT_COMPARISON_R1 = PASS_OPERATOR_SPLIT_SELECTION
+SELECTED_OPERATOR_SPLIT = PRESERVE_V3_POST_OBT_ROOT_GAIN
 V4_PIPELINE_CHANGED = FALSE
 V3_CHANGED = FALSE
 UFOTRI_REFERENCE_PROFILE_ACTIVE = FALSE
