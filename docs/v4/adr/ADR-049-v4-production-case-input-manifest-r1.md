@@ -8,7 +8,7 @@ Accepted as a fail-closed case-manifest contract, pending exact-head CI and clea
 
 PR #45 established that the controlled UFOTRI software chain is connected but `PRODUCTION_INPUT_PACKET_READY=FALSE`. The remaining gap is not another solver feature. It is the absence of one case-level record proving that every consumed input has an eligible source, compatible units/time/space semantics, provenance, and an explicit zero policy where zero is scientifically intended.
 
-`FULL_MODEL_PRODUCTION_READY=FALSE` remains an explicit hard boundary.
+`FULL_MODEL_PRODUCTION_READY=FALSE` remains an explicit hard boundary. Real CTEAS-Atmos surface deposition remains `BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED`.
 
 ## Decision
 
