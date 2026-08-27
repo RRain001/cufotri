@@ -9,10 +9,10 @@ REPORT = ROOT / "docs/v4/reports/v4_system_replay_input_adapter_decision_r1.md"
 ADR = ROOT / "docs/v4/adr/ADR-033-v4-system-replay-input-adapter-decision.md"
 
 
-def test_decision_is_control_plane_only_and_awaits_exact_head_gate() -> None:
+def test_decision_is_control_plane_only_and_formally_selected() -> None:
     data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
     assert data["stage"] == "V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1"
-    assert data["status"] == "DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE"
+    assert data["status"] == "PASS_SYSTEM_REPLAY_ORCHESTRATION_DECISION"
     assert data["base_main_sha"] == "c5d58271c68cc79a9e0492ab934025d752f02e30"
     scope = data["scope"]
     assert scope["control_plane_and_interface_decision_only"] is True
@@ -68,7 +68,23 @@ def test_selected_interval_order_preserves_leaf_before_obt_and_root_post_obt() -
     assert order["timestamp_rule"]["do_not_reset_or_forge_component_timestamps"] is True
 
 
-def test_future_implementation_requires_zero_leaf_equivalence_and_second_gate() -> None:
+def test_first_exact_head_gate_is_recorded_and_closure_gate_remains_required() -> None:
+    data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
+    gate = data["decision_gate"]
+    assert gate["decision_head_sha"] == "45298061c58cbf8f558f4b25de02ca6288dcb104"
+    assert gate["protected_gate_run_id"] == 33030199770
+    assert gate["remediation_run_id"] == 33030199769
+    assert gate["protected_gate_status"] == "SUCCESS"
+    assert gate["remediation_status"] == "SUCCESS"
+    assert gate["portable_suite"] == "1226 passed, 1 skipped, 57 deselected"
+    assert gate["frozen_boundary_suite"] == "295 passed"
+    assert gate["sensitivity_status"] == "PASS_SOFTWARE_SCREENING"
+    assert gate["operator_split_status"] == "PASS_SELECTION"
+    assert gate["soil_root_tfwt_obt_status"] == "PASS_INTEGRATION"
+    assert gate["closure_exact_head_gate_required"] is True
+
+
+def test_future_implementation_requires_zero_leaf_equivalence_and_no_drift_merge() -> None:
     data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
     gates = data["future_implementation_acceptance_gates"]
     assert gates["zero_leaf_exchange_equivalence"]["required"] is True
@@ -78,7 +94,9 @@ def test_future_implementation_requires_zero_leaf_equivalence_and_second_gate() 
     assert gates["mapping"]["no_puff_ledger_amount_as_surface_flux"] is True
     next_stage = data["next_stage_recommendation"]
     assert next_stage["stage"] == "V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1"
+    assert next_stage["selected_for_post_merge_authorization"] is True
     assert next_stage["implementation_authorized_now"] is False
+    assert next_stage["authorization_effective_after_no_drift_merge"] is True
     assert "closure_exact_head_protected_gate_success" in next_stage["authorization_requires"]
     assert "expected_head_merge_without_tree_drift" in next_stage["authorization_requires"]
 
@@ -95,9 +113,14 @@ def test_hard_boundaries_and_documents_do_not_authorize_scope_creep() -> None:
     assert hard["full_soil_hydrology_authorized"] is False
     assert hard["real_cteas_atmos_coupling_active"] is False
     assert hard["empirical_validation"] is False
+    exit_state = data["exit_state"]
+    assert exit_state["governance_closure_complete"] is True
+    assert exit_state["closure_exact_head_gate_complete"] is False
+    assert exit_state["implementation_authorized"] is False
+    assert exit_state["implementation_authorized_after_no_drift_merge"] is True
     report = REPORT.read_text(encoding="utf-8")
     adr = ADR.read_text(encoding="utf-8")
-    assert "`DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE`" in report
+    assert "`PASS_SYSTEM_REPLAY_ORCHESTRATION_DECISION`" in report
     assert "field-only adapter" in adr
     assert "zero-leaf equivalence" in adr
     assert "Real CTEAS-Atmos binding remains blocked" in adr

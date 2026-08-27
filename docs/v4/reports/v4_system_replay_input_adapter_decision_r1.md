@@ -2,19 +2,19 @@
 
 ## Verdict
 
-`DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE`
+`PASS_SYSTEM_REPLAY_ORCHESTRATION_DECISION`
 
-The architecture decision is complete, but implementation is not yet authorized. Exact-head CI and a second closure gate are still required.
+The architecture decision is complete and its first exact-head protected/remediation gate passed. Implementation is still not active; the pure governance closure exact head must pass again and merge without drift.
 
 ## Problem resolved
 
-The post-integration review selected the replay-input boundary as the next system priority. Repository audit now shows that this boundary cannot be implemented as a simple field mapper:
+The post-integration review selected the replay-input boundary as the next system priority. Repository audit shows that this boundary cannot be implemented as a simple field mapper:
 
 - the current atmospheric soil adapter produces the V3 one-layer `SoilForcing`, not the V4 `ThreeLayerSoilForcing`;
 - the current V4 soil-root-TFWT-OBT integrator contains no leaf-exchange step;
 - the frozen numerical semantics require same-interval leaf exchange to affect the TFWT inventory seen by OBT, while root gain remains post-OBT.
 
-Therefore a field-only adapter would leave the full Atmos -> leaf/soil -> TFWT/OBT chain incomplete.
+Therefore a field-only adapter would leave the complete Atmos -> leaf/soil -> TFWT/OBT chain incomplete.
 
 ## Selected architecture
 
@@ -59,11 +59,22 @@ The TFWT solver returns a leaf-updated state stamped at interval end, whereas OB
 
 All forcing domains must share the same explicit UTC half-open interval. Silent resampling, nearest-time substitution and hidden temporal reconciliation remain forbidden.
 
+## First exact-head gate evidence
+
+Exact decision head: `45298061c58cbf8f558f4b25de02ca6288dcb104`.
+
+- Protected Gate run `33030199770`: SUCCESS
+- Remediation run `33030199769`: SUCCESS
+- portable suite: `1226 passed, 1 skipped, 57 deselected`
+- frozen-boundary suite: `295 passed`
+- sensitivity: `PASS_SOFTWARE_SCREENING`
+- operator split: `PASS_SELECTION`
+- soil-root-TFWT-OBT integration: `PASS_INTEGRATION`
+
 ## Boundaries retained
 
-This stage changes no production source. It does not authorize:
+This closure changes no production source. It does not authorize implementation before the closure merge, and it does not authorize:
 
-- replay adapter/orchestrator implementation before closure;
 - Leaf R5;
 - food/intake/dose V4 integration;
 - full Richards/Darcy hydrology or hidden hydrology;
@@ -74,22 +85,23 @@ This stage changes no production source. It does not authorize:
 
 Real CTEAS-Atmos coupling remains blocked on the producer-side true surface-deposition-flux product required by the frozen exchange contract.
 
-## Next-stage recommendation
+## Next-stage authorization rule
 
-After this decision passes exact-head protected/remediation CI, receives a pure governance closure, passes closure exact-head CI, and merges without drift, authorize:
+If this closure exact head passes both CI workflows and merges with `expected_head_sha` plus no-drift verification, a new isolated branch may start:
 
 `V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1`
 
-Until then:
+Until that merge:
 
 ```ini
-V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1 = DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE
+V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1 = PASS_SYSTEM_REPLAY_ORCHESTRATION_DECISION
 SELECTED_ARCHITECTURE = OPT_IN_REPLAY_INPUT_SYSTEM_ORCHESTRATOR
 FIELD_ONLY_ADAPTER = REJECT_INSUFFICIENT_FOR_COMPLETE_V4_CHAIN
 CURRENT_V4_FOUR_MODULE_INTEGRATOR = FREEZE_AS_REFERENCE_BASELINE
 SELECTED_OPERATOR_SPLIT = PRESERVE_V3_POST_OBT_ROOT_GAIN
 ZERO_LEAF_EXCHANGE_EQUIVALENCE_REQUIRED = TRUE
-IMPLEMENTATION_AUTHORIZED = FALSE
+IMPLEMENTATION_AUTHORIZED_NOW = FALSE
+IMPLEMENTATION_AUTHORIZED_AFTER_NO_DRIFT_MERGE = TRUE
 LEAF_R5_AUTHORIZED = FALSE
 FOOD_INTAKE_DOSE_V4_INTEGRATION_AUTHORIZED = FALSE
 REAL_CTEAS_ATMOS_BINDING = FALSE

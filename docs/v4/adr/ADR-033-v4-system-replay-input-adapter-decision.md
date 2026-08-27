@@ -2,7 +2,9 @@
 
 ## Status
 
-`DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE`
+`PASS_SYSTEM_REPLAY_ORCHESTRATION_DECISION`
+
+The architecture decision passed its first exact-head protected/remediation gate. A final closure exact-head gate and no-drift merge are still required before implementation authorization becomes effective.
 
 ## Context
 
@@ -49,12 +51,24 @@ The current TFWT solver advances its returned state timestamp to the interval en
 
 The future orchestration layer must therefore keep the common forcing interval explicit and must not mutate timestamps merely to satisfy an API. Start forcing must match the composite state timestamp; endpoint state must be `t_n+1`; silent resampling or nearest-time substitution remains forbidden.
 
-## Non-authorization
+## First exact-head gate evidence
 
-This decision does not authorize implementation yet. In particular it does not authorize dynamic Leaf R5, food/intake/dose V4 integration, full Richards/Darcy hydrology, plant-water dynamics, parameter activation, calibration, real CTEAS-Atmos binding, or any empirical/physical-accuracy claim.
+Decision head `45298061c58cbf8f558f4b25de02ca6288dcb104` passed:
+
+- Protected Gate run `33030199770`: SUCCESS;
+- Remediation run `33030199769`: SUCCESS;
+- portable suite: `1226 passed, 1 skipped, 57 deselected`;
+- frozen-boundary suite: `295 passed`;
+- sensitivity: `PASS_SOFTWARE_SCREENING`;
+- operator split: `PASS_SELECTION`;
+- soil-root-TFWT-OBT integration: `PASS_INTEGRATION`.
+
+## Authorization boundary
+
+This closure still does not authorize implementation on the current branch. It does not authorize dynamic Leaf R5, food/intake/dose V4 integration, full Richards/Darcy hydrology, plant-water dynamics, parameter activation, calibration, real CTEAS-Atmos binding, or any empirical/physical-accuracy claim.
 
 Real CTEAS-Atmos binding remains blocked until an identifiable true surface-deposition-flux product satisfies the already frozen exchange contract.
 
-If this decision passes exact-head CI, receives a pure governance closure, passes closure exact-head CI, and merges without tree drift, the next stage may be authorized as:
+If the closure exact head passes both protected and remediation CI and the PR merges with expected-head and no tree drift, authorization becomes effective for a **new isolated branch**:
 
 `V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1`

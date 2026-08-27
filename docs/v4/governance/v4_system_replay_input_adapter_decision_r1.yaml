@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
-status: DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE
+status: PASS_SYSTEM_REPLAY_ORCHESTRATION_DECISION
 repository: RRain001/CTEAS_ufotri
 base_main_sha: c5d58271c68cc79a9e0492ab934025d752f02e30
 branch: codex/v4-system-replay-input-adapter-decision-r1
@@ -170,14 +170,25 @@ future_implementation_acceptance_gates:
     no_puff_ledger_amount_as_surface_flux: true
     missing_required_input_fails_closed: true
 
+decision_gate:
+  decision_head_sha: 45298061c58cbf8f558f4b25de02ca6288dcb104
+  protected_gate_run_id: 33030199770
+  remediation_run_id: 33030199769
+  protected_gate_status: SUCCESS
+  remediation_status: SUCCESS
+  portable_suite: '1226 passed, 1 skipped, 57 deselected'
+  frozen_boundary_suite: '295 passed'
+  sensitivity_status: PASS_SOFTWARE_SCREENING
+  operator_split_status: PASS_SELECTION
+  soil_root_tfwt_obt_status: PASS_INTEGRATION
+  closure_exact_head_gate_required: true
+
 next_stage_recommendation:
   stage: V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1
-  recommended_after_decision_merge: true
+  selected_for_post_merge_authorization: true
   implementation_authorized_now: false
+  authorization_effective_after_no_drift_merge: true
   authorization_requires:
-    - decision_exact_head_protected_gate_success
-    - decision_exact_head_remediation_success
-    - governance_closure_commit
     - closure_exact_head_protected_gate_success
     - closure_exact_head_remediation_success
     - expected_head_merge_without_tree_drift
@@ -217,7 +228,10 @@ hard_invariants:
 
 exit_state:
   decision_content_complete: true
-  exact_head_gate_complete: false
+  first_exact_head_gate_complete: true
+  governance_closure_complete: true
+  closure_exact_head_gate_complete: false
   selected_architecture: OPT_IN_REPLAY_INPUT_SYSTEM_ORCHESTRATOR
   implementation_authorized: false
+  implementation_authorized_after_no_drift_merge: true
   next_stage_if_closure_passes: V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1
