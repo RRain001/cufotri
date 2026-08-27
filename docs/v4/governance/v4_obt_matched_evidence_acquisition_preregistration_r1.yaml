@@ -1,0 +1,215 @@
+schema_version: v1
+stage: V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1
+status: PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI
+repository: RRain001/CTEAS_ufotri
+base_main_sha: d28695a13eae1fe4a7afb55a7a8a179d366de44c
+branch: codex/v4-obt-matched-evidence-acquisition-preregistration-r1
+
+stage_scope:
+  kind: CONTROL_PLANE_AND_DATA_ACQUISITION_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  parameter_activation: false
+  calibration: false
+  request_execution: false
+  quantitative_data_inspection: false
+  empirical_validation: false
+
+source_authorization:
+  stage: V4_OBT_FORMATION_EVIDENCE_READINESS_R1
+  pr: 35
+  merge_sha: d28695a13eae1fe4a7afb55a7a8a179d366de44c
+  merge_tree: b9ed9d9fe6c92e196b48c3059e71d70bb21b4c14
+  parent1: d8c3336c14db1d695e70dc62755b00ce5235d04d
+  parent2: 020ff23c8cb8ec9d5a2fe8c027f5ce410d3a64d5
+  no_drift_verified: true
+  head_to_merge_files_empty: true
+  evidence_disposition: ACQUIRABLE_WITH_PREREGISTRATION
+
+artifacts:
+  adr: docs/v4/adr/ADR-039-v4-obt-matched-evidence-acquisition-preregistration-r1.md
+  acquisition_contract: docs/v4/contracts/obt_matched_evidence_acquisition_preregistration_r1.yaml
+  request_package: docs/v4/gates/obt_matched_evidence_request_package_r1.md
+  report: docs/v4/reports/v4_obt_matched_evidence_acquisition_preregistration_r1.md
+  test: tests/v4/test_v4_obt_matched_evidence_acquisition_preregistration_r1.py
+
+preregistration:
+  layer_a_frozen_now: true
+  layer_a_fields:
+    - observation_operator
+    - raw_packet_acceptance
+    - acquisition_target_hierarchy
+    - exclusion_missing_and_censoring_boundaries
+    - whole_group_calibration_holdout_rule
+    - metadata_only_blind_intake
+    - required_identifiability_diagnostics
+  layer_b_dataset_shape_amendment_required: true
+  layer_b_must_precede_quantitative_fit: true
+  layer_b_must_precede_holdout_value_inspection: true
+  exact_sample_size_invented_now: false
+  exact_identifiability_thresholds_invented_now: false
+  exact_holdout_group_count_invented_now: false
+
+observation_operator:
+  tfwt:
+    direct_observable: true
+    explicit_tissue_time_method_and_basis_required: true
+    silent_water_mass_inference: false
+    numerical_cross_basis_conversion_without_evidence: false
+  nonexchangeable_obt:
+    maps_to_B_n_only_under_explicit_protocol: true
+    direct_biological_equivalence_to_all_slow_matter_claimed: false
+  exchangeable_obt:
+    maps_to_B_x_only_under_explicit_protocol: true
+    direct_measurement_allowed: true
+    total_minus_ne_allowed_only_same_sample_or_documented_matched_aliquots: true
+    covariance_or_uncertainty_rule_required_before_fit: true
+    literature_fraction_partition_allowed: false
+    cross_crop_fraction_partition_allowed: false
+  aggregate_obt:
+    diagnostic_only_when_components_compatible: true
+    silent_partition_allowed: false
+  precursor_P:
+    latent_lumped_state: true
+    asserted_chemical_identity: false
+    existing_proxy_relabeling_allowed: false
+  precursor_source_u_P:
+    direct_observation: false
+
+acquisition_targets:
+  - priority: A
+    target: VATO_IRSN_EDF
+    status: PREREGISTERED_NOT_SENT
+    purpose: OWNER_CLARIFICATION_AND_MATCHED_RAW_PACKET_REQUEST
+  - priority: B1
+    target: MICRO_TOM_2024
+    status: PREREGISTERED_NOT_SENT
+    purpose: CONTROLLED_COMPONENT_RAW_PACKET_REQUEST
+  - priority: B2
+    target: RENARD_RYEGRASS_2017
+    status: PREREGISTERED_NOT_SENT
+    purpose: CONTROLLED_COMPONENT_RAW_PACKET_REQUEST
+  - priority: SUPPORT
+    target: SOYBEAN_NOCTURNAL_PHYSIOLOGY
+    status: PREREGISTERED_NOT_SENT
+    purpose: FORCING_STAGE_AND_REDUCED_BASELINE_SUPPORT_ONLY
+  - priority: FALLBACK
+    target: PROSPECTIVE_MATCHED_EXPERIMENT
+    status: NOT_DESIGNED_IN_THIS_STAGE
+    purpose: SEPARATE_FUTURE_PREREGISTERED_EXPERIMENT_IF_HISTORICAL_PACKETS_FAIL
+
+request_state:
+  requests_sent: false
+  responses_received: false
+  raw_packet_received: false
+  owner_identity_confirmed: false
+  permission_reference_recorded: false
+  file_checksums_recorded: false
+  raw_packet_accepted: false
+
+raw_packet_acceptance:
+  required_fields:
+    - source_owner_identifier
+    - original_filename
+    - sha256
+    - licence_or_local_use_status
+    - machine_readable_table_or_documented_owner_export
+    - data_dictionary
+    - experiment_or_run_identifier
+    - biological_replicate_identifier
+    - sample_timestamp
+    - sampling_time_support
+    - crop_cultivar_and_stage
+    - tissue_scope
+    - activity_mass_and_area_basis
+    - analytical_component_definition
+    - analytical_method_or_protocol
+    - uncertainty
+    - detection_or_quantification_limit
+    - forcing_data_required_by_claimed_terms
+  raw_values_committed_to_repo: false
+  publication_summary_sufficient: false
+  plot_digitization_allowed: false
+  ocr_raw_data_substitution_allowed: false
+  model_pseudo_observation_allowed: false
+
+missing_and_censoring:
+  missing_value_action: KEEP_MISSING
+  below_detection_action: KEEP_CENSORED_WITH_LIMIT
+  zero_substitution: false
+  half_limit_substitution: false
+  limit_substitution: false
+  fit_based_exclusion: false
+  future_numeric_censoring_rule_requires_layer_b: true
+
+holdout_policy:
+  unit: WHOLE_INDEPENDENT_BIOLOGICAL_REPLICATE_OR_COMPLETE_EXPERIMENTAL_RUN
+  random_time_row_split_allowed: false
+  metadata_only_split_before_quantitative_holdout_inspection: true
+  exact_group_count_selected_now: false
+  insufficient_groups_disposition: INSUFFICIENT_FOR_INDEPENDENT_HOLDOUT
+  lack_of_blind_holdout_may_still_support_exploratory_component_method_evidence: true
+  lack_of_blind_holdout_may_support_independent_validation_claim: false
+
+identifiability_policy:
+  structural_identifiability_required: true
+  practical_identifiability_required: true
+  latent_P_included_in_structural_review: true
+  profile_likelihood_or_equivalent_required: true
+  jacobian_or_fisher_conditioning_required: true
+  parameter_correlation_and_compensation_required: true
+  boundary_hit_and_interval_width_required: true
+  replicate_or_run_stability_required: true
+  option_a_option_b_same_case_comparison_required: true
+  exact_numeric_thresholds_selected_now: false
+  optimizer_convergence_is_identifiability: false
+  non_identifiable_parameter_activation_allowed: false
+
+next_stage:
+  selected: V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1
+  scope: EXTERNAL_DATA_REQUEST_AND_METADATA_INTAKE_ONLY
+  effective_after_successful_merge_and_no_drift: true
+  implementation_authorized: false
+  parameter_activation_authorized: false
+  calibration_authorized: false
+  holdout_tuning_authorized: false
+
+first_exact_head_gate:
+  complete: false
+  head_sha: null
+  protected_gate: null
+  remediation: null
+  portable_suite: null
+  frozen_boundary_suite: null
+
+governance_closure:
+  written: false
+  source_preregistration_head: null
+  implementation_status_update_required_after_first_gate: true
+  closure_exact_head_gate_complete: false
+  merge_authorized: false
+
+hard_invariants:
+  requests_sent: false
+  raw_packet_received: false
+  quantitative_model_fit_inspection: false
+  holdout_values_inspected: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+exit_state:
+  preregistration_frozen: true
+  requests_sent: false
+  first_exact_head_gate_complete: false
+  governance_closure_written: false
+  next_stage_after_successful_merge: V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1
