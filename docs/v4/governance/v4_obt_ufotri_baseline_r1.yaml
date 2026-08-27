@@ -1,0 +1,69 @@
+schema_version: v1
+stage: V4_OBT_UFOTRI_BASELINE_R1
+status: IMPLEMENTATION_IN_PROGRESS
+repository: RRain001/CTEAS_ufotri
+base_main_sha: b557a4c98009f7fe52bb4019504a11a8cac317fc
+branch: codex/v4-obt-ufotri-baseline-r1
+
+user_decision:
+  external_evidence_request_required: false
+  parameter_source_policy: USE_UFOTRI_BASELINE
+  request_execution_abandoned: true
+
+source:
+  primary_reference: ufotri_manual.md
+  reference_identity: KfK_4605_UFOTRI_Raskob
+  recovered_statements:
+    obt_formation_daily_average_percent_per_hour: 0.06
+    obt_loss_mean_percent_per_hour: 0.3
+    daytime_formation_increased: true
+    nighttime_formation_reduced: true
+    explicit_normalized_day_night_pair_recovered: false
+
+adopted_profile:
+  obt_kf_per_hour: 0.0006
+  obt_kr_per_hour: 0.003
+  obt_kf_per_second: 1.6666666666666665e-07
+  obt_kr_per_second: 8.333333333333333e-07
+  daylight_multiplier: 1.0
+  nighttime_multiplier: 1.0
+  multiplier_policy: PRESERVE_STATED_DAILY_AVERAGE_WITHOUT_INVENTED_SPLIT
+  solver_equation: dM_OBT/dt = kf * M_TFWT - kr * M_OBT
+  solver_equation_changed: false
+
+scope:
+  ufotri_parameter_profile_added: true
+  existing_obt_solver_reused: true
+  multi_pool_solver_added: false
+  quantitative_fit_performed: false
+  holdout_values_inspected: false
+  calibration_performed: false
+  real_cteas_atmos_binding_changed: false
+
+interpretation:
+  parameter_status: ADOPTED_UFOTRI_BASELINE
+  empirical_validation_status: NOT_PERFORMED
+  physical_accuracy_claim: false
+  day_night_refinement_status: DEFERRED_UNTIL_EXPLICIT_NUMERIC_RULE_AVAILABLE
+  note: >-
+    Direct UFOTRI numerical values are admitted as the controlled model baseline.
+    This is a source-selection decision, not an empirical calibration or validation claim.
+
+hard_invariants:
+  external_requests_sent: false
+  raw_packet_received: false
+  quantitative_model_fit_inspection: false
+  holdout_values_inspected: false
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+next_transition:
+  after_exact_head_ci: V4_OBT_UFOTRI_BASELINE_NUMERICAL_INTEGRATION_R1
+  objective: run the existing soil-root-TFWT-OBT chain with the adopted UFOTRI profile and verify conservation, timestep behavior, and replay determinism
