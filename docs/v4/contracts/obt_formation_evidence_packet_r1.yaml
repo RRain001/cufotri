@@ -1,0 +1,209 @@
+schema_version: v1
+stage: V4_OBT_FORMATION_EVIDENCE_READINESS_R1
+contract_id: V4_OBT_MATCHED_EVIDENCE_PACKET_R1
+status: PROPOSED_FOR_EXACT_HEAD_REVIEW
+
+scope:
+  kind: EVIDENCE_PACKET_AND_ACQUISITION_CONTRACT_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  runtime_candidate_state_activated: false
+  parameter_values_admitted: false
+  calibration_started: false
+
+state_observability:
+  T:
+    meaning: TFWT activity inventory at the OBT formation boundary
+    classification: DIRECT_OBSERVABLE_IF_EXTRACTION_AND_BASIS_EXPLICIT
+    required_metadata:
+      - tissue_scope
+      - activity_unit
+      - area_or_mass_basis
+      - sample_timestamp
+      - sampling_time_support
+      - analytical_method
+      - uncertainty
+      - detection_limit
+      - provenance
+  P:
+    meaning: lumped precursor/activity inventory mediating organic binding
+    classification: LATENT_MODEL_STATE
+    direct_chemical_identity_asserted: false
+    direct_observation_required: false
+    proxy_may_be_used_only_if_preregistered: true
+  B_x:
+    meaning: exchangeable OBT candidate inventory
+    classification: OPERATIONAL_ANALYTICAL_OBSERVABLE_IF_PROTOCOL_EXPLICIT
+    automatic_equivalence_to_tfwt: false
+    automatic_equivalence_to_generic_fast_pool: false
+    required_metadata:
+      - exchange_or_deexchange_protocol
+      - tissue_scope
+      - mass_basis
+      - area_basis
+      - sample_timestamp
+      - analytical_recovery_or_method_context
+      - uncertainty
+      - detection_limit
+      - provenance
+  B_n:
+    meaning: non_exchangeable OBT candidate inventory
+    classification: OPERATIONAL_ANALYTICAL_OBSERVABLE_IF_PROTOCOL_EXPLICIT
+    automatic_equivalence_to_all_slow_organic_matter: false
+    required_metadata:
+      - deexchange_and_combustion_protocol
+      - tissue_scope
+      - mass_basis
+      - area_basis
+      - sample_timestamp
+      - analytical_recovery_or_method_context
+      - uncertainty
+      - detection_limit
+      - provenance
+  B_total:
+    classification: DERIVED_ONLY_WHEN_COMPONENTS_SHARE_SAMPLE_AND_BASIS_OR_SEPARATE_DIRECT_OBSERVATION
+    aggregate_partition_into_components_without_measurement: FORBIDDEN
+  u_P:
+    meaning: candidate precursor/activity formation flux
+    classification: DERIVED_OR_LATENT_SOURCE_FLUX
+    functional_form_selected: false
+  day_night_state:
+    classification: EXTERNAL_OBSERVED_OR_PREREGISTERED_DERIVED_FORCING
+    implicit_mapping_from_current_multiplier: FORBIDDEN
+  activity_or_PAR:
+    classification: EXTERNAL_MEASURED_OR_EXPLICIT_PROXY_FORCING
+    measured_and_proxy_interpretations_may_be_mixed: false
+  leaf_temperature:
+    classification: EXTERNAL_MEASUREMENT_OR_EXPLICITLY_JUSTIFIED_PROXY
+  crop_stage:
+    classification: EXTERNAL_OBSERVED_CATEGORY
+
+packet_identity:
+  single_experiment_or_internally_aligned_program_required: true
+  cross_study_splicing_for_parameter_fit: FORBIDDEN
+  component_measurement_from_one_study_plus_forcing_from_another: FORBIDDEN
+  literature_fraction_used_to_partition_total_obt: FORBIDDEN
+  synthetic_fixture_used_as_empirical_observation: FORBIDDEN
+  publication_plot_digitization_used_to_replace_unavailable_raw_table: FORBIDDEN
+
+required_quantitative_fields:
+  plant:
+    - tfwt
+    - exchangeable_obt
+    - nonexchangeable_obt
+  biological_forcing:
+    - daylight_or_light_state
+    - photosynthetic_activity_or_PAR
+    - temperature
+    - crop_identity
+    - developmental_stage
+  sample_identity:
+    - sample_timestamp
+    - sampling_time_support
+    - tissue_scope
+    - biological_replicate_id
+  basis:
+    - activity_unit
+    - mass_basis
+    - area_basis
+  analytical_quality:
+    - uncertainty
+    - detection_limit_or_quantification_limit
+    - missing_data_flag
+    - analytical_method_or_protocol
+  provenance:
+    - source_dataset_identifier
+    - source_file_identifier
+    - file_sha256_after_receipt
+    - licence_or_local_use_status
+    - field_mapping_version
+
+conditionally_required_fields:
+  precursor_proxy:
+    required_if_used: true
+    accepted_examples_without_preselection:
+      - measured_photosynthetic_rate
+      - declared_PAR_proxy
+      - other_preregistered_activity_proxy
+    proxy_to_P_equation_selected_here: false
+  meteorology:
+    humidity_required_if_used_by_candidate_forcing: true
+    radiation_required_if_PAR_not_directly_measured: true
+  plant_mass:
+    required_if_inventory_or_concentration_conversion_uses_mass: true
+    numerical_cross_basis_conversion_without_evidence: FORBIDDEN
+
+alignment_contract:
+  tfwt_bx_bn_same_case_required: true
+  tissue_scope_compatible_required: true
+  time_support_declared_required: true
+  forcing_alignment_rule_must_be_preregistered: true
+  day_night_transition_convention_must_be_preregistered: true
+  sampling_interpolation_rule_must_be_preregistered: true
+  missing_data_rule_must_be_preregistered: true
+  basis_conversion_rule_default: NO_CONVERSION_FAIL_CLOSED
+
+replicate_and_holdout_contract:
+  independent_biological_replicates_required: true
+  replicate_identity_must_precede_fit: true
+  calibration_holdout_partition_must_precede_holdout_inspection: true
+  holdout_must_be_independent_of_parameter_fit: true
+  exact_minimum_sample_count_selected_here: false
+  sample_size_must_be_justified_after_dataset_shape_is_known: true
+
+identifiability_gate:
+  structural_identifiability_assessment_required_before_activation: true
+  practical_identifiability_assessment_required_before_activation: true
+  option_a_and_option_b_same_case_comparison_required: true
+  forcing_excitation_required_for_claimed_response_terms: true
+  constant_exposure_alone_can_validate_all_day_night_activity_terms: false
+  aggregate_obt_only_can_identify_bx_bn_rates: false
+  component_observations_required_for_component_validation: true
+  unresolved_parameter_confounding_disposition: HOLD
+  parameter_point_estimate_without_identifiability: FORBIDDEN
+
+acquisition_acceptance_gate:
+  raw_or_owner_supplied_machine_readable_table_required: true
+  publication_summary_alone_sufficient: false
+  licence_or_local_use_permission_required: true
+  file_checksums_required: true
+  complete_data_dictionary_required: true
+  analytical_component_definition_required: true
+  calibration_holdout_ids_frozen_before_model_fit: true
+  packet_acceptance_report_required: true
+  failed_field_completeness_disposition: REJECT_OR_REQUEST_REMEDIATION
+
+external_candidate_roles:
+  VATO:
+    role: PRIORITY_A_OWNER_CLARIFICATION_AND_ACQUISITION_TARGET
+    public_methodology_evidence: true
+    public_raw_complete_option_b_packet_verified: false
+    owner_confirmation_of_direct_component_table_required: true
+  MICRO_TOM_2024:
+    role: PRIORITY_B_CONTROLLED_COMPONENT_ACQUISITION_TARGET
+    tfwt_eobt_neobt_reported: true
+    public_raw_complete_option_b_packet_verified: false
+  RENARD_RYEGRASS_2017:
+    role: PRIORITY_B_CONTROLLED_COMPONENT_ACQUISITION_TARGET
+    exchangeable_fraction_reported: true
+    constant_exposure_limits_forcing_discrimination: true
+    public_raw_complete_option_b_packet_verified: false
+  SOYBEAN_DAY_NIGHT:
+    role: SUPPORTING_FORCING_AND_STAGE_FEASIBILITY_ONLY
+    aggregate_obt_only_for_candidate_component_validation: true
+    admissible_as_option_b_component_validation_case: false
+
+hard_boundaries:
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  v3_default_changed: false
+  v4_runtime_changed: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
