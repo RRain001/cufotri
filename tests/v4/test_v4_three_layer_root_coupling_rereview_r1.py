@@ -80,10 +80,15 @@ def test_future_operator_split_requires_comparison_not_guessing() -> None:
 
 def test_existing_v4_root_contract_required_this_rereview() -> None:
     contract = load_yaml(ROOT_CONTRACT)
-    coupling = contract["coupling_constraints"]
-    assert coupling["p7_5_p7_5b_re_review_required_before_implementation"] is True
-    assert coupling["soil_to_root_flux_conservation_required"] is True
-    assert coupling["root_to_plant_transfer_conservation_required"] is True
+    assert contract["p7_5_p7_5b_re_review_required_before_implementation"] is True
+    ownership = contract["state_ownership"]
+    conservation = contract["conservation_contract"]
+    coupling = contract["coupling_review_contract"]
+    assert ownership["extraction_and_plant_input_are_same_transfer_identity"] is True
+    assert ownership["v4_root_boundary_may_apply_J_root_to_soil_more_than_once"] is False
+    assert ownership["v4_root_boundary_may_apply_J_root_to_TFWT_more_than_once"] is False
+    assert conservation["layer_and_global_conservation_tests_required_before_implementation"] is True
+    assert coupling["required_before_implementation"] is True
     text = REPORT.read_text(encoding="utf-8")
     assert "20%, 40% and 40%" in text
     assert "0.026, 0.026 and 0.017" in text
