@@ -1,0 +1,73 @@
+schema_version: v1
+stage: V4_ROOT_TOTAL_UPTAKE_UFOTRI_EQ39_IMPLEMENTATION_R1
+status: IN_PROGRESS
+base_main: de56247b44057e4ec21b110684cd2818d1afd967
+selected_boundary:
+  mode: EQUILIBRIUM_RADIATION_EQ39
+  implementation: src/cteas_ufotri/plant/root_v4/ufotri_eq39.py
+  total_uptake_identity: root_uptake_m_s = plant_transpiration_m_s
+  aerodynamic_coefficient_w_m2_pa: 0.0
+  eq38_empirical_aerodynamic_term_active: false
+  dewpoint_required: false
+  wind_required: false
+explicit_inputs:
+  meteorology:
+    - temperature_k
+    - net_radiation_w_m2
+  plant_and_soil_case:
+    - lai
+    - soil_water_m
+    - maximum_water_m
+    - wilting_water_m
+  physical_conversion:
+    - latent_heat_j_kg
+    - water_density_kg_m3
+    - psychrometric_constant_pa_k
+  independent_provenance_groups:
+    - meteorology_provenance
+    - case_provenance
+    - physical_constants_provenance
+  output_root_forcing_provenance: required
+root_distribution:
+  profile: UFOTRI_20_40_40_CONTROLLED_PROFILE
+  layer_fractions: [0.2, 0.4, 0.4]
+  layer_rule: q_w_i = root_uptake_m_s * fraction_i
+  root_flux_rule: J_root_i = q_w_i * C_w_i
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+required_gates:
+  - direct_eq39_formula_identity
+  - no_eq38_aerodynamic_input_dependency
+  - root_uptake_equals_plant_transpiration
+  - exact_20_40_40_distribution
+  - layer_sum_equals_total_root_uptake
+  - wilting_cutoff_zero
+  - nonpositive_radiation_zero
+  - units_fail_closed
+  - physical_domain_fail_closed
+  - utc_and_provenance_preserved
+  - deterministic_repeat
+  - root_j_equals_q_times_c
+  - root_ledger_conservation
+exit_state_if_all_gates_pass:
+  eq39_controlled_baseline_active: true
+  ufotri_20_40_40_controlled_profile_active: true
+  root_q_w_production_input_resolved: true
+  full_model_production_ready: false
+  full_penman_eq38_production_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+  full_hydrology: false
+  real_cteas_atmos_binding: false
+hard_boundaries:
+  v3_default_path_changed: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  leaf_r5: false
+  multi_pool_obt: false
+interpretation: >-
+  ROOT_Q_W_PRODUCTION_INPUT_RESOLVED=TRUE is limited to the controlled V4 root
+  input construction path. Required meteorology, LAI, soil-water state and
+  physical constants remain explicit caller-supplied inputs with provenance.
+  This state is not a claim that the full CTEAS-UFOTRI system is production
+  ready or empirically validated.
