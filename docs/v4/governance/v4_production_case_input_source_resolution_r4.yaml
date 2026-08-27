@@ -1,0 +1,130 @@
+schema_version: v1
+stage: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R4
+status: BLOCKED_PRODUCTION_CASE_IDENTITY_NOT_INDEPENDENTLY_DECLARED_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 25e2b50e2096bfd3953a5f5fdc637b1f7eaee8b3
+scope:
+  kind: PRODUCTION_CASE_IDENTITY_AND_EQ39_PRESSURE_SOURCE_SELECTION_ONLY
+  source_resolution_r3: docs/v4/governance/v4_production_case_input_source_resolution_r3.yaml
+  production_manifest: docs/v4/contracts/v4_production_case_input_manifest_r1.yaml
+  historical_assumptions: docs/assumptions.md
+  historical_era5_audit: docs/era5_data_audit.md
+  manifest_changed: false
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  runtime_parameter_import_changed: false
+  calibration_changed: false
+selection_outcome:
+  token: BLOCKED_PRODUCTION_CASE_IDENTITY_NOT_INDEPENDENTLY_DECLARED
+  production_case_identity_bound: false
+  production_pressure_source_selected: false
+  production_site_elevation_source_selected: false
+  production_psychrometric_constant_available: false
+  eq39_production_input_ready: false
+historical_repository_evidence:
+  era5_requested_test_point:
+    longitude_deg_e: 117.141610855
+    latitude_deg_n: 31.939774444
+    source_artifact: docs/era5_data_audit.md
+    disposition: HISTORICAL_TEST_CONTEXT_NOT_PRODUCTION_BINDING
+  era5_returned_nearest_grid_point:
+    longitude_deg_e: 117.25
+    latitude_deg_n: 32.0
+    source_artifact: docs/era5_data_audit.md
+    disposition: METEOROLOGICAL_TEST_GRID_POINT_NOT_SITE_IDENTITY
+  historical_test_period:
+    start_utc: '2025-06-01T00:00:00Z'
+    end_utc: '2025-06-03T00:00:00Z'
+    source_artifact: docs/era5_data_audit.md
+    disposition: HISTORICAL_TEST_TEMPORAL_SUPPORT_NOT_PRODUCTION_CASE
+  assumptions_semantics:
+    finite_test_values_not_site_claims: true
+    crop_defaults_not_hefei_site_claims: true
+    source_artifact: docs/assumptions.md
+  software_label:
+    value: Hefei-H3-ERA5/1.0
+    source_artifact: era5/era5_catalogue.py
+    disposition: SOFTWARE_REQUEST_LABEL_NOT_PRODUCTION_DECLARATION
+pressure_source_audit:
+  historical_era5_mapped_variables:
+    - t2m
+    - d2m
+    - u10
+    - v10
+    - tp
+    - ssrd
+    - strd
+  surface_pressure_documented_in_historical_audit: false
+  selected_case_mean_atmospheric_pressure_source: null
+  explicit_pressure_path_ready: false
+site_elevation_source_audit:
+  independently_sourced_site_elevation_m_msl_found: false
+  selected_site_elevation_m_msl_source: null
+  elevation_derived_pressure_path_ready: false
+psychrometric_selection:
+  r3_policy: FAO56_CASE_PRESSURE_DERIVED
+  selected_pressure_source_kind: null
+  selected_pressure_kpa: null
+  selected_site_elevation_m_msl: null
+  selected_gamma_pa_k: null
+  source_selection_authorized_without_case_declaration: false
+production_case_identity_binding_packet:
+  contract_id: PRODUCTION_CASE_IDENTITY_BINDING_PACKET_R1
+  required_fields:
+    - case_id
+    - scenario_id
+    - facility_or_site_id
+    - site_location_id
+    - site_latitude_deg
+    - site_longitude_deg
+    - horizontal_crs_or_datum
+    - production_time_start_utc
+    - production_time_end_utc
+    - operational_mode_or_release_case
+    - declaration_source_id
+    - declaration_source_revision
+    - declaration_provenance_note
+  rules:
+    positive_time_interval_required: true
+    site_coordinate_must_identify_pressure_elevation_site: true
+    historical_test_coordinate_may_be_silently_promoted: false
+    era5_nearest_grid_may_be_silently_promoted: false
+    receptor_coordinate_may_be_silently_promoted: false
+    explicit_spatial_reconciliation_required_when_different: true
+    missing_declaration_fields_may_be_inferred_from_test_artifacts: false
+fail_closed_conditions:
+  - PRODUCTION_CASE_IDENTITY_NOT_INDEPENDENTLY_DECLARED
+  - PRODUCTION_TIME_SUPPORT_NOT_DECLARED
+  - HISTORICAL_TEST_COORDINATE_PROPOSED_AS_PRODUCTION_IDENTITY
+  - ERA5_GRID_POINT_PROPOSED_AS_SITE_IDENTITY
+  - NO_ADMISSIBLE_EXPLICIT_PRESSURE_SOURCE
+  - NO_ADMISSIBLE_SITE_ELEVATION_SOURCE
+  - MISSING_DECLARATION_FIELD_INFERRED_FROM_TEST_CONTEXT
+atmos_surface_flux_blocker:
+  token: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+  atmosphere_surface_deposition_flux_ready: false
+  soil_surface_deposition_flux_ready: false
+  surrogate_or_zero_substitution_authorized: false
+hard_boundaries:
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+next_stage_if_clean_merge:
+  selected: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R5
+  focus: INDEPENDENT_PRODUCTION_CASE_DECLARATION_INTAKE_ONLY
+  historical_test_inference_authorized: false
+  manifest_projection_authorized: false
+  solver_change_authorized: false
+  runtime_activation_authorized: false
+  production_activation_authorized: false
