@@ -99,6 +99,7 @@ jobs:
             tests/v4/test_v4_three_layer_soil_core_implementation_r1.py \
             tests/v4/test_v4_three_layer_root_coupling_rereview_r1.py \
             tests/v4/test_v4_three_layer_root_flux_core_implementation_r1.py \
+            tests/v4/test_v4_root_operator_split_comparison_r1.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
@@ -107,3 +108,8 @@ jobs:
         run: |
           python scripts/v4/run_system_sensitivity_screening_r1.py --output /tmp/v4_system_sensitivity_screening_r1.json
           cat /tmp/v4_system_sensitivity_screening_r1.json
+
+      - name: Execute V4 root operator-split comparison R1
+        run: |
+          python scripts/v4/run_root_operator_split_comparison_r1.py --output /tmp/v4_root_operator_split_comparison_r1.json
+          cat /tmp/v4_root_operator_split_comparison_r1.json

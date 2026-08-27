@@ -1,0 +1,69 @@
+schema_version: v1
+stage: V4_ROOT_OPERATOR_SPLIT_COMPARISON_R1
+status: COMPARISON_IMPLEMENTED_AWAITING_MACHINE_GATE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 63b924d0878c2fbfae2e371ca9032497c3228d81
+branch: codex/v4-root-operator-split-comparison-r1
+
+scope:
+  production_pipeline_changed: false
+  v3_changed: false
+  root_v4_changed: false
+  soil_v4_changed: false
+  tfwt_v3_changed: false
+  obt_v3_changed: false
+  synthetic_comparison_only: true
+
+candidates:
+  - PRESERVE_V3_POST_OBT_ROOT_GAIN
+  - ROOT_GAIN_BEFORE_OBT
+
+comparison_harness:
+  path: scripts/v4/run_root_operator_split_comparison_r1.py
+  forcing_source: explicit_synthetic_q_w
+  q_w_generation: none
+  ufotri_reference_profile_active: false
+  short_term_three_hour_delay_active: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  common_area_basis: soil_surface_area
+  area_basis_conversion: false
+
+required_gates:
+  - both_candidates_monotonic_timestep_refinement
+  - single_application_and_conservation
+  - restart_equivalence
+  - deterministic_repeat
+  - root_to_obt_lag_difference_explicit
+
+selection_rule:
+  if_all_gates_pass: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  otherwise: HOLD_NO_SELECTION
+  basis:
+    - interval_start_state_semantics
+    - root_transfer_is_interval_integrated_not_interval_start_state
+    - do_not_make_full_interval_root_transfer_available_for_entire_same_interval
+    - preserve_frozen_p7_5b_order_when_no_gate_requires_change
+    - synthetic_error_ranking_is_not_physical_evidence
+  pre_obt_candidate_if_post_selected: NOT_SELECTED_RIGHT_BIASED_LIE_SPLIT
+
+integration_boundary:
+  future_soil_root_tfwt_obt_integration_authorized_now: false
+  future_area_basis_rule: identical_basis_or_explicit_adapter
+  silent_soil_area_to_plant_area_conversion: forbidden
+
+next_gate_if_machine_passes:
+  stage: V4_SOIL_ROOT_TFWT_OBT_INTEGRATION_R1
+  authorization_requires_exact_head_merge_of_this_decision: true
+
+hard_invariants:
+  active_parameters: 0
+  calibration_started: false
+  leaf_r5_authorized: false
+  real_cteas_atmos_coupling_active: false
+  v3_default_profile_changed: false
+  v4_pipeline_integration_active: false
+  ufotri_20_40_40_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+  physical_validation_complete: false
