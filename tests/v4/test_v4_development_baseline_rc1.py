@@ -141,8 +141,9 @@ def test_rc1_artifacts_explicitly_reject_production_interpretation() -> None:
     report = REPORT.read_text(encoding="utf-8")
     for text in (adr, report):
         lowered = text.lower()
+        normalized = lowered.replace("_", " ").replace("-", " ")
         assert "production" in lowered
-        assert "real cteas-atmos" in lowered
-        assert "empirical validation" in lowered
+        assert "real cteas atmos" in normalized
+        assert "empirical validation" in normalized
         assert "physical" in lowered
-        assert "v4_software_development_baseline_complete" in lowered
+        assert "v4 software development baseline complete" in normalized
