@@ -108,6 +108,7 @@ jobs:
             tests/v4/test_v4_system_post_orchestration_review_r1.py \
             tests/v4/test_v4_system_food_intake_dose_adapter_decision_r1.py \
             tests/v4/test_v4_system_food_intake_dose_adapter_implementation_r1.py \
+            tests/v4/test_v4_system_post_endpoint_review_r1.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
