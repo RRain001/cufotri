@@ -32,9 +32,14 @@ def test_machine_runner_passes_the_controlled_end_to_end_gates() -> None:
     completed = subprocess.run(
         [sys.executable, str(SCRIPT)],
         cwd=ROOT,
-        check=True,
+        check=False,
         text=True,
         capture_output=True,
+    )
+    assert completed.returncode == 0, (
+        "controlled UFOTRI E2E runner failed\n"
+        f"stdout:\n{completed.stdout}\n"
+        f"stderr:\n{completed.stderr}"
     )
     line = next(
         item
