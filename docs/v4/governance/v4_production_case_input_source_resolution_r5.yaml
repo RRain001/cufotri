@@ -1,0 +1,160 @@
+schema_version: v1
+stage: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R5
+status: DECLARATION_NOT_RECEIVED_FAIL_CLOSED_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 59055c22a44795ad3ef45228fe2816510478d8c5
+scope:
+  kind: INDEPENDENT_PRODUCTION_CASE_DECLARATION_INTAKE_ONLY
+  source_resolution_r4: docs/v4/governance/v4_production_case_input_source_resolution_r4.yaml
+  production_manifest: docs/v4/contracts/v4_production_case_input_manifest_r1.yaml
+  manifest_changed: false
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  runtime_parameter_import_changed: false
+  calibration_changed: false
+  pressure_source_selected: false
+  site_elevation_source_selected: false
+  gamma_computed: false
+declaration_intake:
+  contract_id: PRODUCTION_CASE_IDENTITY_DECLARATION_INTAKE_R1
+  receipt_state: NOT_RECEIVED
+  declaration_source_kind: null
+  received_timestamp_utc: null
+  artifact_identity: null
+  artifact_revision: null
+  artifact_sha256: null
+  submitted_by_role: null
+  required_fields:
+    - case_id
+    - scenario_id
+    - facility_or_site_id
+    - site_location_id
+    - site_latitude_deg
+    - site_longitude_deg
+    - horizontal_crs_or_datum
+    - production_time_start_utc
+    - production_time_end_utc
+    - operational_mode_or_release_case
+    - declaration_source_id
+    - declaration_source_revision
+    - declaration_provenance_note
+  declared_fields:
+    case_id: null
+    scenario_id: null
+    facility_or_site_id: null
+    site_location_id: null
+    site_latitude_deg: null
+    site_longitude_deg: null
+    horizontal_crs_or_datum: null
+    production_time_start_utc: null
+    production_time_end_utc: null
+    operational_mode_or_release_case: null
+    declaration_source_id: null
+    declaration_source_revision: null
+    declaration_provenance_note: null
+validation:
+  performed: false
+  declaration_complete: false
+  declaration_accepted: false
+  blocking_reason: DECLARATION_NOT_RECEIVED
+  missing_fields:
+    - case_id
+    - scenario_id
+    - facility_or_site_id
+    - site_location_id
+    - site_latitude_deg
+    - site_longitude_deg
+    - horizontal_crs_or_datum
+    - production_time_start_utc
+    - production_time_end_utc
+    - operational_mode_or_release_case
+    - declaration_source_id
+    - declaration_source_revision
+    - declaration_provenance_note
+  positive_time_interval_checked: false
+  coordinate_and_datum_semantics_checked: false
+  declaration_provenance_checked: false
+  spatial_identity_reconciliation_checked: false
+  inference_from_test_context_used: false
+intake_rules:
+  independent_declaration_required: true
+  declaration_may_be_controlled_repository_artifact_or_owner_supplied_artifact: true
+  all_required_fields_must_be_explicit: true
+  positive_time_interval_required: true
+  horizontal_crs_or_datum_must_be_explicit: true
+  declaration_source_revision_required: true
+  declaration_provenance_note_required: true
+  historical_test_coordinate_may_fill_missing_field: false
+  era5_nearest_grid_may_fill_missing_field: false
+  software_label_may_fill_missing_field: false
+  synthetic_configuration_may_fill_missing_field: false
+  conversational_background_without_controlled_declaration_may_fill_missing_field: false
+  missing_field_inference_allowed: false
+forbidden_inference_sources:
+  - docs/era5_data_audit.md requested coordinate
+  - docs/era5_data_audit.md nearest grid coordinate
+  - era5/era5_catalogue.py software request label
+  - docs/assumptions.md finite test values
+  - synthetic or validation configurations
+  - Atmos air sampling height or receptor height
+state_machine:
+  current_token: DECLARATION_NOT_RECEIVED
+  on_independent_artifact_receipt: DECLARATION_RECEIVED_UNVALIDATED
+  on_complete_valid_declaration: DECLARATION_ACCEPTED_FOR_SOURCE_RESOLUTION
+  on_missing_required_field: DECLARATION_REJECTED_INCOMPLETE
+  on_identity_time_or_datum_ambiguity: DECLARATION_REJECTED_AMBIGUOUS
+  acceptance_binds_production_manifest: false
+  acceptance_selects_pressure_source: false
+  acceptance_selects_site_elevation_source: false
+  acceptance_computes_gamma: false
+  acceptance_authorizes_runtime_activation: false
+  acceptance_authorizes_production_activation: false
+current_outcome:
+  token: DECLARATION_NOT_RECEIVED_FAIL_CLOSED
+  production_case_identity_bound: false
+  production_pressure_source_selected: false
+  production_site_elevation_source_selected: false
+  production_psychrometric_constant_available: false
+  eq39_production_input_ready: false
+manifest_snapshot:
+  expected_case_id: TEMPLATE_NOT_PRODUCTION
+  expected_scenario_id: UNSET
+  projection_performed: false
+pressure_elevation_snapshot:
+  r3_contract_id: EQ39_PRESSURE_SITE_ELEVATION_PROVENANCE_CONTRACT_R1
+  selected_pressure_source_kind: null
+  selected_pressure_kpa: null
+  selected_site_elevation_m_msl_source: null
+  selected_site_elevation_m_msl: null
+  selected_gamma_pa_k: null
+atmos_surface_flux_blocker:
+  token: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+  atmosphere_surface_deposition_flux_ready: false
+  soil_surface_deposition_flux_ready: false
+  surrogate_or_zero_substitution_authorized: false
+hard_boundaries:
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+conditional_next_stage:
+  prerequisite: DECLARATION_ACCEPTED_FOR_SOURCE_RESOLUTION
+  selected: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R6
+  focus: PRODUCTION_CASE_IDENTITY_BINDING_AND_EQ39_CASE_SOURCE_RESOLUTION_ONLY
+  manifest_projection_authorized_by_r5: false
+  solver_change_authorized: false
+  runtime_activation_authorized: false
+  production_activation_authorized: false
+current_next_action:
+  token: AWAIT_INDEPENDENT_PRODUCTION_CASE_DECLARATION
+  create_r6_before_accepted_declaration: false
