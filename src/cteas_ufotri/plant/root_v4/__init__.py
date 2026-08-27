@@ -3,6 +3,12 @@
 from .reference import UFOTRIRootReferenceEvidenceV4, UFOTRI_ROOT_REFERENCE_EVIDENCE_V4
 from .root_solver import ThreeLayerRootFluxSolverV4, ThreeLayerRootWaterFluxForcingV4
 from .root_state import LayerRootTransferV4, RootWaterFluxProvenanceV4, ThreeLayerRootFluxPlanV4
+from .ufotri_profile import (
+    UFOTRI_ROOT_LAYER_IDS,
+    UFOTRI_ROOT_WATER_UPTAKE_FRACTIONS,
+    ufotri_root_water_uptake_fluxes,
+    ufotri_three_layer_root_water_flux_forcing,
+)
 from .validation import (
     HTO_CONCENTRATION_UNIT,
     HTO_FLUX_UNIT,
@@ -32,6 +38,10 @@ __all__ = [
     "ThreeLayerRootWaterFluxForcingV4",
     "UFOTRIRootReferenceEvidenceV4",
     "UFOTRI_ROOT_REFERENCE_EVIDENCE_V4",
+    "UFOTRI_ROOT_LAYER_IDS",
+    "UFOTRI_ROOT_WATER_UPTAKE_FRACTIONS",
     "WATER_FLUX_UNIT",
     "WATER_TRANSFER_UNIT",
+    "ufotri_root_water_uptake_fluxes",
+    "ufotri_three_layer_root_water_flux_forcing",
 ]

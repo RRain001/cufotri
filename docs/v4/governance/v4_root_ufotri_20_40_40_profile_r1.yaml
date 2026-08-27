@@ -1,0 +1,51 @@
+schema_version: v1
+stage: V4_ROOT_UFOTRI_20_40_40_PROFILE_R1
+status: IN_PROGRESS
+base_main: 27f74524777d3b2f5259f6b1b05c8849afaaf035
+ufotri_source:
+  manual: ufotri_manual.md
+  context: chapter_3_3_2_long_term_ingestion_root_zone
+  layers:
+    L1: 0-5_cm
+    L2: 5-15_cm
+    L3: 15-30_cm
+  water_uptake_fractions: [0.2, 0.4, 0.4]
+profile_contract:
+  input: explicit_total_plant_water_uptake_flux_m_s
+  output: ThreeLayerRootWaterFluxForcingV4
+  layer_rule: q_w_i = total_q_w * fraction_i
+  total_flux_inferred_in_root: false
+  hidden_hydrology: false
+  hidden_transpiration_model: false
+  provenance_required: true
+  utc_timestamp_required: true
+  fail_closed_units: true
+activation_state:
+  ufotri_20_40_40_controlled_profile_active: true
+  root_q_w_production_input_resolved: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+  full_hydrology: false
+hard_boundaries:
+  v3_default_path_changed: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  leaf_r5: false
+  multi_pool_obt: false
+  real_cteas_atmos_binding: false
+rationale: >-
+  UFOTRI directly supplies the three-layer 20/40/40 distribution of total
+  plant water uptake. It does not supply a universal fixed total uptake flux.
+  Therefore this controlled profile activates only the UFOTRI layer fractions
+  while keeping the total plant-water uptake/transpiration flux as an explicit
+  upstream forcing. The ~0.026/0.026/0.017 d^-1 compartment transfer rates are
+  not converted into m/s q_w because their state and unit semantics differ.
+exit_gate:
+  exact_fraction_identity: required
+  total_flux_sum_identity: required
+  zero_behavior: required
+  invalid_input_fail_closed: required
+  forcing_provenance_time_preserved: required
+  root_j_equals_q_times_c: required
+  root_ledger_closure: required
