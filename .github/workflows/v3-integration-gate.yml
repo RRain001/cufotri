@@ -96,6 +96,7 @@ jobs:
             tests/v4/test_v4_system_sensitivity_screening_results_r1.py \
             tests/v4/test_v4_root_soil_layered_boundary_decision_r1.py \
             tests/v4/test_v4_three_layer_soil_core_implementation_r1.py \
+            tests/v4/test_v4_three_layer_root_coupling_rereview_r1.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
