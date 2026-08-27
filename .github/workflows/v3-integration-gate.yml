@@ -53,6 +53,7 @@ jobs:
           import cteas_ufotri.v3_pipeline
           import cteas_ufotri.plant.mass_basis_v3_1
           import cteas_ufotri.plant.soil_v4
+          import cteas_ufotri.plant.root_v4
           from cteas_ufotri.plant import soil_v3, root_v3, tfwt_v3, obt_v3, food_v3
           from cteas_ufotri.exposure import intake_v3, dose_v3
           print('V3_V4_IMPORT_SMOKE=PASS')
@@ -97,6 +98,7 @@ jobs:
             tests/v4/test_v4_root_soil_layered_boundary_decision_r1.py \
             tests/v4/test_v4_three_layer_soil_core_implementation_r1.py \
             tests/v4/test_v4_three_layer_root_coupling_rereview_r1.py \
+            tests/v4/test_v4_three_layer_root_flux_core_implementation_r1.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
