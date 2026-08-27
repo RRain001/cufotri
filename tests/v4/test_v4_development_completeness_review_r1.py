@@ -32,17 +32,17 @@ def test_completeness_review_has_zero_mandatory_internal_blockers():
     assert all(item["mandatory_blocker"] is False for item in matrix.values())
 
 
-def test_current_state_advances_only_to_rc1():
+def test_completeness_review_snapshot_authorizes_rc1_without_pinning_living_state():
     current = _load(CURRENT)
-    review = current["development_completeness_review"]
+    review = _load(REVIEW)
+    current_review = current["development_completeness_review"]
+    auth = review["next_stage_authorization"]
 
-    assert current["project_phase"] == "INTERNAL_V4_DEVELOPMENT_BASELINE_RC"
-    assert review["verdict"] == "PASS_NO_MANDATORY_INTERNAL_BLOCKERS"
-    assert review["mandatory_internal_blocker_count"] == 0
-    assert current["remaining_mandatory_internal_development_stages"] == [
-        "V4_DEVELOPMENT_BASELINE_RC1"
-    ]
-    assert current["current_next_stage"]["selected"] == "V4_DEVELOPMENT_BASELINE_RC1"
+    assert auth["selected"] == "V4_DEVELOPMENT_BASELINE_RC1"
+    assert auth["new_physics_subsystem_authorized"] is False
+    assert current["project_phase"].startswith("INTERNAL_V4_")
+    assert current_review["verdict"] == "PASS_NO_MANDATORY_INTERNAL_BLOCKERS"
+    assert current_review["mandatory_internal_blocker_count"] == 0
     assert current["current_next_stage"]["new_physics_implementation_pre_authorized"] is False
 
 
