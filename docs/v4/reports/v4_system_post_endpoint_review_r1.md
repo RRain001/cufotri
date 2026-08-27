@@ -2,7 +2,7 @@
 
 ## Status
 
-`READY_FOR_FIRST_EXACT_HEAD_CI`
+`PASS_REVIEW_EXACT_HEAD_AWAITING_CLOSURE_GATE`
 
 This is a system-level control-plane review only. PR #33 has closed the missing terminal diagnostic `food -> intake -> dose` software seam; the purpose of this review is to choose the next evidence/physics blocker without changing runtime behavior.
 
@@ -102,10 +102,57 @@ If evidence is insufficient, the multi-pool redesign stays HOLD. The stage may n
 
 `codex/v4-3-obt-formation-readiness` is not an unfinished OBT implementation worth resuming. It still points to `d4bb2def...`, the early roadmap-reset-era baseline, and contains no OBT readiness work. It is treated as a stale empty anchor. Any next OBT stage must start fresh from the then-current certified `main`.
 
+## First exact-head certification
+
+The first corrected clean review head was:
+
+`c571a1e6bdf856f76a326f68cb10c304973128c0`
+
+Exact-head evidence:
+
+```text
+Protected 33037462292 = SUCCESS
+Remediation 33037462279 = SUCCESS
+portable = 1284 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 346 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+food-intake-dose endpoint = PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+```
+
+The PR workflow checked synthetic merge ref `eac67ac3ec27d64b32e0a4af54f4fa9533ed88b9`, explicitly distinct from the branch head. All existing machine gates retained their previously frozen software-only interpretation; no machine result became empirical validation or a physical-accuracy claim.
+
+### Superseded first attempt
+
+Head `3e788e8f0919e7dc42ed068269c6bcc750575c87` is not certification evidence.
+
+- Remediation `33037233021`: SUCCESS.
+- Protected `33037232966`: FAILURE in portable only.
+- portable: `1283 passed, 1 failed, 1 skipped, 57 deselected`.
+- the sole failure was a governance-document string-consistency check: ADR-037 used equivalent prose but omitted exact token `BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED`.
+- no runtime, solver, coupling, parameter, scientific priority or roadmap decision failed.
+
+The branch was clean-rewritten directly on base `48bb658c...`; the correction added the exact status token only.
+
+## Governance closure
+
+The first clean review head has now passed both exact-head gates, so a governance-only closure is written. Relative to `c571a1e6...`, the closure is restricted to these four files:
+
+- `docs/v4/adr/ADR-037-v4-system-post-endpoint-review.md`;
+- `docs/v4/governance/v4_system_post_endpoint_review_r1.yaml`;
+- `docs/v4/reports/v4_system_post_endpoint_review_r1.md`;
+- `tests/v4/test_v4_system_post_endpoint_review_r1.py`.
+
+It changes no production source, workflow, script, machine runner, solver equation, runtime semantics, parameter value, calibration state or selected scientific priority. It only freezes CI identity, the superseded failed attempt, review interpretation boundaries and the second exact-head merge rule.
+
+The PR remains Draft until the closure exact head independently passes Protected + Remediation. Only then may it be marked Ready and merged with `expected_head_sha`, followed by parent/tree/main no-drift verification.
+
 ## Hard state
 
 ```ini
-V4_SYSTEM_POST_ENDPOINT_REVIEW_R1 = READY_FOR_FIRST_EXACT_HEAD_CI
+V4_SYSTEM_POST_ENDPOINT_REVIEW_R1 = PASS_REVIEW_EXACT_HEAD_AWAITING_CLOSURE_GATE
 BASE_MAIN = 48bb658c986d4ca1f355991e4e298a16863fec3b
 CONTROL_PLANE_ONLY = TRUE
 V3_DEFAULT_CHANGED = FALSE
@@ -127,4 +174,4 @@ PHYSICAL_ACCURACY_CLAIM = FALSE
 NEXT_STAGE = V4_OBT_FORMATION_EVIDENCE_READINESS_R1
 ```
 
-Exact-head Protected + Remediation must pass before a governance-only closure is written. The closure head must then pass both workflows again before Ready/`expected_head_sha` merge and parent/tree no-drift audit.
+The next stage remains unauthorized until closure exact-head CI and merge no-drift are complete.

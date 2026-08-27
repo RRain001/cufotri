@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SYSTEM_POST_ENDPOINT_REVIEW_R1
-status: READY_FOR_FIRST_EXACT_HEAD_CI
+status: PASS_REVIEW_EXACT_HEAD_AWAITING_CLOSURE_GATE
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 48bb658c986d4ca1f355991e4e298a16863fec3b
 branch: codex/v4-system-post-endpoint-review-r1
@@ -174,26 +174,68 @@ required_matched_evidence_fields:
   - independent_biological_replicates
   - provenance
 
+superseded_first_attempt:
+  head_sha: 3e788e8f0919e7dc42ed068269c6bcc750575c87
+  certified: false
+  remediation:
+    run_id: 33037233021
+    status: SUCCESS
+  protected_gate:
+    run_id: 33037232966
+    status: FAILURE
+  portable_suite:
+    passed: 1283
+    failed: 1
+    skipped: 1
+    deselected: 57
+  failure_classification: GOVERNANCE_DOCUMENT_STRING_CONSISTENCY_ONLY
+  failure_detail: ADR_037_MISSING_EXACT_BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED_TOKEN
+  runtime_failure: false
+  model_failure: false
+  roadmap_decision_changed_by_fix: false
+  clean_rewrite_performed: true
+
 first_exact_head_gate:
-  complete: false
-  head_sha: null
-  protected_gate: null
-  remediation: null
-  portable_suite: null
-  frozen_boundary_suite: null
-  machine_gates_expected_unchanged:
-    - PASS_SOFTWARE_SCREENING
-    - PASS_SELECTION
-    - PASS_INTEGRATION
-    - PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
-    - PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+  complete: true
+  head_sha: c571a1e6bdf856f76a326f68cb10c304973128c0
+  protected_gate:
+    run_id: 33037462292
+    status: SUCCESS
+  remediation:
+    run_id: 33037462279
+    status: SUCCESS
+  portable_suite:
+    passed: 1284
+    skipped: 1
+    deselected: 57
+  frozen_boundary_suite:
+    passed: 346
+  checkout_merge_sha: eac67ac3ec27d64b32e0a4af54f4fa9533ed88b9
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+    food_intake_dose_endpoint: PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+  production_source_changed: false
+  empirical_validation: false
+  physical_accuracy_claim: false
 
 governance_closure:
-  written: false
-  source_review_head: null
-  changed_files_only: []
+  written: true
+  source_review_head: c571a1e6bdf856f76a326f68cb10c304973128c0
+  changed_files_only:
+    - docs/v4/adr/ADR-037-v4-system-post-endpoint-review.md
+    - docs/v4/governance/v4_system_post_endpoint_review_r1.yaml
+    - docs/v4/reports/v4_system_post_endpoint_review_r1.md
+    - tests/v4/test_v4_system_post_endpoint_review_r1.py
+  production_source_changed_by_closure: false
+  workflow_changed_by_closure: false
+  scripts_changed_by_closure: false
+  solver_or_runtime_semantics_changed_by_closure: false
+  review_decision_changed_by_closure: false
   closure_exact_head_gate_complete: false
-  status: NOT_STARTED
+  status: AWAITING_CLOSURE_EXACT_HEAD_GATE
 
 hard_invariants:
   v3_default_profile_changed: false
@@ -225,8 +267,8 @@ closure_rule:
 
 exit_state:
   review_decision_complete: true
-  first_exact_head_gate_complete: false
-  governance_closure_written: false
+  first_exact_head_gate_complete: true
+  governance_closure_written: true
   governance_closure_exact_head_gate_complete: false
   merge_authorized: false
   next_stage_after_successful_merge: V4_OBT_FORMATION_EVIDENCE_READINESS_R1

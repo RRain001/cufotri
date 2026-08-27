@@ -17,7 +17,7 @@ def load_governance() -> dict:
 def test_post_endpoint_review_is_control_plane_only_and_anchored_to_no_drift_merge() -> None:
     data = load_governance()
     assert data["stage"] == "V4_SYSTEM_POST_ENDPOINT_REVIEW_R1"
-    assert data["status"] == "READY_FOR_FIRST_EXACT_HEAD_CI"
+    assert data["status"] == "PASS_REVIEW_EXACT_HEAD_AWAITING_CLOSURE_GATE"
     assert data["base_main_sha"] == "48bb658c986d4ca1f355991e4e298a16863fec3b"
     scope = data["review_scope"]
     assert scope["kind"] == "SYSTEM_LEVEL_CONTROL_PLANE_REVIEW_ONLY"
@@ -162,7 +162,48 @@ def test_next_stage_requires_matched_evidence_and_forbids_shortcuts() -> None:
     } <= required
 
 
-def test_hard_invariants_and_gate_state_are_frozen() -> None:
+def test_first_exact_head_and_governance_closure_are_frozen_before_second_gate() -> None:
+    data = load_governance()
+    failed = data["superseded_first_attempt"]
+    assert failed["head_sha"] == "3e788e8f0919e7dc42ed068269c6bcc750575c87"
+    assert failed["certified"] is False
+    assert failed["remediation"] == {"run_id": 33037233021, "status": "SUCCESS"}
+    assert failed["protected_gate"] == {"run_id": 33037232966, "status": "FAILURE"}
+    assert failed["portable_suite"] == {"passed": 1283, "failed": 1, "skipped": 1, "deselected": 57}
+    assert failed["failure_classification"] == "GOVERNANCE_DOCUMENT_STRING_CONSISTENCY_ONLY"
+    assert failed["runtime_failure"] is False
+    assert failed["model_failure"] is False
+    assert failed["roadmap_decision_changed_by_fix"] is False
+
+    gate = data["first_exact_head_gate"]
+    assert gate["complete"] is True
+    assert gate["head_sha"] == "c571a1e6bdf856f76a326f68cb10c304973128c0"
+    assert gate["protected_gate"] == {"run_id": 33037462292, "status": "SUCCESS"}
+    assert gate["remediation"] == {"run_id": 33037462279, "status": "SUCCESS"}
+    assert gate["portable_suite"] == {"passed": 1284, "skipped": 1, "deselected": 57}
+    assert gate["frozen_boundary_suite"] == {"passed": 346}
+    assert gate["checkout_merge_sha"] == "eac67ac3ec27d64b32e0a4af54f4fa9533ed88b9"
+    assert gate["machine_gates"] == {
+        "sensitivity": "PASS_SOFTWARE_SCREENING",
+        "root_operator_split": "PASS_SELECTION",
+        "soil_root_tfwt_obt": "PASS_INTEGRATION",
+        "replay_orchestration": "PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION",
+        "food_intake_dose_endpoint": "PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION",
+    }
+
+    closure = data["governance_closure"]
+    assert closure["written"] is True
+    assert closure["source_review_head"] == "c571a1e6bdf856f76a326f68cb10c304973128c0"
+    assert closure["production_source_changed_by_closure"] is False
+    assert closure["workflow_changed_by_closure"] is False
+    assert closure["scripts_changed_by_closure"] is False
+    assert closure["solver_or_runtime_semantics_changed_by_closure"] is False
+    assert closure["review_decision_changed_by_closure"] is False
+    assert closure["closure_exact_head_gate_complete"] is False
+    assert closure["status"] == "AWAITING_CLOSURE_EXACT_HEAD_GATE"
+
+
+def test_hard_invariants_and_review_artifacts_remain_fail_closed() -> None:
     data = load_governance()
     hard = data["hard_invariants"]
     assert hard["v3_default_profile_changed"] is False
@@ -177,15 +218,14 @@ def test_hard_invariants_and_gate_state_are_frozen() -> None:
     assert hard["root_q_w_production_input_resolved"] is False
     assert hard["real_cteas_atmos_coupling_active"] is False
 
-    gate = data["first_exact_head_gate"]
-    assert gate["complete"] is False
-    assert gate["head_sha"] is None
-    assert data["governance_closure"]["written"] is False
-    assert data["exit_state"]["merge_authorized"] is False
-    assert data["exit_state"]["next_stage_after_successful_merge"] == "V4_OBT_FORMATION_EVIDENCE_READINESS_R1"
+    exit_state = data["exit_state"]
+    assert exit_state["review_decision_complete"] is True
+    assert exit_state["first_exact_head_gate_complete"] is True
+    assert exit_state["governance_closure_written"] is True
+    assert exit_state["governance_closure_exact_head_gate_complete"] is False
+    assert exit_state["merge_authorized"] is False
+    assert exit_state["next_stage_after_successful_merge"] == "V4_OBT_FORMATION_EVIDENCE_READINESS_R1"
 
-
-def test_review_artifacts_and_protected_gate_name_the_selected_boundary() -> None:
     report = REPORT.read_text(encoding="utf-8")
     adr = ADR.read_text(encoding="utf-8")
     workflow = WORKFLOW.read_text(encoding="utf-8")
@@ -193,4 +233,7 @@ def test_review_artifacts_and_protected_gate_name_the_selected_boundary() -> Non
         assert "V4_OBT_FORMATION_EVIDENCE_READINESS_R1" in text
         assert "ACTIVE_PARAMETERS = 0" in text
         assert "BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED" in text
+        assert "c571a1e6bdf856f76a326f68cb10c304973128c0" in text
+        assert "33037462292" in text
+        assert "33037462279" in text
     assert "tests/v4/test_v4_system_post_endpoint_review_r1.py" in workflow
