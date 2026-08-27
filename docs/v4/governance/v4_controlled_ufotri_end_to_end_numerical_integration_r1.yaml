@@ -1,0 +1,83 @@
+schema_version: v1
+stage: V4_CONTROLLED_UFOTRI_END_TO_END_NUMERICAL_INTEGRATION_R1
+status: IN_PROGRESS
+base_main: 2814579b6bc345d31cabf36f7712ede78292ce46
+scope:
+  kind: SYNTHETIC_REPLAY_SYSTEM_NUMERICAL_INTEGRATION_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  v3_default_path_changed: false
+controlled_chain:
+  sequence:
+    - synthetic_replay_atmosphere_and_explicit_net_radiation
+    - ufotri_eq39_total_root_uptake
+    - ufotri_20_40_40_layer_distribution
+    - replay_orchestrator_leaf_soil_root_tfwt_obt
+    - ufotri_obt_reduced_baseline
+    - terminal_harvest_keep_event
+    - intake
+    - dose
+  root_total_uptake: EQUILIBRIUM_RADIATION_EQ39
+  root_distribution: [0.2, 0.4, 0.4]
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  obt_parameter_source: cteas_ufotri.plant.obt_v3.ufotri_obt_baseline_parameters
+  harvest_boundary: KEEP_HARVEST_EVENT
+numerical_case:
+  duration_h: 24
+  dt_s: 3600
+  daylight_hours: 12
+  daytime_net_radiation_w_m2: 300.0
+  nighttime_net_radiation_w_m2: 0.0
+  lai: 3.0
+  maximum_water_m: 0.60
+  wilting_water_m: 0.15
+  soil_water_source: CURRENT_THREE_LAYER_SOIL_TOTAL_WATER_INVENTORY
+  source_kind: SYNTHETIC_REPLAY_NUMERICAL_INTEGRATION
+required_gates:
+  - daylight_eq39_root_uptake_positive
+  - nighttime_eq39_root_uptake_zero
+  - exact_20_40_40_distribution
+  - root_j_equals_q_times_c
+  - plant_balance_closed
+  - coupled_balance_closed
+  - root_transfer_nonzero
+  - deterministic_repeat
+  - restart_equivalence
+  - ufotri_obt_baseline_nonzero
+  - endpoint_non_mutating
+  - food_inventory_nonzero
+  - annual_intake_nonzero
+  - dose_nonzero
+  - endpoint_timestamp_identity
+  - h3_food_ingestion_identity
+  - harvest_not_environmental_sink
+  - no_basis_conversion
+  - no_area_conversion
+resolution_state_if_pass:
+  eq39_controlled_baseline_active: true
+  ufotri_20_40_40_controlled_profile_active: true
+  root_q_w_production_input_resolved: true
+  ufotri_obt_controlled_baseline_active: true
+  software_chain_connected_with_controlled_ufotri_profiles: true
+  full_model_production_ready: false
+hard_boundaries:
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  full_hydrology: false
+  leaf_r5: false
+  multi_pool_obt: false
+  full_penman_eq38_production_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+  real_cteas_atmos_binding: false
+  v3_default_path_changed: false
+next_stage_if_clean_merge:
+  selected: V4_POST_CONTROLLED_UFOTRI_SYSTEM_REVIEW_R1
+  scope: CONTROL_PLANE_RERANK_REMAINING_BLOCKERS_ONLY
+  new_physics_implementation_authorized: false
+interpretation: >-
+  A PASS demonstrates numerical/software continuity of the controlled UFOTRI
+  profiles through the synthetic/replay-to-dose chain. It does not establish
+  empirical accuracy, complete production readiness, real Atmos coupling, or
+  authorize another physics subsystem without the post-integration review.
