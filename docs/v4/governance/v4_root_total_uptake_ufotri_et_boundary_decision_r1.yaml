@@ -1,0 +1,72 @@
+schema_version: v1
+stage: V4_ROOT_TOTAL_UPTAKE_UFOTRI_ET_BOUNDARY_DECISION_R1
+status: PASS_BOUNDARY_DECISION
+base_main: 611b2a8f622f6b36d9cbace7742430a51efda876
+problem:
+  target: total_plant_water_uptake_flux_m_s
+  downstream_profile: UFOTRI_20_40_40_CONTROLLED_PROFILE
+  current_root_q_w_production_input_resolved: false
+existing_ufotri_path:
+  implementation: src/cteas_ufotri/meteorology/fallback_fluxes.py
+  equations: UFOTRI_38_43
+  outputs:
+    - plant_transpiration_m_s
+    - root_uptake_m_s
+  root_uptake_identity: root_uptake_m_s_equals_plant_transpiration_m_s
+candidate_modes:
+  FULL_PENMAN_EQ38:
+    disposition: NOT_SELECTED_PROVISIONAL_AERODYNAMIC_COEFFICIENT
+    reason: >-
+      The recovered manual does not close the empirical aerodynamic-term unit
+      conversion. The existing coefficient 0.001 W m^-2 Pa^-1 is a project
+      assumption and must not be silently promoted to the V4 UFOTRI baseline.
+  EQUILIBRIUM_RADIATION_EQ39:
+    disposition: SELECTED_CONTROLLED_BASELINE
+    reason: >-
+      The existing implementation obtains the UFOTRI Eq.39 equilibrium form by
+      setting the unresolved aerodynamic coefficient to zero. This removes the
+      project-assumption coefficient while retaining the manual Eq.40-43
+      LAI partition, moisture reduction and wilting cutoff contract.
+selected_boundary:
+  mode: EQUILIBRIUM_RADIATION_EQ39
+  total_uptake_definition: root_uptake_m_s = plant_transpiration_m_s
+  atmospheric_inputs:
+    - temperature_k
+    - net_radiation_w_m2
+  explicit_state_or_case_inputs:
+    - lai
+    - soil_water_m
+    - maximum_water_m
+    - wilting_water_m
+  physical_conversion_inputs:
+    - latent_heat_j_kg
+    - water_density_kg_m3
+    - psychrometric_constant_pa_k
+  aerodynamic_coefficient_w_m2_pa: 0.0
+  hidden_root_hydrology: false
+  three_hour_delay_active: false
+authorization:
+  next_stage: V4_ROOT_TOTAL_UPTAKE_UFOTRI_EQ39_IMPLEMENTATION_R1
+  implementation_authorized: true
+  production_activation_authorized: false
+state_after_decision:
+  ufotri_20_40_40_controlled_profile_active: true
+  root_q_w_production_input_resolved: false
+  full_penman_eq38_production_active: false
+  eq39_controlled_baseline_selected: true
+  full_hydrology: false
+  real_cteas_atmos_binding: false
+hard_boundaries:
+  v3_default_path_changed: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  leaf_r5: false
+  multi_pool_obt: false
+rationale: >-
+  This decision follows the user-selected UFOTRI-parameter route. It chooses
+  an already represented manual equation instead of inventing or promoting the
+  unresolved Eq.38 aerodynamic coefficient. Production readiness remains false
+  until the selected Eq.39 boundary is implemented in V4 with explicit typed
+  forcing/state/provenance and then integrated with the UFOTRI 20/40/40 root
+  distribution profile.
