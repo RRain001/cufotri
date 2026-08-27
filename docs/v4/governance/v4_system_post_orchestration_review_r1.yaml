@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SYSTEM_POST_ORCHESTRATION_REVIEW_R1
-status: PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_EXACT_HEAD_GATE
+status: PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_CLOSURE_GATE
 repository: RRain001/CTEAS_ufotri
 base_main_sha: a03da884eb60b82658c07e0ca57db7058480260f
 branch: codex/v4-system-post-orchestration-review-r1
@@ -14,17 +14,6 @@ review_scope:
   calibration: false
   empirical_validation: false
   real_cteas_atmos_binding: false
-
-inputs_reviewed:
-  - docs/v4/governance/v4_system_post_integration_review_r1.yaml
-  - docs/v4/governance/v4_system_physics_gap_sensitivity_audit_r1.yaml
-  - docs/v4/results/v4_system_sensitivity_screening_execution_r1.yaml
-  - docs/v4/governance/v4_system_replay_input_orchestration_implementation_r1.yaml
-  - src/cteas_ufotri/v4_integration/replay_input_orchestration.py
-  - src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
-  - src/cteas_ufotri/exposure/intake_v3/intake_solver.py
-  - src/cteas_ufotri/exposure/dose_v3/dose_solver.py
-  - src/cteas_ufotri/plant/mass_basis_v3_1/contract.py
 
 orchestration_merge:
   pr: 30
@@ -45,50 +34,6 @@ resolved_prior_blockers:
   three_layer_soil_root_tfwt_obt_now_replay_driven: true
   food_intake_dose_v4_endpoint_wiring_still_missing: true
 
-post_orchestration_system_state:
-  atmosphere_exchange:
-    contract: FROZEN
-    replay_input: CONNECTED_TO_OPT_IN_V4_ORCHESTRATION
-    real_binding: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
-  leaf_exchange:
-    baseline_solver: CONNECTED_IN_REPLAY_ORCHESTRATION
-    dynamic_leaf_r5: HOLD_R4_EVIDENCE_CHECKPOINT
-  soil:
-    representation: THREE_LAYER_OPT_IN_INVENTORY_CORE
-    replay_surface_deposition: CONNECTED_L1_ONLY
-    transport_forcing: EXPLICIT_EXTERNAL
-    full_hydrology: false
-  root:
-    representation: THREE_LAYER_EXPLICIT_WATER_FLUX_TRANSFER
-    replay_system_status: CONNECTED
-    q_w_source: EXPLICIT_SEPARATELY_PROVENANCED
-    inferred_from_atmos: false
-  tfwt:
-    status: CONNECTED_IN_REPLAY_ORCHESTRATION
-    endpoint_type: TFWTState
-    dynamic_water_storage: false
-  obt:
-    status: CONNECTED_IN_REPLAY_ORCHESTRATION
-    endpoint_type: OBTState
-    physics: REDUCED_FIRST_ORDER_BASELINE
-  food:
-    current_module: EXISTING_V3_ENDPOINT
-    consumes_replay_endpoint_types: true
-    v4_adapter: NOT_DECIDED
-    source_state_mutation: false
-  intake:
-    current_module: EXISTING_V3_ENDPOINT
-    input: FoodInventory_PLUS_EXPLICIT_PRODUCT_MASS_AND_CONSUMPTION
-    v4_adapter: NOT_DECIDED
-  dose:
-    current_module: EXISTING_V3_ENDPOINT
-    input: IntakeState_PLUS_EXPLICIT_DOSE_COEFFICIENT
-    v4_adapter: NOT_DECIDED
-  mass_basis:
-    contract: V3_1_FAIL_CLOSED_METADATA_ONLY
-    numerical_cross_basis_conversion: false
-    wired_to_endpoint_adapter: false
-
 sensitivity_interpretation:
   result_kind: SYNTHETIC_LOCAL_COMPUTATIONAL_SCREENING
   physical_uncertainty_ranking_available: false
@@ -97,36 +42,16 @@ sensitivity_interpretation:
   interpretation: ENDPOINT_DEFINITION_MATTERS_NOT_PARAMETER_VALIDATION
   endpoint_scaling_is_environmental_physics_priority: false
 
-priority_rule: >-
-  Prefer the smallest next stage that increases connectivity of the complete
-  Atmos-to-dose chain while preserving frozen upstream physics and fail-closed
-  basis/provenance semantics. A computationally influential endpoint parameter
-  does not become validated or active by being wired into the chain.
-
 candidate_ranking:
   - rank: 1
     candidate: V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1
     disposition: SELECT_NEXT_CONTROL_PLANE_STAGE
-    rationale:
-      - The previous upstream-boundary deferral condition is now resolved by the merged replay orchestration.
-      - Replay endpoint TFWTState and OBTState are already the public types consumed by FoodTransferSolver.
-      - Food, intake, and dose are one-way endpoint/readout modules and can increase end-to-end connectivity without changing replay dynamics.
-      - Endpoint definitions are computationally material, so event, area, mass-basis, product, and provenance semantics must be frozen before implementation.
     implementation_authorized_now: false
-    required_decisions:
-      - terminal diagnostic harvest only; no automatic per-interval harvest
-      - no continuation of the same dynamic trajectory after non-mutating diagnostic harvest
-      - harvest source timestamp equals replay endpoint timestamp
-      - source area basis remains soil_surface_area with explicit harvest_area_m2 and no hidden area conversion
-      - explicit V3.1 MassBasisContract at the food-product boundary
-      - same mass/tissue/area basis for direct comparison; cross-basis numerical conversion remains blocked
-      - explicit OBT_ONLY versus OBT_PLUS_TFWT endpoint mode
-      - mixed TFWT harvest fraction explicit and independently provenanced
-      - independent provenance for harvest, food mass/consumption, and dose coefficient
-      - fail-closed food product, consumer, age group, radionuclide, pathway, and period identity
-      - endpoint evaluation must not mutate replay soil/TFWT/OBT/root/restart state
-      - compose existing endpoint solvers rather than rewrite their equations
-      - no default promotion or parameter activation
+    rationale:
+      - The previous upstream-boundary deferral condition is resolved by the merged replay orchestration.
+      - Replay endpoint TFWTState and OBTState are already the public types consumed by FoodTransferSolver.
+      - Food, intake, and dose are one-way endpoint/readout modules and can increase complete-chain connectivity without changing replay dynamics.
+      - Endpoint definitions are computationally material, so event, area, mass-basis, product, identity, and provenance semantics must be frozen before implementation.
   - rank: 2
     candidate: POST_END_TO_END_PARAMETER_EVIDENCE_PRIORITY_REVIEW
     disposition: DEFER_UNTIL_ENDPOINT_BOUNDARY_FROZEN
@@ -161,8 +86,10 @@ future_adapter_boundary_requirements:
   source_state: REPLAY_ENDPOINT_TFWT_AND_OBT
   source_state_mutation: FORBIDDEN_R1
   continue_same_trajectory_after_harvest: FORBIDDEN_R1
+  harvest_timestamp: MUST_EQUAL_REPLAY_ENDPOINT
   source_area_basis: soil_surface_area
   hidden_area_conversion: FORBIDDEN
+  harvest_area_m2: EXPLICIT_REQUIRED
   mass_basis_contract_required: true
   direct_basis_rule: IDENTICAL_MASS_TISSUE_AREA_ONLY
   numerical_cross_basis_conversion: FORBIDDEN
@@ -173,12 +100,48 @@ future_adapter_boundary_requirements:
   independent_parameter_provenance: true
   endpoint_identity_fail_closed: true
   upstream_side_effects: FORBIDDEN
+  compose_existing_endpoint_solvers: true
 
-review_exact_head_gate:
-  complete: false
-  status: AWAITING_EXACT_HEAD_GATE
-  protected_gate: PENDING
-  remediation: PENDING
+first_exact_head_gate:
+  complete: true
+  head_sha: baf27ed33348e44ecb9ff04b8b633deecfbfa3c2
+  protected_gate:
+    run_id: 33032403498
+    status: SUCCESS
+  remediation:
+    run_id: 33032403623
+    status: SUCCESS
+  portable_suite:
+    passed: 1253
+    skipped: 1
+    deselected: 57
+  frozen_boundary_suite:
+    passed: 321
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+  evidence_scope: CONTROL_PLANE_PLUS_EXISTING_SOFTWARE_REGRESSION_ONLY
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+governance_closure:
+  written: true
+  source_review_head: baf27ed33348e44ecb9ff04b8b633deecfbfa3c2
+  changed_files_only:
+    - docs/v4/adr/ADR-035-v4-system-post-orchestration-review.md
+    - docs/v4/governance/v4_system_post_orchestration_review_r1.yaml
+    - docs/v4/reports/v4_system_post_orchestration_review_r1.md
+    - tests/v4/test_v4_system_post_orchestration_review_r1.py
+  production_source_changed_by_closure: false
+  workflow_semantics_changed_by_closure: false
+  scripts_changed_by_closure: false
+  functional_tests_changed_by_closure: false
+  endpoint_apis_changed_by_closure: false
+  solver_or_runtime_semantics_changed_by_closure: false
+  closure_exact_head_gate_complete: false
+  status: AWAITING_CLOSURE_EXACT_HEAD_GATE
 
 hard_invariants:
   v3_default_profile_changed: false
@@ -203,3 +166,11 @@ closure_rule:
   closure_exact_head_gate_required: true
   expected_head_merge_required: true
   post_merge_no_drift_required: true
+
+exit_state:
+  review_decision_complete: true
+  first_exact_head_gate_complete: true
+  governance_closure_written: true
+  governance_closure_exact_head_gate_complete: false
+  merge_authorized: false
+  next_stage_after_successful_merge: V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1

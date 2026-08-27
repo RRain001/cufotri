@@ -2,11 +2,11 @@
 
 ## Status
 
-`PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_EXACT_HEAD_GATE`
+`PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_CLOSURE_GATE`
 
 ## Context
 
-The project north star is a traceable chain from atmospheric HTO forcing and deposition through soil/plant HTO, TFWT/OBT, food, intake, and dose. The replay-input orchestration merged in PR #30 now closes the previously missing opt-in upstream system seam from atmospheric replay through leaf exchange, three-layer soil/root coupling, TFWT, and OBT without changing the frozen V3 default or component equations.
+The project north star is a traceable chain from atmospheric HTO forcing and deposition through soil/plant HTO, TFWT/OBT, food, intake, and dose. The replay-input orchestration merged in PR #30 closes the previously missing opt-in upstream system seam from atmospheric replay through leaf exchange, three-layer soil/root coupling, TFWT, and OBT without changing the frozen V3 default or component equations.
 
 The previous post-integration review ranked `FOOD_INTAKE_DOSE_V4_ADAPTER_DECISION` second and deferred it only until the upstream input boundary was decided. That blocker is now resolved. This review therefore re-evaluates the next system-level gap rather than reopening already-frozen subsystem physics.
 
@@ -87,6 +87,27 @@ The endpoint adapter must be composition/readout only. With identical replay end
 5. OBT physics redesign — **HOLD** pending matched evidence; current reduced solver remains the software baseline.
 6. Full soil hydrology / plant-water dynamics — **HOLD**; explicit forcing remains the selected boundary.
 
+## First exact-head gate
+
+Review head `baf27ed33348e44ecb9ff04b8b633deecfbfa3c2` passed both required workflows:
+
+- V3 Protected Integration Gate run `33032403498`: `SUCCESS`;
+- V3 Remediation CI run `33032403623`: `SUCCESS`;
+- portable suite: `1253 passed, 1 skipped, 57 deselected`;
+- frozen/current-boundary suite: `321 passed`;
+- sensitivity gate: `PASS_SOFTWARE_SCREENING`;
+- root operator-split gate: `PASS_SELECTION`;
+- soil-root-TFWT-OBT gate: `PASS_INTEGRATION`;
+- replay orchestration gate: `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`.
+
+No corrective review commit was required. The first gate therefore closes the review decision itself; the present follow-up is governance-only.
+
+## Governance closure rule
+
+This closure may update only ADR-035, the machine-readable governance record, the review report, and its governance test. It must not change `src/`, scripts, replay functional tests, workflow execution semantics, component equations, endpoint APIs, or runtime coupling.
+
+Merge remains unauthorized until the governance-closure exact head independently passes both Protected and Remediation workflows. The eventual merge must use `expected_head_sha` and must be followed by parent/tree no-drift verification.
+
 ## Non-authorization
 
 This review does not authorize:
@@ -102,4 +123,4 @@ This review does not authorize:
 - real CTEAS-Atmos binding;
 - empirical validation or physical-accuracy claims.
 
-The frozen V3 default, current replay orchestration, component solver equations, `PRESERVE_V3_POST_OBT_ROOT_GAIN`, and `ACTIVE_PARAMETERS=0` remain unchanged.
+The frozen V3 default, current replay orchestration, component solver equations, `PRESERVE_V3_POST_OBT_ROOT_GAIN`, and `ACTIVE_PARAMETERS=0` remain unchanged. After a successful closure gate and no-drift merge, only `V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1` becomes authorized, still as a control-plane/interface decision stage rather than implementation.

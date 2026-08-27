@@ -2,103 +2,106 @@
 
 ## Status
 
-`PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_EXACT_HEAD_GATE`
+`PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_CLOSURE_GATE`
 
-This is a system-level control-plane review after the replay-input orchestration was merged and verified without tree drift. It does not change production source, solver equations, numerical coupling, parameters, calibration, or real CTEAS-Atmos binding.
+The system-level review after replay-input orchestration has passed its first exact-head Protected + Remediation gate. A governance-only closure is now recorded; merge remains blocked until the closure exact head passes both workflows again.
 
-## What changed since the previous system review
+## Review conclusion
 
-The prior post-integration review selected the replay-input adapter decision as the next stage and deferred food/intake/dose only until the upstream input boundary was decided.
+The previous reason for deferring downstream endpoint wiring is resolved. PR #30 merged the opt-in replay-input orchestration and passed both its implementation and closure gates without tree drift. Atmospheric replay, baseline leaf exchange, three-layer soil/root, TFWT, and OBT are therefore connected on the current opt-in V4 path.
 
-That condition is now resolved:
-
-- PR #29 froze the replay-input architecture;
-- PR #30 implemented and merged the opt-in replay-input system orchestration;
-- both implementation and governance-closure exact heads passed Protected + Remediation CI;
-- post-merge parent/tree audit proved no drift;
-- baseline leaf exchange, atmospheric surface deposition, three-layer soil/root, TFWT, and OBT now share one opt-in replay system seam.
-
-The remaining missing connection in the stated north-star chain is therefore the endpoint transition from replay TFWT/OBT to food, intake, and dose.
-
-## Endpoint API audit
-
-The existing downstream modules already have compatible one-way public boundaries:
-
-- `FoodTransferSolver` reads public `OBTState` and `TFWTState`, requires a shared harvest timestamp, multiplies their area-normalized inventories by an explicit harvest area, and creates separate food/harvest outputs;
-- `FoodIntakeSolver` converts total food activity to Bq/kg using an explicit `food_product_mass_kg`, then applies an explicit annual consumption amount;
-- `DoseSolver` converts annual intake to committed dose with an explicit dose coefficient.
-
-None of these calls currently mutates the replay state. That makes an endpoint adapter architecturally possible without changing upstream dynamics.
-
-## Critical boundary discovered
-
-The existing food transfer is a readout, not a state-depleting crop-harvest dynamics model. It reports transferred and remaining inventory but does not write the remaining plant inventory back into TFWT/OBT state.
-
-Therefore the next V4 decision must freeze R1 as a **terminal diagnostic harvest readout**. It must not automatically harvest every replay interval, and it must not allow the same trajectory to continue after harvest while pretending that the plant source inventory has been depleted.
-
-Repeated harvest, regrowth, crop removal, or post-harvest continuation would require a separate future state-mutation/physics decision.
-
-## Basis and provenance audit
-
-The replay endpoint inventory basis is `soil_surface_area`. Existing food transfer uses an explicit `harvest_area_m2` to convert Bq/m2 into total Bq but does not define a general area conversion layer.
-
-V3.1 already provides the correct governance rule for food concentration basis:
-
-- mass basis is explicit (`fresh_mass`, `dry_mass`, `water_mass`, or `hydrogen_mass`);
-- tissue/product scope is explicit;
-- area basis is explicit;
-- direct comparison requires identical mass/tissue/area basis;
-- cross-basis conversion requires separate evidence metadata;
-- V3.1 performs no numerical cross-basis conversion.
-
-The next adapter decision must reuse this contract rather than inventing hidden moisture/yield/tissue conversion.
-
-## Sensitivity interpretation
-
-The synthetic screening reported local dose elasticity of approximately `0.8443` for the provisional TFWT harvest fraction and `0.1557` for the OBT harvest fraction in its mixed endpoint profile.
-
-This supports freezing the endpoint definition before implementation. It does **not** validate either fraction, establish physical uncertainty, or authorize calibration. External annual consumption, food mass, harvest area, and dose coefficient remain scenario/exposure scaling inputs rather than environmental-physics priorities.
-
-## Priority decision
-
-Selected next stage:
+The selected next stage is:
 
 `V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1`
 
-Scope:
+Its scope remains `CONTROL_PLANE_AND_INTERFACE_DECISION_ONLY`. No endpoint adapter implementation is authorized by this review.
 
-`CONTROL_PLANE_AND_INTERFACE_DECISION_ONLY`
+## Why this is next
 
-Implementation remains unauthorized until that decision is independently gated and merged.
+The current food/intake/dose modules already form one-way readout APIs compatible with replay endpoint TFWT/OBT types. Connecting them is the smallest remaining step toward the stated Atmos-to-dose chain that does not require new upstream physics.
 
-The next decision must define at minimum:
+The synthetic sensitivity screen shows that endpoint definition can materially alter computed dose, especially the provisional mixed TFWT harvest fraction. That is used only to justify freezing endpoint semantics first. It is not parameter evidence, physical uncertainty, calibration evidence, or an activation decision.
 
-- explicit terminal harvest trigger and endpoint timestamp semantics;
-- OBT-only versus OBT+TFWT endpoint mode;
-- explicit mixed TFWT harvest fraction when applicable;
-- `soil_surface_area` source ownership and explicit harvest-area handling;
-- V3.1 mass/tissue/area-basis contract at the food boundary;
-- no numerical cross-basis conversion;
-- independent provenance for harvest, product mass/consumption, and dose coefficient;
-- fail-closed product/consumer/age/radionuclide/pathway/period identity;
+## Terminal diagnostic harvest boundary
+
+The existing food solver does not mutate source TFWT/OBT state after calculating transferred and remaining inventory. R1 must therefore use a **terminal diagnostic harvest readout**:
+
+- harvest only on explicit caller request;
+- harvest source timestamp must equal the replay endpoint timestamp;
+- no automatic per-step harvest;
+- no continuation of the same replay trajectory after harvest while claiming source depletion;
+- repeated harvest, regrowth, crop removal, or state-mutating harvest require a separate future decision.
+
+This avoids introducing a hidden conservation/state-semantic gap merely to make the chain appear end-to-end.
+
+## Basis, area, identity, and provenance boundary
+
+The next decision must freeze:
+
+- source inventory area basis `soil_surface_area`;
+- explicit `harvest_area_m2` only, with no hidden leaf/plant/field area conversion;
+- V3.1 `MassBasisContract` at the product boundary;
+- direct comparison only for identical mass/tissue/area basis;
+- no numerical fresh/dry/water/hydrogen cross-basis conversion;
+- explicit `OBT_ONLY` versus `OBT_PLUS_TFWT` mode;
+- explicit, independently provenanced TFWT harvest fraction for mixed mode;
+- independent provenance for harvest, food-product mass/consumption, and dose coefficient;
+- fail-closed food-product, consumer, age-group, radionuclide, pathway, and exposure-period identity;
 - no upstream state mutation or feedback;
-- no continuation of the same replay trajectory after terminal diagnostic harvest;
 - composition of existing endpoint solvers rather than equation rewrites.
+
+## First exact-head evidence
+
+Review head:
+
+`baf27ed33348e44ecb9ff04b8b633deecfbfa3c2`
+
+Evidence:
+
+```text
+Protected Gate 33032403498 = SUCCESS
+Remediation 33032403623 = SUCCESS
+portable = 1253 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 321 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+```
+
+No corrective review commit was required. Existing replay invariants remained green, including zero-leaf equivalence, same-interval leaf-to-OBT semantics, post-OBT root gain, deposition-to-L1 ownership, independent root provenance, no precipitation-to-infiltration inference, restart equivalence, deterministic repeat, and coupled conservation.
+
+## Governance closure
+
+The closure changes only:
+
+- ADR-035;
+- the post-orchestration governance YAML;
+- this review report;
+- the review governance test.
+
+It does not modify production source, workflow execution semantics, scripts, endpoint APIs, replay functional tests, solver equations, parameters, or runtime coupling.
+
+A second exact-head Protected + Remediation gate remains mandatory before Ready/merge. The merge must use `expected_head_sha` and be followed by parent/tree no-drift verification.
 
 ## What remains HOLD
 
-- Leaf R5 dynamic stomata remains at the R4 evidence checkpoint.
-- OBT redesign remains held pending matched evidence.
-- full hydrology and plant-water dynamics remain held.
-- root `q_w` remains explicit and independently provenanced.
-- real CTEAS-Atmos binding remains blocked until the producer-side surface-deposition/flux product is confirmed.
-- parameter activation and calibration remain false.
+- Leaf R5 dynamic stomata: R4 evidence checkpoint.
+- OBT physics redesign: matched evidence required.
+- full hydrology and plant-water dynamics: HOLD.
+- root `q_w`: explicit, independently provenanced; not inferred from Atmos.
+- real CTEAS-Atmos binding: blocked until producer-side surface-deposition/flux product is confirmed.
+- parameter activation: false.
+- calibration: false.
 
 ## Current hard state
 
 ```ini
-V4_SYSTEM_POST_ORCHESTRATION_REVIEW_R1 = PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_EXACT_HEAD_GATE
-MAIN_BASE = a03da884eb60b82658c07e0ca57db7058480260f
+V4_SYSTEM_POST_ORCHESTRATION_REVIEW_R1 = PASS_SYSTEM_POST_ORCHESTRATION_REVIEW_AWAITING_CLOSURE_GATE
+BASE_MAIN = a03da884eb60b82658c07e0ca57db7058480260f
+FIRST_EXACT_HEAD = baf27ed33348e44ecb9ff04b8b633deecfbfa3c2
+FIRST_PROTECTED_GATE = SUCCESS
+FIRST_REMEDIATION = SUCCESS
 V3_DEFAULT_CHANGED = FALSE
 REPLAY_ORCHESTRATION_CHANGED = FALSE
 COMPONENT_SOLVER_EQUATIONS_CHANGED = FALSE
@@ -114,7 +117,7 @@ FOOD_INTAKE_DOSE_V4_IMPLEMENTATION = FALSE
 REAL_CTEAS_ATMOS_BINDING = FALSE
 EMPIRICAL_VALIDATION = FALSE
 PHYSICAL_ACCURACY_CLAIM = FALSE
-NEXT_STAGE = V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1
+CLOSURE_EXACT_HEAD_GATE = PENDING
+MERGE_AUTHORIZED = FALSE
+NEXT_AFTER_VERIFIED_MERGE = V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1
 ```
-
-This review requires an exact-head Protected + Remediation gate, followed by a governance-only closure, a second exact-head gate, expected-head merge, and post-merge parent/tree no-drift verification before the next decision stage becomes authorized.
