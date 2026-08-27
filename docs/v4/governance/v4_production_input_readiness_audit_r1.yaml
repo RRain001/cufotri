@@ -1,0 +1,507 @@
+schema_version: v1
+stage: V4_PRODUCTION_INPUT_READINESS_AUDIT_R1
+status: AUDIT_COMPLETE_AWAITING_EXACT_HEAD_GATE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 7800176751050c678ccfe24b04c5c263ec6c27bb
+branch: codex/v4-production-input-readiness-audit-r1
+
+review_scope:
+  kind: CONTROL_PLANE_AND_INPUT_INVENTORY_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  parameter_values_changed: false
+  parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  real_cteas_atmos_binding: false
+
+post_review_merge_anchor:
+  pr: 44
+  merge_sha: 7800176751050c678ccfe24b04c5c263ec6c27bb
+  merge_tree: 76db5ceec943e568cd1c0be3d4ae2a2ee7808fc6
+  parent1: 589d23a81fb27509fb8591dac8695971dc14905f
+  parent2: e854092cfa2e8cf696e434e2b8b86b72c89ed856
+  head_to_merge_files_empty: true
+  no_drift_verified: true
+
+source_snapshot:
+  atmos_forcing:
+    path: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    blob_sha: 76500c048caac1d9d1bce8a463560adc91d521a0
+  atmos_exchange_contract:
+    path: docs/v4/contracts/v4_system_atmos_exchange_contract.yaml
+    blob_sha: 886d454c8bc3b2ff9c1bff864dae63c76897df25
+  soil_v4_solver:
+    path: src/cteas_ufotri/plant/soil_v4/soil_solver.py
+    blob_sha: 18abf2ef1f4c71281f6c609594f736d7735177aa
+  root_eq39:
+    path: src/cteas_ufotri/plant/root_v4/ufotri_eq39.py
+    blob_sha: dab83798058b635ba1d9d9ec9bbced78fa367277
+  leaf_resistance:
+    path: src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    blob_sha: 57b87cf6575c44a35505e317fb8aa4a1141d4ab1
+  tfwt_state:
+    path: src/cteas_ufotri/plant/tfwt_v3/tfwt_state.py
+    blob_sha: aeb5fb9605b89fadf5b1ce1d1580325213b5ca3c
+  obt_baseline:
+    path: src/cteas_ufotri/plant/obt_v3/ufotri_baseline.py
+    blob_sha: ef62228b8b4e41de19f33c137f2e63f621d93270
+  obt_state:
+    path: src/cteas_ufotri/plant/obt_v3/obt_state.py
+    blob_sha: c1246492e0f9e9a1e2124e4b7392d60a509d37a5
+  food_transfer:
+    path: src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    blob_sha: 2061ed157df0b59fff194ad41034b5ae7f3ee7c7
+  intake:
+    path: src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+    blob_sha: 1c0f6019d733183ba57265a96f41a4fcda909e04
+  dose:
+    path: src/cteas_ufotri/exposure/dose_v3/dose_solver.py
+    blob_sha: ca44d6345789b203d3577bd589467121b144bd9e
+  sensitivity_review:
+    path: docs/v4/reports/v4_system_sensitivity_screening_execution_r1.md
+    blob_sha: 715db8e31cb69f5bffafe3bbbcd1332175381e63
+
+classification_contract:
+  allowed:
+    - CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+    - PHYSICAL_CONSTANT
+    - EXPLICIT_EXTERNAL_SCENARIO_INPUT
+    - REAL_UPSTREAM_DATA_PREREQUISITE
+    - UNRESOLVED_OR_SYNTHETIC_ONLY
+  production_required_readiness_states:
+    - READY_CONTROLLED
+    - READY_PROVENANCED_SOURCE
+    - DERIVED_FROM_READY_STATE
+  non_ready_states:
+    - CONTRACT_READY_SOURCE_NOT_BOUND
+    - SOURCE_REQUIRED
+    - SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+    - BLOCKED_EXTERNAL
+    - PROVISIONAL_SOURCE_REQUIRED
+  api_default_is_production_evidence: false
+  synthetic_fixture_is_production_evidence: false
+  replay_fixture_is_live_binding: false
+  silent_zero_allowed: false
+  silent_unit_conversion_allowed: false
+  silent_time_or_space_reconciliation_allowed: false
+
+controlled_runtime_items:
+  obt_reduced_baseline:
+    classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+    readiness: READY_CONTROLLED
+    values:
+      formation_per_hour: 0.0006
+      loss_per_hour: 0.003
+      daylight_multiplier: 1.0
+      nighttime_multiplier: 1.0
+    interpretation: DAILY_AVERAGE_CONTROLLED_BASELINE_NO_INVENTED_DAY_NIGHT_SPLIT
+  root_total_uptake_equation:
+    classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+    readiness: READY_CONTROLLED
+    mode: EQUILIBRIUM_RADIATION_EQ39
+    eq38_aerodynamic_term_active: false
+  root_layer_profile:
+    classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+    readiness: READY_CONTROLLED
+    fractions: [0.2, 0.4, 0.4]
+  operator_split:
+    classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+    readiness: READY_CONTROLLED
+    value: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  harvest_boundary:
+    classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+    readiness: READY_CONTROLLED
+    value: KEEP_HARVEST_EVENT
+
+input_registry:
+  atmosphere:
+    air_hto_concentration:
+      classification: REAL_UPSTREAM_DATA_PREREQUISITE
+      readiness: CONTRACT_READY_SOURCE_NOT_BOUND
+      required: true
+      canonical_unit: Bq m^-3
+      source_rule: TYPED_RECEPTOR_OR_GRID_CONCENTRATION_WITH_FROZEN_TIME_AND_SPATIAL_SUPPORT
+    surface_deposition_flux:
+      classification: REAL_UPSTREAM_DATA_PREREQUISITE
+      readiness: BLOCKED_EXTERNAL
+      required: true
+      canonical_unit: Bq m^-2 s^-1
+      blocker: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+      forbidden_substitutes:
+        - puff_deposition_ledger_amount
+        - accumulated_inventory_relabelled_as_rate
+        - silent_zero
+    temperature:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: CONTRACT_READY_SOURCE_NOT_BOUND
+      required: true
+      canonical_unit: K
+    relative_humidity:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: CONTRACT_READY_SOURCE_NOT_BOUND
+      required: true
+      canonical_unit: '1'
+    wind_speed:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: CONTRACT_READY_SOURCE_NOT_BOUND
+      required: true
+      canonical_unit: m s^-1
+    precipitation:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: CONTRACT_READY_SOURCE_NOT_BOUND
+      required: true
+      canonical_unit: m s^-1
+    time_location_height_identity:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      requirements:
+        - UTC_half_open_interval
+        - location_or_grid_identity
+        - air_sampling_height
+        - vertical_reference
+        - spatial_colocation_or_explicit_reconciliation
+
+  root_eq39:
+    temperature:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: DERIVED_FROM_READY_STATE
+      required: true
+      derives_from: atmosphere.temperature_once_atmosphere_source_ready
+    net_radiation:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: W m^-2
+      inferred_from_cteas_atmos: false
+    lai:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: '1'
+      crop_and_stage_specific: true
+    soil_water_state:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: DERIVED_FROM_READY_STATE
+      required: true
+      derives_from: three_layer_soil_total_water_inventory_after_initial_state_and_forcing_are_ready
+    maximum_water:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: m water
+    wilting_water:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: m water
+    latent_heat:
+      classification: PHYSICAL_CONSTANT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: J kg^-1
+      provenance_required: true
+    water_density:
+      classification: PHYSICAL_CONSTANT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: kg m^-3
+      provenance_required: true
+    psychrometric_constant:
+      classification: PHYSICAL_CONSTANT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: Pa K^-1
+      provenance_required: true
+
+  soil_three_layer:
+    initial_layer_water_inventories:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      layers: [L1_0_5_cm, L2_5_15_cm, L3_15_30_cm]
+    initial_layer_hto_inventories:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      explicit_zero_initial_condition_allowed_only_if_declared: true
+    surface_water_input:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    surface_water_loss:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    l1_l2_water_flux:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+      signed_positive_downward: true
+    l1_l2_hto_flux:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    l2_l3_water_flux:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+      signed_positive_downward: true
+    l2_l3_hto_flux:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    lower_boundary_water_loss:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    lower_boundary_hto_loss:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    surface_reemission_hto_loss:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+    surface_deposition_flux:
+      classification: REAL_UPSTREAM_DATA_PREREQUISITE
+      readiness: BLOCKED_EXTERNAL
+      required: true
+      derives_from: atmosphere.surface_deposition_flux
+    root_water_and_hto_extraction:
+      classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+      readiness: DERIVED_FROM_READY_STATE
+      required: true
+      owner: root_v4
+      base_soil_root_slots_must_be_zero: true
+    tritium_half_life:
+      classification: PHYSICAL_CONSTANT
+      readiness: SOURCE_REQUIRED
+      required: true
+      rule: use_reviewed_physical_constant_record_not_synthetic_fixture
+
+  leaf_exchange:
+    aerodynamic_resistance:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: s m^-1
+    boundary_layer_resistance:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: s m^-1
+    canopy_resistance:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: s m^-1
+    production_parameter_database_path_ready: false
+    current_database_lookup_mode: production_false_only
+    active_parameter_provenance_rejected: true
+    leaf_r5_required_to_complete_manifest: false
+    leaf_r5_authorized: false
+    equilibrium_air_concentration:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: Bq m^-3
+      rule: source_or_state_mapping_must_be_explicit_no_hidden_tfwt_conversion
+
+  plant_state_and_obt:
+    initial_tfwt_inventory:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: Bq m^-2
+    tfwt_water_content:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: kg water m^-2
+    tfwt_water_loss_flux:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+      api_zero_default_is_production_evidence: false
+    tfwt_transformation_flux:
+      classification: UNRESOLVED_OR_SYNTHETIC_ONLY
+      readiness: SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+      required: true
+      api_zero_default_is_production_evidence: false
+    initial_obt_inventory:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      canonical_unit: Bq m^-2
+    obt_plant_mass:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: kg fresh m^-2
+    crop_growth_stage_area_basis:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+      shared_state_identity_required: true
+    obt_kf_kr_and_daily_average_multipliers:
+      classification: CONTROLLED_UFOTRI_BASELINE_OR_PROFILE
+      readiness: READY_CONTROLLED
+      required: true
+
+  endpoint:
+    harvest_fraction:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      current_default_parameter_status: provisional
+    tfwt_harvest_fraction:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: false
+      if_omitted_semantics: TFWT_TRANSFER_ZERO_BY_EXPLICIT_ENDPOINT_MODEL
+    harvest_area:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: m^2
+    food_product_mass:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: kg
+    annual_consumption_amount:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: kg year^-1_or_exact_declared_consumption_unit
+    age_group_and_consumer_identity:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: SOURCE_REQUIRED
+      required: true
+    dose_coefficient:
+      classification: EXPLICIT_EXTERNAL_SCENARIO_INPUT
+      readiness: PROVISIONAL_SOURCE_REQUIRED
+      required: true
+      canonical_unit: Sv Bq^-1_or_exact_solver_declared_unit
+      radionuclide_and_pathway_match_required: true
+
+cross_cutting_requirements:
+  - scenario_identity
+  - UTC_timestamp_and_time_support
+  - spatial_support_and_area_basis
+  - unit_declarations
+  - crop_growth_stage_food_age_group_identity
+  - provenance_source_artifact_revision
+  - transformation_log
+  - missing_data_policy
+  - explicit_zero_policy_when_zero_is_intended
+
+readiness_summary:
+  software_chain_connected_with_controlled_ufotri_profiles: true
+  root_q_w_controlled_equation_and_profile_resolved: true
+  production_input_packet_ready: false
+  complete_real_atmos_packet_ready: false
+  soil_dynamic_forcing_source_ready: false
+  leaf_resistance_production_source_ready: false
+  plant_state_source_packet_ready: false
+  endpoint_parameter_source_packet_ready: false
+  all_required_physical_constant_provenance_frozen: false
+  full_model_production_ready: false
+
+prior_sensitivity_context:
+  status: PASS_SOFTWARE_SCREENING
+  physical_importance_ranking: NOT_AVAILABLE
+  selected_local_computational_elasticities:
+    food_tfwt_harvest_fraction: 0.844289
+    atmos_air_hto_concentration: 0.670850
+    leaf_total_resistance: -0.559056
+    atmos_surface_deposition_flux: 0.139315
+  interpretation: SOFTWARE_PROPAGATION_ONLY_DO_NOT_USE_AS_EMPIRICAL_OR_PHYSICAL_RANKING
+
+blocker_ranking:
+  - rank: 1
+    candidate: V4_PRODUCTION_CASE_INPUT_MANIFEST_R1
+    disposition: SELECT_NEXT_CONTROL_PLANE_STAGE
+    rationale:
+      - multiple required inputs remain source-unbound across atmosphere soil leaf plant and endpoint boundaries
+      - one case-level completeness gate is required before subsystem-specific production claims
+      - Python defaults and synthetic fixtures must not silently satisfy production requirements
+  - rank: 2
+    candidate: REAL_CTEAS_ATMOS_BINDING
+    disposition: HOLD_EXTERNAL_PREREQUISITE_SURFACE_FLUX_UNCONFIRMED
+  - rank: 3
+    candidate: LEAF_RESISTANCE_PRODUCTION_SOURCE_DECISION
+    disposition: HOLD_UNTIL_CASE_MANIFEST_IDENTIFIES_REQUIRED_PROFILE
+  - rank: 4
+    candidate: THREE_LAYER_SOIL_DYNAMIC_FORCING_SOURCE_DECISION
+    disposition: HOLD_UNTIL_CASE_MANIFEST_WITHOUT_AUTHORIZING_FULL_HYDROLOGY
+  - rank: 5
+    candidate: ENDPOINT_AND_PLANT_STATE_SOURCE_PACKET
+    disposition: HOLD_UNTIL_CASE_MANIFEST_POPULATION
+
+next_stage:
+  selected: V4_PRODUCTION_CASE_INPUT_MANIFEST_R1
+  scope: CONTROL_PLANE_SCHEMA_AND_FAIL_CLOSED_COMPLETENESS_GATE_ONLY
+  production_values_may_be_activated: false
+  parameter_fitting_authorized: false
+  solver_changes_authorized: false
+  numerical_coupling_changes_authorized: false
+  real_cteas_atmos_binding_authorized: false
+  leaf_r5_authorized: false
+  full_hydrology_authorized: false
+  multi_pool_obt_authorized: false
+
+manifest_minimum_fields:
+  - input_id
+  - subsystem
+  - required_for_case
+  - classification
+  - canonical_quantity
+  - canonical_unit
+  - source_artifact_or_dataset
+  - source_revision_or_checksum
+  - temporal_support
+  - spatial_support_or_area_basis
+  - scenario_crop_stage_food_age_identity_as_applicable
+  - transformation_log
+  - readiness_status
+  - explicit_zero_policy_if_applicable
+  - provenance
+
+manifest_fail_closed_rules:
+  required_input_unresolved: FAIL
+  required_input_synthetic_only: FAIL
+  required_real_upstream_product_unbound: FAIL
+  required_unit_ambiguous: FAIL
+  required_time_support_ambiguous: FAIL
+  required_spatial_or_area_basis_ambiguous: FAIL
+  implicit_default_zero: FAIL
+  implicit_unit_conversion: FAIL
+  silent_missing_value_repair: FAIL
+
+hard_boundaries:
+  v3_default_path_changed: false
+  active_parameters: 0
+  calibration_started: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  full_model_production_ready: false
+  real_cteas_atmos_binding: false
+  leaf_r5: false
+  full_hydrology: false
+  full_penman_eq38_production_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+  multi_pool_obt: false
+
+exit_state_if_exact_head_and_merge_clean:
+  audit_complete: true
+  production_input_packet_ready: false
+  software_chain_connected_with_controlled_ufotri_profiles: true
+  full_model_production_ready: false
+  next_stage: V4_PRODUCTION_CASE_INPUT_MANIFEST_R1
