@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SOIL_ROOT_TFWT_OBT_INTEGRATION_R1
-status: INTEGRATION_IMPLEMENTED_AWAITING_MACHINE_GATE
+status: PASS_SOIL_ROOT_TFWT_OBT_INTEGRATION
 repository: RRain001/CTEAS_ufotri
 base_main_sha: c6e311039dc173a176bb59396cdbffb3504b8545
 branch: codex/v4-soil-root-tfwt-obt-integration-r1
@@ -59,6 +59,23 @@ restart_contract:
 machine_gate:
   script: scripts/v4/run_soil_root_tfwt_obt_integration_r1.py
   expected_status: PASS_INTEGRATION
+  empirical_validation: false
+  physical_accuracy_claim: false
+  implementation_head_sha: 966ac71c590b8a0e850d9d9ec01b5bdcef285116
+  protected_gate_run_id: 33028178452
+  portable_suite: 1216 passed, 1 skipped, 57 deselected
+  frozen_boundary_suite: 295 passed
+  sensitivity_status: PASS_SOFTWARE_SCREENING
+  operator_split_status: PASS_SELECTION
+  integration_status: PASS_INTEGRATION
+  deterministic_repeat: true
+  restart_equivalence: true
+  root_pulse_post_obt_semantics: true
+  max_abs_root_identity_residual_bq_m2: 0.0
+  max_abs_plant_residual_bq_m2: 4.440892098500626e-16
+  max_abs_soil_residual_bq_m2: 4.163336342344337e-17
+  max_abs_coupled_residual_bq_m2: 4.884981308350689e-15
+  closure_exact_head_gate_required: true
   required:
     - single_root_plan_application_and_conservation
     - deterministic_repeat
@@ -70,16 +87,15 @@ machine_gate:
     - no_root_reference_fixture_activation
     - full_portable_regression
     - frozen_boundary_regression
-  empirical_validation: false
-  physical_accuracy_claim: false
 
 acceptance_rule:
-  if_all_exact_head_gates_pass: PASS_SOIL_ROOT_TFWT_OBT_INTEGRATION
-  otherwise: HOLD_INTEGRATION
+  implementation_gate: PASS
+  merge_requires_closure_exact_head_gate: true
 
 next_stage:
   authorized_now: false
   must_be_decided_after_this_stage_merge: true
+  preferred_review: SYSTEM_LEVEL_POST_INTEGRATION_REVIEW
   candidates:
     - SYSTEM_LEVEL_POST_INTEGRATION_REVIEW
     - FOOD_INTAKE_DOSE_V4_ADAPTER_DECISION

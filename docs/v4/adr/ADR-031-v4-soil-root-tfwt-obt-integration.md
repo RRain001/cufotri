@@ -1,6 +1,6 @@
 # ADR-031: V4 soil-root-TFWT-OBT integration R1
 
-Status: Proposed pending exact-head machine gate
+Status: Accepted after implementation-head machine gate; closure-head CI required before merge
 
 ## Context
 
@@ -33,25 +33,29 @@ The root water transfer is applied to the soil storage sink because it is the ca
 
 The production integration object requires an explicit soil solver and an explicit OBT solver. It defines no soil half-life, OBT `kf/kr`, root-water flux, UFOTRI root fraction, or delay default.
 
-Synthetic test and machine-harness values are labelled `TEST_ONLY`; they do not become validated or active parameters.
+Synthetic test and machine-harness values are labelled `TEST_ONLY`; they do not become validated or active parameters. The H-3-scale half-life used by the synthetic machine harness is a numerical-conditioning fixture only, not a runtime default or parameter activation.
 
 ## Restart contract
 
 The opt-in composite state is JSON round-trippable from authoritative soil, TFWT, and OBT inventories plus their existing provenance and basis metadata. Restart must reproduce a direct multi-step run exactly under the same explicit forcing sequence.
 
-## Gate
+## Machine evidence
 
-Before this stage can be accepted, exact-head CI must prove:
+Implementation head `966ac71c590b8a0e850d9d9ec01b5bdcef285116` passed the protected exact-head gate in run `33028178452`:
 
-- V3 default-pipeline isolation;
-- common timestamp/identity/area fail-closed checks;
-- single root-plan application;
-- post-OBT root-pulse behavior;
-- OBT cannot borrow same-interval root transfer to cover TFWT overdraw;
-- deterministic repeat;
-- JSON restart equivalence;
-- soil, plant, and coupled HTO ledger closure;
-- no root reference fixture activation;
-- the full portable and frozen-boundary regression suites remain green.
+- portable suite: `1216 passed`, `1 skipped`, `57 deselected`;
+- frozen-boundary suite: `295 passed`;
+- sensitivity screening: `PASS_SOFTWARE_SCREENING`;
+- operator-split gate: `PASS_SELECTION`;
+- integration machine result: `PASS_INTEGRATION`;
+- deterministic repeat: PASS;
+- restart equivalence: PASS;
+- root-pulse post-OBT semantics: PASS;
+- maximum root-plan identity residual: `0 Bq m^-2`;
+- maximum plant residual: `4.44e-16 Bq m^-2`;
+- maximum soil residual: `4.16e-17 Bq m^-2`;
+- maximum coupled residual: `4.88e-15 Bq m^-2`.
 
-A passing synthetic gate is software integration evidence only. It is not empirical or physical validation.
+The closure commit changes governance/report/test assertions only. Its new exact head must pass the same protected CI before the PR can be marked Ready or merged.
+
+A passing synthetic gate is software integration evidence only. It is not empirical or physical validation. No subsequent stage is authorized by this ADR.
