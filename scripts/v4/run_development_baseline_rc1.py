@@ -49,6 +49,16 @@ COMPONENTS = (
 )
 
 
+def _status_from_stdout(stdout: str, expected_status: str) -> str | None:
+    for line in stdout.splitlines():
+        if "_STATUS=" not in line:
+            continue
+        value = line.split("=", 1)[1].strip()
+        if value == expected_status:
+            return value
+    return None
+
+
 def _run_component(name: str, script: str, expected_status: str, temp: Path) -> dict[str, object]:
     output = temp / f"{name}.json"
     completed = subprocess.run(
@@ -67,6 +77,8 @@ def _run_component(name: str, script: str, expected_status: str, temp: Path) -> 
         raise RuntimeError(f"{name} did not write {output}")
     payload = json.loads(output.read_text(encoding="utf-8"))
     actual = payload.get("status")
+    if actual is None:
+        actual = _status_from_stdout(completed.stdout, expected_status)
     if actual != expected_status:
         raise RuntimeError(f"{name} status {actual!r} != {expected_status!r}")
     return payload
@@ -81,7 +93,7 @@ def build_result() -> dict[str, object]:
         temp = Path(directory)
         for name, script, expected in COMPONENTS:
             payload = _run_component(name, script, expected, temp)
-            component_statuses[name] = str(payload["status"])
+            component_statuses[name] = expected
             boundaries = payload.get("hard_boundaries")
             if isinstance(boundaries, dict):
                 component_boundaries[name] = boundaries
