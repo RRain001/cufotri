@@ -2,11 +2,11 @@
 
 ## Status
 
-`IMPLEMENTED_AWAITING_EXACT_HEAD_GATE`
+`PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`
 
 ## Context
 
-ADR-033 selected a higher-level opt-in replay-input system orchestrator because a field-only adapter cannot complete the V4 chain. The frozen atmospheric adapter targets V3 one-layer soil, while the frozen four-module V4 integrator contains no leaf-exchange step. The selected numerical semantics also require same-interval leaf exchange to be visible to OBT while same-interval root gain remains post-OBT.
+ADR-033 selected a higher-level opt-in replay-input system orchestrator because a field-only adapter cannot complete the V4 chain. The frozen atmospheric adapter targets V3 one-layer soil, while the frozen four-module V4 integrator contains no leaf-exchange step. The selected numerical semantics require same-interval leaf exchange to be visible to OBT while same-interval root gain remains post-OBT.
 
 ## Implementation decision
 
@@ -59,6 +59,29 @@ When atmospheric HTO concentration equals the explicit leaf equilibrium-air conc
 
 The machine harness also checks nonzero same-interval leaf influence on OBT, post-OBT root gain, deposition mapping, no precipitation-to-infiltration inference, independent root provenance, deterministic repeat, restart equivalence, plant closure, and coupled closure.
 
+## First exact-head evidence
+
+Implementation head `dc309089d667fbd4ca0ab5ca4498b75b02a909d1` passed both required workflows without a corrective implementation commit:
+
+- V3 Remediation CI run `33031238565`: `SUCCESS`;
+- V3 Protected Integration Gate run `33031238577`: `SUCCESS`;
+- portable suite: `1245 passed, 1 skipped, 57 deselected`;
+- frozen/current-boundary suite: `313 passed`;
+- sensitivity machine gate: `PASS_SOFTWARE_SCREENING`;
+- root operator-split gate: `PASS_SELECTION`;
+- four-module soil-root-TFWT-OBT gate: `PASS_INTEGRATION`;
+- replay orchestration machine gate: `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`.
+
+The replay machine result explicitly reported all mandatory invariants true: atmospheric deposition mapped to L1 surface input, coupled and plant balances closed, deterministic repeat, precipitation not inferred as soil water, restart equivalence, post-OBT root gain, independent root provenance, same-interval leaf influence on OBT, and zero-leaf equivalence.
+
+This evidence is software/numerical integration evidence only. It is not empirical validation and does not establish physical accuracy.
+
+## Governance closure decision
+
+The first exact-head implementation gate is now closed. The only permitted follow-up on this branch is a governance-only closure update recording the evidence above. The closure must not alter `src/`, the replay machine harness, workflow execution semantics, functional tests, solver equations, or runtime coupling semantics.
+
+Merge remains unauthorized until the governance-closure exact head independently passes both Protected and Remediation workflows. The eventual merge must use `expected_head_sha` and must be followed by parent/tree no-drift verification.
+
 ## Non-authorization
 
 This implementation does not authorize or implement:
@@ -74,4 +97,4 @@ This implementation does not authorize or implement:
 - real CTEAS-Atmos binding;
 - empirical validation or physical-accuracy claims.
 
-The stage remains `IMPLEMENTED_AWAITING_EXACT_HEAD_GATE` until the implementation exact head passes the protected/remediation workflows and a separate governance closure is created and re-tested.
+After successful closure exact-head CI and no-drift merge, the next stage remains `SYSTEM_LEVEL_POST_ORCHESTRATION_REVIEW`; no downstream physics expansion is authorized by this closure.

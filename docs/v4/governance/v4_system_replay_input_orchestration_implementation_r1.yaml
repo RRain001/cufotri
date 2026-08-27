@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1
-status: IMPLEMENTED_AWAITING_EXACT_HEAD_GATE
+status: PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 8588d9e59916c89c2dfa4007dbedfea39b2d2e9f
 branch: codex/v4-system-replay-input-orchestration-implementation-r1
@@ -119,11 +119,51 @@ acceptance_gates:
   fail_closed_time_spatial_area_ownership: required
   machine_harness: scripts/v4/run_replay_input_orchestration_r1.py
 
-exact_head_gate:
-  complete: false
-  protected_gate_status: PENDING
-  remediation_status: PENDING
-  machine_status: PENDING
+implementation_exact_head_gate:
+  complete: true
+  head_sha: dc309089d667fbd4ca0ab5ca4498b75b02a909d1
+  protected_gate:
+    run_id: 33031238577
+    status: SUCCESS
+  remediation:
+    run_id: 33031238565
+    status: SUCCESS
+  portable_suite:
+    passed: 1245
+    skipped: 1
+    deselected: 57
+  frozen_boundary_suite:
+    passed: 313
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+  replay_invariants:
+    atmos_deposition_mapped_to_l1_surface: true
+    coupled_balance_closed: true
+    deterministic_repeat: true
+    plant_balance_closed: true
+    precipitation_not_inferred_as_soil_water: true
+    restart_equivalence: true
+    root_gain_post_obt: true
+    root_provenance_independent: true
+    same_interval_leaf_exchange_reaches_obt: true
+    zero_leaf_exchange_equivalence: true
+  evidence_scope: SOFTWARE_AND_NUMERICAL_INTEGRATION_ONLY
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+governance_closure:
+  written: true
+  source_implementation_head: dc309089d667fbd4ca0ab5ca4498b75b02a909d1
+  production_source_changed_by_closure: false
+  workflow_semantics_changed_by_closure: false
+  functional_tests_changed_by_closure: false
+  machine_harness_changed_by_closure: false
+  solver_or_runtime_semantics_changed_by_closure: false
+  closure_exact_head_gate_complete: false
+  status: AWAITING_CLOSURE_EXACT_HEAD_GATE
 
 hard_invariants:
   v3_default_profile_changed: false
@@ -149,7 +189,8 @@ closure_rule:
 
 exit_state:
   implementation_written: true
-  implementation_exact_head_gate_complete: false
-  governance_closure_complete: false
+  implementation_exact_head_gate_complete: true
+  governance_closure_written: true
+  governance_closure_exact_head_gate_complete: false
   merge_authorized: false
   next_stage_after_successful_merge: SYSTEM_LEVEL_POST_ORCHESTRATION_REVIEW

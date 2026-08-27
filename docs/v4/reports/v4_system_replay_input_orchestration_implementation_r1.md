@@ -2,9 +2,9 @@
 
 ## Status
 
-`IMPLEMENTED_AWAITING_EXACT_HEAD_GATE`
+`PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`
 
-The authorized opt-in replay-input orchestration layer has been implemented on an isolated branch. No production claim is made until exact-head protected/remediation CI and a second governance-closure gate pass.
+The authorized opt-in replay-input orchestration layer has passed its first exact-head software integration gate. A governance-only closure has now been written; merge remains blocked until the closure exact head passes Protected + Remediation CI again.
 
 ## Implemented boundary
 
@@ -59,33 +59,63 @@ The implementation checks:
 - combined soil+plant HTO closure;
 - underlying three-layer soil water and HTO closure.
 
-## Required regression evidence
+## First exact-head evidence
 
-The implementation test suite includes:
+Implementation head:
 
-- exact zero-leaf equivalence to the frozen four-module V4 integrator;
-- same-interval leaf influence on OBT;
-- post-OBT root gain;
-- signed leaf re-emission conservation;
-- total deposition -> L1 mapping;
-- precipitation not becoming infiltration;
-- explicit non-Atmos soil transport preservation;
-- double-ownership rejection;
-- interval/spatial/area fail-closed behavior;
-- independent root provenance;
-- deterministic repeat;
-- restart equivalence.
+`dc309089d667fbd4ca0ab5ca4498b75b02a909d1`
 
-A visible machine harness is added at:
+Required workflows:
 
-`scripts/v4/run_replay_input_orchestration_r1.py`
+- V3 Remediation CI `33031238565`: `SUCCESS`;
+- V3 Protected Integration Gate `33031238577`: `SUCCESS`.
 
-The protected gate will execute it explicitly after the existing sensitivity, operator-split, and four-module integration gates.
+Observed test/machine evidence:
+
+```text
+portable = 1245 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 313 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+```
+
+The replay machine harness explicitly returned all required invariants as true:
+
+- `atmos_deposition_mapped_to_l1_surface`;
+- `coupled_balance_closed`;
+- `deterministic_repeat`;
+- `plant_balance_closed`;
+- `precipitation_not_inferred_as_soil_water`;
+- `restart_equivalence`;
+- `root_gain_post_obt`;
+- `root_provenance_independent`;
+- `same_interval_leaf_exchange_reaches_obt`;
+- `zero_leaf_exchange_equivalence`.
+
+The driven synthetic check reported a coupled residual of approximately `4.44e-15 Bq m^-2` and a plant residual of approximately `4.44e-16 Bq m^-2`. These are software/numerical closure checks only and are not empirical validation.
+
+## Governance closure
+
+No corrective implementation commit was needed. The closure changes only this report, ADR-034, the machine-readable governance record, and the governance test that asserts the recorded gate state.
+
+The closure deliberately does **not** modify:
+
+- `src/cteas_ufotri/v4_integration/replay_input_orchestration.py`;
+- the frozen `V4SoilRootTFWTOBTIntegrator`;
+- any V3 source;
+- functional replay tests;
+- the machine harness;
+- workflow execution semantics;
+- solver equations or operator order.
+
+Therefore the runtime implementation proven by the first exact-head gate is unchanged. A second exact-head gate is still mandatory because governance metadata is part of the auditable branch head.
 
 ## Hard boundaries
 
 ```ini
-V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1 = IMPLEMENTED_AWAITING_EXACT_HEAD_GATE
+V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1 = PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE
 V3_DEFAULT_CHANGED = FALSE
 EXISTING_V4_FOUR_MODULE_INTEGRATOR_CHANGED = FALSE
 COMPONENT_SOLVER_EQUATIONS_CHANGED = FALSE
@@ -100,6 +130,8 @@ ROOT_Q_W_FROM_ATMOS = FALSE
 REAL_CTEAS_ATMOS_BINDING = FALSE
 EMPIRICAL_VALIDATION = FALSE
 PHYSICAL_ACCURACY_CLAIM = FALSE
+CLOSURE_EXACT_HEAD_GATE = PENDING
+MERGE_AUTHORIZED = FALSE
 ```
 
-If the implementation exact head passes both workflows, only a pure governance closure is next. After closure exact-head CI and no-drift merge, the route returns to a system-level post-orchestration review rather than immediately expanding food/dose or other physics.
+After closure exact-head CI succeeds, the PR may be marked Ready and merged only with `expected_head_sha`, followed by parent/tree no-drift verification. The next stage after a verified merge remains `SYSTEM_LEVEL_POST_ORCHESTRATION_REVIEW`; this closure does not authorize immediate food/intake/dose integration or any other physics expansion.

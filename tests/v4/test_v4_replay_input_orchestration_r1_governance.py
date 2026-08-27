@@ -12,10 +12,10 @@ FROZEN_CORE = ROOT / "src/cteas_ufotri/v4_integration/soil_root_tfwt_obt.py"
 WORKFLOW = ROOT / ".github/workflows/v3-integration-gate.yml"
 
 
-def test_implementation_is_authorized_opt_in_and_awaits_exact_head_gate() -> None:
+def test_implementation_is_authorized_opt_in_and_first_exact_head_gate_is_closed() -> None:
     data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
     assert data["stage"] == "V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1"
-    assert data["status"] == "IMPLEMENTED_AWAITING_EXACT_HEAD_GATE"
+    assert data["status"] == "PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE"
     assert data["base_main_sha"] == "8588d9e59916c89c2dfa4007dbedfea39b2d2e9f"
     assert data["authorization"]["source_decision"] == "V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1"
     assert data["authorization"]["decision_no_drift_verified"] is True
@@ -23,6 +23,13 @@ def test_implementation_is_authorized_opt_in_and_awaits_exact_head_gate() -> Non
     assert data["implementation"]["existing_four_module_integrator_modified"] is False
     assert data["implementation"]["v3_default_pipeline_modified"] is False
     assert data["implementation"]["component_solver_equations_modified"] is False
+    gate = data["implementation_exact_head_gate"]
+    assert gate["complete"] is True
+    assert gate["head_sha"] == "dc309089d667fbd4ca0ab5ca4498b75b02a909d1"
+    assert gate["protected_gate"] == {"run_id": 33031238577, "status": "SUCCESS"}
+    assert gate["remediation"] == {"run_id": 33031238565, "status": "SUCCESS"}
+    assert gate["portable_suite"] == {"passed": 1245, "skipped": 1, "deselected": 57}
+    assert gate["frozen_boundary_suite"] == {"passed": 313}
 
 
 def test_selected_operator_order_and_input_ownership_are_preserved() -> None:
@@ -41,7 +48,7 @@ def test_selected_operator_order_and_input_ownership_are_preserved() -> None:
     assert ownership["leaf"]["dynamic_leaf_r5"] is False
 
 
-def test_acceptance_gates_include_zero_leaf_equivalence_and_conservation() -> None:
+def test_acceptance_gates_and_recorded_machine_evidence_close_the_required_invariants() -> None:
     data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
     gates = data["acceptance_gates"]
     zero = gates["zero_leaf_exchange_equivalence"]
@@ -59,6 +66,16 @@ def test_acceptance_gates_include_zero_leaf_equivalence_and_conservation() -> No
     assert conservation["leaf_exchange_is_signed_external_transfer"] is True
     assert conservation["root_is_internal_to_coupled_system"] is True
     assert conservation["root_plan_applied_once"] is True
+
+    machine = data["implementation_exact_head_gate"]["machine_gates"]
+    assert machine["sensitivity"] == "PASS_SOFTWARE_SCREENING"
+    assert machine["root_operator_split"] == "PASS_SELECTION"
+    assert machine["soil_root_tfwt_obt"] == "PASS_INTEGRATION"
+    assert machine["replay_orchestration"] == "PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION"
+    invariants = data["implementation_exact_head_gate"]["replay_invariants"]
+    assert all(invariants.values())
+    assert data["implementation_exact_head_gate"]["empirical_validation"] is False
+    assert data["implementation_exact_head_gate"]["physical_accuracy_claim"] is False
 
 
 def test_source_is_new_high_level_layer_and_frozen_core_does_not_reverse_import_it() -> None:
@@ -80,8 +97,19 @@ def test_protected_gate_explicitly_runs_replay_orchestration_machine_harness() -
     assert "python scripts/v4/run_replay_input_orchestration_r1.py" in workflow
 
 
-def test_hard_boundaries_and_closure_rule_prevent_scope_creep() -> None:
+def test_governance_closure_is_written_but_merge_remains_blocked_until_second_exact_head_gate() -> None:
     data = yaml.safe_load(GOVERNANCE.read_text(encoding="utf-8"))
+    closure = data["governance_closure"]
+    assert closure["written"] is True
+    assert closure["source_implementation_head"] == "dc309089d667fbd4ca0ab5ca4498b75b02a909d1"
+    assert closure["production_source_changed_by_closure"] is False
+    assert closure["workflow_semantics_changed_by_closure"] is False
+    assert closure["functional_tests_changed_by_closure"] is False
+    assert closure["machine_harness_changed_by_closure"] is False
+    assert closure["solver_or_runtime_semantics_changed_by_closure"] is False
+    assert closure["closure_exact_head_gate_complete"] is False
+    assert closure["status"] == "AWAITING_CLOSURE_EXACT_HEAD_GATE"
+
     hard = data["hard_invariants"]
     assert hard["v3_default_profile_changed"] is False
     assert hard["existing_v4_four_module_integrator_changed"] is False
@@ -96,9 +124,12 @@ def test_hard_boundaries_and_closure_rule_prevent_scope_creep() -> None:
     assert hard["real_cteas_atmos_coupling_active"] is False
     assert hard["empirical_validation"] is False
     assert hard["physical_accuracy_claim"] is False
-    assert data["exact_head_gate"]["complete"] is False
-    assert data["closure_rule"]["governance_closure_required_after_first_exact_head_pass"] is True
-    assert data["exit_state"]["merge_authorized"] is False
-    assert data["exit_state"]["next_stage_after_successful_merge"] == "SYSTEM_LEVEL_POST_ORCHESTRATION_REVIEW"
-    assert "`IMPLEMENTED_AWAITING_EXACT_HEAD_GATE`" in REPORT.read_text(encoding="utf-8")
-    assert "`IMPLEMENTED_AWAITING_EXACT_HEAD_GATE`" in ADR.read_text(encoding="utf-8")
+
+    exit_state = data["exit_state"]
+    assert exit_state["implementation_exact_head_gate_complete"] is True
+    assert exit_state["governance_closure_written"] is True
+    assert exit_state["governance_closure_exact_head_gate_complete"] is False
+    assert exit_state["merge_authorized"] is False
+    assert exit_state["next_stage_after_successful_merge"] == "SYSTEM_LEVEL_POST_ORCHESTRATION_REVIEW"
+    assert "`PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`" in REPORT.read_text(encoding="utf-8")
+    assert "`PASS_IMPLEMENTATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`" in ADR.read_text(encoding="utf-8")
