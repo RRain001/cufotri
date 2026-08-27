@@ -1,0 +1,39 @@
+schema_version: v1
+stage: V4_OBT_UFOTRI_BASELINE_NUMERICAL_INTEGRATION_R1
+status: IN_PROGRESS
+base_main: cd13c39f0cf43986f423b9d4a8f9d6c4af64cb6e
+parameter_source:
+  profile: cteas_ufotri.plant.obt_v3.ufotri_obt_baseline_parameters
+  kf_s: 1.6666666666666665e-7
+  kr_s: 8.333333333333333e-7
+  daylight_multiplier: 1.0
+  nighttime_multiplier: 1.0
+numerical_scope:
+  chain: soil_v4 -> root_v4 -> tfwt_v3 -> obt_v3
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  duration_hours: 24
+  reference_dt_s: 225
+  refinement_dt_s: [3600, 1800, 900, 450]
+required_gates:
+  - ufotri_profile_exact
+  - selected_operator_split_preserved
+  - conservation_closed
+  - deterministic_repeat
+  - restart_equivalence
+  - timestep_refinement
+  - obt_formation_nonzero
+hard_boundaries:
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  multi_pool_obt: false
+  leaf_r5: false
+  production_root_q_w: false
+  full_hydrology: false
+  real_cteas_atmos_binding: false
+  v3_default_path_changed: false
+route_decision: >-
+  This stage numerically integrates the already adopted UFOTRI OBT baseline
+  through the existing V4 soil-root-TFWT-OBT chain. Synthetic soil/root
+  forcing is retained only to exercise numerical semantics; it is not a
+  production-input claim or empirical validation.
