@@ -42,10 +42,11 @@ def test_r4_historical_hefei_coordinate_is_test_context_not_production_binding()
     assert evidence["software_label"]["disposition"] == "SOFTWARE_REQUEST_LABEL_NOT_PRODUCTION_DECLARATION"
 
     assumptions = ASSUMPTIONS_PATH.read_text(encoding="utf-8")
+    assumptions_one_line = " ".join(assumptions.split())
     audit = ERA5_AUDIT_PATH.read_text(encoding="utf-8")
     catalogue = ERA5_CATALOGUE_PATH.read_text(encoding="utf-8")
     assert "not site claims" in assumptions
-    assert "not claims about the Hefei receptor" in assumptions
+    assert "rather than claims about the Hefei receptor or a specific agricultural survey." in assumptions_one_line
     assert "117.141610855 E, 31.939774444 N" in audit
     assert "117.25 E, 32.00 N" in audit
     assert "Hefei-H3-ERA5/1.0" in catalogue
