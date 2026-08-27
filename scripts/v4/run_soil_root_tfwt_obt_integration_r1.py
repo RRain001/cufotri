@@ -32,7 +32,10 @@ from cteas_ufotri.v4_integration import (
 
 UTC = timezone.utc
 DT = 1800.0
-TEST_HALF_LIFE_S = 1.0e12
+# Explicit H-3-scale value for numerically conditioned synthetic conservation
+# exercise only. This is not a production default, validated parameter, or
+# runtime activation.
+TEST_HALF_LIFE_S = 388_789_632.0
 TEST_KF_S = 2.0e-5
 TEST_KR_S = 5.0e-6
 Q_PROFILES = (
@@ -273,6 +276,7 @@ def build_result() -> dict[str, Any]:
         "area_basis_conversion": False,
         "test_only_inputs": {
             "soil_half_life_s": TEST_HALF_LIFE_S,
+            "soil_half_life_context": "EXPLICIT_TEST_ONLY_H3_SCALE_NUMERICAL_CONDITIONING",
             "obt_kf_s": TEST_KF_S,
             "obt_kr_s": TEST_KR_S,
             "root_q_w_profiles_m_s": Q_PROFILES,
