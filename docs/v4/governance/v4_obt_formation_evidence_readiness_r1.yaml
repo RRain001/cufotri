@@ -1,0 +1,317 @@
+schema_version: v1
+stage: V4_OBT_FORMATION_EVIDENCE_READINESS_R1
+status: PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI
+repository: RRain001/CTEAS_ufotri
+base_main_sha: d8c3336c14db1d695e70dc62755b00ce5235d04d
+branch: codex/v4-obt-formation-evidence-readiness-r1
+
+stage_scope:
+  kind: CONTROL_PLANE_AND_EVIDENCE_READINESS_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  v3_default_changed: false
+  v4_runtime_changed: false
+  parameter_values_admitted: false
+  parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+entry_authorization:
+  source_stage: V4_SYSTEM_POST_ENDPOINT_REVIEW_R1
+  source_pr: 34
+  source_merge_sha: d8c3336c14db1d695e70dc62755b00ce5235d04d
+  source_merge_tree: e00d73be6c26f127e2274f59b1139c99eed5a168
+  source_parent1: 48bb658c986d4ca1f355991e4e298a16863fec3b
+  source_parent2: 667d5e2bdcf9cae326f37980b6033a219ab8540a
+  no_drift_verified: true
+  head_to_merge_files_empty: true
+  selected_next_stage: V4_OBT_FORMATION_EVIDENCE_READINESS_R1
+
+frozen_candidate_architecture:
+  current_runnable_baseline:
+    model_id: option_a_reduced_first_order
+    equation: dB/dt = k_f T - k_r B
+    remains_default: true
+  selected_future_candidate:
+    model_id: option_b_two_pool_biological_extension
+    selected_for_v4: true
+    symbolic_equations:
+      precursor: dP/dt = u_P(T,A,d,stage,T_leaf,L) - k_P P
+      exchangeable: dB_x/dt = k_PB P - (k_x + k_xn) B_x
+      nonexchangeable: dB_n/dt = k_xn B_x - k_n B_n
+    implemented: false
+    runtime_admissible: false
+    numerical_parameter_values_selected: false
+
+state_classification:
+  T:
+    classification: DIRECT_OBSERVABLE_IF_EXTRACTION_AND_BASIS_EXPLICIT
+  P:
+    classification: LATENT_LUMPED_PRECURSOR_ACTIVITY_STATE
+    direct_chemical_identity_asserted: false
+  B_x:
+    classification: OPERATIONAL_ANALYTICAL_OBSERVABLE_IF_PROTOCOL_EXPLICIT
+    automatic_equivalence_to_tfwt: false
+    automatic_equivalence_to_generic_fast_pool: false
+  B_n:
+    classification: OPERATIONAL_ANALYTICAL_OBSERVABLE_IF_PROTOCOL_EXPLICIT
+    automatic_equivalence_to_all_slow_organic_matter: false
+  B_total:
+    classification: DERIVED_IF_MATCHED_COMPONENTS_OR_SEPARATE_DIRECT_OBSERVATION
+    silent_partition_to_components: forbidden
+  u_P:
+    classification: DERIVED_OR_LATENT_FORMATION_FLUX
+    functional_form_selected: false
+  external_biological_forcing:
+    fields:
+      - day_night_state
+      - photosynthetic_activity_or_PAR
+      - leaf_temperature
+      - crop_stage
+    independent_provenance_required: true
+
+repository_evidence_audit:
+  matched_option_b_raw_packet_present: false
+  soybean_request_package_status: READY_TO_SEND_MANUALLY_NOT_SENT
+  soybean_data_status: BLOCKED_EXTERNAL_DATA
+  preregistration_status: DRAFT_NOT_PREREGISTERED
+  calibration_status: NOT_RUN_BLOCKED_EXTERNAL_DATA
+  identifiability_status: NOT_ASSESSED_NO_EXECUTABLE_EXTERNAL_CASE
+  soybean_obt_component_status: AGGREGATE_OR_ORGAN_AVERAGES_NOT_BX_BN_KINETIC_PACKET
+  interpretation: REPOSITORY_DOES_NOT_CONTAIN_AN_AVAILABLE_OPTION_B_VALIDATION_PACKET
+
+external_evidence_audit:
+  purpose: ACQUISITION_FEASIBILITY_ONLY_NOT_PARAMETER_IMPORT
+  sources:
+    - evidence_id: VATO_MARO_2017
+      title: The VATO project - An original methodology to study the transfer of tritium as HT and HTO in grassland ecosystem
+      doi: 10.1016/j.jenvrad.2016.10.016
+      source_program: IRSN_EDF_VATO
+      demonstrated_features:
+        - high_frequency_environmental_monitoring_and_hourly_reconstruction
+        - grass_tfwt_and_obt_sampling
+        - tritium_transfer_kinetics_program
+      iaea_followup_states_eobt_neobt_used_in_first_phase: true
+      public_dynamic_intercomparison_uses_total_obt: true
+      direct_component_raw_table_obtained_by_repository: false
+      complete_option_b_packet_verified: false
+      owner_clarification_required: true
+      role: PRIORITY_A_ACQUISITION_TARGET
+    - evidence_id: RENARD_RYEGRASS_2017
+      title: Tritium forms discrimination in ryegrass under constant tritium exposure - From seed germination to seedling autotrophy
+      doi: 10.1016/j.jenvrad.2017.06.026
+      demonstrated_features:
+        - controlled_tritium_exposure
+        - exchangeable_obt_fraction_measured
+        - tfwt_obt_discrimination
+        - time_resolved_dehydrated_biomass_during_early_growth
+      limitations:
+        - constant_exposure_does_not_by_itself_excite_all_day_night_activity_terms
+        - complete_raw_option_b_packet_not_obtained
+      identifiable_owner_contact_route: true
+      role: PRIORITY_B_CONTROLLED_COMPONENT_ACQUISITION_TARGET
+    - evidence_id: MICRO_TOM_2024
+      title: Tritium Uptake from Peat Soil to Plants - A Model Study with Tomato Using Liquid Scintillation Counting and Imaging Plate Radiography
+      source: SSRN_abstract_5059446
+      demonstrated_features:
+        - controlled_14_day_experiment
+        - tfwt_measured
+        - exchangeable_obt_measured
+        - nonexchangeable_obt_measured
+      limitations:
+        - complete_raw_machine_readable_table_not_obtained
+        - full_light_PAR_leaf_temperature_replicate_metadata_not_verified
+      role: PRIORITY_B_CONTROLLED_COMPONENT_ACQUISITION_TARGET
+    - evidence_id: SOYBEAN_DAY_NIGHT_SUPPORT
+      role: SUPPORTING_FORCING_AND_STAGE_FEASIBILITY_ONLY
+      demonstrated_features:
+        - day_night_exposures
+        - developmental_stage_contrast
+        - tfwt_and_aggregate_obt
+      component_observations_bx_bn: false
+      admissible_as_option_b_component_validation_case: false
+
+evidence_disposition:
+  allowed_states:
+    - AVAILABLE
+    - ACQUIRABLE_WITH_PREREGISTRATION
+    - UNAVAILABLE_OR_INSUFFICIENT
+  selected: ACQUIRABLE_WITH_PREREGISTRATION
+  repository_packet_available: false
+  rationale:
+    - No complete matched raw packet satisfying the Option B contract has been obtained or frozen in the repository.
+    - Multiple controlled or field programmes demonstrate component measurement feasibility and identifiable acquisition routes.
+    - Raw access, component definitions, basis, forcing metadata, replicates, licence and holdout identities must be verified before admission.
+  not_available_reason: PUBLICATION_LEVEL_OR_SUMMARY_EVIDENCE_IS_NOT_A_FROZEN_MATCHED_RAW_PACKET
+  not_unavailable_reason: COMPONENT_RESOLVED_EXPERIMENTS_AND_REALISTIC_OWNER_ACQUISITION_ROUTES_EXIST
+
+cross_study_policy:
+  independent_studies_may_support:
+    - biological_interpretation
+    - acquisition_feasibility
+    - measurement_protocol_design
+    - preregistration_design
+  independent_studies_may_not_be_spliced_for:
+    - one_calibration_case
+    - one_validation_trajectory
+    - component_partition
+    - missing_forcing_replacement
+  fixed_literature_fraction_partition_of_total_obt: forbidden
+  plot_digitization_to_replace_unavailable_raw_table: forbidden
+  synthetic_fixture_as_empirical_evidence: forbidden
+
+acquisition_hierarchy:
+  - priority: A
+    target: VATO_OWNER_CLARIFICATION_AND_RAW_PACKET_REQUEST
+    admission_question: WERE_EOBT_AND_NEOBT_DIRECTLY_MEASURED_PER_MATCHED_GRASS_SAMPLE_WITH_RECOVERABLE_METADATA
+  - priority: B
+    target: CONTROLLED_COMPONENT_DATASET_REQUEST
+    candidate_programs:
+      - MICRO_TOM_2024
+      - RENARD_RYEGRASS_2017
+  - priority: C
+    target: PREREGISTERED_NEW_EXPERIMENT_OR_FAIL_CLOSED_HOLD
+    trigger: NO_EXISTING_OWNER_CAN_SUPPLY_COMPLETE_MATCHED_PACKET
+
+required_packet_fields:
+  - time_resolved_tfwt
+  - time_resolved_exchangeable_obt
+  - time_resolved_nonexchangeable_obt
+  - daylight_or_light_state
+  - photosynthetic_activity_or_PAR
+  - temperature
+  - crop_identity
+  - developmental_stage
+  - tissue_scope
+  - sample_timestamp
+  - sampling_time_support
+  - biological_replicate_id
+  - activity_unit
+  - mass_basis
+  - area_basis
+  - analytical_method_or_protocol
+  - uncertainty
+  - detection_limit_or_quantification_limit
+  - missing_data_flag
+  - source_file_identifier
+  - file_sha256_after_receipt
+  - licence_or_local_use_status
+  - provenance
+
+identifiability_gate:
+  bx_bn_direct_or_protocol_defined_component_observations_required: true
+  aggregate_obt_partition_by_literature_fraction_allowed: false
+  option_a_option_b_same_case_comparison_required: true
+  forcing_excitation_required_for_claimed_response_terms: true
+  structural_identifiability_assessment_required: true
+  practical_identifiability_assessment_required: true
+  calibration_holdout_partition_preregistered_before_holdout_inspection: true
+  independent_holdout_required: true
+  exact_parameter_values_selected_here: false
+  exact_response_function_forms_selected_here: false
+  failure_disposition: HOLD_SELECTED_CANDIDATE_KEEP_REDUCED_BASELINE
+
+next_stage:
+  selected: V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1
+  authorization_effective_after_successful_merge_and_no_drift: true
+  scope: CONTROL_PLANE_AND_DATA_ACQUISITION_ONLY
+  may_prepare:
+    - data_owner_request_package
+    - target_hierarchy
+    - raw_file_acceptance_schema
+    - licence_and_provenance_manifest
+    - preregistered_exclusion_and_missing_data_rules
+    - calibration_holdout_partition_policy
+  may_not:
+    - implement_option_b_solver
+    - activate_precursor_or_component_runtime_states
+    - set_candidate_rate_values
+    - select_numerical_phi_response_functions
+    - calibrate_current_kf_kr
+    - activate_any_parameter
+    - change_v3_default
+    - change_v4_runtime
+
+first_exact_head_gate:
+  complete: true
+  head_sha: 428d413230d90fc2e8960bc69217052c6b5cd95e
+  protected_gate:
+    run_id: 33039367515
+    status: SUCCESS
+  remediation:
+    run_id: 33039367521
+    status: SUCCESS
+  portable_suite:
+    passed: 1293
+    skipped: 1
+    deselected: 57
+  frozen_boundary_suite:
+    passed: 355
+  checkout_merge_sha: f37488d2ebe57b091317942e223487f736dedfc4
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+    food_intake_dose_endpoint: PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+  production_source_changed: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+governance_closure:
+  written: true
+  source_review_head: 428d413230d90fc2e8960bc69217052c6b5cd95e
+  changed_files_only:
+    - docs/v4/adr/ADR-038-v4-obt-formation-evidence-readiness-r1.md
+    - docs/v4/governance/v4_obt_formation_evidence_readiness_r1.yaml
+    - docs/v4/reports/v4_obt_formation_evidence_readiness_r1.md
+    - tests/v4/test_v4_obt_formation_evidence_readiness_r1.py
+    - docs/implementation_status.md
+  implementation_status_update_required_after_first_gate: true
+  implementation_status_updated: true
+  production_source_changed_by_closure: false
+  workflow_changed_by_closure: false
+  evidence_packet_contract_changed_by_closure: false
+  scripts_changed_by_closure: false
+  solver_or_runtime_semantics_changed_by_closure: false
+  evidence_disposition_changed_by_closure: false
+  closure_exact_head_gate_complete: false
+  status: AWAITING_CLOSURE_EXACT_HEAD_GATE
+
+hard_invariants:
+  v3_default_changed: false
+  v4_runtime_changed: false
+  production_source_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  plant_water_dynamics_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+closure_rule:
+  first_exact_head_gate_required: true
+  governance_closure_required_after_first_pass: true
+  implementation_status_update_only_in_closure: true
+  closure_exact_head_gate_required: true
+  expected_head_merge_required: true
+  post_merge_no_drift_required: true
+
+exit_state:
+  readiness_assessed: true
+  evidence_disposition: ACQUIRABLE_WITH_PREREGISTRATION
+  first_exact_head_gate_complete: true
+  governance_closure_written: true
+  governance_closure_exact_head_gate_complete: false
+  merge_authorized: false
+  next_stage_after_successful_merge: V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1
