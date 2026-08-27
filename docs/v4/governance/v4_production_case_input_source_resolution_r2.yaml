@@ -1,0 +1,144 @@
+schema_version: v1
+stage: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R2
+status: PASS_EQ39_PHYSICAL_PROPERTY_SOURCE_POLICY_DECISION_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 62ee5f4e83ae251fc869cb688d3d63096e9641cb
+scope:
+  kind: EQ39_PHYSICAL_PROPERTY_SOURCE_POLICY_DECISION_ONLY
+  source_resolution_r1: docs/v4/governance/v4_production_case_input_source_resolution_r1.yaml
+  manifest_path: docs/v4/contracts/v4_production_case_input_manifest_r1.yaml
+  eq39_implementation: src/cteas_ufotri/plant/root_v4/ufotri_eq39.py
+  manifest_changed: false
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  runtime_parameter_import_changed: false
+  calibration_changed: false
+selected_policy:
+  policy_id: FAO56_EQ39_REFERENCE_PROPERTY_POLICY_R1
+  source_policy_resolved: true
+  production_case_values_complete: false
+  production_use_authorized: false
+  runtime_activation_authorized: false
+  physical_accuracy_claim: false
+properties:
+  root_eq39.latent_heat:
+    disposition: SOURCE_POLICY_RESOLVED_MODEL_CONVENTION_NOT_ACTIVATED
+    source_role: MODEL_CONVENTION_NOT_UNIVERSAL_CONSTANT
+    selected_policy: FAO56_REFERENCE_ET_FIXED_CONVENTION
+    selected_value: 2450000.0
+    unit: J kg^-1
+    authority:
+      organization: FAO
+      work: FAO Irrigation and Drainage Paper 56
+      section: Chapter 3 - Latent heat of vaporization
+      url: https://www.fao.org/4/X0490E/x0490e07.htm
+    applicability:
+      selected_eq39_reference_policy_only: true
+      fao_reference_air_temperature_approx_c: 20.0
+      temperature_dependence_acknowledged: true
+      universal_exact_property_claim: false
+    implementation:
+      temperature_dependent_lambda_authorized: false
+      production_use_authorized: false
+      runtime_activation_authorized: false
+  root_eq39.water_density:
+    disposition: SOURCE_POLICY_RESOLVED_MODEL_CONVENTION_NOT_ACTIVATED
+    source_role: WATER_DEPTH_CONVERSION_MODEL_CONVENTION_NOT_UNIVERSAL_CONSTANT
+    selected_policy: REFERENCE_WATER_DEPTH_CONVERSION_CONVENTION
+    selected_value: 1000.0
+    unit: kg m^-3
+    purpose: convert water mass flux kg m^-2 s^-1 to water-depth flux m s^-1
+    physical_property_boundary_authority:
+      organization: IAPWS
+      work: IAPWS-95
+      url: https://www.iapws.org/relguide/IAPWS-95.html
+      interpretation: >-
+        IAPWS-95 remains evidence that ordinary-water density is a thermodynamic
+        property of state. The selected 1000 kg m^-3 value is therefore a
+        deliberate reference conversion convention, not an exact density claim.
+    implementation:
+      iapws_runtime_solver_authorized: false
+      state_dependent_density_authorized: false
+      production_use_authorized: false
+      runtime_activation_authorized: false
+  root_eq39.psychrometric_constant:
+    disposition: DERIVATION_POLICY_RESOLVED_CASE_VALUE_NOT_BOUND
+    source_role: CASE_PRESSURE_DERIVED_PROPERTY
+    selected_policy: FAO56_CASE_PRESSURE_DERIVED
+    selected_value: null
+    unit: Pa K^-1
+    authority:
+      organization: FAO
+      work: FAO Irrigation and Drainage Paper 56
+      section: Chapter 3 - Psychrometric constant and atmospheric pressure
+      url: https://www.fao.org/4/X0490E/x0490e07.htm
+    derivation:
+      gamma_kpa_per_k_from_pressure_kpa:
+        coefficient: 0.000665
+        formula: gamma_kPa_per_K = 0.000665 * P_kPa
+      gamma_pa_per_k_from_pressure_kpa:
+        coefficient: 0.665
+        formula: gamma_Pa_per_K = 0.665 * P_kPa
+      pressure_source_precedence:
+        - EXPLICIT_CASE_MEAN_ATMOSPHERIC_PRESSURE_WITH_PROVENANCE
+        - FAO56_PRESSURE_DERIVED_FROM_EXPLICIT_SITE_ELEVATION_WITH_PROVENANCE
+      elevation_fallback_formula:
+        formula: P_kPa = 101.3 * ((293 - 0.0065*z_m)/293)^5.26
+        z_semantics: site elevation above mean sea level
+        source_elevation_required: true
+      explicit_case_pressure_required_if_no_elevation_source: true
+      sea_level_pressure_default_allowed: false
+      zero_elevation_default_allowed: false
+      fixed_gamma_66_pa_k_allowed: false
+    implementation:
+      production_use_authorized: false
+      runtime_activation_authorized: false
+      pressure_or_elevation_source_bound: false
+rejected_alternatives:
+  FIX_ALL_THREE_TO_SYNTHETIC_TEST_VALUES:
+    selected: false
+    reason: TEST_VALUES_ARE_NOT_SOURCE_EVIDENCE
+  IAPWS_RUNTIME_PROPERTY_SOLVER:
+    selected: false
+    reason: OUT_OF_SCOPE_NEW_THERMODYNAMIC_IMPLEMENTATION
+  FIX_GAMMA_66_PA_K:
+    selected: false
+    reason: FAO56_GAMMA_IS_PRESSURE_DEPENDENT
+  SEA_LEVEL_PRESSURE_FALLBACK:
+    selected: false
+    reason: SILENT_CASE_PROVENANCE_SUBSTITUTION_FORBIDDEN
+source_resolution_after_r2:
+  latent_heat_source_policy_resolved: true
+  latent_heat_case_value_policy_complete: true
+  water_density_source_policy_resolved: true
+  water_density_case_value_policy_complete: true
+  psychrometric_source_policy_resolved: true
+  psychrometric_case_value_available: false
+  all_three_runtime_ready: false
+  eq39_production_input_ready: false
+atmos_surface_flux_blocker:
+  token: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+  atmosphere_surface_deposition_flux_ready: false
+  soil_surface_deposition_flux_ready: false
+  surrogate_or_zero_substitution_authorized: false
+hard_boundaries:
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+next_stage_if_clean_merge:
+  selected: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R3
+  focus: EQ39_CASE_PRESSURE_AND_SITE_ELEVATION_SOURCE_CONTRACT_ONLY
+  manifest_projection_authorized: false
+  solver_change_authorized: false
+  production_activation_authorized: false
