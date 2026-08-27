@@ -1,0 +1,157 @@
+schema_version: v1
+stage: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R1
+status: SOURCE_RESOLUTION_AUDIT_COMPLETE_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 69cfebcdfa9e13bd63143321c1534a74e009bcc4
+scope:
+  kind: SOURCE_EVIDENCE_RESOLUTION_CONTROL_PLANE_ONLY
+  manifest_path: docs/v4/contracts/v4_production_case_input_manifest_r1.yaml
+  manifest_input_count: 49
+  required_input_count: 48
+  optional_input_count: 1
+  production_source_binding_changed: false
+  runtime_import_changed: false
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  calibration_changed: false
+source_resolution_contract:
+  source_resolution_is_production_authorization: false
+  source_resolution_is_parameter_activation: false
+  test_or_api_default_is_source_evidence: false
+  convenient_constant_approximation_is_universal_evidence: false
+  silent_zero_allowed: false
+  silent_unit_conversion_allowed: false
+  silent_time_or_space_reconciliation_allowed: false
+  every_manifest_quantity_has_exactly_one_r1_disposition: true
+resolution_summary:
+  SOURCE_RESOLVED_NOT_ACTIVATED: 1
+  ALREADY_CONTROLLED: 1
+  BLOCKED_EXTERNAL: 2
+  LIVE_CASE_BINDING_REQUIRED: 5
+  DERIVED_DEPENDENCY_NOT_READY: 3
+  CASE_SOURCE_REQUIRED: 12
+  CONDITION_DEPENDENT_PHYSICAL_PROPERTY_SOURCE_REQUIRED: 3
+  PROCESS_SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED: 11
+  PROVISIONAL_EVIDENCE_REQUIRED: 11
+  total: 49
+resolution_registry:
+  SOURCE_RESOLVED_NOT_ACTIVATED:
+    soil_three_layer.tritium_half_life:
+      manifest_readiness_before: SOURCE_REQUIRED
+      semantic_evidence_parameter_id: soil.tritium_half_life
+      source_artifact: docs/v3/parameter_evidence/physical_constant_validation_registry.yaml
+      source_revision: 2d6a0d1174795980406355055c4855df46ba583f
+      selected_evidence_id: evidence.ddep.tritium_half_life.2006
+      validated_quantity: universal H-3 nuclear half-life
+      validated_value_s: 388540800.0
+      validated_uncertainty_s: 777600.0
+      applicability: RADIOACTIVE_DECAY_TERM_ONLY
+      production_use_authorized: false
+      runtime_import_authorized: false
+      active_parameter: false
+  ALREADY_CONTROLLED:
+    - plant_state_and_obt.obt_kf_kr_and_daily_average_multipliers
+  BLOCKED_EXTERNAL:
+    - atmosphere.surface_deposition_flux
+    - soil_three_layer.surface_deposition_flux
+  LIVE_CASE_BINDING_REQUIRED:
+    - atmosphere.air_hto_concentration
+    - atmosphere.temperature
+    - atmosphere.relative_humidity
+    - atmosphere.wind_speed
+    - atmosphere.precipitation
+  DERIVED_DEPENDENCY_NOT_READY:
+    - root_eq39.temperature
+    - root_eq39.soil_water_state
+    - soil_three_layer.root_water_and_hto_extraction
+  CASE_SOURCE_REQUIRED:
+    - atmosphere.time_location_height_identity
+    - root_eq39.net_radiation
+    - root_eq39.lai
+    - root_eq39.maximum_water
+    - root_eq39.wilting_water
+    - soil_three_layer.initial_layer_water_inventories
+    - soil_three_layer.initial_layer_hto_inventories
+    - leaf_exchange.equilibrium_air_concentration
+    - plant_state_and_obt.initial_tfwt_inventory
+    - plant_state_and_obt.initial_obt_inventory
+    - plant_state_and_obt.crop_growth_stage_area_basis
+    - endpoint.age_group_and_consumer_identity
+  CONDITION_DEPENDENT_PHYSICAL_PROPERTY_SOURCE_REQUIRED:
+    root_eq39.latent_heat:
+      selected_value: null
+      test_value_promoted: false
+      source_class_basis: >-
+        FAO-56 states that latent heat varies with temperature and uses
+        2.45 MJ kg^-1 only as a Penman-Monteith simplification at about 20 degC.
+      authority_url: https://www.fao.org/4/X0490E/x0490e07.htm
+    root_eq39.water_density:
+      selected_value: null
+      test_value_promoted: false
+      source_class_basis: >-
+        IAPWS-95 treats ordinary-water density as a thermodynamic property of
+        state rather than a universal invariant fixed at 1000 kg m^-3.
+      authority_url: https://www.iapws.org/relguide/IAPWS-95.html
+    root_eq39.psychrometric_constant:
+      selected_value: null
+      test_value_promoted: false
+      source_class_basis: >-
+        FAO-56 derives the psychrometric constant from atmospheric pressure,
+        latent heat, heat capacity, and the molecular-weight ratio; a fixed
+        66 Pa K^-1 test value is not universal production evidence.
+      authority_url: https://www.fao.org/4/X0490E/x0490e07.htm
+  PROCESS_SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED:
+    - soil_three_layer.surface_water_input
+    - soil_three_layer.surface_water_loss
+    - soil_three_layer.l1_l2_water_flux
+    - soil_three_layer.l1_l2_hto_flux
+    - soil_three_layer.l2_l3_water_flux
+    - soil_three_layer.l2_l3_hto_flux
+    - soil_three_layer.lower_boundary_water_loss
+    - soil_three_layer.lower_boundary_hto_loss
+    - soil_three_layer.surface_reemission_hto_loss
+    - plant_state_and_obt.tfwt_water_loss_flux
+    - plant_state_and_obt.tfwt_transformation_flux
+  PROVISIONAL_EVIDENCE_REQUIRED:
+    - leaf_exchange.aerodynamic_resistance
+    - leaf_exchange.boundary_layer_resistance
+    - leaf_exchange.canopy_resistance
+    - plant_state_and_obt.tfwt_water_content
+    - plant_state_and_obt.obt_plant_mass
+    - endpoint.harvest_fraction
+    - endpoint.tfwt_harvest_fraction
+    - endpoint.harvest_area
+    - endpoint.food_product_mass
+    - endpoint.annual_consumption_amount
+    - endpoint.dose_coefficient
+atmos_surface_flux_blocker:
+  token: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+  atmosphere_surface_deposition_flux_ready: false
+  soil_surface_deposition_flux_ready: false
+  surrogate_or_zero_substitution_authorized: false
+h3_resolution:
+  evidence_registry_status_required: PASS_PHYSICAL_CONSTANT_VALIDATION
+  selected_evidence_id: evidence.ddep.tritium_half_life.2006
+  source_resolution_complete: true
+  production_activation_complete: false
+  runtime_import_complete: false
+  environmental_effective_half_life_interpretation_allowed: false
+hard_boundaries:
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+next_stage_if_clean_merge:
+  selected: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R2
+  focus: EQ39_PHYSICAL_PROPERTY_SOURCE_DECISION_ONLY
+  production_activation_authorized: false
