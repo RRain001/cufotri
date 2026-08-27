@@ -1,0 +1,130 @@
+schema_version: v1
+stage: V4_THREE_LAYER_ROOT_FLUX_CORE_IMPLEMENTATION_R1
+status: IMPLEMENTED_AWAITING_EXACT_HEAD_CI
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 4fd9fba8743155566c1eea4f31306088d5a0ce6c
+branch: codex/v4-three-layer-root-flux-core-implementation-r1
+
+implementation:
+  package: src/cteas_ufotri/plant/root_v4
+  opt_in_only: true
+  root_v3_modified: false
+  v3_pipeline_modified: false
+  v4_pipeline_integration: false
+  root_core_mutates_soil: false
+  root_core_mutates_tfwt: false
+  q_w_derivation_inside_root_core: false
+  transpiration_solver: false
+  hidden_three_hour_delay: false
+  full_richards_darcy: false
+
+forcing_contract:
+  type: ThreeLayerRootWaterFluxForcingV4
+  timestamp_required: true
+  timestamp_basis: UTC
+  interval_semantics: start
+  plant_identifier_required: true
+  water_uptake_fluxes_m_s:
+    required: true
+    length: 3
+    layer_order: [L1, L2, L3]
+    nonnegative: true
+    unit: m s^-1
+  provenance:
+    required: true
+    required_fields:
+      - source_id
+      - source_locator
+      - revision
+      - artifact_sha256
+      - profile_context
+  guessed_q_w: forbidden
+  scalar_rate_to_velocity_conversion: forbidden
+
+physics_contract:
+  authoritative_soil_state: interval_start_ThreeLayerSoilState
+  concentration_basis: layer HTO inventory / layer water inventory
+  per_layer_equation: J_root_i = q_w_i * C_w_i(S_n)
+  hto_flux_unit: Bq m^-2 s^-1
+  water_transfer: q_w_i * interval_seconds
+  hto_transfer: J_root_i * interval_seconds
+  state_mutation: none
+
+transfer_identity:
+  output_type: ThreeLayerRootFluxPlanV4
+  per_layer_output:
+    - water_uptake_flux_m_s
+    - soil_hto_concentration_bq_m3_water
+    - hto_uptake_flux_bq_m2_s
+    - water_transfer_m
+    - hto_transfer_bq_m2
+    - source_water_inventory_m
+    - source_hto_inventory_bq_m2
+    - remaining_water_if_applied_m
+    - remaining_hto_if_applied_bq_m2
+    - water_balance_residual_m
+    - hto_balance_residual_bq_m2
+  soil_sink_identity_exposed: true
+  tfwt_gain_identity_future_use: same integrated HTO transfer
+  application_inside_root_core: false
+  double_application: forbidden
+
+fail_closed:
+  forcing_state_timestamp_mismatch: true
+  non_utc_timestamp: true
+  nonpositive_interval: true
+  wrong_units: true
+  missing_provenance: true
+  malformed_sha256: true
+  non_triplet_q_w: true
+  negative_q_w: true
+  water_overdraw: true
+  hto_overdraw: true
+
+ufotri_reference_evidence:
+  source: KfK_4605_manual
+  fixture_type: UFOTRIRootReferenceEvidenceV4
+  layer_ids: [L1, L2, L3]
+  layer_depth_m:
+    - [0.00, 0.05]
+    - [0.05, 0.15]
+    - [0.15, 0.30]
+  long_term_layer_water_uptake_fraction: [0.20, 0.40, 0.40]
+  long_term_transfer_rate_d_minus_1: [0.026, 0.026, 0.017]
+  short_term_transpiration_to_root_delay_h: 3.0
+  runtime_activation: false
+  generates_runtime_forcing: false
+
+verification_required:
+  - exact_layer_flux_equation
+  - interval_transfer_ledger
+  - non_mutating_state
+  - deterministic_repeat
+  - zero_flux_identity
+  - utc_interval_start_alignment
+  - strict_units
+  - strict_provenance
+  - q_w_triplet_validation
+  - source_inventory_overdraw_fail_closed
+  - transfer_identity_exposure
+  - ufotri_reference_not_active
+  - v3_isolation
+
+next_gate:
+  exact_head_ci_required: true
+  independent_review_required: true
+  pipeline_integration_authorized_after_this_stage: false
+  next_decision_if_pass: V4_ROOT_OPERATOR_SPLIT_COMPARISON_R1
+
+hard_invariants:
+  active_parameters: 0
+  calibration_started: false
+  leaf_r5_authorized: false
+  real_cteas_atmos_coupling_active: false
+  v3_default_profile_changed: false
+  v4_pipeline_integration_authorized: false
+  v4_operator_split_selected: false
+  ufotri_20_40_40_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+  physical_validation_complete: false
