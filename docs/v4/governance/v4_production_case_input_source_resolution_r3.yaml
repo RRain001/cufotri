@@ -1,0 +1,152 @@
+schema_version: v1
+stage: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R3
+status: PRESSURE_ELEVATION_SOURCE_CONTRACT_FROZEN_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 9943613aafad43db4e0831547f5593d02b7044ce
+scope:
+  kind: EQ39_CASE_PRESSURE_AND_SITE_ELEVATION_SOURCE_CONTRACT_ONLY
+  source_resolution_r2: docs/v4/governance/v4_production_case_input_source_resolution_r2.yaml
+  production_manifest: docs/v4/contracts/v4_production_case_input_manifest_r1.yaml
+  atmos_exchange_contract: docs/v4/contracts/v4_system_atmos_exchange_contract.yaml
+  manifest_changed: false
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  runtime_parameter_import_changed: false
+  production_case_value_bound: false
+  calibration_changed: false
+selected_contract:
+  contract_id: EQ39_PRESSURE_SITE_ELEVATION_PROVENANCE_CONTRACT_R1
+  psychrometric_policy: FAO56_CASE_PRESSURE_DERIVED
+  production_case_identity_bound: false
+  production_pressure_bound: false
+  production_elevation_bound: false
+  production_gamma_bound: false
+  production_use_authorized: false
+  runtime_activation_authorized: false
+source_precedence:
+  - EXPLICIT_CASE_MEAN_ATMOSPHERIC_PRESSURE_WITH_PROVENANCE
+  - FAO56_PRESSURE_DERIVED_FROM_EXPLICIT_SITE_ELEVATION_WITH_PROVENANCE
+explicit_pressure_contract:
+  field_id: case_mean_atmospheric_pressure_kpa
+  canonical_unit: kPa
+  quantity_semantics: NEAR_SURFACE_ATMOSPHERIC_PRESSURE_REPRESENTATIVE_OF_PRODUCTION_CASE_SITE
+  source_required: true
+  accepted_source_identity_must_not_be:
+    - SEA_LEVEL_PRESSURE
+    - MODEL_PRESSURE_LEVEL_WITHOUT_SITE_SURFACE_MAPPING
+    - SYNTHETIC_TEST_CONSTANT
+  required_provenance_fields:
+    - source_id
+    - source_revision
+    - source_dataset
+    - source_variable
+    - original_unit
+    - spatial_support
+    - temporal_support
+    - location_identity
+    - missing_data_treatment
+    - transformation_log
+  case_mean_rule:
+    aggregation_must_be_explicit: true
+    production_case_temporal_support_required: true
+    spatial_representativeness_required: true
+    silent_resampling_allowed: false
+    silent_fill_allowed: false
+    silent_unit_conversion_allowed: false
+  allowed_input_units_with_explicit_conversion:
+    - Pa
+    - hPa
+    - kPa
+  forbidden_defaults:
+    sea_level_pressure_101_3_kpa: true
+    fixed_gamma_66_pa_k: true
+site_elevation_contract:
+  field_id: site_elevation_m_msl
+  canonical_unit: m
+  quantity_semantics: SITE_ORTHOMETRIC_OR_EQUIVALENT_HEIGHT_ABOVE_MEAN_SEA_LEVEL
+  source_required: true
+  required_provenance_fields:
+    - source_id
+    - source_revision
+    - source_dataset_or_authority
+    - location_identity
+    - horizontal_reference
+    - vertical_datum_or_explicit_msl_semantics
+    - original_value
+    - original_unit
+    - transformation_log
+  forbidden_substitutes:
+    - ATMOS_AIR_SAMPLING_HEIGHT
+    - RECEPTOR_HEIGHT_ABOVE_LOCAL_GROUND
+    - STACK_HEIGHT
+    - TERRAIN_FOLLOWING_MODEL_LEVEL
+    - PRESSURE_LEVEL_ALTITUDE
+    - ELLIPSOIDAL_HEIGHT_WITHOUT_GEOID_TRANSFORMATION
+  ellipsoidal_height_rule:
+    direct_relabel_to_msl_allowed: false
+    explicit_geoid_or_vertical_datum_transformation_required: true
+  ambiguity_policy: FAIL_CLOSED
+fao56_derivation:
+  pressure_from_elevation:
+    formula: P_kPa = 101.3 * ((293 - 0.0065*z_m)/293)^5.26
+    z_semantics: site_elevation_m_msl
+    missing_z_default_allowed: false
+  psychrometric_constant:
+    formula: gamma_Pa_per_K = 0.665 * P_kPa
+    fixed_66_pa_k_allowed: false
+  formula_constants_are_model_approximation_terms: true
+dual_source_rule:
+  explicit_pressure_has_precedence: true
+  elevation_derived_pressure_may_be_diagnostic_cross_check: true
+  automatic_blending_allowed: false
+  automatic_averaging_allowed: false
+  disagreement_tolerance_defined_in_r3: false
+identity_separation:
+  atmos_air_sampling_height_is_site_elevation: false
+  atmos_vertical_reference_is_site_vertical_datum: false
+  receptor_location_identity_may_help_match_site: true
+  explicit_reconciliation_required: true
+fail_closed_conditions:
+  - NO_ADMISSIBLE_PRESSURE_AND_NO_ADMISSIBLE_SITE_ELEVATION
+  - SEA_LEVEL_PRESSURE_RELABELLED_AS_SITE_PRESSURE
+  - AMBIGUOUS_ELEVATION_VERTICAL_SEMANTICS
+  - AIR_SAMPLING_HEIGHT_SUBSTITUTED_FOR_SITE_ELEVATION
+  - ELLIPSOIDAL_HEIGHT_RELABELLED_WITHOUT_GEOID_TRANSFORMATION
+  - UNDOCUMENTED_PRESSURE_AGGREGATION_OR_FILL
+  - SYNTHETIC_OR_TEST_CONSTANT_PROMOTED_TO_PRODUCTION_EVIDENCE
+source_resolution_after_r3:
+  latent_heat_policy_resolved: true
+  water_density_policy_resolved: true
+  psychrometric_derivation_policy_resolved: true
+  pressure_elevation_source_contract_resolved: true
+  production_case_identity_bound: false
+  real_pressure_or_elevation_source_selected: false
+  psychrometric_case_value_available: false
+  eq39_production_input_ready: false
+atmos_surface_flux_blocker:
+  token: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+  atmosphere_surface_deposition_flux_ready: false
+  soil_surface_deposition_flux_ready: false
+  surrogate_or_zero_substitution_authorized: false
+hard_boundaries:
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  active_parameters: 0
+  calibration_started: false
+  obt_multi_pool_implementation_authorized: false
+  obt_parameter_activation_authorized: false
+  current_kf_kr_calibration_authorized: false
+  leaf_r5_authorized: false
+  root_q_w_production_input_resolved: false
+  full_hydrology_authorized: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+next_stage_if_clean_merge:
+  selected: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R4
+  focus: PRODUCTION_CASE_IDENTITY_AND_EQ39_PRESSURE_SOURCE_SELECTION_ONLY
+  manifest_projection_authorized: false
+  solver_change_authorized: false
+  runtime_activation_authorized: false
+  production_activation_authorized: false
