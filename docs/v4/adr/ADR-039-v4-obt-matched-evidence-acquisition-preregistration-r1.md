@@ -1,6 +1,6 @@
 # ADR-039: V4 OBT matched-evidence acquisition preregistration R1
 
-Status: `PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI`
+Status: `PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`
 
 ## Context
 
@@ -134,9 +134,39 @@ Optimizer convergence is never an identifiability result. Non-identifiability le
 
 The repository only freezes request text and target requirements. It does not claim that any request has been sent. Request/response dates, owner identity, permission reference and received-file checksums remain empty until an explicit acquisition execution stage records them.
 
+## First exact-head certification
+
+The first preregistration head is `8d1c866b6750e68cbae2313c110fe3c94dc19a59`.
+
+```text
+Protected 33042549240 = SUCCESS
+Remediation 33042549262 = SUCCESS
+portable = 1302 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 364 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+food-intake-dose endpoint = PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+```
+
+The pull-request workflow checked synthetic merge ref `f11203f0f464b27618e814a10c5c50b43241b4e0`, which merges the exact branch head into base `d28695a1...`. The merge-ref identity is recorded separately from the branch-head identity. These are software/governance results only; no request was sent, no raw packet was received, and no empirical/physical validation claim was created.
+
+## Governance closure
+
+The first exact head has passed both workflows, so this governance/status closure is now written. Relative to `8d1c866b...`, closure changes are restricted to:
+
+- `docs/v4/adr/ADR-039-v4-obt-matched-evidence-acquisition-preregistration-r1.md`;
+- `docs/v4/governance/v4_obt_matched_evidence_acquisition_preregistration_r1.yaml`;
+- `docs/v4/reports/v4_obt_matched_evidence_acquisition_preregistration_r1.md`;
+- `tests/v4/test_v4_obt_matched_evidence_acquisition_preregistration_r1.py`;
+- `docs/implementation_status.md`.
+
+The acquisition contract, request package, Protected workflow, production source, solver/runtime semantics and scientific preregistration decision are unchanged by closure. The closure exact head must pass Protected + Remediation again before Ready/merge.
+
 ## Next stage
 
-After this preregistration passes both exact-head CI rounds, merges with `expected_head_sha`, and passes no-drift verification, authorize only:
+After this preregistration passes closure exact-head CI, merges with `expected_head_sha`, and passes no-drift verification, authorize only:
 
 `V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1`
 
@@ -147,7 +177,7 @@ That stage may record requests, responses and metadata-only intake. It may not i
 ## Hard invariants
 
 ```ini
-V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1 = PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI
+V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1 = PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE
 REQUESTS_SENT = FALSE
 RAW_PACKET_RECEIVED = FALSE
 QUANTITATIVE_MODEL_FIT_INSPECTION = FALSE

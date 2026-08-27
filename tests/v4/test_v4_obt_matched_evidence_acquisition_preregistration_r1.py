@@ -9,6 +9,7 @@ CONTRACT = ROOT / "docs/v4/contracts/obt_matched_evidence_acquisition_preregistr
 REQUEST = ROOT / "docs/v4/gates/obt_matched_evidence_request_package_r1.md"
 REPORT = ROOT / "docs/v4/reports/v4_obt_matched_evidence_acquisition_preregistration_r1.md"
 ADR = ROOT / "docs/v4/adr/ADR-039-v4-obt-matched-evidence-acquisition-preregistration-r1.md"
+IMPLEMENTATION_STATUS = ROOT / "docs/implementation_status.md"
 WORKFLOW = ROOT / ".github/workflows/v3-integration-gate.yml"
 
 
@@ -19,7 +20,7 @@ def load_yaml(path: Path) -> dict:
 def test_preregistration_is_control_plane_only_and_anchored_to_no_drift_merge() -> None:
     data = load_yaml(GOVERNANCE)
     assert data["stage"] == "V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1"
-    assert data["status"] == "PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI"
+    assert data["status"] == "PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE"
     assert data["base_main_sha"] == "d28695a13eae1fe4a7afb55a7a8a179d366de44c"
     scope = data["stage_scope"]
     assert scope["kind"] == "CONTROL_PLANE_AND_DATA_ACQUISITION_ONLY"
@@ -164,20 +165,68 @@ def test_identifiability_and_hard_holds_remain_closed() -> None:
     assert hard["physical_accuracy_claim"] is False
 
 
-def test_adr_report_and_workflow_freeze_same_next_stage() -> None:
+def test_first_exact_head_and_governance_closure_are_frozen() -> None:
+    data = load_yaml(GOVERNANCE)
+    gate = data["first_exact_head_gate"]
+    assert gate["complete"] is True
+    assert gate["head_sha"] == "8d1c866b6750e68cbae2313c110fe3c94dc19a59"
+    assert gate["protected_gate"] == {"run_id": 33042549240, "status": "SUCCESS"}
+    assert gate["remediation"] == {"run_id": 33042549262, "status": "SUCCESS"}
+    assert gate["checkout_merge_sha"] == "f11203f0f464b27618e814a10c5c50b43241b4e0"
+    assert gate["portable_suite"] == {"passed": 1302, "skipped": 1, "deselected": 57}
+    assert gate["frozen_boundary_suite"] == {"passed": 364}
+    assert gate["machine_gates"] == {
+        "sensitivity": "PASS_SOFTWARE_SCREENING",
+        "root_operator_split": "PASS_SELECTION",
+        "soil_root_tfwt_obt": "PASS_INTEGRATION",
+        "replay_orchestration": "PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION",
+        "food_intake_dose_endpoint": "PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION",
+    }
+    assert gate["request_execution"] is False
+    assert gate["raw_packet_received"] is False
+    assert gate["quantitative_fit_inspection"] is False
+    assert gate["empirical_validation"] is False
+    assert gate["physical_accuracy_claim"] is False
+
+    closure = data["governance_closure"]
+    assert closure["written"] is True
+    assert closure["source_preregistration_head"] == "8d1c866b6750e68cbae2313c110fe3c94dc19a59"
+    assert closure["implementation_status_updated"] is True
+    assert closure["changed_files_only"] == [
+        "docs/v4/adr/ADR-039-v4-obt-matched-evidence-acquisition-preregistration-r1.md",
+        "docs/v4/governance/v4_obt_matched_evidence_acquisition_preregistration_r1.yaml",
+        "docs/v4/reports/v4_obt_matched_evidence_acquisition_preregistration_r1.md",
+        "tests/v4/test_v4_obt_matched_evidence_acquisition_preregistration_r1.py",
+        "docs/implementation_status.md",
+    ]
+    assert closure["acquisition_contract_changed_by_closure"] is False
+    assert closure["request_package_changed_by_closure"] is False
+    assert closure["workflow_changed_by_closure"] is False
+    assert closure["production_source_changed_by_closure"] is False
+    assert closure["scientific_preregistration_changed_by_closure"] is False
+    assert closure["closure_exact_head_gate_complete"] is False
+    assert closure["merge_authorized"] is False
+
+
+def test_adr_report_status_and_workflow_freeze_same_next_stage() -> None:
     adr = ADR.read_text()
     report = REPORT.read_text()
+    status = IMPLEMENTATION_STATUS.read_text()
     workflow = WORKFLOW.read_text()
 
-    assert "Status: `PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI`" in adr
+    assert "Status: `PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`" in adr
     assert "two-layer blind workflow" in adr
     assert "Random row-wise or time-point splitting is forbidden" in adr
+    assert "Protected 33042549240 = SUCCESS" in adr
     assert "`V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1`" in adr
 
     assert "REQUESTS_SENT = FALSE" in report
     assert "RAW_PACKET_RECEIVED = FALSE" in report
     assert "QUANTITATIVE_MODEL_FIT_INSPECTION = FALSE" in report
     assert "Random timestamp/row splitting is prohibited" in report
+    assert "NEXT_STAGE_AUTHORIZED_NOW = FALSE" in report
     assert "V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1" in report
 
+    assert "V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1 = PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE" in status
+    assert "NEXT_STAGE_AUTHORIZED_NOW = FALSE" in status
     assert "tests/v4/test_v4_obt_matched_evidence_acquisition_preregistration_r1.py" in workflow

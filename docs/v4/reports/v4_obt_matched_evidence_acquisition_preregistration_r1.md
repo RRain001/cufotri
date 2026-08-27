@@ -2,7 +2,7 @@
 
 ## Status
 
-`PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI`
+`PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE`
 
 This stage freezes external-data acquisition and blind-intake rules. It does not send requests, receive raw files, inspect quantitative plant-tritium values for fitting, implement the selected multi-pool OBT candidate, or activate/calibrate any parameter.
 
@@ -81,6 +81,33 @@ A future candidate cannot advance from acquisition to implementation merely beca
 
 The allowed scientific outcomes remain `IDENTIFIABLE`, `PARTIALLY_IDENTIFIABLE`, `NON_IDENTIFIABLE`, or not assessed. Unsupported degrees of freedom are reduced or held; they are not activated.
 
+## First exact-head certification
+
+Certified preregistration head:
+
+`8d1c866b6750e68cbae2313c110fe3c94dc19a59`
+
+```text
+Protected 33042549240 = SUCCESS
+Remediation 33042549262 = SUCCESS
+portable = 1302 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 364 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+food-intake-dose endpoint = PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+checkout merge ref = f11203f0f464b27618e814a10c5c50b43241b4e0
+```
+
+This evidence establishes software/governance compatibility only. It did not execute a request, receive a raw packet, inspect quantitative values, fit a model, validate OBT biology, calibrate a parameter or create a physical-accuracy claim.
+
+## Governance closure
+
+The first exact head passed both workflows, so the governance/status closure is now written. Relative to `8d1c866b...`, closure changes are restricted to ADR-039, the governance YAML, this report, the governance test, and `docs/implementation_status.md`.
+
+The acquisition contract, request package and Protected workflow remain byte-for-byte as certified at the first head. There is no `src/`, solver, script, machine-physics, runtime parameter or numerical-coupling change. The PR remains Draft until the closure exact head independently passes Protected + Remediation.
+
 ## What this stage has not done
 
 ```text
@@ -97,7 +124,7 @@ No contact identity, request date, response date, permission reference or raw ch
 
 ## Next stage
 
-After first exact-head CI, governance closure, closure exact-head CI, expected-head merge and no-drift verification, the only authorized follow-on is:
+After closure exact-head CI, expected-head merge and no-drift verification, the only authorized follow-on is:
 
 `V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1`
 
@@ -106,7 +133,11 @@ That stage may send/record requests and perform metadata-only intake. It may not
 ## Hard state
 
 ```ini
-V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1 = PREREGISTRATION_FROZEN_REQUESTS_NOT_SENT_AWAITING_FIRST_EXACT_HEAD_CI
+V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1 = PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE
+REQUESTS_SENT = FALSE
+RAW_PACKET_RECEIVED = FALSE
+QUANTITATIVE_MODEL_FIT_INSPECTION = FALSE
+HOLDOUT_VALUES_INSPECTED = FALSE
 OBT_MULTI_POOL_IMPLEMENTATION_AUTHORIZED = FALSE
 OBT_PARAMETER_ACTIVATION_AUTHORIZED = FALSE
 CURRENT_KF_KR_CALIBRATION_AUTHORIZED = FALSE
@@ -117,4 +148,5 @@ REAL_CTEAS_ATMOS_BINDING = FALSE
 EMPIRICAL_VALIDATION = FALSE
 PHYSICAL_ACCURACY_CLAIM = FALSE
 NEXT_STAGE = V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1
+NEXT_STAGE_AUTHORIZED_NOW = FALSE
 ```

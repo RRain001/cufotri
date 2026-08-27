@@ -1,6 +1,57 @@
 # Implementation status
 
-Updated: 2026-08-24
+Updated: 2026-08-27
+
+## V4 OBT matched-evidence acquisition preregistration R1 (2026-08-27)
+
+The OBT formation evidence-readiness merge `d28695a13eae1fe4a7afb55a7a8a179d366de44c`
+authorized only the control-plane acquisition/preregistration stage. The first
+preregistration exact head `8d1c866b6750e68cbae2313c110fe3c94dc19a59`
+passed both pull-request workflows. Protected run `33042549240` recorded
+`1302 passed, 1 skipped, 57 deselected` in the portable suite and `364 passed`
+in the frozen/current-boundary suite; Remediation run `33042549262` also
+succeeded. Existing sensitivity, root-operator-split, soil-root-TFWT-OBT,
+replay-orchestration and food-intake-dose machine gates retained their frozen
+PASS states. The workflow checkout merge ref was
+`f11203f0f464b27618e814a10c5c50b43241b4e0`.
+
+The preregistration still has not sent any request, received a raw packet,
+inspected quantitative plant-tritium values, opened holdout values, fitted a
+candidate model, calibrated a parameter or implemented the selected OBT
+multi-pool architecture. The first-head evidence is software/governance
+certification only. A governance/status closure is now pending its own exact-
+head Protected + Remediation gate.
+
+```text
+V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1 = PASS_PREREGISTRATION_EXACT_HEAD_AWAITING_CLOSURE_GATE
+FIRST_EXACT_HEAD = 8d1c866b6750e68cbae2313c110fe3c94dc19a59
+FIRST_PROTECTED_RUN = 33042549240_SUCCESS
+FIRST_REMEDIATION_RUN = 33042549262_SUCCESS
+FIRST_CHECKOUT_MERGE_REF = f11203f0f464b27618e814a10c5c50b43241b4e0
+PORTABLE_SUITE = PASS_1302_WITH_1_SKIP_57_DESELECTED
+FROZEN_BOUNDARY_SUITE = PASS_364
+REQUESTS_SENT = FALSE
+RAW_PACKET_RECEIVED = FALSE
+QUANTITATIVE_MODEL_FIT_INSPECTION = FALSE
+HOLDOUT_VALUES_INSPECTED = FALSE
+OBT_MULTI_POOL_IMPLEMENTATION_AUTHORIZED = FALSE
+OBT_PARAMETER_ACTIVATION_AUTHORIZED = FALSE
+CURRENT_KF_KR_CALIBRATION_AUTHORIZED = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+LEAF_R5_AUTHORIZED = FALSE
+ROOT_Q_W_PRODUCTION_INPUT_RESOLVED = FALSE
+FULL_HYDROLOGY_AUTHORIZED = FALSE
+REAL_CTEAS_ATMOS_BINDING = FALSE
+EMPIRICAL_VALIDATION = FALSE
+PHYSICAL_ACCURACY_CLAIM = FALSE
+NEXT_STAGE_AFTER_SUCCESSFUL_MERGE = V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1
+NEXT_STAGE_AUTHORIZED_NOW = FALSE
+```
+
+The next stage is not effective until this closure passes its own exact-head
+Protected + Remediation workflows, merges with `expected_head_sha`, and passes
+parent/tree/main no-drift verification.
 
 ## V4 OBT formation evidence readiness R1 (2026-08-27)
 
