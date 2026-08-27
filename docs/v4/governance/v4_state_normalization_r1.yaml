@@ -1,0 +1,66 @@
+schema_version: v1
+stage: V4_STATE_NORMALIZATION_R1
+status: NORMALIZATION_COMPLETE_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 6e4edff6a1334f823cb631a25e8449a49d426254
+scope:
+  kind: GOVERNANCE_STATE_NORMALIZATION_ONLY
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  production_manifest_changed: false
+  runtime_parameter_import_changed: false
+  parameter_values_changed: false
+  calibration_changed: false
+  real_cteas_atmos_binding_changed: false
+  production_input_binding_changed: false
+
+normalization_decisions:
+  current_state_authority: docs/v4/governance/v4_current_system_state.yaml
+  historical_stage_snapshots_rewritten: false
+  legacy_root_flag_deprecated_as_current_authority: true
+  replacement_flags:
+    root_q_w_controlled_construction_path_resolved: true
+    root_q_w_production_case_input_ready: false
+  project_phase: INTERNAL_V4_DEVELOPMENT_COMPLETION
+  production_case_track_disposition: PARKED_FOR_FUTURE_PRODUCTION_PHASE
+  issue_52_closed_or_deleted: false
+
+route_reset:
+  deferred_now:
+    - REAL_PRODUCTION_INPUT_BINDING
+    - REAL_CTEAS_ATMOS_BINDING
+  mandatory_internal_sequence:
+    - V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+    - V4_DEVELOPMENT_BASELINE_RC1
+  next_stage: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+  new_physics_pre_authorized: false
+
+hard_boundaries:
+  full_model_production_ready: false
+  production_input_packet_ready: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  calibration_started: false
+  active_parameters: 0
+  v3_default_path_changed: false
+
+optional_extensions_not_mandatory:
+  leaf_r5: true
+  full_richards_darcy: true
+  obt_multi_pool: true
+  short_term_3h_delay: true
+  penman_eq38_aerodynamic_term: true
+
+next_stage_authorization:
+  selected: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+  allowed_scope:
+    - inventory_existing_v4_software_and_selected_physics
+    - identify_only_mandatory_internal_blockers
+    - classify_optional_extensions_as_non_blocking_unless_evidence_changes
+    - confirm_deferred_production_and_atmos_dependencies
+  solver_change_authorized: false
+  numerical_coupling_change_authorized: false
+  production_manifest_projection_authorized: false
+  production_parameter_activation_authorized: false
+  real_atmos_binding_authorized: false

@@ -1,0 +1,95 @@
+schema_version: v1
+authority_kind: CURRENT_V4_MODEL_DEVELOPMENT_STATE
+normalization_stage: V4_STATE_NORMALIZATION_R1
+project_phase: INTERNAL_V4_DEVELOPMENT_COMPLETION
+
+scope_policy:
+  real_production_inputs_currently_required: false
+  real_production_inputs_deferred: true
+  real_cteas_atmos_binding_currently_required: false
+  real_cteas_atmos_binding_deferred: true
+  production_case_declaration_track_active: false
+  production_case_declaration_issue: 52
+  production_case_declaration_issue_disposition: PARKED_FOR_FUTURE_PRODUCTION_PHASE
+
+controlled_baseline_state:
+  software_chain_connected_with_controlled_ufotri_profiles: true
+  atmosphere_input_mode_for_internal_development: SYNTHETIC_OR_REPLAY
+  three_layer_soil_core_implemented: true
+  soil_layers:
+    - L1_0_5_cm
+    - L2_5_15_cm
+    - L3_15_30_cm
+  root_eq39_controlled_baseline_active: true
+  root_layer_profile_20_40_40_active: true
+  root_q_w_controlled_construction_path_resolved: true
+  root_q_w_production_case_input_ready: false
+  leaf_baseline_resistance_path_connected: true
+  tfwt_solver_connected: true
+  obt_reduced_ufotri_baseline_connected: true
+  terminal_harvest_boundary: KEEP_HARVEST_EVENT
+  operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  food_intake_dose_endpoint_connected: true
+
+legacy_flag_normalization:
+  deprecated_current_state_flag: ROOT_Q_W_PRODUCTION_INPUT_RESOLVED
+  reason: SAME_TOKEN_WAS_USED_FOR_CONTROLLED_CONSTRUCTION_READINESS_AND_REAL_PRODUCTION_CASE_INPUT_READINESS
+  historical_stage_files_are_immutable: true
+  current_authority_must_use_split_flags: true
+
+readiness_boundaries:
+  full_model_production_ready: false
+  production_input_packet_ready: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  calibration_started: false
+  active_parameters: 0
+  v3_default_path_changed: false
+
+optional_or_held_extensions:
+  leaf_r5_dynamic_stomatal:
+    disposition: HOLD_EVIDENCE_DRIVEN_OPTIONAL_EXTENSION
+    mandatory_for_v4_internal_completion: false
+  full_richards_darcy_hydrology:
+    disposition: HOLD_NOT_REQUIRED_FOR_SELECTED_UFOTRI_BASELINE
+    mandatory_for_v4_internal_completion: false
+  obt_multi_pool:
+    disposition: HOLD_EVIDENCE_DRIVEN_OPTIONAL_EXTENSION
+    mandatory_for_v4_internal_completion: false
+  ufotri_short_term_3h_delay:
+    disposition: HOLD_OPTIONAL_EXTENSION
+    mandatory_for_v4_internal_completion: false
+  penman_eq38_aerodynamic_term:
+    disposition: HOLD_REJECTED_FROM_CONTROLLED_BASELINE
+    mandatory_for_v4_internal_completion: false
+
+remaining_mandatory_internal_development_stages:
+  - V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+  - V4_DEVELOPMENT_BASELINE_RC1
+
+current_next_stage:
+  selected: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+  scope: MANDATORY_INTERNAL_SOFTWARE_AND_PHYSICS_GAP_REVIEW_ONLY
+  new_physics_implementation_pre_authorized: false
+  production_input_work_pre_authorized: false
+  real_atmos_binding_pre_authorized: false
+
+completion_target:
+  desired_state: V4_SOFTWARE_DEVELOPMENT_BASELINE_COMPLETE
+  production_ready_required_for_target: false
+  real_atmos_required_for_target: false
+  empirical_validation_required_for_target: false
+  physical_accuracy_claim_required_for_target: false
+  interpretation: >-
+    The target closes the selected internal V4 software and controlled-physics
+    development baseline. Production binding and empirical/physical validation
+    remain later phases and must not be inferred from this completion state.
+
+evidence_anchors:
+  eq39_semantics_adr: docs/v4/adr/ADR-045-v4-root-total-uptake-ufotri-eq39-implementation-r1.md
+  controlled_e2e_governance: docs/v4/governance/v4_controlled_ufotri_end_to_end_numerical_integration_r1.yaml
+  post_controlled_review: docs/v4/reports/v4_post_controlled_ufotri_system_review_r1.md
+  production_readiness_audit: docs/v4/governance/v4_production_input_readiness_audit_r1.yaml
+  r5_snapshot: docs/v4/governance/v4_production_case_input_source_resolution_r5.yaml
+  base_main_before_normalization: 6e4edff6a1334f823cb631a25e8449a49d426254
