@@ -20,7 +20,7 @@ def _data() -> dict:
 def test_execution_is_anchored_to_pr36_no_drift_merge() -> None:
     data = _data()
     assert data["stage"] == "V4_OBT_EVIDENCE_ACQUISITION_EXECUTION_R1"
-    assert data["status"] == "REQUEST_EXECUTION_READY_CONTACT_ROUTES_AUDITED_NOT_SENT"
+    assert data["status"] == "PASS_EXECUTION_CONTROL_EXACT_HEAD_AWAITING_CLOSURE_GATE"
     source = data["source_authorization"]
     assert source["source_pr"] == 36
     assert source["merge_sha"] == "ca77d8abf4d7babe2669aa829f028e4ac45f653d"
@@ -109,23 +109,62 @@ def test_hard_invariants_keep_physics_and_calibration_frozen() -> None:
     assert inv["physical_accuracy_claim"] is False
 
 
-def test_report_and_adr_preserve_first_head_gate_before_send() -> None:
+def test_first_execution_head_is_certified_and_failed_attempt_is_non_certifying() -> None:
+    data = _data()
+    gate = data["first_execution_head_gate"]
+    assert gate["complete"] is True
+    assert gate["certified_head"] == "15f3e4be9e03cf9ff49fe1a1fe1b0a516de628a5"
+    assert gate["protected_gate"] == "SUCCESS"
+    assert gate["protected_run_id"] == 33045107295
+    assert gate["protected_checkout_merge_ref"] == "d20da58ac9721d5703ade8bcc5807453596466c7"
+    assert gate["portable_suite"] == "PASS_1311_WITH_1_SKIP_57_DESELECTED"
+    assert gate["frozen_boundary_suite"] == "PASS_373"
+    assert gate["remediation"] == "SUCCESS"
+    assert gate["remediation_run_id"] == 33045107285
+    assert gate["external_send_before_gate_allowed"] is False
+    assert gate["verified_route_send_gate_satisfied"] is True
+
+    machine = gate["machine_gates"]
+    assert machine["sensitivity_screening"] == "PASS_SOFTWARE_SCREENING"
+    assert machine["root_operator_split"] == "PASS_SELECTION"
+    assert machine["soil_root_tfwt_obt_integration"] == "PASS_INTEGRATION"
+    assert machine["replay_orchestration"] == "PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION"
+    assert machine["food_intake_dose_endpoint"] == "PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION"
+
+    superseded = data["superseded_non_certifying_head"]
+    assert superseded["head"] == "f92b2e962acbc4c6cedfe4a1bd872b53cd084f9c"
+    assert superseded["protected_result"] == "FAILURE"
+    assert superseded["failure_class"] == "GOVERNANCE_TEST_WORDING_ASSERTION_ONLY"
+    assert superseded["production_or_scientific_failure"] is False
+    assert superseded["certification_evidence"] is False
+
+
+def test_report_and_adr_record_certification_without_claiming_send() -> None:
     report = REPORT.read_text(encoding="utf-8")
     adr = ADR.read_text(encoding="utf-8")
     assert "MERGE_TREE_DRIFT = FALSE" in report
+    assert "FIRST_EXACT_HEAD = 15f3e4be9e03cf9ff49fe1a1fe1b0a516de628a5" in report
+    assert "FIRST_PROTECTED_RUN = 33045107295_SUCCESS" in report
+    assert "FIRST_REMEDIATION_RUN = 33045107285_SUCCESS" in report
     assert "REQUESTS_SENT = FALSE" in report
-    assert "execution-control head must pass Protected + Remediation CI" in report
+    assert "PASS_EXECUTION_CONTROL_EXACT_HEAD_AWAITING_CLOSURE_GATE" in adr
     assert "requires a certified execution head before an external send is recorded" in adr
-    gate = _data()["first_execution_head_gate"]
-    assert gate["complete"] is False
-    assert gate["protected_gate"] == "PENDING"
-    assert gate["remediation"] == "PENDING"
-    assert gate["external_send_before_gate_allowed"] is False
+
+
+def test_closure_is_minimal_and_send_remains_unperformed() -> None:
+    closure = _data()["closure"]
+    assert closure["status"] == "AWAITING_CLOSURE_EXACT_HEAD_DUAL_CI"
+    assert closure["request_message_artifact_changed_in_closure"] is False
+    assert closure["workflow_changed_in_closure"] is False
+    assert closure["preregistration_contract_changed_in_closure"] is False
+    assert closure["production_source_changed_in_closure"] is False
+    assert closure["numerical_coupling_changed_in_closure"] is False
+    assert closure["requests_sent_in_closure"] is False
 
 
 def test_next_transition_allows_send_not_model_implementation() -> None:
     transition = _data()["next_transition"]
-    assert transition["after_first_execution_head_dual_ci"] == "SEND_ONLY_ON_CURRENTLY_VERIFIED_ROUTE"
+    assert transition["after_closure_dual_ci_and_no_drift_merge"] == "SEND_ONLY_ON_CURRENTLY_VERIFIED_ROUTE"
     assert transition["eligible_first_target"] == "MICRO_TOM_2024"
     assert transition["vato_requires_contact_reverification"] is True
     assert transition["renard_requires_contact_reverification"] is True
