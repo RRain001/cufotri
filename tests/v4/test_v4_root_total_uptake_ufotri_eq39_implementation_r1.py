@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import fields
 from datetime import datetime, timezone
+import hashlib
 import math
 from pathlib import Path
 
@@ -34,7 +35,7 @@ def provenance(label: str) -> RootWaterFluxProvenanceV4:
         source_id=f"TEST_{label}",
         source_locator="tests/v4/test_v4_root_total_uptake_ufotri_eq39_implementation_r1.py",
         revision="r1",
-        artifact_sha256=(label.lower()[0] if label else "a") * 64,
+        artifact_sha256=hashlib.sha256(label.encode("utf-8")).hexdigest(),
         profile_context=f"UFOTRI_EQ39_{label}",
     )
 
