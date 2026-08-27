@@ -1,0 +1,170 @@
+schema_version: v1
+stage: V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_IMPLEMENTATION_R1
+status: PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION_AWAITING_CLOSURE_GATE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: f13a36d2bd5b92a86bf6405388c8e5eb5d3a5472
+branch: codex/v4-system-food-intake-dose-adapter-implementation-r1
+certified_implementation_head: 7118fb227045500b58391b0144f2cb639579dce3
+certified_implementation_tree: e7a84bbb67d9932f518e3ccf51ccdb7db0ce1975
+
+scope:
+  endpoint_adapter_implemented: true
+  opt_in_v4_only: true
+  v3_default_changed: false
+  replay_orchestration_changed: false
+  upstream_solver_equations_changed: false
+  state_mutating_harvest: false
+  repeated_harvest: false
+  continuous_food_chain_kinetics: false
+  numerical_mass_basis_conversion: false
+  numerical_area_conversion: false
+  parameter_activation: false
+  calibration: false
+  leaf_r5: false
+  obt_redesign: false
+  full_hydrology: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+implemented_boundary:
+  adapter: V4FoodIntakeDoseEndpointAdapter
+  request: V4TerminalHarvestRequest
+  result: V4FoodIntakeDoseEndpointResult
+  audit: V4FoodIntakeDoseAudit
+  harvest_modes:
+    - OBT_ONLY
+    - OBT_PLUS_TFWT
+  composed_existing_apis:
+    - FoodTransferSolver
+    - FoodIntakeSolver
+    - DoseSolver
+  endpoint_state: V4SoilRootTFWTOBTState
+  endpoint_area_basis: soil_surface_area
+  dose_radionuclide: H-3
+  dose_pathway: food-ingestion
+
+fail_closed_gates:
+  endpoint_type: true
+  endpoint_area_basis: true
+  plant_identifier: true
+  crop_identifier: true
+  growth_stage: true
+  food_product_identifier: true
+  age_group_identifier: true
+  radionuclide_identifier: true
+  pathway_identifier: true
+  explicit_harvest_mode: true
+  food_product_mass_basis_contract: true
+  consumption_mass_basis_contract: true
+  direct_mass_tissue_area_basis_comparison: true
+  endpoint_timestamp_preservation: true
+  endpoint_immutability: true
+  food_transfer_internal_balance: true
+
+provenance_domains_retained_independently:
+  - replay_tfwt
+  - replay_obt
+  - harvest
+  - food_product_basis
+  - consumption_basis
+  - consumption
+  - dose
+
+superseded_non_certified_attempt:
+  head: 7df074c25f2ef7aaf7553aa57bf384e86851d5ac
+  protected_run: 33035343479
+  remediation_run: 33035343332
+  remediation_conclusion: SUCCESS
+  protected_conclusion: FAILURE
+  failure_scope: SYNTHETIC_MACHINE_ASSERTION_ONLY
+  failure_cause: EXACT_BINARY_FLOAT_EQUALITY_FOR_MIXED_DOSE
+  observed_value_sv: 1.9999999999999997e-09
+  expected_mathematical_value_sv: 2.0e-09
+  production_runtime_physics_failure: false
+  correction: math.isclose_rel_tol_1e-12
+  first_attempt_portable: "1269 passed, 1 skipped, 57 deselected"
+  first_attempt_frozen: "337 passed"
+  existing_machine_gates_passed: true
+
+first_exact_head_certification:
+  head: 7118fb227045500b58391b0144f2cb639579dce3
+  protected:
+    run_id: 33035667912
+    run_number: 139
+    conclusion: SUCCESS
+    job_id: 98397698802
+    checkout_merge_ref: 8e7656b741ee27948952d36606bf9d8dab6cee26
+  remediation:
+    run_id: 33035667915
+    run_number: 128
+    conclusion: SUCCESS
+    job_id: 98397698523
+  environment:
+    os: Ubuntu-24.04.4-LTS
+    python: 3.12.14
+  portable_suite:
+    passed: 1269
+    skipped: 1
+    deselected: 57
+    warnings: 1
+  frozen_current_suite:
+    passed: 337
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+    food_intake_dose_endpoint: PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+
+endpoint_machine_result:
+  source_kind: SYNTHETIC_TEST_ONLY
+  invariants:
+    deterministic_repeat: true
+    endpoint_timestamp_preserved: true
+    endpoint_unchanged: true
+    food_balance_closed: true
+    h3_food_ingestion_identity: true
+    independent_provenance_retained: true
+    mixed_annual_intake_bq: true
+    mixed_dose_sv: true
+    mixed_obt_bq: true
+    mixed_tfwt_bq: true
+    mixed_total_food_bq: true
+    no_area_conversion: true
+    no_basis_conversion: true
+    not_environmental_mass_sink: true
+    obt_only_tfwt_exact_zero: true
+  mixed_output:
+    food_total_bq: 25.0
+    food_obt_bq: 10.0
+    food_tfwt_bq: 15.0
+    annual_intake_bq: 100.0
+    committed_dose_sv: 1.9999999999999997e-09
+  obt_only_output:
+    food_total_bq: 10.0
+    food_obt_bq: 10.0
+    food_tfwt_bq: 0.0
+    annual_intake_bq: 40.0
+    committed_dose_sv: 7.999999999999999e-10
+
+interpretation_boundaries:
+  software_integration_pass: true
+  synthetic_only: true
+  endpoint_equations_reused_not_rederived: true
+  food_readout_is_terminal_diagnostic_not_environmental_sink: true
+  physical_parameter_validation: false
+  physical_uncertainty_ranking: NOT_AVAILABLE
+  production_parameter_readiness: false
+  real_atmos_coupling_readiness: false
+
+roadmap:
+  merge_authorized_before_closure_exact_head_ci: false
+  next_stage_if_closure_and_no_drift_merge_pass: V4_SYSTEM_POST_ENDPOINT_REVIEW_R1
+  next_stage_scope: CONTROL_PLANE_ONLY
+  next_stage_purpose: REVIEW_FULL_NORTH_STAR_CHAIN_AND_SELECT_NEXT_EVIDENCE_OR_PHYSICS_BLOCKER
+  automatic_leaf_r5_authorization: false
+  automatic_obt_redesign_authorization: false
+  automatic_full_hydrology_authorization: false
+  automatic_parameter_activation_authorization: false
+  automatic_real_cteas_atmos_binding_authorization: false

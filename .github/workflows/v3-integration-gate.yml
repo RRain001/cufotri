@@ -107,6 +107,7 @@ jobs:
             tests/v4/test_v4_replay_input_orchestration_r1_governance.py \
             tests/v4/test_v4_system_post_orchestration_review_r1.py \
             tests/v4/test_v4_system_food_intake_dose_adapter_decision_r1.py \
+            tests/v4/test_v4_system_food_intake_dose_adapter_implementation_r1.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
@@ -130,3 +131,8 @@ jobs:
         run: |
           python scripts/v4/run_replay_input_orchestration_r1.py --output /tmp/v4_replay_input_orchestration_r1.json
           cat /tmp/v4_replay_input_orchestration_r1.json
+
+      - name: Execute V4 food-intake-dose endpoint adapter R1
+        run: |
+          python scripts/v4/run_food_intake_dose_endpoint_adapter_r1.py --output /tmp/v4_food_intake_dose_endpoint_adapter_r1.json
+          cat /tmp/v4_food_intake_dose_endpoint_adapter_r1.json
