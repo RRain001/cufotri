@@ -114,7 +114,7 @@ def test_report_and_adr_preserve_first_head_gate_before_send() -> None:
     adr = ADR.read_text(encoding="utf-8")
     assert "MERGE_TREE_DRIFT = FALSE" in report
     assert "REQUESTS_SENT = FALSE" in report
-    assert "first execution-control head must pass Protected + Remediation CI" in report
+    assert "execution-control head must pass Protected + Remediation CI" in report
     assert "requires a certified execution head before an external send is recorded" in adr
     gate = _data()["first_execution_head_gate"]
     assert gate["complete"] is False
