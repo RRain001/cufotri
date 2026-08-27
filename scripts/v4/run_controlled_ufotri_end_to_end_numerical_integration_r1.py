@@ -72,7 +72,7 @@ def replay_provenance(source_id: str, digest: str) -> ReplayDomainProvenance:
         artifact_sha256=digest * 64,
         spatial_reference=SPATIAL,
         temporal_resolution_s=DT_S,
-        source_kind="SYNTHETIC_REPLAY_NUMERICAL_INTEGRATION",
+        source_kind="SYNTHETIC_TEST",
     )
 
 
