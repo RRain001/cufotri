@@ -1,6 +1,6 @@
 # ADR-040: V4 OBT evidence acquisition execution R1
 
-Status: `REQUEST_EXECUTION_READY_CONTACT_ROUTES_AUDITED_NOT_SENT`
+Status: `PASS_EXECUTION_CONTROL_EXACT_HEAD_AWAITING_CLOSURE_GATE`
 
 ## Context
 
@@ -21,6 +21,25 @@ R1 starts with an auditable execution-control head before any external message i
 - keeps every received raw byte outside Git and permits only metadata/schema/checksum manifests in tracked files.
 
 This execution-control head is not a new scientific preregistration layer and does not change the observation operator, acceptance rules, holdout policy or identifiability requirements frozen by PR #36.
+
+## First exact-head certification
+
+The valid first execution-control exact head is `15f3e4be9e03cf9ff49fe1a1fe1b0a516de628a5`.
+
+- Protected run `33045107295`: `SUCCESS`.
+- Remediation run `33045107285`: `SUCCESS`.
+- Protected checkout merge ref: `d20da58ac9721d5703ade8bcc5807453596466c7`.
+- portable suite: `1311 passed, 1 skipped, 57 deselected`.
+- frozen/current-boundary suite: `373 passed`.
+- sensitivity screening: `PASS_SOFTWARE_SCREENING`.
+- root operator split: `PASS_SELECTION`.
+- soil-root-TFWT-OBT integration: `PASS_INTEGRATION`.
+- replay orchestration: `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`.
+- food-intake-dose endpoint: `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+
+The earlier head `f92b2e962acbc4c6cedfe4a1bd872b53cd084f9c` is retained only as `SUPERSEDED_NON_CERTIFYING_HEAD`. Its Protected run failed one newly added governance test because the expected sentence contained an unnecessarily exact wording variant. The follow-up commit changed only that assertion (`+1/-1` in one test file). The obsolete failure is not scientific, production, numerical-coupling or regression evidence and is not used for certification.
+
+The certified first-head condition is now satisfied, but this governance/status closure must pass its own exact-head Protected + Remediation gates and merge without tree drift before the PR is treated as closed on `main`.
 
 ## Contact-route audit
 
@@ -70,4 +89,4 @@ PHYSICAL_ACCURACY_CLAIM = FALSE
 
 ## Next transition
 
-After this exact execution-control head passes Protected + Remediation CI, request execution may begin only on a currently verified route. The first send may update the execution registry to `REQUEST_SENT_AWAITING_RESPONSE`; it still does not authorize quantitative inspection or model fitting.
+After this closure passes its own exact-head Protected + Remediation CI and merges with `expected_head_sha` plus parent/tree/main/head-to-merge no-drift verification, request execution may proceed only on a currently verified route. The first send may update the execution registry to `REQUEST_SENT_AWAITING_RESPONSE`; it still does not authorize quantitative inspection or model fitting.
