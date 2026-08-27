@@ -1,0 +1,147 @@
+schema_version: v1
+stage: V4_PRODUCTION_CASE_INPUT_MANIFEST_R1
+status: MANIFEST_CONTRACT_COMPLETE_AWAITING_EXACT_HEAD_GATE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 211cfe6799e8a4285466c6836fc849a701eff8bb
+branch: codex/v4-production-case-input-manifest-r1
+
+scope:
+  kind: CASE_MANIFEST_SCHEMA_AND_COMPLETENESS_GATE_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  workflow_changed: false
+  production_values_added: false
+  parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  real_cteas_atmos_binding: false
+
+production_input_audit_merge_anchor:
+  pr: 45
+  merge_sha: 211cfe6799e8a4285466c6836fc849a701eff8bb
+  merge_tree: 2c211b9f7fb5c2fa646daec57707187837e5356e
+  parent1: 7800176751050c678ccfe24b04c5c263ec6c27bb
+  parent2: 2fb6a84caf513b47f56ec853f9b6f05ef3f4401d
+  certified_head:
+    sha: 2fb6a84caf513b47f56ec853f9b6f05ef3f4401d
+    remediation_run: 33056892790
+    protected_run: 33056892817
+    protected_merge_ref: 1741a1cfa5e83354509800a703163e6a634c3e0e
+    portable_suite: {passed: 1373, skipped: 1, deselected: 57, warnings: 1}
+    frozen_boundary_suite: {passed: 375}
+  head_tree_equals_merge_tree: true
+  head_to_merge_files_empty: true
+  no_drift_verified: true
+
+artifacts:
+  schema: schemas/v4/v4_production_case_input_manifest.schema.json
+  manifest: docs/v4/contracts/v4_production_case_input_manifest_r1.yaml
+  validator: scripts/v4/validate_production_case_input_manifest_r1.py
+  adr: docs/v4/adr/ADR-049-v4-production-case-input-manifest-r1.md
+  report: docs/v4/reports/v4_production_case_input_manifest_r1.md
+  test: tests/v4/test_v4_production_case_input_manifest_r1.py
+  required_input_authority: docs/v4/governance/v4_production_input_readiness_audit_r1.yaml
+
+contract:
+  schema_valid_is_production_complete: false
+  required_input_authority_is_audit_registry: true
+  manifest_inventory_must_cover_all_audit_registry_records: true
+  duplicate_quantity_ids_allowed: false
+  unknown_quantity_ids_allowed_without_review: false
+  classification_must_match_frozen_audit: true
+  canonical_unit_must_match_when_frozen: true
+  production_ready_states:
+    - READY_CONTROLLED
+    - READY_PROVENANCED_SOURCE
+    - DERIVED_FROM_READY_STATE_WITH_COMPLETE_DEPENDENCIES
+  non_ready_states:
+    - CONTRACT_READY_SOURCE_NOT_BOUND
+    - SOURCE_REQUIRED
+    - SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED
+    - BLOCKED_EXTERNAL
+    - PROVISIONAL_SOURCE_REQUIRED
+  api_default_is_production_evidence: false
+  synthetic_fixture_is_production_evidence: false
+  replay_fixture_is_live_binding: false
+  silent_zero_allowed: false
+  silent_unit_conversion_allowed: false
+  silent_time_reconciliation_allowed: false
+  silent_spatial_reconciliation_allowed: false
+  explicit_zero_requires_evidence: true
+  explicit_zero_required_fields:
+    - evidence_artifact
+    - evidence_revision
+    - rationale
+  ready_provenanced_source_requires:
+    - source_artifact
+    - source_revision
+    - missing_data_policy
+    - production_use_authorized
+  external_or_upstream_ready_source_also_requires:
+    - temporal_support
+    - spatial_support
+    - identity_support
+  derived_ready_state_requires:
+    - derivation_evidence_complete
+    - nonempty_dependency_list
+    - all_dependencies_production_ready
+
+checked_in_template:
+  case_mode: TEMPLATE_FAIL_CLOSED
+  production_claim: false
+  inventory_records: 49
+  required_records: 48
+  optional_records: 1
+  expected_schema_valid: true
+  expected_inventory_complete: true
+  expected_production_complete: false
+  expected_status: FAIL_CLOSED_INCOMPLETE
+  production_values_populated: false
+  preserved_blocker:
+    quantity_id: atmosphere.surface_deposition_flux
+    readiness: BLOCKED_EXTERNAL
+    blocker: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+
+controlled_profiles_preserved:
+  - obt_reduced_ufotri_kf_kr_daily_average
+  - root_total_uptake_eq39_equilibrium_radiation
+  - root_layer_distribution_20_40_40
+  - operator_split_preserve_v3_post_obt_root_gain
+  - harvest_boundary_keep_harvest_event
+
+hard_boundaries:
+  software_chain_connected_with_controlled_ufotri_profiles: true
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  active_parameters: 0
+  calibration_started: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  real_cteas_atmos_binding: false
+  leaf_r5: false
+  full_hydrology: false
+  multi_pool_obt: false
+  full_penman_eq38_production_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+
+next_stage_if_clean_merge:
+  selected: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R1
+  scope: CONTROL_PLANE_AND_SOURCE_EVIDENCE_RESOLUTION_ONLY
+  production_values_may_be_activated_without_review: false
+  new_physics_implementation_authorized: false
+  solver_changes_authorized: false
+  real_cteas_atmos_binding_authorized: false
+  leaf_r5_authorized: false
+  full_hydrology_authorized: false
+  multi_pool_obt_authorized: false
+
+exit_state_if_clean_merge:
+  manifest_contract_frozen: true
+  schema_and_inventory_gate_available: true
+  checked_in_template_production_complete: false
+  production_input_packet_ready: false
+  full_model_production_ready: false
+  next_stage: V4_PRODUCTION_CASE_INPUT_SOURCE_RESOLUTION_R1

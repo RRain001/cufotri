@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cteas.local/schemas/v4/v4_production_case_input_manifest.schema.json",
+  "title": "CTEAS-UFOTRI V4 production case input manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stage", "case_identity", "controlled_profiles", "inputs", "production_claim"],
+  "properties": {
+    "schema_version": {"const": "v1"},
+    "stage": {"const": "V4_PRODUCTION_CASE_INPUT_MANIFEST_R1"},
+    "production_claim": {"type": "boolean"},
+    "case_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "scenario_id", "mode"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1},
+        "scenario_id": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["TEMPLATE_FAIL_CLOSED", "PRODUCTION_CANDIDATE"]}
+      }
+    },
+    "controlled_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["profile_id", "readiness", "source_artifact", "source_revision"],
+        "properties": {
+          "profile_id": {"type": "string", "minLength": 1},
+          "readiness": {"const": "READY_CONTROLLED"},
+          "source_artifact": {"type": "string", "minLength": 1},
+          "source_revision": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/input_record"}
+    }
+  },
+  "$defs": {
+    "nullable_nonempty_string": {"type": ["string", "null"], "minLength": 1},
+    "source_record": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["artifact", "revision", "dataset_id"],
+      "properties": {
+        "artifact": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "revision": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "dataset_id": {"$ref": "#/$defs/nullable_nonempty_string"}
+      }
+    },
+    "explicit_zero_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared", "evidence_artifact", "evidence_revision", "rationale"],
+      "properties": {
+        "declared": {"type": "boolean"},
+        "evidence_artifact": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "evidence_revision": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "rationale": {"$ref": "#/$defs/nullable_nonempty_string"}
+      }
+    },
+    "derivation_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_complete", "dependencies"],
+      "properties": {
+        "evidence_complete": {"type": "boolean"},
+        "dependencies": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "input_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quantity_id", "required", "classification", "readiness", "canonical_unit",
+        "source", "temporal_support", "spatial_support", "identity_support",
+        "transformation_log", "missing_data_policy", "production_use_authorized",
+        "explicit_zero", "derivation"
+      ],
+      "properties": {
+        "quantity_id": {"type": "string", "pattern": "^[a-z0-9_]+\\.[a-z0-9_]+$"},
+        "required": {"type": "boolean"},
+        "classification": {
+          "enum": [
+            "CONTROLLED_UFOTRI_BASELINE_OR_PROFILE",
+            "PHYSICAL_CONSTANT",
+            "EXPLICIT_EXTERNAL_SCENARIO_INPUT",
+            "REAL_UPSTREAM_DATA_PREREQUISITE",
+            "UNRESOLVED_OR_SYNTHETIC_ONLY"
+          ]
+        },
+        "readiness": {
+          "enum": [
+            "READY_CONTROLLED",
+            "READY_PROVENANCED_SOURCE",
+            "DERIVED_FROM_READY_STATE",
+            "CONTRACT_READY_SOURCE_NOT_BOUND",
+            "SOURCE_REQUIRED",
+            "SOURCE_OR_EXPLICIT_ZERO_POLICY_REQUIRED",
+            "BLOCKED_EXTERNAL",
+            "PROVISIONAL_SOURCE_REQUIRED"
+          ]
+        },
+        "canonical_unit": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "source": {"$ref": "#/$defs/source_record"},
+        "temporal_support": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "spatial_support": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "identity_support": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "transformation_log": {"type": "array", "items": {"type": "string"}},
+        "missing_data_policy": {"$ref": "#/$defs/nullable_nonempty_string"},
+        "production_use_authorized": {"type": "boolean"},
+        "explicit_zero": {"$ref": "#/$defs/explicit_zero_record"},
+        "derivation": {"$ref": "#/$defs/derivation_record"}
+      }
+    }
+  }
+}
