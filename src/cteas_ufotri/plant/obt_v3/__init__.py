@@ -1,7 +1,7 @@
 """V3-P6.2C isolated TFWT-to-OBT inventory pathway.
 
-This package is provisional and opt-in. It does not alter V1/V2 runtime
-behavior, read the UFOTRI parameter database, or connect foodchain or dose.
+This package is provisional and opt-in. V4 may select the controlled UFOTRI
+baseline profile explicitly; no hidden runtime default is introduced here.
 """
 
 from .obt_solver import (
@@ -12,6 +12,16 @@ from .obt_solver import (
     PlantBiologicalForcing,
 )
 from .obt_state import OBTState
+from .ufotri_baseline import (
+    SECONDS_PER_HOUR,
+    UFOTRI_OBT_DAYLIGHT_MULTIPLIER,
+    UFOTRI_OBT_FORMATION_PER_HOUR,
+    UFOTRI_OBT_KF_S,
+    UFOTRI_OBT_KR_S,
+    UFOTRI_OBT_LOSS_PER_HOUR,
+    UFOTRI_OBT_NIGHTTIME_MULTIPLIER,
+    ufotri_obt_baseline_parameters,
+)
 from .validation import (
     INTEGRATED_ACTIVITY_UNIT,
     OBT_CONCENTRATION_UNIT,
@@ -42,4 +52,12 @@ __all__ = [
     "PLANT_MASS_UNIT",
     "PlantBiologicalForcing",
     "RATE_UNIT",
+    "SECONDS_PER_HOUR",
+    "UFOTRI_OBT_DAYLIGHT_MULTIPLIER",
+    "UFOTRI_OBT_FORMATION_PER_HOUR",
+    "UFOTRI_OBT_KF_S",
+    "UFOTRI_OBT_KR_S",
+    "UFOTRI_OBT_LOSS_PER_HOUR",
+    "UFOTRI_OBT_NIGHTTIME_MULTIPLIER",
+    "ufotri_obt_baseline_parameters",
 ]
