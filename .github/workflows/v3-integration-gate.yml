@@ -51,6 +51,7 @@ jobs:
           import cteas_ufotri.parameters_v3
           import cteas_ufotri.validation_v3
           import cteas_ufotri.v3_pipeline
+          import cteas_ufotri.v4_integration
           import cteas_ufotri.plant.mass_basis_v3_1
           import cteas_ufotri.plant.soil_v4
           import cteas_ufotri.plant.root_v4
@@ -100,6 +101,8 @@ jobs:
             tests/v4/test_v4_three_layer_root_coupling_rereview_r1.py \
             tests/v4/test_v4_three_layer_root_flux_core_implementation_r1.py \
             tests/v4/test_v4_root_operator_split_comparison_r1.py \
+            tests/v4/test_v4_soil_root_tfwt_obt_integration_r1.py \
+            tests/v4/test_v4_soil_root_tfwt_obt_integration_r1_governance.py \
             tests/v3_1/test_mass_basis_contract.py \
             tests/v3_1/test_mass_basis_schema_whitespace.py \
             tests/v3_1/test_mass_basis_identity_evidence_gate.py
@@ -113,3 +116,8 @@ jobs:
         run: |
           python scripts/v4/run_root_operator_split_comparison_r1.py --output /tmp/v4_root_operator_split_comparison_r1.json
           cat /tmp/v4_root_operator_split_comparison_r1.json
+
+      - name: Execute V4 soil-root-TFWT-OBT integration R1
+        run: |
+          python scripts/v4/run_soil_root_tfwt_obt_integration_r1.py --output /tmp/v4_soil_root_tfwt_obt_integration_r1.json
+          cat /tmp/v4_soil_root_tfwt_obt_integration_r1.json

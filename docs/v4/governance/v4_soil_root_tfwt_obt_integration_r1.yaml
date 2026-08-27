@@ -1,0 +1,112 @@
+schema_version: v1
+stage: V4_SOIL_ROOT_TFWT_OBT_INTEGRATION_R1
+status: PASS_SOIL_ROOT_TFWT_OBT_INTEGRATION
+repository: RRain001/CTEAS_ufotri
+base_main_sha: c6e311039dc173a176bb59396cdbffb3504b8545
+branch: codex/v4-soil-root-tfwt-obt-integration-r1
+
+scope:
+  opt_in_only: true
+  v3_default_path_changed: false
+  v3_pipeline_changed: false
+  soil_v4_solver_physics_changed: false
+  root_v4_solver_physics_changed: false
+  tfwt_v3_solver_changed: false
+  obt_v3_solver_changed: false
+  new_integration_orchestrator: true
+  food_intake_dose_integrated: false
+  real_cteas_atmos_binding: false
+
+selected_numerical_semantics:
+  operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  root_plan_source_state: interval_start_soil_S_n
+  obt_tfwt_source_state: interval_start_TFWT
+  root_gain_enters_tfwt: endpoint_after_obt_reconciliation
+  root_plan_single_identity: required
+
+area_basis_contract:
+  identical_declared_basis_required: true
+  silent_soil_area_to_plant_area_conversion: forbidden
+  area_adapter_implemented: false
+
+water_contract:
+  root_water_sink_applied_to_soil: true
+  plant_water_storage_added: false
+  tfwt_water_content_remains_fixed_basis: true
+  coupled_plant_water_conservation_claim: false
+  hydrology_or_transpiration_generated_inside_root: false
+
+parameter_boundary:
+  production_defaults_added: false
+  active_parameters: 0
+  calibration_started: false
+  soil_solver_must_be_explicit: true
+  obt_solver_must_be_explicit: true
+  root_q_w_must_be_explicit_forcing: true
+  synthetic_values_are_test_only: true
+  ufotri_20_40_40_active: false
+  ufotri_reference_layer_rates_active: false
+  short_term_3h_delay_active: false
+
+restart_contract:
+  composite_state_json_roundtrip: required
+  authoritative_reservoirs:
+    - three_layer_soil_inventory
+    - tfwt_inventory
+    - obt_inventory
+  direct_vs_restart_equivalence: required
+
+machine_gate:
+  script: scripts/v4/run_soil_root_tfwt_obt_integration_r1.py
+  expected_status: PASS_INTEGRATION
+  empirical_validation: false
+  physical_accuracy_claim: false
+  implementation_head_sha: 966ac71c590b8a0e850d9d9ec01b5bdcef285116
+  protected_gate_run_id: 33028178452
+  portable_suite: 1216 passed, 1 skipped, 57 deselected
+  frozen_boundary_suite: 295 passed
+  sensitivity_status: PASS_SOFTWARE_SCREENING
+  operator_split_status: PASS_SELECTION
+  integration_status: PASS_INTEGRATION
+  deterministic_repeat: true
+  restart_equivalence: true
+  root_pulse_post_obt_semantics: true
+  max_abs_root_identity_residual_bq_m2: 0.0
+  max_abs_plant_residual_bq_m2: 4.440892098500626e-16
+  max_abs_soil_residual_bq_m2: 4.163336342344337e-17
+  max_abs_coupled_residual_bq_m2: 4.884981308350689e-15
+  closure_exact_head_gate_required: true
+  required:
+    - single_root_plan_application_and_conservation
+    - deterministic_repeat
+    - restart_equivalence
+    - root_pulse_post_obt_semantics
+    - obt_interval_start_tfwt_overdraw_fail_closed
+    - common_timestamp_identity_area_fail_closed
+    - v3_default_pipeline_isolation
+    - no_root_reference_fixture_activation
+    - full_portable_regression
+    - frozen_boundary_regression
+
+acceptance_rule:
+  implementation_gate: PASS
+  merge_requires_closure_exact_head_gate: true
+
+next_stage:
+  authorized_now: false
+  must_be_decided_after_this_stage_merge: true
+  preferred_review: SYSTEM_LEVEL_POST_INTEGRATION_REVIEW
+  candidates:
+    - SYSTEM_LEVEL_POST_INTEGRATION_REVIEW
+    - FOOD_INTAKE_DOSE_V4_ADAPTER_DECISION
+    - ATMOS_REPLAY_ADAPTER_PREPARATION
+  leaf_r5: not_authorized
+
+hard_invariants:
+  v3_default_profile_changed: false
+  active_parameters: 0
+  physical_validation_complete: false
+  leaf_r5_authorized: false
+  real_cteas_atmos_coupling_active: false
+  full_soil_hydrology_active: false
+  plant_water_dynamics_active: false
