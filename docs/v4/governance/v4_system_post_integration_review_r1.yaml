@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SYSTEM_POST_INTEGRATION_REVIEW_R1
-status: REVIEW_COMPLETE_AWAITING_EXACT_HEAD_GATE
+status: PASS_SYSTEM_POST_INTEGRATION_REVIEW
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 4545f4b88a5bc4051a9d0ab4291a03d8aff5c021
 branch: codex/v4-system-post-integration-review-r1
@@ -68,7 +68,7 @@ priority_decision_rule: >-
 candidate_ranking:
   - rank: 1
     candidate: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
-    disposition: RECOMMEND_NEXT_CONTROL_PLANE_STAGE
+    disposition: SELECT_NEXT_CONTROL_PLANE_STAGE
     rationale:
       - The upstream exchange contract is already frozen, while the new V4 soil-root-TFWT-OBT core is not connected to it.
       - Replay/synthetic records can advance end-to-end integration without waiting for CTEAS-Atmos production completion.
@@ -86,37 +86,40 @@ candidate_ranking:
   - rank: 2
     candidate: FOOD_INTAKE_DOSE_V4_ADAPTER_DECISION
     disposition: DEFER_UNTIL_UPSTREAM_INPUT_BOUNDARY_DECIDED
-    rationale:
-      - Existing endpoint modules already provide software capability.
-      - Current sensitivity evidence identifies several endpoint terms as external scenario or geometry scaling rather than missing environmental transport physics.
-      - Closing the upstream forcing boundary first yields a more meaningful end-to-end pathway.
   - rank: 3
     candidate: LEAF_R5_DYNAMIC_STOMATAL_IMPLEMENTATION
     disposition: HOLD
-    rationale:
-      - R4 remains design-only and lacks the admissible empirical packet required to select or calibrate a dynamic response law.
   - rank: 4
     candidate: OBT_PHYSICS_REDESIGN
     disposition: HOLD
-    rationale:
-      - Keep the reduced first-order baseline until matched time-resolved TFWT/OBT evidence is available.
   - rank: 5
     candidate: FULL_SOIL_HYDROLOGY_OR_PLANT_WATER_DYNAMICS
     disposition: HOLD
-    rationale:
-      - The minimal explicit-flux three-layer core now closes the current architectural dependency.
-      - Richards/Darcy hydrology and plant-water storage remain unsupported physical expansions.
   - rank: 6
     candidate: REAL_CTEAS_ATMOS_BINDING
     disposition: BLOCKED
-    rationale:
-      - Frozen exchange contract still records the producer surface-deposition-flux product as unconfirmed.
+
+review_gate:
+  review_head_sha: cbd2dafc374e22da17c197b7255444836fdc8393
+  protected_gate_run_id: 33029158798
+  remediation_run_id: 33029158729
+  protected_gate_status: SUCCESS
+  remediation_status: SUCCESS
+  portable_suite: 1220 passed, 1 skipped, 57 deselected
+  frozen_boundary_suite: 295 passed
+  sensitivity_status: PASS_SOFTWARE_SCREENING
+  operator_split_status: PASS_SELECTION
+  soil_root_tfwt_obt_status: PASS_INTEGRATION
+  closure_exact_head_gate_required: true
 
 next_stage:
-  recommended: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
-  authorized_now: false
-  scope_if_later_authorized: CONTROL_PLANE_AND_INTERFACE_DECISION_ONLY
-  implementation_stage_authorized: false
+  selected: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
+  authorization_effective_after_review_merge: true
+  scope: CONTROL_PLANE_AND_INTERFACE_DECISION_ONLY
+  adapter_implementation_authorized: false
+  solver_changes_authorized: false
+  parameter_activation_authorized: false
+  real_cteas_atmos_binding_authorized: false
 
 hard_invariants:
   v3_default_profile_changed: false
