@@ -1,0 +1,223 @@
+schema_version: v1
+stage: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
+status: DECISION_COMPLETE_AWAITING_EXACT_HEAD_GATE
+repository: RRain001/CTEAS_ufotri
+base_main_sha: c5d58271c68cc79a9e0492ab934025d752f02e30
+branch: codex/v4-system-replay-input-adapter-decision-r1
+
+scope:
+  control_plane_and_interface_decision_only: true
+  production_src_changes: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  adapter_or_orchestrator_implemented: false
+  parameter_activation: false
+  calibration: false
+  leaf_r5: false
+  food_intake_dose_v4_integration: false
+  full_hydrology: false
+  real_cteas_atmos_binding: false
+
+reviewed_software_boundaries:
+  frozen_atmos_exchange_contract:
+    path: docs/v4/contracts/v4_system_atmos_exchange_contract.yaml
+    status: PASS_CONTROL_PLANE_CONTRACT_FROZEN
+    interval_semantics: UTC_HALF_OPEN_START_INCLUSIVE_END_EXCLUSIVE
+    normalized_values: INTERVAL_REPRESENTATIVE_MEAN_OR_RATE
+  current_atmos_v3_forcing:
+    path: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+    soil_adapter_target: V3_SINGLE_LAYER_SOIL_FORCING
+    v4_three_layer_soil_adapter_available: false
+    leaf_adapter_available: true
+  current_v4_integration:
+    path: src/cteas_ufotri/v4_integration/soil_root_tfwt_obt.py
+    modules: [THREE_LAYER_SOIL, THREE_LAYER_ROOT, TFWT, OBT]
+    leaf_exchange_input_present: false
+    selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+    status: PASS_INTEGRATION
+  tfwt_solver:
+    path: src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
+    consumes_precomputed_leaf_exchange_flux: true
+    advances_tfwt_state_time_to_interval_end: true
+  obt_solver:
+    path: src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    consumes_tfwt_inventory: true
+    reads_tfwt_timestamp_for_dynamics: false
+    biological_forcing_is_explicit: true
+
+architecture_decision:
+  field_only_adapter:
+    selected: false
+    disposition: REJECT_INSUFFICIENT_FOR_COMPLETE_V4_CHAIN
+    reasons:
+      - current AtmosphericHTOForcing soil adapter targets the V3 one-layer soil forcing
+      - current V4 four-module integrator has no leaf-exchange input
+      - leaf exchange must affect TFWT before OBT while root gain remains post-OBT
+      - forcing ownership must remain separated across atmosphere, soil transport, root water flux, and biology
+  selected_architecture: OPT_IN_REPLAY_INPUT_SYSTEM_ORCHESTRATOR
+  current_v4_four_module_integrator:
+    disposition: FREEZE_AS_REFERENCE_BASELINE
+    production_behavior_changed_by_this_stage: false
+  selected_future_layer:
+    role: HIGHER_LEVEL_ORCHESTRATION_AND_FAIL_CLOSED_INPUT_MAPPING
+    may_reuse_existing_component_solvers: true
+    may_change_component_solver_equations: false
+    may_change_v3_default_pipeline: false
+
+future_input_ownership:
+  atmos_or_replay_record:
+    owns:
+      - air_hto_concentration_bq_m3
+      - surface_deposition_flux_total_bq_m2_s
+      - air_temperature_k
+      - relative_humidity
+      - wind_speed_m_s
+      - precipitation_rate_m_s
+      - interval_and_spatial_provenance
+    does_not_own:
+      - root_q_w_i
+      - interlayer_soil_water_flux
+      - interlayer_soil_hto_flux
+      - soil_lower_boundary_loss
+      - soil_surface_reemission
+      - biological_forcing
+      - leaf_resistance_parameters
+      - leaf_equilibrium_air_concentration
+  three_layer_soil_external_forcing:
+    owns:
+      - surface_water_input_m_s
+      - surface_water_loss_m_s
+      - l1_l2_water_flux_m_s
+      - l1_l2_hto_flux_bq_m2_s
+      - l2_l3_water_flux_m_s
+      - l2_l3_hto_flux_bq_m2_s
+      - lower_boundary_water_loss_m_s
+      - lower_boundary_hto_loss_bq_m2_s
+      - surface_reemission_hto_loss_bq_m2_s
+    atmospheric_deposition_mapping: ONLY_SURFACE_DEPOSITION_FLUX_TOTAL_TO_L1
+    precipitation_to_soil_water_inference: FORBIDDEN
+  root_water_flux_forcing:
+    owns: [root_q_w_L1_m_s, root_q_w_L2_m_s, root_q_w_L3_m_s]
+    provenance_must_be_independent_from_atmos_record: true
+    infer_from_temperature_humidity_wind_precipitation: FORBIDDEN
+  biological_forcing:
+    owns: [is_daylight, optional_temperature_k, optional_photosynthetic_activity, optional_growth_stage]
+    provenance_required_by_future_orchestrator: true
+  leaf_exchange_inputs:
+    resistance_state_must_be_explicit: true
+    equilibrium_air_concentration_bq_m3_must_be_explicit: true
+    dynamic_stomatal_model_authorized: false
+
+selected_interval_order:
+  interval_state: t_n
+  forcing_interval: '[t_n, t_n+1)'
+  steps:
+    - order: 1
+      operation: VALIDATE_AND_ALIGN_ALL_INPUT_RECORDS_FAIL_CLOSED
+    - order: 2
+      operation: MAP_TOTAL_SURFACE_DEPOSITION_TO_THREE_LAYER_SOIL_L1_BOUNDARY
+    - order: 3
+      operation: COMPUTE_BASELINE_SIGNED_LEAF_EXCHANGE_FROM_ATMOS_RECORD
+    - order: 4
+      operation: ADVANCE_TFWT_WITH_LEAF_EXCHANGE_TO_LEAF_INTERMEDIATE
+    - order: 5
+      operation: ADVANCE_OBT_USING_LEAF_UPDATED_TFWT_INVENTORY
+    - order: 6
+      operation: PLAN_ROOT_TRANSFER_FROM_INTERVAL_START_THREE_LAYER_SOIL_STATE
+    - order: 7
+      operation: ADVANCE_THREE_LAYER_SOIL_WITH_THE_SAME_ROOT_PLAN_APPLIED_ONCE
+    - order: 8
+      operation: RECONCILE_ENDPOINT_TFWT_AS_LEAF_INTERMEDIATE_MINUS_OBT_LOSS_PLUS_ROOT_GAIN
+  preserved_semantics:
+    obt_sees_same_interval_leaf_exchange: true
+    obt_sees_same_interval_root_gain: false
+    root_reads_interval_start_soil: true
+    root_gain_is_post_obt: true
+    selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  timestamp_rule:
+    do_not_reset_or_forge_component_timestamps: true
+    forcing_start_must_equal_composite_state_timestamp: true
+    all_interval_lengths_must_match: true
+    endpoint_state_timestamp: t_n_plus_1
+
+future_implementation_acceptance_gates:
+  zero_leaf_exchange_equivalence:
+    required: true
+    reference: V4SoilRootTFWTOBTIntegrator
+    requirement: >-
+      With identical initial state, soil forcing, root forcing, biological forcing, interval,
+      solver parameters, and exactly zero leaf exchange, the future system orchestrator must
+      reproduce the frozen four-module integrator endpoint state and ledgers within the existing
+      numerical closure tolerance.
+  conservation:
+    root_plan_applied_once: true
+    soil_root_identity_closure: true
+    plant_inventory_closure: true
+    coupled_inventory_closure: true
+  temporal:
+    deterministic_repeat: true
+    restart_equivalence: true
+    utc_half_open_interval: true
+    no_silent_resampling: true
+  provenance:
+    per_input_domain_provenance_required: true
+    root_q_w_must_not_inherit_atmos_provenance_by_default: true
+    transformation_log_required: true
+  mapping:
+    no_silent_unit_conversion: true
+    no_silent_area_conversion: true
+    no_precipitation_to_soil_water_inference: true
+    no_puff_ledger_amount_as_surface_flux: true
+    missing_required_input_fails_closed: true
+
+next_stage_recommendation:
+  stage: V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1
+  recommended_after_decision_merge: true
+  implementation_authorized_now: false
+  authorization_requires:
+    - decision_exact_head_protected_gate_success
+    - decision_exact_head_remediation_success
+    - governance_closure_commit
+    - closure_exact_head_protected_gate_success
+    - closure_exact_head_remediation_success
+    - expected_head_merge_without_tree_drift
+  future_allowed_scope_if_authorized:
+    - new_opt_in_replay_input_records_or_adapter_package
+    - new_opt_in_system_orchestrator
+    - mapping_to_three_layer_soil_surface_deposition
+    - baseline_leaf_exchange_composition
+    - explicit_root_q_w_and_biological_input_ownership
+    - restart_and_conservation_ledgers
+    - synthetic_and_replay_tests
+  future_forbidden_scope:
+    - modify_v3_default_pipeline
+    - modify_existing_component_solver_equations
+    - modify_selected_operator_split
+    - leaf_r5_dynamic_stomatal_implementation
+    - food_intake_dose_v4_integration
+    - full_richards_or_hidden_hydrology
+    - infer_root_q_w_from_atmos_meteorology
+    - parameter_activation_or_calibration
+    - real_cteas_atmos_binding
+    - physical_accuracy_or_empirical_validation_claim
+
+hard_invariants:
+  v3_default_profile_changed: false
+  existing_v4_four_module_integrator_changed: false
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  active_parameters: 0
+  calibration_started: false
+  leaf_r5_authorized: false
+  food_intake_dose_v4_integration_authorized: false
+  full_soil_hydrology_authorized: false
+  plant_water_dynamics_authorized: false
+  real_cteas_atmos_coupling_active: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
+exit_state:
+  decision_content_complete: true
+  exact_head_gate_complete: false
+  selected_architecture: OPT_IN_REPLAY_INPUT_SYSTEM_ORCHESTRATOR
+  implementation_authorized: false
+  next_stage_if_closure_passes: V4_SYSTEM_REPLAY_INPUT_ORCHESTRATION_IMPLEMENTATION_R1
