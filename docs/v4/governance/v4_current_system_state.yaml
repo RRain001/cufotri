@@ -1,7 +1,7 @@
 schema_version: v1
 authority_kind: CURRENT_V4_MODEL_DEVELOPMENT_STATE
-current_state_stage: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
-project_phase: INTERNAL_V4_DEVELOPMENT_BASELINE_RC
+current_state_stage: V4_DEVELOPMENT_BASELINE_RC1
+project_phase: INTERNAL_V4_SOFTWARE_DEVELOPMENT_BASELINE_COMPLETE
 
 scope_policy:
   real_production_inputs_currently_required: false
@@ -45,6 +45,19 @@ development_completeness_review:
   production_and_real_atmos_excluded_as_deferred_current_phase_dependencies: true
   new_physics_required_before_rc: false
 
+development_baseline_rc1:
+  stage: V4_DEVELOPMENT_BASELINE_RC1
+  verdict: V4_SOFTWARE_DEVELOPMENT_BASELINE_COMPLETE
+  selected_internal_baseline_frozen: true
+  mandatory_internal_blocker_count: 0
+  mandatory_internal_stage_count_remaining: 0
+  combined_regression_required_at_exact_head: true
+  machine_composition_gate_required: true
+  production_scope_excluded: true
+  real_atmos_scope_excluded: true
+  empirical_validation_scope_excluded: true
+  new_physics_added: false
+
 readiness_boundaries:
   full_model_production_ready: false
   production_input_packet_ready: false
@@ -72,30 +85,35 @@ optional_or_held_extensions:
     disposition: HOLD_REJECTED_FROM_CONTROLLED_BASELINE
     mandatory_for_v4_internal_completion: false
 
-remaining_mandatory_internal_development_stages:
-  - V4_DEVELOPMENT_BASELINE_RC1
+remaining_mandatory_internal_development_stages: []
 
 current_next_stage:
-  selected: V4_DEVELOPMENT_BASELINE_RC1
-  scope: COMBINED_REGRESSION_AND_DEVELOPMENT_BASELINE_FREEZE_ONLY
+  selected: NONE_WITHIN_INTERNAL_V4_DEVELOPMENT_BASELINE
+  scope: DEVELOPMENT_BASELINE_FROZEN_FUTURE_WORK_REQUIRES_NEW_AUTHORIZATION
   new_physics_implementation_pre_authorized: false
   production_input_work_pre_authorized: false
   real_atmos_binding_pre_authorized: false
 
 completion_target:
   desired_state: V4_SOFTWARE_DEVELOPMENT_BASELINE_COMPLETE
+  achieved: true
   production_ready_required_for_target: false
   real_atmos_required_for_target: false
   empirical_validation_required_for_target: false
   physical_accuracy_claim_required_for_target: false
   interpretation: >-
-    The target closes the selected internal V4 software and controlled-physics
-    development baseline. Production binding and empirical/physical validation
-    remain later phases and must not be inferred from this completion state.
+    The selected internal V4 software and controlled-physics development baseline
+    is frozen. Production binding, real CTEAS-Atmos coupling, calibration,
+    empirical validation and physical-accuracy qualification remain later phases
+    and must not be inferred from this completion state.
 
 evidence_anchors:
   state_normalization_adr: docs/v4/adr/ADR-055-v4-state-normalization-r1.md
   completeness_review_adr: docs/v4/adr/ADR-056-v4-development-completeness-review-r1.md
+  development_baseline_rc1_adr: docs/v4/adr/ADR-057-v4-development-baseline-rc1.md
+  development_baseline_rc1_governance: docs/v4/governance/v4_development_baseline_rc1.yaml
+  development_baseline_rc1_report: docs/v4/reports/v4_development_baseline_rc1.md
+  development_baseline_rc1_runner: scripts/v4/run_development_baseline_rc1.py
   three_layer_soil_report: docs/v4/reports/v4_three_layer_soil_core_implementation_r1.md
   root_flux_report: docs/v4/reports/v4_three_layer_root_flux_core_implementation_r1.md
   eq39_semantics_adr: docs/v4/adr/ADR-045-v4-root-total-uptake-ufotri-eq39-implementation-r1.md
@@ -104,4 +122,5 @@ evidence_anchors:
   food_intake_dose_report: docs/v4/reports/v4_system_food_intake_dose_adapter_implementation_r1.md
   controlled_e2e_adr: docs/v4/adr/ADR-046-v4-controlled-ufotri-end-to-end-numerical-integration-r1.md
   leaf_r5_readiness: docs/v4/leaf/v4_2_leaf_dynamic_stomatal_readiness.yaml
-  base_main_before_completeness_review: 1b832dbcbe9a57ec0af13ecec691d43f409d4fa1
+  base_main_before_rc1: a9ae81fe1931289c44a860df6eafc6ab2ee16b55
+  base_tree_before_rc1: 4b483f427b3aaef0f8bd53f3859815949ce1510e

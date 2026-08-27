@@ -1,0 +1,120 @@
+schema_version: v1
+stage: V4_DEVELOPMENT_BASELINE_RC1
+status: RC1_FREEZE_CANDIDATE_REQUIRES_EXACT_HEAD_CERTIFICATION
+repository: RRain001/CTEAS_ufotri
+
+entry_anchor:
+  base_main: a9ae81fe1931289c44a860df6eafc6ab2ee16b55
+  base_tree: 4b483f427b3aaef0f8bd53f3859815949ce1510e
+  preceding_stage: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+  preceding_verdict: PASS_NO_MANDATORY_INTERNAL_BLOCKERS
+  mandatory_internal_blocker_count: 0
+  preceding_merge_tree_drift: false
+
+scope:
+  kind: COMBINED_REGRESSION_AND_DEVELOPMENT_BASELINE_FREEZE_ONLY
+  production_source_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  production_manifest_changed: false
+  runtime_parameter_values_changed: false
+  calibration_started: false
+  production_input_binding_started: false
+  real_cteas_atmos_binding_started: false
+  new_physics_subsystem_added: false
+  v3_default_path_changed: false
+
+selected_baseline_freeze:
+  atmosphere_input_mode: SYNTHETIC_OR_REPLAY_FOR_INTERNAL_DEVELOPMENT
+  soil_layers:
+    - L1_0_5_cm
+    - L2_5_15_cm
+    - L3_15_30_cm
+  root_total_uptake: UFOTRI_EQ39_EQUILIBRIUM_RADIATION_BASELINE
+  root_layer_distribution:
+    - 0.2
+    - 0.4
+    - 0.4
+  root_flux_identity: J_ROOT_I_EQUALS_Q_W_I_TIMES_C_W_I
+  leaf_exchange: BASELINE_RESISTANCE_CHAIN
+  tfwt: CONNECTED
+  obt: REDUCED_UFOTRI_KF_KR_BASELINE
+  operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  terminal_harvest_boundary: KEEP_HARVEST_EVENT
+  food_intake_dose_endpoint: CONNECTED
+
+machine_composition_gate:
+  runner: scripts/v4/run_development_baseline_rc1.py
+  required_status: PASS_V4_DEVELOPMENT_BASELINE_RC1_MACHINE_COMPOSITION
+  components:
+    controlled_ufotri_e2e:
+      runner: scripts/v4/run_controlled_ufotri_end_to_end_numerical_integration_r1.py
+      expected_status: PASS_CONTROLLED_UFOTRI_END_TO_END_NUMERICAL_INTEGRATION
+    sensitivity_screening:
+      runner: scripts/v4/run_system_sensitivity_screening_r1.py
+      expected_status: PASS_SOFTWARE_SCREENING
+    root_operator_split:
+      runner: scripts/v4/run_root_operator_split_comparison_r1.py
+      expected_status: PASS_SELECTION
+    soil_root_tfwt_obt:
+      runner: scripts/v4/run_soil_root_tfwt_obt_integration_r1.py
+      expected_status: PASS_INTEGRATION
+    replay_orchestration:
+      runner: scripts/v4/run_replay_input_orchestration_r1.py
+      expected_status: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+    food_intake_dose:
+      runner: scripts/v4/run_food_intake_dose_endpoint_adapter_r1.py
+      expected_status: PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+
+exact_head_certification:
+  remediation_ci_required: true
+  protected_integration_gate_required: true
+  portable_current_suite_required: true
+  frozen_current_boundary_suite_required: true
+  existing_machine_gates_required: true
+  rc1_machine_composition_gate_required: true
+  no_new_commit_after_certification: true
+  merge_method: merge
+  expected_head_sha_required: true
+  post_merge_parent_check_required: true
+  post_merge_tree_identity_required: true
+  post_merge_head_to_merge_files_empty_required: true
+  post_merge_remote_main_identity_required: true
+
+completion_if_all_gates_pass_and_merge_is_no_drift:
+  v4_software_development_baseline_complete: true
+  mandatory_internal_stage_count_remaining: 0
+  selected_internal_baseline_frozen: true
+  release_candidate_tag_authorized: v4-development-baseline-rc1
+  new_physics_pre_authorized: false
+  future_production_phase_requires_new_authorization: true
+  future_real_atmos_binding_requires_new_authorization: true
+  future_empirical_validation_requires_new_authorization: true
+
+non_blocking_held_extensions:
+  leaf_r5_dynamic_stomatal: HOLD_EVIDENCE_DRIVEN_OPTIONAL_EXTENSION
+  full_richards_darcy_hydrology: HOLD_NOT_REQUIRED_FOR_SELECTED_UFOTRI_BASELINE
+  obt_multi_pool: HOLD_EVIDENCE_DRIVEN_OPTIONAL_EXTENSION
+  ufotri_short_term_3h_delay: HOLD_OPTIONAL_EXTENSION
+  penman_eq38_aerodynamic_term: HOLD_REJECTED_FROM_CONTROLLED_BASELINE
+
+hard_boundaries:
+  full_model_production_ready: false
+  production_input_packet_ready: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  calibration_started: false
+  active_parameters: 0
+  leaf_r5: false
+  full_richards_darcy_hydrology: false
+  multi_pool_obt: false
+  ufotri_short_term_3h_delay: false
+  penman_eq38_aerodynamic_term: false
+  v3_default_path_changed: false
+
+interpretation: >-
+  RC1 freezes the selected internal software and controlled-physics development
+  baseline only. It is not a production release, a real CTEAS-Atmos coupling
+  claim, an empirical validation result, a calibrated model, or a physical-
+  accuracy qualification.
