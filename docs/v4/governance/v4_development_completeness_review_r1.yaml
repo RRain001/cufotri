@@ -1,0 +1,116 @@
+schema_version: v1
+stage: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+status: REVIEW_COMPLETE_AWAITING_EXACT_HEAD_GATE
+base_main_sha: 1b832dbcbe9a57ec0af13ecec691d43f409d4fa1
+scope:
+  kind: MANDATORY_INTERNAL_SOFTWARE_AND_PHYSICS_GAP_REVIEW_ONLY
+  src_changed: false
+  solver_equations_changed: false
+  numerical_coupling_changed: false
+  production_manifest_changed: false
+  runtime_parameter_import_changed: false
+  parameter_values_changed: false
+  calibration_changed: false
+  real_cteas_atmos_binding_changed: false
+  production_input_binding_changed: false
+
+verdict:
+  token: PASS_NO_MANDATORY_INTERNAL_BLOCKERS
+  mandatory_internal_blocker_count: 0
+  selected_v4_baseline_internal_development_complete_for_rc_entry: true
+  production_ready: false
+  empirically_validated: false
+  physical_accuracy_claim: false
+
+review_matrix:
+  contracts_time_units_provenance:
+    disposition: PASS_SELECTED_BASELINE
+    mandatory_blocker: false
+  three_layer_soil_core:
+    disposition: PASS_IMPLEMENTED
+    layers: [L1_0_5_cm, L2_5_15_cm, L3_15_30_cm]
+    signed_transport: true
+    conservation_ledger: true
+    restart: true
+    mandatory_blocker: false
+  root_flux_identity:
+    disposition: PASS_IMPLEMENTED
+    equation: J_root_i_EQUALS_q_w_i_TIMES_C_w_i
+    mandatory_blocker: false
+  root_total_uptake_and_profile:
+    disposition: PASS_CONTROLLED_UFOTRI_BASELINE
+    total_uptake: EQUILIBRIUM_RADIATION_EQ39
+    layer_profile: [0.2, 0.4, 0.4]
+    mandatory_blocker: false
+  leaf_exchange:
+    disposition: PASS_BASELINE_RESISTANCE_PATH_CONNECTED
+    dynamic_stomatal_r5: HOLD_EMPIRICAL_EVIDENCE_REQUIRED
+    mandatory_blocker: false
+  soil_root_tfwt_obt_integration:
+    disposition: PASS_INTEGRATION
+    operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+    mandatory_blocker: false
+  replay_orchestration:
+    disposition: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+    mandatory_blocker: false
+  obt_baseline:
+    disposition: PASS_REDUCED_UFOTRI_BASELINE_CONNECTED
+    multi_pool_required_for_internal_completion: false
+    mandatory_blocker: false
+  food_intake_dose_endpoint:
+    disposition: PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+    harvest_boundary: KEEP_HARVEST_EVENT
+    mandatory_blocker: false
+  controlled_end_to_end:
+    disposition: PASS_CONTROLLED_UFOTRI_SOFTWARE_CHAIN
+    deterministic_repeat_required: true
+    restart_equivalence_required: true
+    conservation_required: true
+    mandatory_blocker: false
+  v3_isolation:
+    disposition: PASS_DEFAULT_UNCHANGED
+    mandatory_blocker: false
+
+non_blocking_extensions:
+  leaf_r5_dynamic_stomatal: HOLD_EVIDENCE_DRIVEN_OPTIONAL_EXTENSION
+  full_richards_darcy_hydrology: HOLD_NOT_REQUIRED_FOR_SELECTED_UFOTRI_BASELINE
+  obt_multi_pool: HOLD_EVIDENCE_DRIVEN_OPTIONAL_EXTENSION
+  ufotri_short_term_3h_delay: HOLD_OPTIONAL_EXTENSION
+  penman_eq38_aerodynamic_term: HOLD_REJECTED_FROM_CONTROLLED_BASELINE
+
+deferred_external_or_later_phase_items:
+  real_production_input_binding: DEFERRED
+  real_cteas_atmos_binding: DEFERRED
+  calibration: DEFERRED_NOT_AUTHORIZED
+  empirical_validation: DEFERRED_NOT_CLAIMED
+  physical_accuracy_qualification: DEFERRED_NOT_CLAIMED
+  production_readiness: DEFERRED_NOT_CLAIMED
+
+hard_boundaries:
+  full_model_production_ready: false
+  production_input_packet_ready: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  calibration_started: false
+  active_parameters: 0
+  v3_default_path_changed: false
+
+next_stage_authorization:
+  selected: V4_DEVELOPMENT_BASELINE_RC1
+  allowed_scope:
+    - combined_portable_and_frozen_regression
+    - controlled_synthetic_replay_end_to_end_execution
+    - conservation_and_identity_gates
+    - deterministic_repeat
+    - restart_equivalence
+    - fail_closed_contract_checks
+    - v3_default_isolation_check
+    - development_baseline_freeze_metadata
+  new_physics_subsystem_authorized: false
+  solver_equation_change_authorized: false
+  production_input_binding_authorized: false
+  real_atmos_binding_authorized: false
+  calibration_authorized: false
+  empirical_validation_claim_authorized: false
+  physical_accuracy_claim_authorized: false
