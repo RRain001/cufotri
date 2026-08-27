@@ -16,7 +16,7 @@ def load_governance() -> dict:
 def test_decision_is_control_plane_only_and_based_on_post_orchestration_main() -> None:
     data = load_governance()
     assert data["stage"] == "V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1"
-    assert data["status"] == "PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_EXACT_HEAD_GATE"
+    assert data["status"] == "PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_CLOSURE_GATE"
     assert data["base_main_sha"] == "1884bb791873d47d08ceb6300d51b6974dddf37d"
     scope = data["scope"]
     assert scope["control_plane_and_interface_decision_only"] is True
@@ -109,6 +109,25 @@ def test_provenance_and_annual_time_semantics_remain_domain_specific() -> None:
     assert time["annual_means_continuous_harvest_transfer_for_one_year"] is False
 
 
+def test_first_exact_head_evidence_is_frozen_and_superseded_head_is_not_certified() -> None:
+    evidence = load_governance()["first_exact_head_evidence"]
+    assert evidence["certified_head_sha"] == "8b94002dbfbdd1a2278f95a345ba488d98e06474"
+    assert evidence["certified_head_parent_sha"] == "1884bb791873d47d08ceb6300d51b6974dddf37d"
+    assert evidence["protected_run_id"] == 33033725862
+    assert evidence["protected_conclusion"] == "SUCCESS"
+    assert evidence["remediation_run_id"] == 33033725958
+    assert evidence["remediation_conclusion"] == "SUCCESS"
+    assert evidence["portable"] == {"passed": 1259, "skipped": 1, "deselected": 57}
+    assert evidence["explicit_frozen_current"]["passed"] == 327
+    assert evidence["machine_gates"]["sensitivity"] == "PASS_SOFTWARE_SCREENING"
+    assert evidence["machine_gates"]["root_operator_split"] == "PASS_SELECTION"
+    assert evidence["machine_gates"]["soil_root_tfwt_obt"] == "PASS_INTEGRATION"
+    assert evidence["machine_gates"]["replay_orchestration"] == "PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION"
+    superseded = evidence["superseded_noncertified_head"]
+    assert superseded["sha"] == "604b6a4ec2b3f025e2fa10ec024bb753f9a5f9e4"
+    assert superseded["production_or_runtime_failure_observed"] is False
+
+
 def test_future_implementation_is_gated_and_scope_creep_remains_forbidden() -> None:
     data = load_governance()
     gates = data["future_implementation_acceptance_gates"]
@@ -130,7 +149,7 @@ def test_future_implementation_is_gated_and_scope_creep_remains_forbidden() -> N
     assert "real_cteas_atmos_binding" in forbidden
 
 
-def test_hard_boundaries_and_documents_match_the_selected_decision() -> None:
+def test_hard_boundaries_and_documents_match_the_closure_state() -> None:
     data = load_governance()
     hard = data["hard_invariants"]
     assert hard["v3_default_profile_changed"] is False
@@ -144,14 +163,16 @@ def test_hard_boundaries_and_documents_match_the_selected_decision() -> None:
     assert hard["real_cteas_atmos_coupling_active"] is False
 
     exit_state = data["exit_state"]
-    assert exit_state["first_exact_head_gate_complete"] is False
-    assert exit_state["governance_closure_complete"] is False
+    assert exit_state["first_exact_head_gate_complete"] is True
+    assert exit_state["governance_closure_complete"] is True
+    assert exit_state["closure_exact_head_gate_complete"] is False
     assert exit_state["implementation_authorized"] is False
     assert exit_state["implementation_authorized_after_no_drift_merge"] is True
 
     report = REPORT.read_text(encoding="utf-8")
     adr = ADR.read_text(encoding="utf-8")
-    assert "`PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_EXACT_HEAD_GATE`" in report
+    assert "`PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_CLOSURE_GATE`" in report
     assert "terminal diagnostic" in adr
     assert "cross-basis conversion is forbidden" in adr.lower()
     assert "`H-3`" in adr
+    assert "8b94002dbfbdd1a2278f95a345ba488d98e06474" in adr

@@ -2,7 +2,7 @@
 
 ## Status
 
-`PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_EXACT_HEAD_GATE`
+`PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_CLOSURE_GATE`
 
 ## Context
 
@@ -146,9 +146,26 @@ R1 does not activate or validate any endpoint parameter.
 
 Existing harvest fractions, TFWT harvest fractions, annual consumption amounts, product masses, and dose coefficients remain explicit scenario/provisional inputs under their current API rules. The earlier synthetic sensitivity screen demonstrated computational dependence only; it does not provide physical uncertainty ranges, calibration, or parameter validation.
 
+## First exact-head certification
+
+The initial non-certified head `604b6a4ec2b3f025e2fa10ec024bb753f9a5f9e4` was rejected by Protected CI because one new governance test required a brittle exact prose string. No production source, solver, runtime, workflow semantics, or physics failure was observed. That head was superseded rather than treated as certified evidence.
+
+The corrected decision head is `8b94002dbfbdd1a2278f95a345ba488d98e06474`, a single commit directly based on `1884bb791873d47d08ceb6300d51b6974dddf37d`. Its exact-head evidence is:
+
+- V3 Protected Integration Gate `33033725862`: `SUCCESS`;
+- V3 Remediation CI `33033725958`: `SUCCESS`;
+- portable suite: `1259 passed, 1 skipped, 57 deselected`;
+- explicit current/frozen suite: `327 passed`;
+- sensitivity machine gate: `PASS_SOFTWARE_SCREENING`;
+- root operator-split gate: `PASS_SELECTION`;
+- soil-root-TFWT-OBT gate: `PASS_INTEGRATION`;
+- replay orchestration gate: `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`.
+
+This certification validates the software/governance boundary only. It is not empirical validation or a physical-accuracy claim.
+
 ## Future implementation acceptance gates
 
-If and only if this decision later passes both exact-head gate rounds and merges without tree drift, a new isolated implementation branch may be authorized. That implementation must demonstrate at least:
+If and only if this decision later passes the governance-closure exact-head gate and merges without tree drift, a new isolated implementation branch may be authorized. That implementation must demonstrate at least:
 
 1. exact composition equivalence to direct `FoodTransferSolver -> FoodIntakeSolver -> DoseSolver` calls for identical valid inputs;
 2. upstream replay endpoint object/value immutability before and after the diagnostic readout;
@@ -180,4 +197,4 @@ This decision does not authorize on the current branch:
 
 The frozen V3 default, merged V4 replay orchestration, component equations, `PRESERVE_V3_POST_OBT_ROOT_GAIN`, and `ACTIVE_PARAMETERS=0` remain unchanged.
 
-If this decision closes through both exact-head gates and a no-drift merge, the only newly authorized next stage is `V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_IMPLEMENTATION_R1` on a new isolated branch.
+This governance closure records the first exact-head evidence only. Implementation remains unauthorized until the closure exact head passes both Protected and Remediation CI and the PR merges by expected head without tree drift. After that no-drift merge, the only newly authorized next stage is `V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_IMPLEMENTATION_R1` on a new isolated branch.

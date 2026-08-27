@@ -1,6 +1,6 @@
 schema_version: v1
 stage: V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_R1
-status: PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_EXACT_HEAD_GATE
+status: PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_CLOSURE_GATE
 repository: RRain001/CTEAS_ufotri
 base_main_sha: 1884bb791873d47d08ceb6300d51b6974dddf37d
 branch: codex/v4-system-food-intake-dose-adapter-decision-r1
@@ -171,6 +171,34 @@ selected_future_order:
   - order: 9
     operation: RETURN_DOWNSTREAM_STATES_AND_COMPOSITE_AUDIT_WITH_UPSTREAM_ENDPOINT_UNCHANGED
 
+first_exact_head_evidence:
+  certified_head_sha: 8b94002dbfbdd1a2278f95a345ba488d98e06474
+  certified_head_parent_sha: 1884bb791873d47d08ceb6300d51b6974dddf37d
+  certified_head_tree_sha: 72ab991675ce7a9eac8fb63603e1aac71bca7139
+  protected_run_id: 33033725862
+  protected_conclusion: SUCCESS
+  remediation_run_id: 33033725958
+  remediation_conclusion: SUCCESS
+  portable:
+    passed: 1259
+    skipped: 1
+    deselected: 57
+  explicit_frozen_current:
+    passed: 327
+  machine_gates:
+    sensitivity: PASS_SOFTWARE_SCREENING
+    root_operator_split: PASS_SELECTION
+    soil_root_tfwt_obt: PASS_INTEGRATION
+    replay_orchestration: PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+  superseded_noncertified_head:
+    sha: 604b6a4ec2b3f025e2fa10ec024bb753f9a5f9e4
+    protected_run_id: 33033492314
+    remediation_run_id: 33033492312
+    disposition: SUPERSEDED_AFTER_GOVERNANCE_TEST_PROSE_ASSERTION_FAILURE
+    production_or_runtime_failure_observed: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+
 future_implementation_acceptance_gates:
   composition:
     direct_v3_solver_chain_equivalence: true
@@ -259,8 +287,8 @@ hard_invariants:
 
 exit_state:
   decision_content_complete: true
-  first_exact_head_gate_complete: false
-  governance_closure_complete: false
+  first_exact_head_gate_complete: true
+  governance_closure_complete: true
   closure_exact_head_gate_complete: false
   selected_architecture: OPT_IN_TERMINAL_DIAGNOSTIC_ENDPOINT_ADAPTER
   implementation_authorized: false

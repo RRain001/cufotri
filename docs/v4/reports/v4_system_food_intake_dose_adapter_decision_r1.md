@@ -2,7 +2,7 @@
 
 ## Result
 
-`PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_EXACT_HEAD_GATE`
+`PASS_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_DECISION_AWAITING_CLOSURE_GATE`
 
 Base: `1884bb791873d47d08ceb6300d51b6974dddf37d`
 
@@ -88,9 +88,28 @@ Replay, harvest, food-product basis, consumption basis, consumption parameters, 
 
 The harvest/food event is anchored at the replay endpoint timestamp. The annual intake period is an exposure-period transform of that terminal product concentration. It is not evidence that the environmental model or harvest process was simulated continuously for a year.
 
+## First exact-head certification
+
+The first attempted head `604b6a4ec2b3f025e2fa10ec024bb753f9a5f9e4` was not certified: Protected run `33033492314` rejected a brittle exact-string governance assertion. Remediation `33033492312` passed, and no production/runtime/physics failure was observed. The branch was rewritten to preserve a one-clean-commit decision history.
+
+Certified decision head: `8b94002dbfbdd1a2278f95a345ba488d98e06474`.
+
+Evidence:
+
+- Protected `33033725862`: SUCCESS;
+- Remediation `33033725958`: SUCCESS;
+- portable: `1259 passed, 1 skipped, 57 deselected`;
+- frozen/current: `327 passed`;
+- `PASS_SOFTWARE_SCREENING`;
+- `PASS_SELECTION`;
+- `PASS_INTEGRATION`;
+- `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`.
+
+The decision is therefore content-complete and first-head certified. This closure records that evidence only; it does not implement the adapter.
+
 ## Future implementation acceptance requirements
 
-A later implementation may be authorized only after this decision passes first exact-head Protected + Remediation CI, a governance-only closure passes a second exact-head Protected + Remediation CI, and the PR merges by expected head without tree drift.
+A later implementation may be authorized only after this governance-only closure passes a second exact-head Protected + Remediation CI and the PR merges by expected head without tree drift.
 
 That future implementation must prove direct-chain equivalence, endpoint immutability, both harvest modes, internal food balance closure, timestamp preservation, fail-closed identities, fail-closed basis mismatch, absence of cross-basis conversion, deterministic repeat, and independent provenance retention.
 
@@ -110,4 +129,4 @@ Still HOLD / FALSE:
 - real CTEAS-Atmos binding;
 - empirical validation or physical-accuracy claim.
 
-If all decision/closure gates and no-drift merge pass, the next isolated stage is `V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_IMPLEMENTATION_R1`.
+If the closure exact-head gates and no-drift merge pass, the next isolated stage is `V4_SYSTEM_FOOD_INTAKE_DOSE_ADAPTER_IMPLEMENTATION_R1`.
