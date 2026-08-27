@@ -38,9 +38,11 @@ def test_normalization_is_grounded_in_historical_semantics_without_rewriting_his
 
 def test_internal_development_route_defers_production_and_real_atmos():
     current = _load(CURRENT)
+    stage = _load(STAGE)
     policy = current["scope_policy"]
 
-    assert current["project_phase"] == "INTERNAL_V4_DEVELOPMENT_COMPLETION"
+    assert stage["normalization_decisions"]["project_phase"] == "INTERNAL_V4_DEVELOPMENT_COMPLETION"
+    assert current["project_phase"].startswith("INTERNAL_V4_DEVELOPMENT_")
     assert policy["real_production_inputs_currently_required"] is False
     assert policy["real_production_inputs_deferred"] is True
     assert policy["real_cteas_atmos_binding_currently_required"] is False
@@ -49,15 +51,15 @@ def test_internal_development_route_defers_production_and_real_atmos():
     assert policy["production_case_declaration_issue"] == 52
 
 
-def test_only_two_mandatory_internal_stages_remain():
-    current = _load(CURRENT)
+def test_normalization_snapshot_selected_the_two_stage_internal_route():
+    stage = _load(STAGE)
 
-    assert current["remaining_mandatory_internal_development_stages"] == [
+    assert stage["route_reset"]["mandatory_internal_sequence"] == [
         "V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1",
         "V4_DEVELOPMENT_BASELINE_RC1",
     ]
-    assert current["current_next_stage"]["selected"] == "V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1"
-    assert current["current_next_stage"]["new_physics_implementation_pre_authorized"] is False
+    assert stage["route_reset"]["next_stage"] == "V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1"
+    assert stage["route_reset"]["new_physics_pre_authorized"] is False
 
 
 def test_optional_extensions_are_not_internal_completion_blockers():

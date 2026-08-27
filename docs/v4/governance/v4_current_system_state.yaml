@@ -1,7 +1,7 @@
 schema_version: v1
 authority_kind: CURRENT_V4_MODEL_DEVELOPMENT_STATE
-normalization_stage: V4_STATE_NORMALIZATION_R1
-project_phase: INTERNAL_V4_DEVELOPMENT_COMPLETION
+current_state_stage: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+project_phase: INTERNAL_V4_DEVELOPMENT_BASELINE_RC
 
 scope_policy:
   real_production_inputs_currently_required: false
@@ -37,6 +37,14 @@ legacy_flag_normalization:
   historical_stage_files_are_immutable: true
   current_authority_must_use_split_flags: true
 
+development_completeness_review:
+  stage: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
+  verdict: PASS_NO_MANDATORY_INTERNAL_BLOCKERS
+  mandatory_internal_blocker_count: 0
+  selected_v4_baseline_internal_development_complete_for_rc_entry: true
+  production_and_real_atmos_excluded_as_deferred_current_phase_dependencies: true
+  new_physics_required_before_rc: false
+
 readiness_boundaries:
   full_model_production_ready: false
   production_input_packet_ready: false
@@ -65,12 +73,11 @@ optional_or_held_extensions:
     mandatory_for_v4_internal_completion: false
 
 remaining_mandatory_internal_development_stages:
-  - V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
   - V4_DEVELOPMENT_BASELINE_RC1
 
 current_next_stage:
-  selected: V4_DEVELOPMENT_COMPLETENESS_REVIEW_R1
-  scope: MANDATORY_INTERNAL_SOFTWARE_AND_PHYSICS_GAP_REVIEW_ONLY
+  selected: V4_DEVELOPMENT_BASELINE_RC1
+  scope: COMBINED_REGRESSION_AND_DEVELOPMENT_BASELINE_FREEZE_ONLY
   new_physics_implementation_pre_authorized: false
   production_input_work_pre_authorized: false
   real_atmos_binding_pre_authorized: false
@@ -87,9 +94,14 @@ completion_target:
     remain later phases and must not be inferred from this completion state.
 
 evidence_anchors:
+  state_normalization_adr: docs/v4/adr/ADR-055-v4-state-normalization-r1.md
+  completeness_review_adr: docs/v4/adr/ADR-056-v4-development-completeness-review-r1.md
+  three_layer_soil_report: docs/v4/reports/v4_three_layer_soil_core_implementation_r1.md
+  root_flux_report: docs/v4/reports/v4_three_layer_root_flux_core_implementation_r1.md
   eq39_semantics_adr: docs/v4/adr/ADR-045-v4-root-total-uptake-ufotri-eq39-implementation-r1.md
-  controlled_e2e_governance: docs/v4/governance/v4_controlled_ufotri_end_to_end_numerical_integration_r1.yaml
-  post_controlled_review: docs/v4/reports/v4_post_controlled_ufotri_system_review_r1.md
-  production_readiness_audit: docs/v4/governance/v4_production_input_readiness_audit_r1.yaml
-  r5_snapshot: docs/v4/governance/v4_production_case_input_source_resolution_r5.yaml
-  base_main_before_normalization: 6e4edff6a1334f823cb631a25e8449a49d426254
+  soil_root_tfwt_obt_report: docs/v4/reports/v4_soil_root_tfwt_obt_integration_r1.md
+  replay_orchestration_report: docs/v4/reports/v4_system_replay_input_orchestration_implementation_r1.md
+  food_intake_dose_report: docs/v4/reports/v4_system_food_intake_dose_adapter_implementation_r1.md
+  controlled_e2e_adr: docs/v4/adr/ADR-046-v4-controlled-ufotri-end-to-end-numerical-integration-r1.md
+  leaf_r5_readiness: docs/v4/leaf/v4_2_leaf_dynamic_stomatal_readiness.yaml
+  base_main_before_completeness_review: 1b832dbcbe9a57ec0af13ecec691d43f409d4fa1
