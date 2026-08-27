@@ -2,7 +2,7 @@
 
 ## Status
 
-`EVIDENCE_READINESS_ASSESSED_AWAITING_FIRST_EXACT_HEAD_CI`
+`PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI`
 
 This stage is a control-plane and evidence-readiness assessment only. It changes no production source, solver equation, numerical coupling, active parameter, calibration state, or runnable default.
 
@@ -137,9 +137,44 @@ The next stage must preregister the packet before inspecting data for fit:
 
 Independent studies may inform measurement design and biological interpretation, but cannot be fused into a single calibration trajectory.
 
+## First exact-head certification
+
+Exact review head:
+
+`428d413230d90fc2e8960bc69217052c6b5cd95e`
+
+```text
+Protected 33039367515 = SUCCESS
+Remediation 33039367521 = SUCCESS
+portable = 1293 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 355 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+food-intake-dose endpoint = PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+PR checkout merge SHA = f37488d2ebe57b091317942e223487f736dedfc4
+```
+
+The run verifies the control-plane artifacts and preserves all existing software gates. It is not empirical evidence for Option B and does not authorize physical-accuracy, calibration or parameter claims.
+
+## Governance closure
+
+The first exact head passed both required workflows. A governance-only closure now freezes those run identities and updates `docs/implementation_status.md` while preserving the evidence decision unchanged.
+
+Relative to `428d4132...`, closure changes are restricted to:
+
+- `docs/v4/adr/ADR-038-v4-obt-formation-evidence-readiness-r1.md`;
+- `docs/v4/governance/v4_obt_formation_evidence_readiness_r1.yaml`;
+- `docs/v4/reports/v4_obt_formation_evidence_readiness_r1.md`;
+- `tests/v4/test_v4_obt_formation_evidence_readiness_r1.py`;
+- `docs/implementation_status.md`.
+
+No `.github/workflows/`, evidence-packet contract, `src/`, script, runtime, solver, parameter, calibration state, evidence disposition or next-stage choice is changed by closure. The PR remains Draft until the closure exact head passes both Protected and Remediation independently.
+
 ## Next stage
 
-After exact-head CI, governance closure, expected-head merge and no-drift verification, authorize only:
+After closure exact-head CI, expected-head merge and no-drift verification, authorize only:
 
 `V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1`
 
@@ -150,7 +185,7 @@ That stage may prepare a data-owner request package, acceptance schema, licence/
 ## Hard state
 
 ```ini
-V4_OBT_FORMATION_EVIDENCE_READINESS_R1 = EVIDENCE_READINESS_ASSESSED_AWAITING_FIRST_EXACT_HEAD_CI
+V4_OBT_FORMATION_EVIDENCE_READINESS_R1 = PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI
 EVIDENCE_DISPOSITION = ACQUIRABLE_WITH_PREREGISTRATION
 REPOSITORY_MATCHED_PACKET_AVAILABLE = FALSE
 P_STATE = LATENT
@@ -172,4 +207,4 @@ PHYSICAL_ACCURACY_CLAIM = FALSE
 NEXT_STAGE = V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1
 ```
 
-The status remains provisional until both exact-head CI rounds and post-merge no-drift are complete.
+The decision remains downstream-authorization pending until closure exact-head CI and post-merge no-drift are complete.

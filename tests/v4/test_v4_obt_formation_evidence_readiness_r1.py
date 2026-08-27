@@ -8,6 +8,7 @@ GOVERNANCE = ROOT / "docs/v4/governance/v4_obt_formation_evidence_readiness_r1.y
 PACKET = ROOT / "docs/v4/contracts/obt_formation_evidence_packet_r1.yaml"
 REPORT = ROOT / "docs/v4/reports/v4_obt_formation_evidence_readiness_r1.md"
 ADR = ROOT / "docs/v4/adr/ADR-038-v4-obt-formation-evidence-readiness-r1.md"
+STATUS = ROOT / "docs/implementation_status.md"
 WORKFLOW = ROOT / ".github/workflows/v3-integration-gate.yml"
 
 
@@ -18,7 +19,7 @@ def load_yaml(path: Path) -> dict:
 def test_obt_evidence_readiness_is_control_plane_only_and_anchored_to_post_endpoint_merge() -> None:
     data = load_yaml(GOVERNANCE)
     assert data["stage"] == "V4_OBT_FORMATION_EVIDENCE_READINESS_R1"
-    assert data["status"] == "EVIDENCE_READINESS_ASSESSED_AWAITING_FIRST_EXACT_HEAD_CI"
+    assert data["status"] == "PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI"
     assert data["base_main_sha"] == "d8c3336c14db1d695e70dc62755b00ce5235d04d"
 
     scope = data["stage_scope"]
@@ -141,9 +142,51 @@ def test_identifiability_gate_fail_closes_and_next_stage_is_acquisition_only() -
     assert "calibrate_current_kf_kr" in next_stage["may_not"]
 
 
-def test_hard_invariants_and_first_gate_state_remain_closed() -> None:
+def test_first_exact_head_gate_and_governance_closure_are_frozen() -> None:
     data = load_yaml(GOVERNANCE)
-    hard = data["hard_invariants"]
+    first = data["first_exact_head_gate"]
+    assert first["complete"] is True
+    assert first["head_sha"] == "428d413230d90fc2e8960bc69217052c6b5cd95e"
+    assert first["protected_gate"] == {"run_id": 33039367515, "status": "SUCCESS"}
+    assert first["remediation"] == {"run_id": 33039367521, "status": "SUCCESS"}
+    assert first["portable_suite"] == {"passed": 1293, "skipped": 1, "deselected": 57}
+    assert first["frozen_boundary_suite"] == {"passed": 355}
+    assert first["checkout_merge_sha"] == "f37488d2ebe57b091317942e223487f736dedfc4"
+    assert first["machine_gates"] == {
+        "sensitivity": "PASS_SOFTWARE_SCREENING",
+        "root_operator_split": "PASS_SELECTION",
+        "soil_root_tfwt_obt": "PASS_INTEGRATION",
+        "replay_orchestration": "PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION",
+        "food_intake_dose_endpoint": "PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION",
+    }
+    assert first["production_source_changed"] is False
+    assert first["empirical_validation"] is False
+    assert first["physical_accuracy_claim"] is False
+
+    closure = data["governance_closure"]
+    assert closure["written"] is True
+    assert closure["source_review_head"] == "428d413230d90fc2e8960bc69217052c6b5cd95e"
+    assert closure["implementation_status_updated"] is True
+    assert closure["workflow_changed_by_closure"] is False
+    assert closure["evidence_packet_contract_changed_by_closure"] is False
+    assert closure["evidence_disposition_changed_by_closure"] is False
+    assert closure["closure_exact_head_gate_complete"] is False
+    assert closure["status"] == "AWAITING_CLOSURE_EXACT_HEAD_GATE"
+    assert set(closure["changed_files_only"]) == {
+        "docs/v4/adr/ADR-038-v4-obt-formation-evidence-readiness-r1.md",
+        "docs/v4/governance/v4_obt_formation_evidence_readiness_r1.yaml",
+        "docs/v4/reports/v4_obt_formation_evidence_readiness_r1.md",
+        "tests/v4/test_v4_obt_formation_evidence_readiness_r1.py",
+        "docs/implementation_status.md",
+    }
+    assert data["exit_state"]["first_exact_head_gate_complete"] is True
+    assert data["exit_state"]["governance_closure_written"] is True
+    assert data["exit_state"]["governance_closure_exact_head_gate_complete"] is False
+    assert data["exit_state"]["merge_authorized"] is False
+
+
+def test_hard_invariants_remain_closed_after_first_gate() -> None:
+    hard = load_yaml(GOVERNANCE)["hard_invariants"]
     assert hard["v3_default_changed"] is False
     assert hard["v4_runtime_changed"] is False
     assert hard["production_source_changed"] is False
@@ -156,22 +199,27 @@ def test_hard_invariants_and_first_gate_state_remain_closed() -> None:
     assert hard["leaf_r5_authorized"] is False
     assert hard["root_q_w_production_input_resolved"] is False
     assert hard["full_hydrology_authorized"] is False
+    assert hard["plant_water_dynamics_authorized"] is False
     assert hard["real_cteas_atmos_binding"] is False
-
-    first = data["first_exact_head_gate"]
-    assert first["complete"] is False
-    assert first["head_sha"] is None
-    assert data["governance_closure"]["written"] is False
-    assert data["exit_state"]["merge_authorized"] is False
+    assert hard["empirical_validation"] is False
+    assert hard["physical_accuracy_claim"] is False
 
 
-def test_readiness_artifacts_and_protected_gate_name_the_frozen_disposition() -> None:
+def test_readiness_artifacts_status_and_protected_gate_name_the_frozen_disposition() -> None:
     adr = ADR.read_text(encoding="utf-8")
     report = REPORT.read_text(encoding="utf-8")
+    status = STATUS.read_text(encoding="utf-8")
     workflow = WORKFLOW.read_text(encoding="utf-8")
     for text in (adr, report):
+        assert "PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI" in text
         assert "ACQUIRABLE_WITH_PREREGISTRATION" in text
         assert "V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1" in text
         assert "ACTIVE_PARAMETERS = 0" in text
         assert "CROSS_STUDY_CASE_FUSION = FORBIDDEN" in text
+        assert "33039367515" in text
+        assert "33039367521" in text
+    assert "V4_OBT_FORMATION_EVIDENCE_READINESS_R1" in status
+    assert "PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI" in status
+    assert "EVIDENCE_DISPOSITION = ACQUIRABLE_WITH_PREREGISTRATION" in status
+    assert "OBT_MULTI_POOL_IMPLEMENTATION_AUTHORIZED = FALSE" in status
     assert "tests/v4/test_v4_obt_formation_evidence_readiness_r1.py" in workflow

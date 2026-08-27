@@ -2,6 +2,54 @@
 
 Updated: 2026-08-24
 
+## V4 OBT formation evidence readiness R1 (2026-08-27)
+
+The post-endpoint review merge `d8c3336c14db1d695e70dc62755b00ce5235d04d`
+authorized an evidence-readiness assessment for the selected future OBT
+precursor/exchangeable/non-exchangeable architecture. The review remains
+control-plane only: the repository has no complete matched Option-B raw packet,
+and publication-level component evidence is not treated as an available
+validation case. The selected disposition is acquisition under a frozen
+preregistration/data contract, with VATO owner clarification first and
+controlled component datasets as fallback acquisition targets.
+
+The first exact review head `428d413230d90fc2e8960bc69217052c6b5cd95e`
+passed both pull-request workflows. Protected run `33039367515` recorded
+`1293 passed, 1 skipped, 57 deselected` in the portable suite and `355 passed`
+in the frozen/current-boundary suite; Remediation run `33039367521` also
+succeeded. Existing sensitivity, root-operator-split, soil-root-TFWT-OBT,
+replay-orchestration and food-intake-dose machine gates all retained their
+previous PASS states. Those results are software/governance evidence only.
+
+```text
+V4_OBT_FORMATION_EVIDENCE_READINESS_R1 = PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI
+EVIDENCE_DISPOSITION = ACQUIRABLE_WITH_PREREGISTRATION
+REPOSITORY_MATCHED_PACKET_AVAILABLE = FALSE
+FIRST_EXACT_HEAD = 428d413230d90fc2e8960bc69217052c6b5cd95e
+FIRST_PROTECTED_RUN = 33039367515_SUCCESS
+FIRST_REMEDIATION_RUN = 33039367521_SUCCESS
+PORTABLE_SUITE = PASS_1293_WITH_1_SKIP_57_DESELECTED
+FROZEN_BOUNDARY_SUITE = PASS_355
+OBT_MULTI_POOL_IMPLEMENTATION_AUTHORIZED = FALSE
+OBT_PARAMETER_ACTIVATION_AUTHORIZED = FALSE
+CURRENT_KF_KR_CALIBRATION_AUTHORIZED = FALSE
+ACTIVE_PARAMETERS = 0
+CALIBRATION_STARTED = FALSE
+V3_DEFAULT_CHANGED = FALSE
+V4_RUNTIME_CHANGED = FALSE
+LEAF_R5_AUTHORIZED = FALSE
+ROOT_Q_W_PRODUCTION_INPUT_RESOLVED = FALSE
+FULL_HYDROLOGY_AUTHORIZED = FALSE
+REAL_CTEAS_ATMOS_BINDING = FALSE
+EMPIRICAL_VALIDATION = FALSE
+PHYSICAL_ACCURACY_CLAIM = FALSE
+NEXT_STAGE_AFTER_SUCCESSFUL_MERGE = V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1
+```
+
+The governance closure must still pass its own exact-head Protected and
+Remediation workflows before Ready/`expected_head_sha` merge. The next stage
+is not effective until merge parent/tree no-drift verification succeeds.
+
 ## V3 P7.7B Baseline synthetic benchmark execution
 
 P7.7B executes all five P7.7A synthetic cases through the existing public V3

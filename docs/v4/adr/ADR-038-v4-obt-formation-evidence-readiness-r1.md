@@ -1,6 +1,6 @@
 # ADR-038: V4 OBT formation evidence readiness R1
 
-Status: `EVIDENCE_READINESS_ASSESSED_AWAITING_FIRST_EXACT_HEAD_CI`
+Status: `PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI`
 
 ## Context
 
@@ -104,9 +104,39 @@ A future implementation remains blocked unless an accepted packet supports all o
 
 If a complete packet cannot satisfy these conditions, the multi-pool candidate remains on HOLD and the reduced model stays explicitly labeled as a limited baseline.
 
+## First exact-head certification
+
+The evidence-readiness review head is `428d413230d90fc2e8960bc69217052c6b5cd95e`.
+
+```text
+Protected 33039367515 = SUCCESS
+Remediation 33039367521 = SUCCESS
+portable = 1293 passed, 1 skipped, 57 deselected
+frozen/current-boundary = 355 passed
+sensitivity = PASS_SOFTWARE_SCREENING
+root operator split = PASS_SELECTION
+soil-root-TFWT-OBT = PASS_INTEGRATION
+replay orchestration = PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION
+food-intake-dose endpoint = PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION
+```
+
+The pull-request workflow checked synthetic merge ref `f37488d2ebe57b091317942e223487f736dedfc4`, which merges exact review head `428d4132...` into base `d8c3336c...`. This checkout identity is recorded separately from the branch-head identity. The passing software gates do not convert the external evidence assessment into empirical validation or a physical-accuracy claim.
+
+## Governance closure
+
+The first exact head has passed both required workflows, so this governance-only closure records the certification evidence and updates `docs/implementation_status.md`. Relative to `428d4132...`, the closure may change only:
+
+- `docs/v4/adr/ADR-038-v4-obt-formation-evidence-readiness-r1.md`;
+- `docs/v4/governance/v4_obt_formation_evidence_readiness_r1.yaml`;
+- `docs/v4/reports/v4_obt_formation_evidence_readiness_r1.md`;
+- `tests/v4/test_v4_obt_formation_evidence_readiness_r1.py`;
+- `docs/implementation_status.md`.
+
+It changes no workflow, evidence-packet contract, `src/`, script, solver equation, runtime state, parameter, calibration state, evidence disposition or next-stage scientific decision. The closure exact head must independently pass Protected + Remediation before the PR may become Ready.
+
 ## Next stage
 
-After this evidence-readiness PR passes both exact-head CI rounds, merges with `expected_head_sha`, and passes parent/tree no-drift verification, the only authorized follow-on is:
+After this evidence-readiness PR passes the closure exact-head CI round, merges with `expected_head_sha`, and passes parent/tree no-drift verification, the only authorized follow-on is:
 
 `V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1`
 
@@ -117,7 +147,7 @@ That stage may freeze a request package, target hierarchy, raw-file acceptance s
 ## Hard invariants
 
 ```ini
-V4_OBT_FORMATION_EVIDENCE_READINESS_R1 = EVIDENCE_READINESS_ASSESSED_AWAITING_FIRST_EXACT_HEAD_CI
+V4_OBT_FORMATION_EVIDENCE_READINESS_R1 = PASS_EVIDENCE_READINESS_AWAITING_CLOSURE_EXACT_HEAD_CI
 EVIDENCE_DISPOSITION = ACQUIRABLE_WITH_PREREGISTRATION
 REPOSITORY_MATCHED_PACKET_AVAILABLE = FALSE
 P_STATE = LATENT_LUMPED_PRECURSOR_ACTIVITY
@@ -141,4 +171,4 @@ PHYSICAL_ACCURACY_CLAIM = FALSE
 NEXT_STAGE_AFTER_SUCCESSFUL_MERGE = V4_OBT_MATCHED_EVIDENCE_ACQUISITION_PREREGISTRATION_R1
 ```
 
-The evidence-readiness result is not effective until first exact-head Protected + Remediation pass, a governance-only closure is written, the closure exact head passes both workflows again, the PR is merged with `expected_head_sha`, and post-merge no-drift verification succeeds.
+The evidence-readiness decision remains non-effective for downstream authorization until the closure exact head passes both workflows, the PR is merged with `expected_head_sha`, and post-merge parent/tree/main no-drift verification succeeds.
