@@ -1,0 +1,134 @@
+schema_version: v1
+stage: V4_SYSTEM_POST_INTEGRATION_REVIEW_R1
+status: PASS_SYSTEM_POST_INTEGRATION_REVIEW
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 4545f4b88a5bc4051a9d0ab4291a03d8aff5c021
+branch: codex/v4-system-post-integration-review-r1
+
+review_scope:
+  kind: SYSTEM_LEVEL_CONTROL_PLANE_REVIEW_ONLY
+  solver_source_changed: false
+  numerical_coupling_changed: false
+  parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  real_cteas_atmos_binding: false
+
+inputs_reviewed:
+  - docs/v4/governance/v4_system_roadmap_reset_r1.yaml
+  - docs/v4/contracts/v4_system_atmos_exchange_contract.yaml
+  - docs/v4/governance/v4_system_physics_gap_sensitivity_audit_r1.yaml
+  - docs/v4/governance/v4_soil_root_tfwt_obt_integration_r1.yaml
+  - current protected-gate sensitivity screening evidence
+
+post_integration_system_state:
+  atmosphere_exchange:
+    status: CONTRACT_FROZEN_REPLAY_SYNTHETIC_USABLE
+    real_binding: BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED
+    current_v4_core_wiring: NOT_CONNECTED
+  leaf_exchange:
+    baseline_solver_available: true
+    dynamic_leaf_r5_authorized: false
+    r4_checkpoint: HOLD
+    included_in_new_v4_soil_root_tfwt_obt_integrator: false
+  soil:
+    representation: THREE_LAYER_OPT_IN_INVENTORY_CORE
+    status: IMPLEMENTED_AND_INTEGRATED
+    water_and_hto_fluxes: EXPLICIT_EXTERNAL_FORCING
+    full_hydrology: false
+    richards_darcy: false
+  root:
+    representation: THREE_LAYER_EXPLICIT_WATER_FLUX_TRANSFER
+    status: IMPLEMENTED_AND_INTEGRATED
+    q_w_source: EXTERNAL_EXPLICIT_FORCING
+    hydrology_or_transpiration_generated_internally: false
+  tfwt:
+    status: EXISTING_FIXED_WATER_BASIS_INTEGRATED
+    dynamic_water_storage: false
+  obt:
+    status: EXISTING_REDUCED_FIRST_ORDER_INTEGRATED
+    organ_specific_growth: false
+  food:
+    status: EXISTING_ENDPOINT_MODULE_NOT_V4_INTEGRATED
+  intake:
+    status: EXISTING_ENDPOINT_MODULE_NOT_V4_INTEGRATED
+  dose:
+    status: EXISTING_ENDPOINT_MODULE_NOT_V4_INTEGRATED
+
+stale_prior_assumptions_resolved:
+  roadmap_three_layer_soil_candidate_not_implemented: NOW_FALSE
+  prior_one_layer_root_pipeline_as_only_integrated_path: NOW_FALSE_FOR_OPT_IN_V4
+  v3_default_baseline_replaced: false
+
+priority_decision_rule: >-
+  Prefer the smallest next step that increases end-to-end system connectivity while preserving
+  already-frozen physics boundaries. Do not prioritize a subsystem merely because more literature,
+  experiments, or documentation are available for it.
+
+candidate_ranking:
+  - rank: 1
+    candidate: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
+    disposition: SELECT_NEXT_CONTROL_PLANE_STAGE
+    rationale:
+      - The upstream exchange contract is already frozen, while the new V4 soil-root-TFWT-OBT core is not connected to it.
+      - Replay/synthetic records can advance end-to-end integration without waiting for CTEAS-Atmos production completion.
+      - A decision stage can freeze ownership of Atmos-derived deposition/air HTO versus separately sourced root q_w and biological forcing before code is written.
+      - Existing baseline leaf exchange can be considered without authorizing dynamic Leaf R5.
+    implementation_authorized_now: false
+    required_decisions:
+      - map frozen Atmos record surface deposition to three-layer soil surface input without hidden accumulation-to-rate conversion
+      - map air HTO to the existing baseline leaf-exchange path without inferring dynamic stomatal physics from temperature humidity or wind
+      - keep root q_w as explicit separately-provenanced forcing; never derive it silently from Atmos fields
+      - keep biological forcing explicitly sourced and interval-aligned
+      - preserve half-open UTC interval semantics and common area-basis checks
+      - define replay and synthetic provenance and fail-closed missing-data behavior
+      - decide whether leaf exchange is composed outside or added to the opt-in V4 orchestration seam without changing leaf physics
+  - rank: 2
+    candidate: FOOD_INTAKE_DOSE_V4_ADAPTER_DECISION
+    disposition: DEFER_UNTIL_UPSTREAM_INPUT_BOUNDARY_DECIDED
+  - rank: 3
+    candidate: LEAF_R5_DYNAMIC_STOMATAL_IMPLEMENTATION
+    disposition: HOLD
+  - rank: 4
+    candidate: OBT_PHYSICS_REDESIGN
+    disposition: HOLD
+  - rank: 5
+    candidate: FULL_SOIL_HYDROLOGY_OR_PLANT_WATER_DYNAMICS
+    disposition: HOLD
+  - rank: 6
+    candidate: REAL_CTEAS_ATMOS_BINDING
+    disposition: BLOCKED
+
+review_gate:
+  review_head_sha: cbd2dafc374e22da17c197b7255444836fdc8393
+  protected_gate_run_id: 33029158798
+  remediation_run_id: 33029158729
+  protected_gate_status: SUCCESS
+  remediation_status: SUCCESS
+  portable_suite: 1220 passed, 1 skipped, 57 deselected
+  frozen_boundary_suite: 295 passed
+  sensitivity_status: PASS_SOFTWARE_SCREENING
+  operator_split_status: PASS_SELECTION
+  soil_root_tfwt_obt_status: PASS_INTEGRATION
+  closure_exact_head_gate_required: true
+
+next_stage:
+  selected: V4_SYSTEM_REPLAY_INPUT_ADAPTER_DECISION_R1
+  authorization_effective_after_review_merge: true
+  scope: CONTROL_PLANE_AND_INTERFACE_DECISION_ONLY
+  adapter_implementation_authorized: false
+  solver_changes_authorized: false
+  parameter_activation_authorized: false
+  real_cteas_atmos_binding_authorized: false
+
+hard_invariants:
+  v3_default_profile_changed: false
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  active_parameters: 0
+  calibration_started: false
+  physical_validation_complete: false
+  leaf_r5_authorized: false
+  full_soil_hydrology_authorized: false
+  plant_water_dynamics_authorized: false
+  food_intake_dose_v4_integration_authorized: false
+  real_cteas_atmos_coupling_active: false
