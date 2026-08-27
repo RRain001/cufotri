@@ -176,7 +176,8 @@ def test_hard_boundaries_and_review_artifacts_are_consistent() -> None:
     adr = ADR.read_text(encoding="utf-8")
     for text in (report, adr):
         assert "V4_PRODUCTION_INPUT_READINESS_AUDIT_R1" in text
-        assert "SOFTWARE_CHAIN_CONNECTED_WITH_CONTROLLED_UFOTRI_PROFILES=TRUE" in text
-        assert "ROOT_Q_W_PRODUCTION_INPUT_RESOLVED=TRUE" in text
-        assert "FULL_MODEL_PRODUCTION_READY=FALSE" in text
+        compact = text.replace(" ", "")
+        assert "SOFTWARE_CHAIN_CONNECTED_WITH_CONTROLLED_UFOTRI_PROFILES=TRUE" in compact
+        assert "ROOT_Q_W_PRODUCTION_INPUT_RESOLVED=TRUE" in compact
+        assert "FULL_MODEL_PRODUCTION_READY=FALSE" in compact
         assert "BLOCKED_SURFACE_FLUX_PRODUCT_UNCONFIRMED" in text
