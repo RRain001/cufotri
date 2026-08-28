@@ -13,6 +13,7 @@ from dataclasses import dataclass
 
 from ..leaf_exchange_resistance import ResistanceChain
 from .model import (
+    UFOTRILeafResistanceResult,
     UFOTRIWindProfileResult,
     manual_canopy_resistance_s_m,
     ufotri_eq21_boundary_resistance_s_m,
@@ -40,14 +41,14 @@ class UFOTRIManualResistanceState:
     def as_rc1_resistance_chain(self) -> ResistanceChain:
         """Project without approximation when the frozen RC1 contract permits it.
 
-        Daytime rain has ``r_c == 0`` in the recovered manual.  RC1 rejects a
+        Daytime rain has ``r_c == 0`` in the recovered manual. RC1 rejects a
         zero component, so this method fails closed for that state rather than
         replacing zero with an arbitrary epsilon.
 
         RC1's frozen state validator compares ``total_resistance`` against the
         literal left-associative expression ``r_a + r_b + r_c`` using exact
-        float equality.  Its factory computes the same mathematical sum via
-        ``sum(...)``, which can differ by one ulp for valid inputs.  This opt-in
+        float equality. Its factory computes the same mathematical sum via
+        ``sum(...)``, which can differ by one ulp for valid inputs. This opt-in
         projection therefore constructs the frozen state with the validator's
         exact arithmetic order; no physical value or RC1 source is changed.
         """
@@ -130,7 +131,25 @@ def build_ufotri_eq7_25_manual_resistance_state(
     )
 
 
+def build_ufotri_eq7_25_resistance_chain(**kwargs: object) -> UFOTRILeafResistanceResult:
+    """Project a manual state onto RC1 only when RC1 can represent it exactly.
+
+    This is the package-level compatibility builder. It deliberately routes
+    through :class:`UFOTRIManualResistanceState`, so the daytime-rain ``r_c=0``
+    state fails closed instead of being altered to satisfy RC1.
+    """
+
+    state = build_ufotri_eq7_25_manual_resistance_state(**kwargs)
+    return UFOTRILeafResistanceResult(
+        chain=state.as_rc1_resistance_chain(),
+        wind=state.wind,
+        canopy_resistance_s_m=state.canopy_resistance_s_m,
+        boundary_layer_resistance_s_m=state.boundary_layer_resistance_s_m,
+    )
+
+
 __all__ = [
     "UFOTRIManualResistanceState",
     "build_ufotri_eq7_25_manual_resistance_state",
+    "build_ufotri_eq7_25_resistance_chain",
 ]
