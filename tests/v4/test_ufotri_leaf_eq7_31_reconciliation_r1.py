@@ -90,5 +90,6 @@ def test_existing_source_boundaries_remain_present():
     assert "def bidirectional_leaf_exchange" in historical
     assert "sherwood = 0.664" in historical
     assert "def signed_leaf_exchange_flux" in resistance
-    assert "aerodynamic + boundary + canopy" in resistance
+    assert "total = sum(values)" in resistance
+    assert "return 1.0 / total" in resistance
     assert "leaf_transfer = leaf_flux * interval" in tfwt
