@@ -1,0 +1,41 @@
+"""Opt-in UFOTRI Eq. (33)-(37) soil-hydrology compatibility path."""
+
+from .model import (
+    EQ33_FORMULA_ID,
+    EQ35_FORMULA_ID,
+    EQ36_FORMULA_ID,
+    EQ37_ROLE_ID,
+    INTERFACE_CONDUCTIVITY_RULE,
+    INTERPOLATION_RULE,
+    STAGE_ID,
+    HydraulicRelationProvenance,
+    SoilPotentialComponents,
+    TabulatedSoilHydraulicRelation,
+    UFOTRIHydraulicProfile,
+    UFOTRIHydrologyFluxResult,
+    UFOTRISoilHydrologyError,
+    build_ufotri_eq33_37_interlayer_fluxes,
+    project_ufotri_hydrology_to_soil_forcing,
+    ufotri_eq33_total_potential_head_m,
+    ufotri_eq35_water_flux_m_s,
+)
+
+__all__ = [
+    "EQ33_FORMULA_ID",
+    "EQ35_FORMULA_ID",
+    "EQ36_FORMULA_ID",
+    "EQ37_ROLE_ID",
+    "INTERFACE_CONDUCTIVITY_RULE",
+    "INTERPOLATION_RULE",
+    "STAGE_ID",
+    "HydraulicRelationProvenance",
+    "SoilPotentialComponents",
+    "TabulatedSoilHydraulicRelation",
+    "UFOTRIHydraulicProfile",
+    "UFOTRIHydrologyFluxResult",
+    "UFOTRISoilHydrologyError",
+    "build_ufotri_eq33_37_interlayer_fluxes",
+    "project_ufotri_hydrology_to_soil_forcing",
+    "ufotri_eq33_total_potential_head_m",
+    "ufotri_eq35_water_flux_m_s",
+]
