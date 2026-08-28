@@ -1,0 +1,116 @@
+schema_version: v1
+stage: UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 4ff6fc0d6fd5a5f93f8b65fc05c11d3e3b8ed507
+scope: OPT_IN_MANUAL_FIDELITY_IMPLEMENTATION_ONLY
+
+authorization:
+  source_stage: UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1
+  source_adr: docs/v4/adr/ADR-059-ufotri-leaf-eq7-31-reconciliation-r1.md
+  source_changes_required: true
+  generic_empirical_leaf_r5_required: false
+
+implementation:
+  package: src/cteas_ufotri/plant/leaf_ufotri_v4
+  activation: EXPLICIT_IMPORT_AND_CALL_ONLY
+  default_runtime_activation: false
+  historical_v2_source_modified: false
+  frozen_rc1_resistance_source_modified: false
+  frozen_rc1_tfwt_source_modified: false
+
+manual_roles:
+  canopy_eq12_to_eq14:
+    implemented: true
+    rules:
+      - r_c_equals_r_st_over_lai
+      - daytime_stomatal_resistance
+      - nighttime_epidermal_resistance
+      - daytime_soil_water_exhaustion_switches_to_night_resistance
+      - daytime_rain_sets_canopy_resistance_zero
+      - nighttime_rain_retains_night_resistance
+      - no_vpd_multiplier_in_manual_compatibility_mode
+  aerodynamic_eq18_eq22_to_eq25:
+    implemented: true
+    eq18_identity: r_a_equals_u_over_u_star_squared
+    eq25_two_step:
+      - station_wind_to_100m_explicit_power_law
+      - wind_100m_to_vegetation_height_stability_log_profile
+    geometry:
+      roughness_length: z0_equals_0_1_H
+      displacement_height: d_equals_0_6_H
+      area_source_emission_height: FLQH_equals_0_8_H
+      area_source_emission_height_minimum_m: 1.0
+    monin_obukhov_provenance:
+      exact_original_estimator_recovered: false
+      allowed_routes:
+        - EXPLICIT_MONIN_OBUKHOV_LENGTH_WITH_SOURCE
+        - GOLDER_1972_APPROXIMATION
+      golder_exact_original_ufotri_logic: false
+  boundary_eq19_to_eq21:
+    implemented: true
+    formula: r_b_equals_2_over_k_u_star
+    historical_sherwood_deleted: false
+  signed_flux_eq26:
+    implemented_via_existing_contract: true
+    authoritative_boundary: LeafExchangeFlux
+    positive_direction: AIR_TO_LEAF
+    second_reemission_flux_created: false
+  equilibrium_eq27:
+    implemented: true
+    tfwt_basis: Bq_per_kg_plant_water
+    equation: C_air_eq_equals_C_tfwt_times_rho_v_sat_over_alpha
+    ambient_relative_humidity_in_equilibrium: false
+  analytic_eq27_to_eq30:
+    implemented: true
+    rate_constant: k_equals_rho_over_alpha_mu_r
+    target: C_target_equals_alpha_chi_over_rho
+    exact_interval_update: C_next_equals_C_target_plus_C0_minus_C_target_times_exp_minus_k_dt
+    conservation_projection: exact_integrated_leaf_transfer_to_interval_mean_signed_flux
+  eq31:
+    implemented: true
+    diagnostic: zero_air_reemission_fraction_equals_1_minus_exp_minus_k_dt
+    authoritative_conservation_flux: LeafExchangeFlux
+
+fail_closed:
+  missing_lai: true
+  zero_or_negative_lai: true
+  missing_station_to_100m_power_exponent: true
+  missing_monin_obukhov_source: true
+  ambiguous_monin_obukhov_source: true
+  golder_relabel_as_exact_original_logic: true
+  invalid_physical_inputs: true
+
+claim_boundary:
+  v4_rc1_default_path_changed: false
+  historical_v2_leaf_path_changed: false
+  generic_empirical_leaf_r5_implemented: false
+  parameter_calibration_started: false
+  production_parameter_activation: false
+  real_cteas_atmos_binding: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  original_ufotri_executable_equivalence_established: false
+
+validation_required:
+  - manual_day_night_soil_water_rain_canopy_rules
+  - eq21_exact_relation
+  - eq25_explicit_two_step_mapping
+  - explicit_monin_obukhov_provenance
+  - golder_named_literature_approximation
+  - eq27_saturated_vapour_equilibrium_mass_basis
+  - eq27_to_eq30_exact_interval_conservation
+  - analytic_restart_split_equivalence
+  - equilibrium_fixed_point
+  - eq31_zero_air_decay_diagnostic
+  - frozen_tfwt_interface_projection
+  - rc1_and_historical_source_isolation
+  - protected_exact_head_ci
+  - post_merge_no_drift
+
+completion:
+  implementation_candidate_present: true
+  exact_head_ci_certified: false
+  merged: false
+  no_drift_audited: false
+  phase_a_leaf_complete: false
+  next_stage_after_clean_merge: UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1
