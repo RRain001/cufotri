@@ -222,9 +222,10 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase C — UFOTRI soil hydrology fidelity
 
-- Phase status: `IN_PROGRESS`
-- Completed scope: recoverable Eq. (33)-(37) hydrologic mechanism and an opt-in internal signed inter-layer flux closure compatible with the frozen three-layer inventory core.
-- Remaining scope: C2 multi-step coupled water/HTO qualification, including wet/dry, lower-boundary, root-sink, restart and timestep-refinement behavior.
+- Phase status: `COMPLETE`
+- Completed scope: recoverable Eq. (33)-(37) hydrologic mechanism, opt-in signed inter-layer water/HTO flux closure compatible with the frozen three-layer inventory core, and controlled multi-step coupled numerical qualification across lower-boundary, root, TFWT and OBT interfaces.
+- Scope claim: `UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_NUMERICAL_QUALIFICATION=COMPLETE` for the recoverable manual-based mechanism under controlled/provenanced constitutive inputs.
+- Remaining source boundary: original UFOTRI constitutive curves and exact original numerical discretization remain unavailable; Phase C does not convert those source gaps into invented production parameters or an original-executable-equivalence claim.
 
 #### C1. Eq. (33)-(37) soil-hydrology reconstruction
 
@@ -252,22 +253,27 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### C2. Coupled water/HTO hydrology verification
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_VERIFICATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: C1.
-- Required checks:
-  - water balance;
-  - HTO balance;
-  - signed upward/downward transport;
-  - lower-boundary behavior;
-  - root sink coupling;
-  - dry/wet limiting cases;
-  - deterministic repeat;
-  - restart equivalence;
-  - timestep refinement;
-  - compatibility with the existing root/TFWT/OBT operator split.
-- Boundary: C2 is qualification-only and must use synthetic/replay/provenanced constitutive inputs; it does not authorize production hydrology parameters, calibration, empirical validation or real CTEAS-Atmos binding.
+- Decision: qualification-only closure with `NO_EXISTING_SOURCE_CHANGE`. At each interval the merged C1 hydrology closure is recomputed from the current three-layer soil state, projected into the frozen `ThreeLayerSoilForcing` contract, coupled to explicit `root_v4` uptake, and advanced through the existing `V4SoilRootTFWTOBTIntegrator`. No second soil solver, second hydrology solver, production parameter activation or RC1 default-path change is introduced.
+- Controlled inputs: synthetic, explicit and provenance-bearing gravity, capillary and dry/wet hydraulic profiles only. The dry `K=0` endpoint uses a documented numerical-zero tolerance `|q| <= 1.0e-24 m/s` solely to absorb a measured floating-point reconstruction residual of `7.401486830834377e-26 m/s`; this is approximately fifteen orders of magnitude below the controlled `~1e-9 m/s` transport scale and does not alter equations, constitutive inputs, conservation tolerances or refinement criteria.
+- Changed source files: `NO_EXISTING_SOURCE_CHANGE`; C2 adds only `scripts/v4/run_ufotri_coupled_water_hto_hydrology_verification_r1.py`, `tests/v4/test_ufotri_coupled_water_hto_hydrology_verification_r1.py`, ADR-065, governance and report artifacts. Existing `soil_ufotri_v4`, `soil_v4`, `root_v4`, TFWT/OBT, V4 integration and RC1/replay source paths remain unchanged.
+- Numerical closure: per-step and cumulative water/HTO ledgers, downward gravity transport, upward capillary transport including a multi-step trajectory, wet/dry limits, lower-boundary water/HTO loss, exact root water/HTO transfer identity, dynamic hydrology recomputation, selected `PRESERVE_V3_POST_OBT_ROOT_GAIN` ordering, deterministic repeat, JSON restart equivalence and timestep refinement (`3600→1800→900→450 s` toward a `225 s` comparison reference) all pass.
+- PR: `#70`
+- Certified head: `a1c0c6759108cd8da716af71c3e38142ca10fc00`
+- Certified tree: `7a14d4edb6c92fc78e6fb269161367f95a7ed42f`
+- Remediation CI: `33144651653` (#200) — `SUCCESS`
+- Protected CI: `33144651659` (#211) — `SUCCESS`
+- Protected merge-ref: `be9af53b68ae54aeff6876e47a3fbea5580fffbc`
+- Validation: portable `1515 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `881f2ab06ef6df3e8e3f4ed5b2c6ddf46aa6e37b`
+- Merge tree: `7a14d4edb6c92fc78e6fb269161367f95a7ed42f`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `95681af4c22bb3ec1de00bf3d67f002288edb0c6` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: `NONE_WITHIN_PHASE_C_SOIL_HYDROLOGY` for recoverable manual-based mechanism plus controlled numerical qualification. Original constitutive curves and exact original discretization remain source-blocked and are not claimed recovered.
+- Next stage: `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`.
+- Non-claims: no production hydraulic parameters, production hydrology readiness, calibration, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding, original constitutive-curve recovery, original numerical-discretization recovery or original-executable equivalence.
 
 ---
 
@@ -461,18 +467,17 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_VERIFICATION_R1`
-2. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
-3. pasture / vegetable / grass / cow / milk / beef / exposure closure
-4. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-5. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-6. HT-derived HTO re-emission/secondary-feedback reconciliation
-7. re-emission/area-source reconciliation
-8. Canada 1987 benchmark reconstruction
-9. ITER benchmark reconstruction
-10. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-11. final cross-module fidelity qualification
-12. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
+2. pasture / vegetable / grass / cow / milk / beef / exposure closure
+3. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+4. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+5. HT-derived HTO re-emission/secondary-feedback reconciliation
+6. re-emission/area-source reconciliation
+7. Canada 1987 benchmark reconstruction
+8. ITER benchmark reconstruction
+9. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+10. final cross-module fidelity qualification
+11. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -497,7 +502,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 ### Soil hydrology
 
 - [x] Eq. (33)-(37) UFOTRI hydrology reconstruction — PR #68, merge `62d720d46ca6e52b328f985226d68d84ce278fc8`, no-drift PASS
-- [ ] Coupled water/HTO verification
+- [x] Coupled water/HTO verification — PR #70, merge `881f2ab06ef6df3e8e3f4ed5b2c6ddf46aa6e37b`, no-drift PASS
 
 ### Food chain / exposure
 
@@ -546,6 +551,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_VERIFICATION_R1`
+`UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
 
-C2 must dynamically recompute C1 hydrology fluxes from the current three-layer soil state, project those signed internal water/HTO fluxes into the frozen `ThreeLayerSoilForcing` contract, and verify the coupled chain without introducing a second soil solver. Required qualification includes wet/dry limiting behavior, signed upward/downward transport, lower-boundary behavior, explicit root-sink coupling, water/HTO conservation, deterministic repeat, restart equivalence and timestep refinement. Synthetic/replay/provenanced constitutive inputs are permitted; production soil parameters, calibration, empirical validation, physical-accuracy claims and real CTEAS-Atmos binding remain outside this stage.
+D1 must reconcile the historical V2 continuous food-chain implementation against the UFOTRI manual and the post-RC1 terminal-harvest boundary before any migration or new compatibility code is authorized. The first obligation is semantic: map vegetable, grass, pasture, animal, milk, beef and exposure compartments/rates to recoverable manual roles; identify which historical V2 components are retainable, which require migration or correction, and which are project-specific replacements. The RC1 terminal-harvest food→intake→dose adapter remains the stable fallback/default and must not be silently removed. No historical V2 parameter is promoted to a modern production default merely because its compartment topology is retained.
