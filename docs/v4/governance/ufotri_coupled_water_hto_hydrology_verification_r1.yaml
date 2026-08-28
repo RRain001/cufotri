@@ -1,0 +1,70 @@
+schema_version: v1
+stage: UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_VERIFICATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED
+dependency:
+  c1: UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1
+manual_anchor:
+  source: KfK_4605
+  section: 2.2.3
+  equations: [33, 34, 35, 36, 37]
+implementation_decision:
+  qualification_only: true
+  existing_source_change: false
+  second_soil_solver: false
+  second_hydrology_solver: false
+  dynamic_step_sequence:
+    - derive_c1_fluxes_from_current_soil_state
+    - project_to_frozen_three_layer_soil_forcing
+    - plan_eq37_root_sink_with_root_v4
+    - advance_existing_soil_root_tfwt_obt_integrator
+    - audit_water_hto_and_root_ledgers
+controlled_inputs:
+  source_kind: SYNTHETIC_PROVENANCED_QUALIFICATION_ONLY
+  gravity_profile:
+    role: downward_transport_and_dynamic_recompute
+    production_parameter: false
+  capillary_profile:
+    role: upward_signed_transport
+    production_parameter: false
+  dry_wet_profile:
+    role: limiting_case_probe
+    production_parameter: false
+  constitutive_curve_claim: CONTROLLED_TEST_INPUT_ONLY
+qualification:
+  required:
+    - per_step_water_balance
+    - per_step_soil_hto_balance
+    - per_step_coupled_hto_balance
+    - cumulative_water_balance
+    - cumulative_coupled_hto_balance
+    - downward_signed_water_and_hto_transport
+    - upward_signed_water_and_hto_transport
+    - multi_step_upward_transport
+    - dry_zero_conductivity_limit
+    - wet_gravity_drainage_limit
+    - lower_boundary_water_and_hto_loss
+    - root_water_and_hto_identity
+    - selected_operator_split_preserved
+    - dynamic_hydrology_recomputed_from_current_state
+    - deterministic_repeat
+    - restart_equivalence
+    - timestep_refinement
+  timestep_refinement_s: [3600, 1800, 900, 450, 225]
+  reference_role: 225_SECOND_NUMERICAL_COMPARISON_ONLY
+operator_split:
+  required: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  root_sink_owner: root_v4
+  internal_hydrology_owner: soil_ufotri_v4_c1
+  storage_and_ledger_owner: soil_v4
+hard_boundaries:
+  production_hydraulic_parameters: false
+  production_hydrology: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  original_constitutive_curves_recovered: false
+  original_numerical_discretization_recovered: false
+  real_cteas_atmos_binding: false
+  original_executable_equivalence: false
+next_stage_if_complete: UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1
