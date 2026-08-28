@@ -279,46 +279,64 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase D — UFOTRI food-chain and exposure reconciliation
 
+- Phase status: `IN_PROGRESS`
+
 #### D1. V2 continuous food-chain to post-RC1 reconciliation
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
-- Current state:
-  - historical V2 contains vegetable/grass/animal/milk/beef and exposure functionality;
-  - V4 RC1 uses a simpler terminal-harvest food→intake→dose adapter.
-- Required outcome:
-  - map historical V2 compartments to UFOTRI manual roles;
-  - identify which historical components can be retained, which require migration, and which are project-specific replacements;
-  - create an optional UFOTRI continuous-ingestion compatibility path without removing the RC1 terminal-harvest project boundary.
+- Manual anchor: KfK 4605 Eq. (65)-(107), covering vegetable/grass, cow/milk, animal HTO/OBT and public exposure roles.
+- Decision: reconciliation-only closure with `NO_EXISTING_SOURCE_CHANGE`. The historical V2 continuous ecological food-chain/dose implementation remains present byte-for-byte and provides recoverable continuous topology, but it is not directly activated because it mixes manual/manual-converted rates with modern inventory-closure engineering, project herd/intake geometry and later dose-coefficient extensions. The V4 RC1 terminal-harvest → annual-intake → food-dose adapter remains the stable default/fallback; later UFOTRI continuous work must be an opt-in parallel compatibility path.
+- Frozen historical evidence: annotated tag `ufotri-environmental-pathways-v2-candidate`, tag object `11eb90096b2c08a0b40c7cf7f2917d473535e8c7`, resolves to commit `f097115cbfc052baa18f1e49a1207fa6b3523cff`. D1 machine tests verified current-vs-tag byte identity for `src/cteas_ufotri/case.py`, `src/cteas_ufotri/foodchain/model.py` and `src/cteas_ufotri/dose/public.py`.
+- Key gap classification: Eq. (98) cow inhalation/skin uptake is genuinely absent from the retained V2 animal core and must be reconstructed in D4; human/public inhalation and skin dose terms must not be relabeled as animal uptake. Representative support-area normalization, beef product inventory/continuous herd turnover, several intake assumptions and distinct modern OBT dose coefficients remain project/application extensions rather than recovered original UFOTRI behavior.
+- Changed source files: `NO_EXISTING_SOURCE_CHANGE`; D1 added only a machine reconciliation script, one independent pytest file, ADR-066, governance YAML and report.
+- PR: `#72`
+- Certified head: `1739f16abb3396a30799fe3c2bcda2ebb750517c`
+- Certified tree: `a2fe9ed69cb4d84c5eb8f62b6ce1c81d07b79dab`
+- Remediation CI: `33146466499` (#202) — `SUCCESS`
+- Protected CI: `33146466511` (#213) — `SUCCESS`
+- Protected merge-ref: `10b7a385e95ce41b8de463c4337d266e621ab7c4`
+- Validation: portable `1520 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`. D1-specific tag resolution, byte-identity, Eq.98-gap, parameter-policy and RC1-boundary assertions passed inside the portable suite.
+- Merge SHA: `1d09f65efb5bff70b65c9b4adfa41b2c09604739`
+- Merge tree: `a2fe9ed69cb4d84c5eb8f62b6ce1c81d07b79dab`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `711819c4bf6b6bdd286f0ee7c970aeb53f631298` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: pasture root allocation, vegetable/grass manual compartment closure, cow/milk/beef Eq. (82)-(105-2) closure including Eq. (98), and Eq. (106)-(107) exposure reconciliation remain D2-D5.
+- Next stage: `UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`.
+- Non-claims: no vegetable/grass completion, cow/milk/beef completion, exposure completion, calibration, empirical validation, production parameter activation, physical-accuracy claim, real CTEAS-Atmos binding, original numerical-discretization recovery or original-executable equivalence.
 
 #### D2. Pasture root-profile fidelity
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`
 - Replication requirement: `REQUIRED`
 - Manual target: pasture root distribution `40/60/0` where specified by the manual.
-- Current state: controlled crop profile `20/40/40` exists for nutrient crops.
-- Dependency: C1/C2 interfaces must remain compatible.
+- Current state: controlled crop profile `20/40/40` exists for nutrient crops and must not be overwritten globally.
+- Dependency: C1/C2 interfaces must remain compatible; D1 requires the continuous-fidelity route to stay opt-in and parallel to RC1.
+- Required outcome: add a pasture-specific manual-fidelity profile/selection boundary that can drive the existing three-layer root machinery without contaminating nutrient-crop `20/40/40` behavior or activating production parameters.
 
 #### D3. Vegetable/grass compartment closure
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
 - Replication requirement: `REQUIRED`
-- Dependency: B1/B2 and D1.
+- Dependency: B1/B2, C1/C2, D1 and D2.
 
 #### D4. Cow/milk/beef compartment closure
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: D1 and D3.
-- Required checks: feed/drinking-water inputs, animal HTO/OBT inventories, milk transfer, slaughter/beef inventory, excretion/loss accounting.
+- Required checks: feed/drinking-water inputs, animal HTO/OBT inventories, milk transfer, slaughter/beef inventory, excretion/loss accounting, Eq. (98) cow inhalation/skin uptake, and strict separation between manual-rate evidence and project herd/geometry assumptions.
 
 #### D5. Inhalation/skin/ingestion exposure reconciliation
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: D1-D4.
-- Goal: reconcile the recoverable UFOTRI exposure pathways with the post-RC1 dose interfaces without asserting obsolete dose coefficients as modern production defaults.
+- Goal: reconcile the recoverable Eq. (106)-(107) UFOTRI exposure pathways with the post-RC1 dose interfaces while keeping original-manual coefficient semantics separate from modern application coefficients and without asserting obsolete coefficients as modern production defaults.
 
 ---
 
@@ -467,17 +485,19 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
-2. pasture / vegetable / grass / cow / milk / beef / exposure closure
-3. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-4. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-5. HT-derived HTO re-emission/secondary-feedback reconciliation
-6. re-emission/area-source reconciliation
-7. Canada 1987 benchmark reconstruction
-8. ITER benchmark reconstruction
-9. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-10. final cross-module fidelity qualification
-11. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`
+2. `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
+3. `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
+4. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
+5. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+6. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+7. HT-derived HTO re-emission/secondary-feedback reconciliation
+8. re-emission/area-source reconciliation
+9. Canada 1987 benchmark reconstruction
+10. ITER benchmark reconstruction
+11. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+12. final cross-module fidelity qualification
+13. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -506,7 +526,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 ### Food chain / exposure
 
-- [ ] V2 continuous food-chain reconciliation
+- [x] V2 continuous food-chain reconciliation — PR #72, merge `1d09f65efb5bff70b65c9b4adfa41b2c09604739`, no-drift PASS
 - [ ] Pasture 40/60/0 root profile
 - [ ] Vegetable/grass closure
 - [ ] Cow/milk/beef closure
@@ -551,6 +571,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
+`UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`
 
-D1 must reconcile the historical V2 continuous food-chain implementation against the UFOTRI manual and the post-RC1 terminal-harvest boundary before any migration or new compatibility code is authorized. The first obligation is semantic: map vegetable, grass, pasture, animal, milk, beef and exposure compartments/rates to recoverable manual roles; identify which historical V2 components are retainable, which require migration or correction, and which are project-specific replacements. The RC1 terminal-harvest food→intake→dose adapter remains the stable fallback/default and must not be silently removed. No historical V2 parameter is promoted to a modern production default merely because its compartment topology is retained.
+D2 must close the manual pasture root distribution `40/60/0` as an explicit opt-in fidelity profile while preserving the existing nutrient-crop `20/40/40` behavior. The implementation must reuse the established three-layer soil/root contracts, keep C1/C2 signed hydrology compatibility, avoid global/default parameter replacement, and demonstrate that selecting pasture fidelity changes only the intended layer allocation while total root uptake and HTO transfer remain conserved. No production parameter activation, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D2.
