@@ -1,0 +1,222 @@
+schema_version: v1
+stage: UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1
+repository: RRain001/CTEAS_ufotri
+base_main_sha: cc39a710ed3d59fb894cb5029f96cdeab624faf6
+base_main_tree: 2e63de77d6a07ee03cf32f457152d0553f2201f1
+scope: GOVERNANCE_AND_FIDELITY_DECISION_ONLY
+
+purpose: >-
+  Reconcile the recoverable UFOTRI KfK 4605 plant/atmosphere exchange equations
+  (7)-(31) against the historical V2 leaf implementation and the frozen V4 RC1
+  resistance/TFWT interfaces, without changing solver physics in this stage.
+
+claim_boundary:
+  v4_rc1_default_path_changed: false
+  source_physics_changed_in_this_stage: false
+  production_parameter_activation: false
+  empirical_validation: false
+  original_executable_equivalence_claim: false
+
+verdict:
+  reconciliation_complete: true
+  current_v2_exactly_manual_faithful: false
+  current_v4_rc1_exactly_manual_faithful: false
+  source_changes_required: true
+  current_empirical_leaf_r5_required_for_replication: false
+  next_stage_authorized: UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1
+
+classification_ontology:
+  - MANUAL_ROLE_COVERED
+  - HISTORICAL_PARTIAL_MATCH
+  - HISTORICAL_LITERATURE_SUBSTITUTION
+  - V4_INTERFACE_ONLY
+  - MANUAL_FIDELITY_MISSING
+  - SOURCE_AMBIGUITY_REQUIRES_EXPLICIT_PROVENANCE
+  - MANUAL_CONTEXT_NOT_SEPARATE_RUNTIME_REQUIREMENT
+
+manual_role_matrix:
+  - id: LEAF-07-08
+    manual_anchor: EQ7_EQ8
+    subject: resistance_flux_analogy
+    classification: MANUAL_ROLE_COVERED
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    decision: preserve_signed_resistance_boundary
+
+  - id: LEAF-09
+    manual_anchor: EQ9
+    subject: total_plant_resistance
+    classification: MANUAL_ROLE_COVERED
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    decision: preserve_r_a_plus_r_b_plus_r_c_identity
+
+  - id: LEAF-10-11
+    manual_anchor: EQ10_EQ11
+    subject: vapour_pressure_latent_heat_resistance_interpretation
+    classification: MANUAL_CONTEXT_NOT_SEPARATE_RUNTIME_REQUIREMENT
+    current_basis: []
+    decision: >-
+      Do not create an additional runtime solver solely for Eq.10-11; the manual
+      itself proceeds to parameterized resistances because direct evaluation is
+      impractical with model inputs.
+
+  - id: LEAF-12-14
+    manual_anchor: EQ12_EQ13_EQ14
+    subject: canopy_resistance_components_and_lai
+    classification: HISTORICAL_PARTIAL_MATCH
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+      - src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    matched_roles:
+      - r_a_identity
+      - r_b_identity
+      - r_c_equals_stomatal_resistance_over_lai_in_historical_v2
+    missing_or_nonfaithful_roles:
+      - v4_rc1_does_not_compute_r_c_from_manual_rules
+      - historical_v2_adds_vpd_multiplier_not_required_by_recovered_manual
+      - historical_v2_has_no_manual_soil_available_water_exhaustion_switch
+    decision: implement_manual_canopy_compatibility_mode_in_A2
+
+  - id: LEAF-STOMATAL-RULES
+    manual_anchor: SEC_2_2_2_ASSOCIATED_WITH_EQ14
+    subject: day_night_soil_water_and_rain_rules
+    classification: HISTORICAL_PARTIAL_MATCH
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+      - configs/default_parameters.yaml
+    matched_roles:
+      - day_night_resistance_values
+      - lai_scaling
+      - daytime_rain_drives_canopy_resistance_to_zero
+      - nighttime_rain_keeps_epidermal_resistance
+    missing_or_nonfaithful_roles:
+      - soil_available_water_exhaustion_switch_to_night_resistance
+      - continuous_vpd_multiplier_is_project_extension
+    decision: >-
+      A2 must implement the recoverable manual rule set without requiring the
+      generic empirical Leaf R5 physiology candidate.
+
+  - id: LEAF-15-18
+    manual_anchor: EQ15_TO_EQ18
+    subject: aerodynamic_resistance_and_friction_velocity
+    classification: HISTORICAL_PARTIAL_MATCH
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+    matched_roles:
+      - r_a_equals_u_over_u_star_squared
+      - stability_corrected_logarithmic_profile_family
+    missing_or_nonfaithful_roles:
+      - clean_manual_compatibility_geometry_mode
+    decision: reuse_concepts_but_implement_explicit_manual_fidelity_path
+
+  - id: LEAF-19-21
+    manual_anchor: EQ19_TO_EQ21
+    subject: scalar_boundary_layer_resistance
+    classification: HISTORICAL_LITERATURE_SUBSTITUTION
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+    historical_substitution: laminar_flat_plate_sherwood_correlation
+    required_manual_relation: r_b_equals_2_over_k_u_star
+    decision: A2_MUST_IMPLEMENT_EQ21
+
+  - id: LEAF-22-24
+    manual_anchor: EQ22_TO_EQ24
+    subject: neutral_stable_unstable_wind_profiles
+    classification: HISTORICAL_PARTIAL_MATCH
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+    matched_roles:
+      - neutral_log_profile
+      - stable_profile
+      - unstable_Dyer_Businger_profile
+    source_ambiguity:
+      - recovered_manual_does_not_provide_complete_original_Monin_Obukhov_length_estimator
+    decision: >-
+      A2 must allow explicit/provenanced Monin-Obukhov length or a named
+      estimator; Golder may remain a documented approximation but may not be
+      represented as exact original UFOTRI source logic.
+
+  - id: LEAF-25
+    manual_anchor: EQ25
+    subject: station_wind_to_100m_then_vegetation_height_mapping
+    classification: MANUAL_FIDELITY_MISSING
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+    manual_geometry:
+      roughness_length: z0_equals_0_1_canopy_height
+      displacement: d_equals_0_6_canopy_height
+      area_source_emission_height: FLQH_equals_0_8_canopy_height
+      minimum_area_source_emission_height_m: 1.0
+    decision: A2_MUST_IMPLEMENT_EXPLICIT_EQ25_TWO_STEP_MODE
+
+  - id: LEAF-26
+    manual_anchor: EQ26
+    subject: bidirectional_flux_from_concentration_difference_over_total_resistance
+    classification: MANUAL_ROLE_COVERED
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+      - src/cteas_ufotri/plant/leaf_exchange.py
+    decision: preserve_single_signed_authoritative_boundary_flux
+
+  - id: LEAF-27
+    manual_anchor: EQ27
+    subject: tissue_water_equilibrium_dynamic_equation
+    classification: HISTORICAL_PARTIAL_MATCH
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+      - src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
+    matched_roles:
+      - saturated_water_vapour_density_equilibrium
+      - liquid_vapour_isotope_fractionation
+      - bidirectional_sign
+      - explicit_TFWT_inventory_state
+    gap: current_post_rc1_step_uses_precomputed_flux_times_dt_not_manual_analytic_interval_update
+    decision: A2_MUST_ADD_OPT_IN_EQ27_ANALYTIC_INTERVAL_TRANSFER
+
+  - id: LEAF-28-30
+    manual_anchor: EQ28_TO_EQ30
+    subject: analytic_exponential_approach_and_decay
+    classification: MANUAL_FIDELITY_MISSING
+    current_basis:
+      - src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
+    required_roles:
+      - k_equals_rho_over_alpha_mu_r
+      - exponential_approach_to_equilibrium
+      - exponential_decay_from_initial_concentration
+    decision: A2_MUST_IMPLEMENT_ANALYTIC_INTERVAL_MODE
+
+  - id: LEAF-31
+    manual_anchor: EQ31
+    subject: plant_reemission_rate_diagnostic
+    classification: HISTORICAL_PARTIAL_MATCH
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+      - src/cteas_ufotri/coupling/integrator.py
+    matched_role: negative_signed_leaf_flux_and_reemission_accounting_exist
+    gap: manual_percent_per_interval_diagnostic_not_explicitly_exposed
+    decision: >-
+      A2 should expose Eq.31 as a compatibility diagnostic derived from the
+      same analytic decay while retaining one signed flux as the authoritative
+      conservation boundary.
+
+A2_minimum_scope:
+  - manual_day_night_lai_soil_water_rain_canopy_resistance
+  - eq18_aerodynamic_resistance
+  - eq22_to_eq25_wind_profile_and_geometry_compatibility
+  - eq21_boundary_layer_resistance
+  - eq27_saturated_vapour_equilibrium
+  - eq27_to_eq30_analytic_interval_exchange
+  - eq31_reemission_diagnostic
+  - explicit_provenance_for_Monin_Obukhov_estimator_substitution
+
+forbidden_scope:
+  - replace_rc1_default_path
+  - generic_empirical_leaf_r5_physiology
+  - parameter_calibration
+  - production_activation
+  - real_cteas_atmos_binding
+  - unrelated_crop_physiology_redesign
+  - delete_historical_v2_literature_parameterization
+
+selected_next_stage: UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1
