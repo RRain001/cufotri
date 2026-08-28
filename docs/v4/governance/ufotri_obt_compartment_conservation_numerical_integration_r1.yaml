@@ -1,0 +1,109 @@
+schema_version: "1.0"
+stage: UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED
+dependency: UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1
+
+manual_authority:
+  - KfK4605_2.2.6
+  - KfK4605_3.3.3_Eq65_66
+
+qualification_scope:
+  source_changes_to_frozen_solver: false
+  source_changes_to_v4_integrator: false
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  duration_s: 86400.0
+  reference_dt_s: 225.0
+  refinement_dt_s:
+    - 3600.0
+    - 1800.0
+    - 900.0
+    - 450.0
+  qualification_dt_s: 1800.0
+
+profiles:
+  SECTION_2_2_6_DAILY_AVERAGE_CONTROLLED_BASELINE:
+    source_context: KFK4605_SECTION_2_2_6_ATMOSPHERIC_HOURLY
+    formation_h_1: 0.0006
+    loss_h_1: 0.003
+    day_multiplier: 1.0
+    night_multiplier: 1.0
+    role: FROZEN_CONTROLLED_BASELINE_REFERENCE
+    original_executable_truth: false
+    production_profile: false
+  EQ65_66_DERIVED_HOURLY_COMPARISON:
+    source_context: KFK4605_SECTION_3_3_3_INGESTION_EQ65_66
+    formation_h_1_approx: 0.0004998657552114991
+    loss_h_1_approx: 0.0028881132523331052
+    day_multiplier: 1.0
+    night_multiplier: 1.0
+    role: CONTROLLED_COMPARISON_ONLY
+    original_executable_truth: false
+    production_profile: false
+
+manual_profile_relation:
+  numerically_identical: false
+  selection_of_correct_original_profile_authorized: false
+  interpretation: PROFILE_CONSEQUENCE_COMPARISON_NOT_PHYSICAL_RANKING
+
+required_gates:
+  coupled_chain:
+    - conservation_closed
+    - deterministic_repeat
+    - restart_equivalence
+    - timestep_refinement
+    - obt_formation_nonzero
+  independent_oracles:
+    - constant_tfwt_analytic_solution
+    - zero_tfwt_pure_obt_decay
+  compatibility:
+    - section_2_2_6_matches_frozen_reduced_rc1
+    - selected_operator_split_preserved
+    - no_separate_exchangeable_pool
+  comparison:
+    - both_manual_rate_forms_remain_nonidentical
+    - profile_obt_consequence_nonzero
+
+state_role_boundary:
+  exchangeable_obt_representation: TFWTState
+  nonexchangeable_obt_representation: OBTState
+  separate_exchangeable_inventory: false
+  double_counting_authorized: false
+
+source_changes:
+  existing_obt_v3_modified: false
+  existing_tfwt_v3_modified: false
+  existing_v4_integrator_modified: false
+  existing_rc1_default_modified: false
+  new_files:
+    - scripts/v4/run_ufotri_obt_compartment_conservation_numerical_integration_r1.py
+    - tests/v4/test_ufotri_obt_compartment_conservation_numerical_integration_r1.py
+    - docs/v4/adr/ADR-063-ufotri-obt-compartment-conservation-numerical-integration-r1.md
+    - docs/v4/governance/ufotri_obt_compartment_conservation_numerical_integration_r1.yaml
+    - docs/v4/reports/ufotri_obt_compartment_conservation_numerical_integration_r1.md
+
+hard_boundaries:
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  production_parameter_activation: false
+  real_cteas_atmos_binding: false
+  generic_multi_pool_obt: false
+  original_executable_parameter_selection_recovered: false
+  normalized_day_night_multiplier_recovered: false
+  frozen_v3_rc1_default_changed: false
+
+completion_gate:
+  exact_head_remediation_ci_required: true
+  exact_head_protected_ci_required: true
+  existing_v4_machine_gates_required: true
+  expected_head_merge_lock_required: true
+  post_merge_parent_tree_main_audit_required: true
+
+phase_close_on_success:
+  phase: Phase_B_UFOTRI_OBT_compartment_fidelity
+  status_if_complete: COMPLETE
+  claim: UFOTRI_OBT_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE
+  claim_scope: RECOVERABLE_PLANT_OBT_STATE_ROLES_AND_NUMERICAL_BEHAVIOR_ONLY
+
+next_authorized_stage: UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1
