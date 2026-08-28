@@ -356,11 +356,28 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### D4. Cow/milk/beef compartment closure
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: D1 and D3.
-- Required checks: feed/drinking-water inputs, animal HTO/OBT inventories, milk transfer, slaughter/beef inventory, excretion/loss accounting, Eq. (98) cow inhalation/skin uptake, and strict separation between manual-rate evidence and project herd/geometry assumptions.
+- Manual anchor: KfK 4605 Eq. (82)-(105-2), including cow-water loss, milk HTO/OBT pathways, cow OBT turnover/formation, Eq. (98) atmosphere-to-cow HTO inhalation/skin uptake, grass-to-cow transfers, and grass HTO/OBT Eq. (105-1)-(105-2).
+- Decision: added a separate opt-in `src/cteas_ufotri/foodchain/ufotri_cow_milk_beef_v4.py` activity-conserving compatibility path. Eq. (98) is an explicit animal atmosphere-column input and is not public dose. Manual rounded transfer rates are retained as written rather than renormalized to Eq. (82)/(92) half-time summaries. Eq. (86) OCR-heading ambiguity is retained, with `cow OBT -> milk OBT` selected from compartment indices, surrounding prose and the milk-production balance. Eq. (105-2) closes literally as `0.069-(0.0033+0.021+0.0017)=0.043 d^-1`. Project feed/drinking-water, support-area, edible-beef-mass and continuous herd-turnover assumptions are not activated. Explicit slaughter-to-beef is a caller-declared activity-conservation boundary only, not a recovered original algorithm.
+- Changed source files: one new opt-in source file, `src/cteas_ufotri/foodchain/ufotri_cow_milk_beef_v4.py`; D4 also added one machine script, one pytest file, ADR-069, governance YAML and report. No existing V2/RC1/D3/V4 integration, public-dose, roadmap or workflow file changed in PR #78.
+- Numerical closure: Eq. (98) exact geometry (`4.875e-5 d^-1`) and manual-rounded value (`4.9e-5 d^-1`) are both visible; Eq. (82)/(92) rounded-rate tensions remain explicit; Eq. (105-2) identity closes; grass OBT receiver routes, milk HTO/OBT receivers, Eq. (83)/(84) external-boundary activity conservation, deterministic repeat, restart equivalence, hourly partition equivalence, timestep refinement (`3600→1800→900→450 s` toward `225 s`), zero-inventory stability, explicit slaughter-to-beef activity conservation, and fail-closed project feed/drinking-water and invalid-input checks all pass.
+- PR: `#78`
+- Certified head: `e5409ce264e1dfd71cd4246dc88f477cc4a6e074`
+- Certified tree: `937104b21aa22a552e6b77d12d492d2ea0038b0e`
+- Remediation CI: `33154304997` (#208) — `SUCCESS`
+- Protected CI: `33154305054` (#219) — `SUCCESS`
+- Protected merge-ref: `b70d3f3cc993ad2ab023d32a4dd3bbd7ac976eb9`
+- Validation: portable `1560 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `27f057474b750e299e2e5234f73552df5b06d558`
+- Merge tree: `937104b21aa22a552e6b77d12d492d2ea0038b0e`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `7f51cca82342601364e1cc074602e44c09554a83` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: public Eq. (106)-(107) inhalation/skin/ingestion exposure reconciliation remains D5. Production animal parameters, calibration, empirical validation and original-executable equivalence remain outside D4's claim.
+- Next stage: `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`.
+- Scope claim: `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE=COMPLETE`.
+- Non-claims: no public exposure completion; no project feed 50 kg/day, drinking water 50 L/day, 4000 m²/animal support area, 200 kg/head edible beef or `0.002 d^-1` continuous herd-turnover activation; no production parameter activation, calibration, empirical validation, physical-accuracy/production-readiness claim, real CTEAS-Atmos binding, recovered original numerical discretization or original-executable equivalence.
 
 #### D5. Inhalation/skin/ingestion exposure reconciliation
 
@@ -517,17 +534,16 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
-2. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
-3. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-4. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-5. HT-derived HTO re-emission/secondary-feedback reconciliation
-6. re-emission/area-source reconciliation
-7. Canada 1987 benchmark reconstruction
-8. ITER benchmark reconstruction
-9. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-10. final cross-module fidelity qualification
-11. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
+2. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+3. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+4. HT-derived HTO re-emission/secondary-feedback reconciliation
+5. re-emission/area-source reconciliation
+6. Canada 1987 benchmark reconstruction
+7. ITER benchmark reconstruction
+8. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+9. final cross-module fidelity qualification
+10. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -559,7 +575,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 - [x] V2 continuous food-chain reconciliation — PR #72, merge `1d09f65efb5bff70b65c9b4adfa41b2c09604739`, no-drift PASS
 - [x] Pasture 40/60/0 root profile — PR #74, merge `c849f3d328c6d59c73fb1d1de85bff57dc5ec1ce`, no-drift PASS
 - [x] Vegetable/grass closure — PR #76, merge `238bbcbc82f5c417dc33663bd47695f6b20426ed`, no-drift PASS
-- [ ] Cow/milk/beef closure
+- [x] Cow/milk/beef closure — PR #78, merge `27f057474b750e299e2e5234f73552df5b06d558`, no-drift PASS
 - [ ] Inhalation/skin/ingestion exposure reconciliation
 
 ### HT and secondary HTO
@@ -601,6 +617,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
+`UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
 
-D4 must close the recoverable KfK 4605 cow/milk/beef compartment roles and Eq. (82)-(105-2) animal-chain transfers against the D1 historical-topology reconciliation and D3 vegetable/grass boundary. It must explicitly reconstruct the Eq. (98) cow inhalation/skin uptake gap identified by D1; preserve HTO/OBT/feed/drinking-water/milk/beef transfer and loss accounting; and separate manual-supported transfer-rate semantics from project herd geometry, support area, intake, slaughter/turnover and modern application assumptions. Grass OBT Eq. (105-1)-(105-2) may only be closed consistently with the animal-loss pathways it references. RC1 remains the stable fallback. No public exposure completion, production parameter activation, calibration, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D4.
+D5 must reconcile KfK 4605 Eq. (106)-(107) public exposure semantics against the retained V2 continuous dose topology and the post-RC1 interfaces. It must preserve the manual Eq. (106) inhalation-plus-50%-skin structure and Eq. (107) ingestion over the representative green-vegetable, beef and milk classes, while separating manual-fidelity coefficient policy from modern application policy. The manual adult HTO coefficient and its treatment of ingested OBT as HTO must not be silently replaced by, or confused with, the retained modern age-specific HTO and distinct OBT coefficients. Project breathing and consumption habits must remain explicit assumptions rather than recovered UFOTRI defaults. RC1 remains the stable fallback. No production exposure parameters, calibration, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D5.
