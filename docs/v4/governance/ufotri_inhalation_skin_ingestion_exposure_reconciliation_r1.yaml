@@ -1,0 +1,128 @@
+schema_version: v1
+stage: UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED
+
+manual_anchor:
+  primary: KfK_4605_Eq106_107
+  general_dose_policy: KfK_4605_Section_4_1
+  inhalation_skin: KfK_4605_Eq106
+  ingestion: KfK_4605_Eq107
+
+dependencies:
+  - UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1
+  - UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1
+  - UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1
+
+decision:
+  source_change: NEW_OPT_IN_SOURCE_ONLY
+  manual_module: cteas_ufotri.dose.ufotri_manual_v4
+  modern_application_module: cteas_ufotri.dose.public
+  existing_modern_path_replaced: false
+  frozen_rc1_changed: false
+  historical_v2_changed: false
+  production_binding_authorized: false
+
+eq106:
+  air_input_unit: Bq_s_per_m3
+  breathing_rate_unit: m3_per_s
+  quality_factor: 1.0
+  skin_to_inhalation_fraction: 0.5
+  total_multiplier: 1.5
+  chemical_form: HTO
+  equation: BR_times_DF_times_Cair_integrated_times_QF_times_1_5
+
+eq107:
+  food_integral_unit: Bq_d_per_kg
+  consumption_rate_unit: kg_per_d
+  representative_food_classes:
+    - green_vegetable
+    - beef
+    - milk
+  drinking_water_in_equation: false
+  root_crop_in_equation: false
+  grain_in_equation: false
+  hto_obt_tracked_separately_upstream: true
+  hto_obt_added_before_historical_dose: true
+  separate_obt_dose_coefficient_in_manual_mode: false
+
+manual_coefficient_policy:
+  explicit_coefficient_required: true
+  adult_reference_sv_bq: 1.7e-11
+  adult_reference_id: KFK4605_EQ106_107_ADULT_REFERENCE_R1
+  modern_hpa_adult_hto_sv_bq: 1.8e-11
+  modern_hpa_adult_obt_ingestion_sv_bq: 4.2e-11
+  modern_coefficients_relabelled_as_original_ufotri: false
+  manual_adult_reference_promoted_to_modern_production_default: false
+
+habit_policy:
+  breathing_rate_must_be_explicit: true
+  green_vegetable_consumption_must_be_explicit: true
+  beef_consumption_must_be_explicit: true
+  milk_consumption_must_be_explicit: true
+  provenance_required: true
+  project_habits_promoted_to_manual_defaults: false
+
+unit_boundary:
+  implicit_milk_litre_to_kg_conversion: false
+  manual_milk_basis: kg
+  application_layer_conversion_if_needed: EXTERNAL_EXPLICIT_ONLY
+
+numerics:
+  equation_type: INTEGRAL_ALGEBRAIC
+  exposure_accumulation: LINEAR_TIME_INTEGRATION
+  original_discretization_claim: NOT_APPLICABLE
+  qualification:
+    - exact_eq106_identity
+    - exact_eq107_identity
+    - hourly_partition_equivalence
+    - quarter_hour_partition_equivalence
+    - deterministic_repeat
+    - zero_exposure_limit
+
+required_machine_gates:
+  - manual_adult_reference_df_visible
+  - eq106_inhalation_identity
+  - eq106_skin_50_percent
+  - eq106_total_multiplier_1_5
+  - eq106_residual_closed
+  - eq107_three_food_identity
+  - eq107_residual_closed
+  - hto_obt_upstream_separation
+  - same_manual_df_for_ingested_obt
+  - deterministic_repeat
+  - hourly_partition_equivalence
+  - quarter_hour_partition_equivalence
+  - zero_exposure_zero_dose
+  - manual_modern_policy_distinction
+  - modern_path_retained
+  - invalid_input_fail_closed
+
+changed_files_policy:
+  existing_source_modification_allowed: false
+  roadmap_modification_allowed_in_stage_pr: false
+  workflow_modification_allowed: false
+  frozen_rc1_change_allowed: false
+  historical_v2_change_allowed: false
+  modern_public_dose_change_allowed: false
+
+hard_boundaries:
+  project_breathing_rate_promoted_to_manual_default: false
+  project_consumption_rates_promoted_to_manual_defaults: false
+  modern_hpa_coefficients_relabelled_as_original_ufotri: false
+  separate_obt_coefficient_relabelled_as_original_ufotri: false
+  drinking_water_added_to_manual_eq107: false
+  root_crop_added_to_manual_eq107: false
+  grain_added_to_manual_eq107: false
+  production_parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  real_cteas_atmos_binding: false
+  original_executable_equivalence: false
+
+candidate_claim_after_merge_no_drift:
+  UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION: COMPLETE
+
+next_stage_after_roadmap_sync:
+  UFOTRI_HT_BRANCH_RECONCILIATION_R1
