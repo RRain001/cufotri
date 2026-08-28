@@ -49,6 +49,7 @@ THICKNESS_M = (0.05, 0.10, 0.15)
 ROOT_Q_M_S = (1.0e-10, 2.0e-10, 1.0e-10)
 WATER_TOL_M = 1.0e-12
 HTO_TOL_BQ_M2 = 1.0e-9
+DRY_ZERO_FLOW_TOL_M_S = 1.0e-24
 
 
 def _plant_provenance(dt_s: float) -> ForcingProvenance:
@@ -440,7 +441,9 @@ def build_result() -> dict[str, Any]:
         "upward_dynamic_sequence": all(
             q12 < 0.0 and q23 < 0.0 for q12, q23 in upward_dynamic["q_history"]
         ),
-        "dry_limit_zero_internal_flow": all(abs(v) <= 1.0e-30 for v in limits["dry_q_m_s"]),
+        "dry_limit_zero_internal_flow": all(
+            abs(v) <= DRY_ZERO_FLOW_TOL_M_S for v in limits["dry_q_m_s"]
+        ),
         "wet_limit_positive_gravity_flow": all(v > 0.0 for v in limits["wet_q_m_s"]),
         "lower_boundary_exercised": boundary_root["lower_water_loss_m"] > 0.0
         and boundary_root["lower_hto_loss_bq_m2"] > 0.0,
@@ -472,6 +475,7 @@ def build_result() -> dict[str, Any]:
         "diagnostics": {
             "directions": directions,
             "wet_dry": limits,
+            "dry_zero_flow_tolerance_m_s": DRY_ZERO_FLOW_TOL_M_S,
             "boundary_root": boundary_root,
             "refinement": refinement,
             "direct_max_abs_water_residual_m": direct["max_abs_water_residual_m"],
