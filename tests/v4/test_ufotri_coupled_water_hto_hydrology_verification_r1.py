@@ -20,9 +20,14 @@ def _result() -> dict[str, object]:
     completed = subprocess.run(
         [sys.executable, str(SCRIPT)],
         cwd=ROOT,
-        check=True,
+        check=False,
         text=True,
         capture_output=True,
+    )
+    assert completed.returncode == 0, (
+        "C2 machine gate failed.\n"
+        f"STDOUT:\n{completed.stdout}\n"
+        f"STDERR:\n{completed.stderr}"
     )
     status_line = next(
         line for line in completed.stdout.splitlines() if line.startswith(STATUS_PREFIX)
