@@ -43,6 +43,13 @@ class UFOTRIManualResistanceState:
         Daytime rain has ``r_c == 0`` in the recovered manual.  RC1 rejects a
         zero component, so this method fails closed for that state rather than
         replacing zero with an arbitrary epsilon.
+
+        RC1's frozen state validator compares ``total_resistance`` against the
+        literal left-associative expression ``r_a + r_b + r_c`` using exact
+        float equality.  Its factory computes the same mathematical sum via
+        ``sum(...)``, which can differ by one ulp for valid inputs.  This opt-in
+        projection therefore constructs the frozen state with the validator's
+        exact arithmetic order; no physical value or RC1 source is changed.
         """
 
         if not self.rc1_projection_available:
@@ -51,10 +58,17 @@ class UFOTRIManualResistanceState:
                 "canopy resistance r_c=0 without changing its contract; no epsilon "
                 "substitution is allowed"
             )
-        return ResistanceChain.from_components(
-            self.aerodynamic_resistance_s_m,
-            self.boundary_layer_resistance_s_m,
-            self.canopy_resistance_s_m,
+        total = (
+            self.aerodynamic_resistance_s_m
+            + self.boundary_layer_resistance_s_m
+            + self.canopy_resistance_s_m
+        )
+        return ResistanceChain(
+            aerodynamic_resistance=self.aerodynamic_resistance_s_m,
+            boundary_layer_resistance=self.boundary_layer_resistance_s_m,
+            canopy_resistance=self.canopy_resistance_s_m,
+            total_resistance=total,
+            exchange_velocity=1.0 / total,
         )
 
 
