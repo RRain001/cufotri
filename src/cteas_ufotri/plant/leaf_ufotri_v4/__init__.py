@@ -13,7 +13,6 @@ from .model import (
     UFOTRI_EQ27_30_FORMULA_ID,
     UFOTRI_EQ31_DIAGNOSTIC_ID,
     advance_tfwt_with_ufotri_analytic_leaf_exchange,
-    build_ufotri_eq7_25_resistance_chain,
     manual_canopy_resistance_s_m,
     resolve_monin_obukhov_provenance,
     saturated_vapour_density_kg_m3,
@@ -26,6 +25,7 @@ from .model import (
 from .resistance_state import (
     UFOTRIManualResistanceState,
     build_ufotri_eq7_25_manual_resistance_state,
+    build_ufotri_eq7_25_resistance_chain,
 )
 
 __all__ = [
