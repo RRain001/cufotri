@@ -39,6 +39,8 @@ Signed matric head increases with theta. The test begins with successively wette
 
 The dry endpoint explicitly has `K=0`; equal-head dry layers must therefore have zero internal flow. The wet endpoint has positive `K` and must produce downward gravity drainage.
 
+The first Protected candidate exposed only a floating-point representation artifact in this dry limit: reconstructing `theta` from water inventory divided by layer thickness yielded a residual interface flow of `7.401486830834377e-26 m/s` instead of exact binary zero. The gate therefore defines numerical zero as `|q| <= 1.0e-24 m/s`. This tolerance is about fifteen orders of magnitude below the `10^-9 m/s` controlled transport scale and changes no equation, constitutive input, conservation tolerance or timestep-refinement criterion.
+
 None of these profiles is a production UFOTRI soil parameterization.
 
 ## 4. Conservation qualification
@@ -62,7 +64,7 @@ The gate requires:
 - positive water and HTO flux on both internal interfaces in the gravity case;
 - negative water and HTO flux on both interfaces in the capillary case;
 - persistence of negative/upward flux during a multi-step capillary trajectory;
-- zero internal flow at the explicit dry `K=0` limit;
+- numerical-zero internal flow at the explicit dry `K=0` limit using only the `1.0e-24 m/s` roundoff tolerance defined above;
 - positive gravity flow at the wet positive-conductivity limit.
 
 These are controlled mechanism tests, not empirical soil validation.
