@@ -307,13 +307,27 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### D2. Pasture root-profile fidelity
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`
 - Replication requirement: `REQUIRED`
-- Manual target: pasture root distribution `40/60/0` where specified by the manual.
-- Current state: controlled crop profile `20/40/40` exists for nutrient crops and must not be overwritten globally.
-- Dependency: C1/C2 interfaces must remain compatible; D1 requires the continuous-fidelity route to stay opt-in and parallel to RC1.
-- Required outcome: add a pasture-specific manual-fidelity profile/selection boundary that can drive the existing three-layer root machinery without contaminating nutrient-crop `20/40/40` behavior or activating production parameters.
+- Manual/evidence anchor: frozen V2 parameter-source audit records `grass_root_fractions=0.4;0.6;0.0` as `manual direct`, source `UFOTRI manual`, grade `A`, status `accepted`; the nutrient-crop `0.2;0.4;0.4` profile remains a separate manual-direct role.
+- Decision: added a separate opt-in `src/cteas_ufotri/plant/root_v4/pasture_profile.py` that accepts an explicit total non-negative water-uptake flux and returns the existing `ThreeLayerRootWaterFluxForcingV4` with exact `(0.4, 0.6, 0.0)` allocation. It does not infer total uptake, ET or hydrology, and it does not replace the existing crop `20/40/40` profile globally.
+- Changed source files: one new opt-in source file only, `src/cteas_ufotri/plant/root_v4/pasture_profile.py`; no pre-existing source file changed. D2 also added one machine script, one pytest file, ADR-067, governance YAML and report.
+- Numerical closure: exact 40/60/0 fractions, exact L3 zero, unchanged 20/40/40 control, total-water identity, equal-concentration total-HTO equivalence, unequal-concentration `J=q_w C_w`, water/HTO ledger closure, typed forcing compatibility and fail-closed invalid input checks all pass.
+- PR: `#74`
+- Certified head: `e4d8a01452b4e8dd3475a3b64f53d661eaa3d5fb`
+- Certified tree: `f83db84e2f1c9793d41724b3cc9ea0d792106226`
+- Remediation CI: `33148130661` (#204) — `SUCCESS`
+- Protected CI: `33148130577` (#215) — `SUCCESS`
+- Protected merge-ref: `88b240e3b0e08582b9655cb0b379e77b8c6338a3`
+- Validation: portable `1531 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`. D2-specific machine-gate execution and all profile/conservation assertions passed inside the portable suite.
+- Merge SHA: `c849f3d328c6d59c73fb1d1de85bff57dc5ec1ce`
+- Merge tree: `f83db84e2f1c9793d41724b3cc9ea0d792106226`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `d5d43092b9255f0a2a950196f68ad6b89b910bab` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: vegetable/grass compartment closure, cow/milk/beef closure including Eq. (98), and exposure reconciliation remain D3-D5. D2 does not activate project-specific pasture LAI, biomass, cutting, root-activity, feed-intake or total-uptake parameters.
+- Next stage: `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`.
+- Scope claim: `UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY=COMPLETE`.
+- Non-claims: no production total root-water uptake, production pasture parameters, vegetable/grass compartment completion, cow/milk/beef completion, exposure completion, calibration, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence.
 
 #### D3. Vegetable/grass compartment closure
 
@@ -485,19 +499,18 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`
-2. `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
-3. `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
-4. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
-5. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-6. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-7. HT-derived HTO re-emission/secondary-feedback reconciliation
-8. re-emission/area-source reconciliation
-9. Canada 1987 benchmark reconstruction
-10. ITER benchmark reconstruction
-11. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-12. final cross-module fidelity qualification
-13. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
+2. `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
+3. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
+4. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+5. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+6. HT-derived HTO re-emission/secondary-feedback reconciliation
+7. re-emission/area-source reconciliation
+8. Canada 1987 benchmark reconstruction
+9. ITER benchmark reconstruction
+10. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+11. final cross-module fidelity qualification
+12. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -527,7 +540,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 ### Food chain / exposure
 
 - [x] V2 continuous food-chain reconciliation — PR #72, merge `1d09f65efb5bff70b65c9b4adfa41b2c09604739`, no-drift PASS
-- [ ] Pasture 40/60/0 root profile
+- [x] Pasture 40/60/0 root profile — PR #74, merge `c849f3d328c6d59c73fb1d1de85bff57dc5ec1ce`, no-drift PASS
 - [ ] Vegetable/grass closure
 - [ ] Cow/milk/beef closure
 - [ ] Inhalation/skin/ingestion exposure reconciliation
@@ -571,6 +584,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_PASTURE_40_60_0_ROOT_PROFILE_FIDELITY_R1`
+`UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
 
-D2 must close the manual pasture root distribution `40/60/0` as an explicit opt-in fidelity profile while preserving the existing nutrient-crop `20/40/40` behavior. The implementation must reuse the established three-layer soil/root contracts, keep C1/C2 signed hydrology compatibility, avoid global/default parameter replacement, and demonstrate that selecting pasture fidelity changes only the intended layer allocation while total root uptake and HTO transfer remain conserved. No production parameter activation, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D2.
+D3 must reconcile the recoverable vegetable/grass continuous food-chain compartments against KfK 4605 and the preserved V2 topology, using the completed B1/B2 OBT roles, C1/C2 hydrology contracts, D1 compatibility boundary and D2 pasture root allocation. It must separate manual-supported compartment/rate semantics from project-specific biomass, support-area, intake or production assumptions; preserve RC1 as the stable fallback; and close conservation and numerical behavior on an explicit opt-in fidelity path. No cow/milk/beef completion, exposure completion, production parameter activation, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D3.
