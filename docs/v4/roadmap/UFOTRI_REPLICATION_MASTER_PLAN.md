@@ -168,23 +168,36 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase B — UFOTRI OBT compartment fidelity
 
+- Phase status: `IN_PROGRESS`
+- Completed scope: plant exchangeable/non-exchangeable state-role semantics and recoverable first-order HTO↔OBT transfer topology.
+- Remaining scope: B2 conservation/numerical qualification; original day/night multipliers and original executable parameter selection remain unresolved source questions.
+
 #### B1. Exchangeable/non-exchangeable OBT reconstruction
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
 - Replication requirement: `REQUIRED`
-- Current state: RC1 retains a reduced aggregate `k_f/k_r` OBT inventory.
-- Required fidelity target:
-  - reconstruct the manual distinction between exchangeable and non-exchangeable tritium/OBT where recoverable;
-  - retain the reduced RC1 OBT path as fallback/reference;
-  - map plant/crop OBT semantics into later food-chain compartments.
-- Important boundary:
-  - `GENERIC_MULTI_POOL_OBT=OPTIONAL_EXTENSION`;
-  - only the narrow manual-supported compartment structure is replication-required.
+- Manual anchor: KfK 4605 Section 2.2.6 and Section 3.3.3 Eq. (65)-(66).
+- Decision: no independent exchangeable-OBT inventory is created because the manual explicitly treats exchangeable OBT together with free plant HTO. In the opt-in UFOTRI semantic path, `TFWTState` represents free HTO plus the exchangeable-OBT role and `OBTState` represents non-exchangeable OBT. The existing first-order `kf*M_TFWT-kr*M_OBT` topology is supported by Eq. (65)-(66) and the manual statement that ingestion transfer paths/rates are adapted to hourly dispersion-module time steps. Generic multi-pool OBT remains an optional extension, not a replication requirement.
+- Rate reconciliation: Section 2.2.6 gives daily-average `kf=0.0006 h^-1`, `kr=0.003 h^-1`; Eq. (66)/24 reconstructs approximately `0.0004998658 h^-1` and Eq. (65)/24 approximately `0.0028881133 h^-1`. The forward and loss differences are approximately 20.0% and 3.9%, respectively. Both manual contexts are retained with distinct provenance; the original executable's parameter selection is not recovered. Normalized day/night formation multipliers also remain unresolved.
+- Changed source files: new opt-in `src/cteas_ufotri/plant/obt_ufotri_v4/{__init__.py,model.py}` only; existing `obt_v3`, `tfwt_v3`, `food_v3`, V4 integration and RC1 defaults were not modified. ADR-062, governance/report artifacts and one independent B1 test file were added.
+- PR: `#64`
+- Certified head: `842151a857fa62f0e9df1f6142ad3c552af516d2`
+- Certified tree: `37a26cc3066deebb84767e9082f32a46ba199cee`
+- Remediation CI: `33140638373` — `SUCCESS`
+- Protected CI: `33140638399` — `SUCCESS`
+- Protected merge-ref: `1194c58830554669e88fb96aab822596933ab2b1`
+- Validation: portable `1493 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `f98b9d54300d53736c25ebf3bf5502f67cf89f07`
+- Merge tree: `37a26cc3066deebb84767e9082f32a46ba199cee`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `0756ddb4777819a58278b73c37209169c2318ee0` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: numerical/conservation qualification of the reconstructed roles, including explicit comparison of the Section-2.2.6 controlled daily-average profile with the Eq. (65)-(66)-derived profile. B1 does not recover the original day/night multiplier pair or exact original executable parameter selection.
+- Next stage: `UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`.
 
 #### B2. OBT compartment conservation and numerical integration
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: B1.
 - Required checks:
@@ -193,7 +206,9 @@ If a stage only performs reconciliation and concludes that existing code is alre
   - restart equivalence;
   - timestep refinement;
   - compatibility with TFWT/root operator split;
-  - explicit comparison against reduced RC1 OBT behavior.
+  - explicit comparison against reduced RC1 OBT behavior;
+  - explicit Section-2.2.6 versus Eq. (65)-(66) profile comparison without promoting either profile to recovered original-executable truth;
+  - no third exchangeable-OBT inventory or double counting.
 
 ---
 
@@ -422,21 +437,20 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
-2. OBT conservation/numerical closure
-3. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
-4. coupled water/HTO hydrology verification
-5. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
-6. pasture / vegetable / grass / cow / milk / beef / exposure closure
-7. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-8. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-9. HT-derived HTO re-emission/secondary-feedback reconciliation
-10. re-emission/area-source reconciliation
-11. Canada 1987 benchmark reconstruction
-12. ITER benchmark reconstruction
-13. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-14. final cross-module fidelity qualification
-15. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`
+2. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
+3. coupled water/HTO hydrology verification
+4. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
+5. pasture / vegetable / grass / cow / milk / beef / exposure closure
+6. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+7. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+8. HT-derived HTO re-emission/secondary-feedback reconciliation
+9. re-emission/area-source reconciliation
+10. Canada 1987 benchmark reconstruction
+11. ITER benchmark reconstruction
+12. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+13. final cross-module fidelity qualification
+14. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -455,7 +469,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 ### OBT
 
-- [ ] Exchangeable/non-exchangeable reconstruction
+- [x] Exchangeable/non-exchangeable reconstruction — PR #64, merge `f98b9d54300d53736c25ebf3bf5502f67cf89f07`, no-drift PASS
 - [ ] OBT conservation/numerical integration closure
 
 ### Soil hydrology
@@ -510,6 +524,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
+`UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`
 
-B1 must first reconcile KfK 4605 Section 2.2.6 against the existing `obt_v3` solver and UFOTRI baseline. The manual explicitly states that exchangeable organically bound tritium is in equilibrium with free plant HTO and need not be distinguished from free HTO in the model; therefore B1 must not introduce a generic exchangeable/non-exchangeable multi-pool structure merely to satisfy the stage name. The distinct replication target is the recoverable non-exchangeable organic-tritium behavior, including the daily-average incorporation rate of approximately `0.06% per hour`, the reported day/night asymmetry where recoverable, and the mean organic-tritium loss rate of approximately `0.3% per hour`. Missing normalized day/night multipliers must remain unresolved rather than being invented.
+B2 must numerically qualify the B1 OBT state-role reconstruction without changing the frozen RC1/V3 default path. It must close mass/inventory conservation, deterministic repeat, restart equivalence, timestep refinement, TFWT/root operator-split compatibility, and an explicit comparison against the reduced RC1 OBT behavior. It must also compare the controlled Section-2.2.6 daily-average profile with the Eq. (65)-(66)-derived hourly profile while preserving the documented source ambiguity: neither profile may be promoted to exact original-executable truth, and missing normalized day/night formation multipliers must remain unresolved rather than being invented.
