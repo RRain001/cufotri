@@ -408,19 +408,35 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase E — HT branch and HT→HTO environmental reconstruction
 
+- Phase status: `IN_PROGRESS`
+
 **HT is part of the replication target and is not omitted from this roadmap.**
 
 The branch is split so that internal HT environmental mechanisms can progress independently, while real atmospheric transport remains deferred until CTEAS-Atmos is ready.
 
 #### E1. HT branch contract and manual mapping
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
-- Goal:
-  - identify the recoverable manual states, units, interfaces, deposition/oxidation semantics, and coupling boundaries for HT;
-  - distinguish HT concentration/flux inputs from HTO inputs;
-  - define synthetic/replay-compatible interfaces so internal HT process development does not wait for real Atmos.
+- Manual anchor: KfK 4605 introduction/dispersion-module description and Section 2.2.3 soil/atmosphere exchange semantics, including explicit HT/T2 versus HTO chemical-form separation, soil/moisture dependence of HT deposition, rapid microorganism-mediated HT→HTO conversion after deposition, and benchmark HT/HTO deposition/diffusion/oxidation values.
+- Decision: added a separate opt-in typed `src/cteas_ufotri/coupling/ht_v4.py` contract. `AtmosphericHTForcing` is distinct from the existing HTO forcing type; HT/T2 concentration is `Bq m-3`, surface HT deposition flux is `Bq m-2 s-1`, and interval-integrated deposited HT is `Bq m-2`. E1 preserves deposited material as chemically HT and creates zero HTO; E2 exclusively owns HT→HTO soil conversion. Synthetic/replay HT forcing is accepted, while real CTEAS-Atmos HT binding fails closed until E4. KfK benchmark values (`v_d,HT=0.05 cm/s`, atmospheric oxidation `0.5%/d`, HT soil diffusion `5.0e-2 cm2/s`, plus corresponding HTO benchmark values) remain evidence-visible but are not activated as global/production defaults.
+- Changed source files: one new opt-in source file, `src/cteas_ufotri/coupling/ht_v4.py`; E1 also added one machine script, one pytest file, ADR-071, governance YAML and report. No existing HTO/V2/RC1/V4 integration, roadmap or workflow file changed in PR #82.
+- Contract/numerical closure: explicit HT/T2 species and rejection of HTO/DT/total-tritium aliases; exact unit contracts; UTC interval validation; finite/non-negative inputs; deposition-flux time integration; four-interval partition equivalence; HT chemical-identity preservation at the soil boundary; zero E1 HTO creation; explicit E1/E2/E3/E4 ownership; distinct HT/HTO forcing fields/types; benchmark evidence visibility without activation; and fail-closed real Atmos binding all pass.
+- PR: `#82`
+- Certified head: `762e9b9b5cdd0f12610fa73b0e1c2d590585553c`
+- Certified tree: `3aed0b8d8f62800fe18013763e54d5d4296357a6`
+- Remediation CI: `33178907829` (#216) — `SUCCESS`
+- Protected CI: `33178907771` (#227) — `SUCCESS`
+- Protected merge-ref: `e109525ae7fc5f38de1f68a5e6034c7fa21b8090`
+- Validation: portable `1597 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `a71a6859f10413038b642009081ea5c730e0a2c3`
+- Merge tree: `3aed0b8d8f62800fe18013763e54d5d4296357a6`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `34ee72b061f393ae082e93df5d60f7f89c01cf34` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: E2 must reconstruct the soil HT→HTO conversion/oxidation mechanism and conservation ledger; E3 secondary HTO re-emission and E4 real CTEAS-Atmos HT binding remain separate later scopes.
+- Next stage: `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`.
+- Scope claim: `UFOTRI_HT_BRANCH_RECONCILIATION=COMPLETE`.
+- Non-claims: no HT→HTO conversion implementation, no HT-derived HTO re-emission, no real HT transport/binding, no benchmark parameter production activation, no calibration, empirical validation, physical-accuracy/production-readiness claim, original numerical-discretization recovery or original-executable equivalence.
 
 #### E2. HT→HTO soil conversion/oxidation reconstruction
 
@@ -551,15 +567,14 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-2. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-3. HT-derived HTO re-emission/secondary-feedback reconciliation
-4. re-emission/area-source reconciliation
-5. Canada 1987 benchmark reconstruction
-6. ITER benchmark reconstruction
-7. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-8. final cross-module fidelity qualification
-9. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+2. HT-derived HTO re-emission/secondary-feedback reconciliation
+3. re-emission/area-source reconciliation
+4. Canada 1987 benchmark reconstruction
+5. ITER benchmark reconstruction
+6. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+7. final cross-module fidelity qualification
+8. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -596,7 +611,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 ### HT and secondary HTO
 
-- [ ] HT branch contract/manual mapping
+- [x] HT branch contract/manual mapping — PR #82, merge `a71a6859f10413038b642009081ea5c730e0a2c3`, no-drift PASS
 - [ ] HT→HTO soil conversion
 - [ ] HT-derived HTO re-emission/secondary feedback
 - [ ] Re-emission/area-source compatibility
@@ -633,6 +648,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+`UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
 
-Phase D is complete for the recoverable manual-based food-chain and public-exposure semantics. E1 must now reconcile the HT branch contract and manual mapping before any HT process implementation is authorized. Internal E1-E3 work may use controlled synthetic/replay HT forcing and must remain distinct from deferred real CTEAS-Atmos HT transport. No HTO forcing may be silently relabeled as real HT, and no production parameter, calibration, empirical-validation, physical-accuracy or original-executable-equivalence claim is authorized by this roadmap transition.
+E1 is complete for the recoverable HT branch contract/manual mapping. E2 is now authorized to reconstruct HT deposition/entry, microbial HT→HTO soil conversion, transfer of generated HTO into the existing soil inventory, and an explicit HT-loss/HTO-gain conservation ledger using controlled synthetic/replay HT forcing. Real CTEAS-Atmos HT transport remains deferred to E4; no benchmark parameter, calibration, empirical-validation, physical-accuracy, production-readiness or original-executable-equivalence claim is authorized by this roadmap transition.
