@@ -5,8 +5,8 @@ without changing the frozen ``obt_v3`` solver.
 
 The manual explicitly states that exchangeable organically bound tritium is in
 equilibrium with free plant HTO and need not be distinguished from free HTO in
-UFOTRI.  Therefore this compatibility layer does *not* create an exchangeable
-OBT inventory.  ``TFWTState`` remains the model representation for free HTO and
+UFOTRI. Therefore this compatibility layer does *not* create an exchangeable
+OBT inventory. ``TFWTState`` remains the model representation for free HTO and
 the exchangeable-OBT role, while ``OBTState`` is interpreted narrowly as the
 non-exchangeable organic-tritium compartment.
 
@@ -14,15 +14,18 @@ KfK 4605 also contains two OBT parameter contexts that must not be conflated:
 
 * Section 2.2.6, the hourly atmospheric/dispersion calculation, states a daily
   average non-exchangeable OBT incorporation rate of 0.06 % h^-1 of plant HTO
-  and a mean organic-tritium loss rate of 0.3 % h^-1.  It states daytime uptake
+  and a mean organic-tritium loss rate of 0.3 % h^-1. It states daytime uptake
   is increased and nighttime uptake reduced, but the recovered text does not
-  provide an unambiguous normalized day/night multiplier pair.
+  provide an unambiguous normalized day/night multiplier pair. The recovered
+  wording is concentration-based and does not explicitly recover the mapping
+  to the current TFWT/OBT inventory bases, so exact numerical binding remains
+  fail-closed at B1.
 * Section 3.3.3, the longer-term ingestion compartment system, gives Eq. (65)
   and Eq. (66): an organic-compartment loss half-time of about 10 d and a
   hydrogen-inventory-balanced HTO -> OBT coefficient of about 0.012 d^-1 for
   the stated 0.1 kg m^-2 organic and 0.4 kg m^-2 inorganic plant masses.
 
-Those are distinct manual roles.  This module keeps both visible and leaves the
+Those are distinct manual roles. This module keeps both visible and leaves the
 frozen V4 short-term numerical baseline untouched for later B2 qualification.
 """
 
@@ -32,7 +35,7 @@ from dataclasses import dataclass
 import math
 
 from ..obt_v3 import (
-    OBTFormationParameters,
+    OBTParameters,
     OBTState,
     UFOTRI_OBT_KF_S,
     UFOTRI_OBT_KR_S,
@@ -84,6 +87,7 @@ class UFOTRIShortTermOBTProfile:
     nighttime_multiplier: float | None = None
     day_night_split_recovered: bool = False
     exact_mass_basis_mapping_recovered: bool = False
+    direct_manual_numerical_binding_authorized: bool = False
     context: str = SHORT_TERM_CONTEXT
     source_section: str = "KfK4605_2.2.6"
 
@@ -114,6 +118,8 @@ class UFOTRILongTermIngestionOBTProfile:
     inorganic_plant_mass_kg_m2: float
     water_hydrogen_divisor: float
     organic_hydrogen_divisor: float
+    current_short_term_solver_binding_authorized: bool = False
+    downstream_stage: str = "UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1"
     context: str = LONG_TERM_CONTEXT
     source_section: str = "KfK4605_3.3.3_Eq65_66"
 
@@ -122,7 +128,7 @@ class UFOTRILongTermIngestionOBTProfile:
 class UFOTRIOBTPlantStateView:
     """Validated UFOTRI semantic view over existing TFWT and OBT states.
 
-    No activity is copied into a new exchangeable-OBT inventory.  The view only
+    No activity is copied into a new exchangeable-OBT inventory. The view only
     labels which existing state carries each manual role.
     """
 
@@ -158,7 +164,7 @@ class UFOTRIOBTPlantStateView:
     def represented_food_components_bq_m2(self) -> tuple[float, float]:
         """Return the two existing downstream food-transfer components.
 
-        The tuple is ``(nonexchangeable OBT, TFWT)``.  Exchangeable OBT is not
+        The tuple is ``(nonexchangeable OBT, TFWT)``. Exchangeable OBT is not
         a third activity component because the manual explicitly co-represents
         it with free HTO in the plant-water pathway.
         """
@@ -205,11 +211,11 @@ def ufotri_long_term_ingestion_obt_profile() -> UFOTRILongTermIngestionOBTProfil
     )
 
 
-def current_short_term_inventory_baseline() -> OBTFormationParameters:
+def current_short_term_inventory_baseline() -> OBTParameters:
     """Expose the frozen controlled numerical baseline without relabeling it.
 
     The existing V4 profile uses 1/1 day/night multipliers solely to preserve
-    the recovered daily-average Section 2.2.6 formation rate.  This helper does
+    the recovered daily-average Section 2.2.6 formation rate. This helper does
     not claim that those multipliers reproduce the missing original day/night
     split, nor that the original source's concentration/inventory basis has
     been recovered exactly.
