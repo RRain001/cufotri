@@ -1,0 +1,64 @@
+stage: UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED
+base_main_sha: e1a3f1ffd94ee91daf5385d21f1076d1d549e630
+scope:
+  existing_default_source_change: false
+  opt_in_source_module_added: true
+  real_cteas_atmos_binding: false
+  benchmark_started: false
+  eq44_rate_generation_recovered: false
+manual_contract:
+  source_hour_seconds: 3600
+  timing_semantics: HOUR_N_ENVIRONMENTAL_STATE_TO_HOUR_N_PLUS_ONE_SECONDARY_SOURCE
+  preferred_shape: RECTANGULAR
+  selected_area_source_approximation: CENTER_POINT_WITH_INITIAL_LATERAL_WIDENING
+  sigma_y0_rule: SOURCE_WIDTH_DIVIDED_BY_4_3
+  eq5: SIGMA_YG_EQUALS_SQRT_SIGMA_Y_SQUARED_PLUS_SIGMA_Y0_SQUARED
+  eq6_compartments:
+    - SOIL
+    - PLANT
+  concentration_combination: LINEAR_SUPERPOSITION
+  common_effective_source_height: true
+  phase_a_height_rule: MAX_0_8_CANOPY_HEIGHT_OR_1_METER
+activity_contract:
+  environmental_loss_is_already_accounted: true
+  atmospheric_handoff_creates_activity: false
+  fully_routed_identity: ENVIRONMENTAL_LOSS_ACTIVITY_EQUALS_ROUTED_SECONDARY_SOURCE_ACTIVITY
+  general_identity: ENVIRONMENTAL_LOSS_ACTIVITY_EQUALS_ROUTED_ACTIVITY_PLUS_UNROUTED_ACTIVITY
+provenance_contract:
+  allowed_origins:
+    - PRIMARY_HTO
+    - HT_DERIVED_HTO
+    - MIXED_HTO_ORIGIN
+    - UNRESOLVED_HTO_ORIGIN
+  ht_derived_requires_explicit_origin_proof: true
+  mixed_origin_must_remain_mixed: true
+  silent_proportional_origin_split: FORBIDDEN
+numerical_contract:
+  timestep_must_exactly_divide_3600_seconds: true
+  first_source_hour_secondary_forcing: ZERO
+  hourly_activity_invariant_across_compatible_dt: REQUIRED
+  fallout_factor: EXPLICIT_ARGUMENT
+  washout_factor: EXPLICIT_ARGUMENT
+  legacy_rectangular_quadrature_is_original_ufotri: false
+preserved_paths:
+  - src/cteas_ufotri/case.py
+  - src/cteas_ufotri/config.py
+  - src/cteas_ufotri/atmosphere/gaussian.py
+  - configs/default_parameters.yaml
+new_source:
+  - src/cteas_ufotri/coupling/reemission_area_source_v4.py
+qualification:
+  machine_gate: scripts/v4/check_ufotri_reemission_area_source_reconciliation_r1.py
+  pytest: tests/v4/test_ufotri_reemission_area_source_reconciliation_r1.py
+non_claims:
+  empirical_validation: false
+  physical_accuracy: false
+  production_readiness: false
+  original_executable_equivalence: false
+  complete_eq44_recovery: false
+  real_cteas_atmos_binding: false
+  canada_1987_benchmark: false
+  iter_benchmark: false
+next_stage_after_certified_merge_and_roadmap_sync: CANADA_1987_BENCHMARK_RECONSTRUCTION
