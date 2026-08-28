@@ -1,0 +1,120 @@
+schema_version: v1
+stage: UFOTRI_HT_BRANCH_RECONCILIATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED
+
+manual_anchor:
+  chemical_forms: KfK_4605_Introduction_HT_T2_and_HTO
+  soil_semantics: KfK_4605_Section_2_2_3
+  benchmark_parameters: KfK_4605_Table_8
+
+dependencies:
+  - PHASE_D_COMPLETE
+  - V4_SYSTEM_ATMOS_EXCHANGE_CONTRACT
+
+decision:
+  source_change: NEW_OPT_IN_SOURCE_ONLY
+  module: cteas_ufotri.coupling.ht_v4
+  existing_hto_forcing_changed: false
+  historical_v2_changed: false
+  frozen_rc1_changed: false
+  roadmap_changed_in_stage_pr: false
+
+chemical_identity:
+  manual_supported_species:
+    - HT
+    - T2
+  hto_allowed_as_ht: false
+  total_tritium_allowed_as_ht: false
+  unspecified_mixture_allowed_as_ht: false
+  dt_allowed_in_manual_e1_contract: false
+  note: DT_exclusion_is_manual_fidelity_boundary_not_physical_nonexistence_claim
+
+atmospheric_contract:
+  concentration_field: air_ht_concentration_bq_m3
+  concentration_unit: Bq_m-3
+  deposition_field: surface_ht_deposition_flux_bq_m2_s
+  deposition_flux_unit: Bq_m-2_s-1
+  concentration_sampling_height_required: true
+  spatial_support_required: true
+  provenance_required: true
+  source_identity_required: true
+  interval_semantics: EXPLICIT_POSITIVE_UTC_INTERVAL
+  automatic_timezone_conversion_allowed: false
+
+soil_boundary:
+  integrated_field: deposited_ht_bq_m2
+  unit: Bq_m-2
+  chemistry_at_e1_exit: HT
+  converted_to_hto_bq_m2: 0
+  e1_ht_to_hto_conversion_allowed: false
+  e2_owns_conversion: true
+
+source_kinds:
+  synthetic: ALLOWED
+  replay: ALLOWED
+  real_cteas_atmos: FAIL_CLOSED_UNTIL_E4
+
+manual_benchmark_evidence:
+  ht_dry_deposition_velocity_cm_s: 0.05
+  ht_dry_deposition_velocity_m_s: 0.0005
+  atmospheric_oxidation_fraction_d_1: 0.005
+  ht_soil_diffusion_cm2_s: 0.05
+  ht_soil_diffusion_m2_s: 0.000005
+  hto_dry_deposition_velocity_cm_s_comparison: 1.8
+  hto_soil_diffusion_cm2_s_comparison: 0.00002
+  global_default_activation: false
+  production_parameter_activation: false
+
+manual_process_semantics:
+  ht_deposition_depends_on_soil_type_and_moisture: true
+  deposited_ht_rapidly_converts_via_microorganisms: true
+  only_transformed_ht_remains_in_soil: true
+
+stage_ownership:
+  e1_contract_and_mapping: true
+  e1_atmospheric_oxidation: false
+  e1_soil_conversion: false
+  e1_secondary_hto_reemission: false
+  e1_real_atmos_binding: false
+  e2_soil_conversion: true
+  e3_secondary_hto_reemission: true
+  e4_real_ht_atmos_binding: true
+
+required_machine_gates:
+  - explicit_ht_t2_species
+  - ht_concentration_unit
+  - ht_deposition_flux_unit
+  - ht_deposition_amount_unit
+  - exact_flux_integration
+  - partition_equivalence
+  - no_hto_created_in_e1
+  - hto_contract_distinct_type
+  - hto_field_not_reused
+  - real_atmos_binding_fail_closed
+  - benchmark_values_visible
+  - benchmark_values_not_activated
+  - ownership_boundary
+  - invalid_species_fail_closed
+  - invalid_time_fail_closed
+  - invalid_units_fail_closed
+  - invalid_numeric_inputs_fail_closed
+
+hard_boundaries:
+  ht_to_hto_soil_conversion_implemented: false
+  ht_derived_hto_reemission_implemented: false
+  real_cteas_atmos_ht_binding_active: false
+  benchmark_deposition_velocity_activated_as_global_default: false
+  benchmark_air_oxidation_activated_as_global_default: false
+  benchmark_soil_diffusion_activated_as_global_default: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  production_readiness_claim: false
+  original_executable_equivalence: false
+
+candidate_claim_after_merge_no_drift:
+  UFOTRI_HT_BRANCH_RECONCILIATION: COMPLETE
+
+next_stage_after_roadmap_sync:
+  UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1
