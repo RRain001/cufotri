@@ -99,41 +99,51 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### A1. UFOTRI Eq. (7)-(31) reconciliation
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
 - Manual anchor: Eq. (7)-(31), leaf/canopy aerodynamic, boundary, stomatal/canopy and meteorological exchange relations.
-- Current repository state:
-  - historical V2 contains a manual-informed dynamic leaf implementation;
-  - frozen V4 RC1 uses the simpler explicit `r_a + r_b + r_c` boundary;
-  - the previously proposed empirical Leaf R5 formulation is not automatically UFOTRI-equivalent.
-- Required outcome:
-  - map each recoverable Eq. (7)-(31) role to V2 and V4 code;
-  - classify each item as already faithful, partially faithful, replacement, missing, or source-ambiguous;
-  - select the smallest manual-faithful compatibility path;
-  - preserve RC1 fallback behavior.
-- Important boundary:
-  - `CURRENT_R5_AS_DESIGNED_NOT_REQUIRED_FOR_REPLICATION`;
-  - do not implement a generic empirical dynamic-stomatal model merely because it is more sophisticated.
-- Completion gate: reconciliation decision merged and no-drift audited.
+- Decision: `SOURCE_CHANGES_REQUIRED=TRUE`; historical V2 is manual-informed but not a clean UFOTRI compatibility implementation; generic empirical Leaf R5 is not required for replication.
+- Changed source files: `NO_SOURCE_CHANGE`; this stage added governance/report/test artifacts only.
+- PR: `#58`
+- Certified head: `04d9a10808132f85a52c27a93c22d5829e2c97e9`
+- Remediation CI: `33136146835` — `SUCCESS`
+- Protected CI: `33136146838` — `SUCCESS`
+- Protected merge-ref: `b6e3839fe0908471a7ded6c0ecac64443f098575`
+- Validation: portable `1454 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; all five existing V4 machine gates PASS.
+- Merge SHA: `6aa1c3858265758927984f2be93b0450e1d1a9e3`
+- Merge tree: `e61581dbd03cd0ac9b88b624840bb18afc60adfc`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `cc39a710ed3d59fb894cb5029f96cdeab624faf6` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Remaining gap: implement the smallest opt-in manual-fidelity path selected by A1, then close manual regression in A3.
+- Next stage: `UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`.
 
-#### A2. Leaf fidelity implementation, if A1 requires source changes
+#### A2. Leaf fidelity implementation required by A1
 
 - Status: `NOT_STARTED`
-- Replication requirement: `CONDITIONAL_REQUIRED`
+- Stage: `UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`
+- Replication requirement: `REQUIRED_BY_A1`
 - Dependency: A1.
-- Scope: only the missing/reconciled UFOTRI Eq. (7)-(31) mechanism authorized by A1.
+- Scope authorized by A1:
+  - manual day/night, LAI, soil-available-water exhaustion and rain canopy-resistance rules;
+  - Eq. (18) aerodynamic resistance with Eq. (22)-(25) wind-profile/geometry compatibility;
+  - Eq. (21) boundary-layer resistance `r_b = 2/(k u_*)`;
+  - Eq. (27) saturated-vapour equilibrium conversion;
+  - Eq. (27)-(30) analytic interval exchange/update;
+  - Eq. (31) compatibility re-emission diagnostic;
+  - explicit provenance for any Monin-Obukhov estimator substitution.
 - Forbidden scope creep:
   - no unrelated crop physiology redesign;
+  - no generic empirical Leaf R5 physiology;
   - no parameter calibration;
+  - no production activation;
   - no silent replacement of RC1 leaf behavior.
-- Completion gate: manual-role unit tests, day/night and forcing-response tests, conservation/integration checks, exact-head CI, merge/no-drift.
+- Completion gate: manual-role unit tests, day/night/soil-water/rain and forcing-response tests, analytic-equation checks, conservation/integration checks, exact-head CI, merge/no-drift.
 
 #### A3. Leaf manual-regression/benchmark closure
 
 - Status: `NOT_STARTED`
 - Replication requirement: `REQUIRED`
-- Dependency: A1 and, if needed, A2.
+- Dependency: A1 and A2.
 - Goal: prove that the selected compatibility path reproduces the recoverable manual semantics across deterministic synthetic/manual test cases.
 
 ---
@@ -394,8 +404,8 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1`
-2. conditional Leaf Eq. (7)-(31) fidelity implementation
+1. `UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`
+2. Leaf Eq. (7)-(31) manual-regression closure
 3. `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
 4. OBT conservation/numerical closure
 5. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
@@ -423,8 +433,8 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 ### Leaf
 
-- [ ] Eq. (7)-(31) reconciliation
-- [ ] Conditional fidelity implementation
+- [x] Eq. (7)-(31) reconciliation — PR #58, merge `6aa1c3858265758927984f2be93b0450e1d1a9e3`, no-drift PASS
+- [ ] UFOTRI Eq. (7)-(31) fidelity implementation
 - [ ] Leaf manual-regression closure
 
 ### OBT
@@ -484,6 +494,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1`
+`UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`
 
-This next stage is reconciliation/fidelity review only. It does not pre-authorize empirical Leaf R5 implementation, runtime parameter activation, production-input work, or real CTEAS-Atmos binding.
+This stage is an opt-in manual-fidelity implementation authorized by completed A1. It must preserve the RC1 fallback/default path and is limited to the Eq. (7)-(31) scope recorded above. It does not authorize generic empirical Leaf R5 physiology, runtime parameter activation, production-input work, or real CTEAS-Atmos binding.
