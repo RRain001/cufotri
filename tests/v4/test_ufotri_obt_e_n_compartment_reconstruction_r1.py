@@ -11,6 +11,7 @@ from cteas_ufotri.plant.obt_ufotri_v4 import (
     current_short_term_inventory_baseline,
     make_ufotri_obt_state_view,
     ufotri_long_term_ingestion_obt_profile,
+    ufotri_obt_rate_reconciliation,
     ufotri_obt_role_map,
     ufotri_short_term_obt_profile,
 )
@@ -73,6 +74,7 @@ def test_exchangeable_obt_is_not_a_third_inventory_pool():
     assert role_map.separate_exchangeable_obt_pool is False
     assert role_map.exchangeable_obt_extra_inventory_added is False
     assert role_map.double_counting_prohibited is True
+    assert role_map.first_order_inventory_transfer_structure_recovered is True
 
 
 def test_state_view_preserves_exactly_two_existing_food_components():
@@ -132,23 +134,26 @@ def test_short_term_section_2_2_6_values_are_exactly_recovered():
     assert profile.loss_per_hour == 0.003
     assert profile.formation_s_1 == 0.0006 / 3600.0
     assert profile.loss_s_1 == 0.003 / 3600.0
+    assert profile.inventory_transfer_structure_recovered is True
+    assert profile.controlled_daily_average_binding_authorized is True
 
 
-def test_short_term_unknown_day_night_and_mass_basis_are_fail_closed():
+def test_short_term_unknown_day_night_and_exact_original_parameters_remain_fail_closed():
     profile = ufotri_short_term_obt_profile()
 
     assert profile.daylight_multiplier is None
     assert profile.nighttime_multiplier is None
     assert profile.day_night_split_recovered is False
-    assert profile.exact_mass_basis_mapping_recovered is False
-    assert profile.direct_manual_numerical_binding_authorized is False
+    assert profile.exact_original_parameterization_recovered is False
     assert set(profile.source_ambiguities) == {
         "NORMALIZED_DAY_NIGHT_FORMATION_MULTIPLIERS_NOT_RECOVERED",
-        "SECTION_2_2_6_CONCENTRATION_TO_CURRENT_INVENTORY_BASIS_NOT_EXPLICITLY_RECOVERED",
+        "SECTION_2_2_6_AND_EQ66_FORWARD_RATE_NUMBERS_NOT_IDENTICAL",
+        "SECTION_2_2_6_AND_EQ65_LOSS_RATE_NUMBERS_NOT_IDENTICAL",
+        "ORIGINAL_EXECUTABLE_PARAMETER_SELECTION_UNAVAILABLE",
     }
 
 
-def test_frozen_short_term_inventory_baseline_remains_a_controlled_baseline_only():
+def test_frozen_short_term_inventory_baseline_is_exact_section_2_2_6_daily_average():
     profile = ufotri_short_term_obt_profile()
     parameters = current_short_term_inventory_baseline()
 
@@ -158,7 +163,7 @@ def test_frozen_short_term_inventory_baseline_remains_a_controlled_baseline_only
     assert parameters.daylight_multiplier == UFOTRI_OBT_DAYLIGHT_MULTIPLIER == 1.0
     assert parameters.nighttime_multiplier == UFOTRI_OBT_NIGHTTIME_MULTIPLIER == 1.0
     assert profile.day_night_split_recovered is False
-    assert profile.direct_manual_numerical_binding_authorized is False
+    assert profile.exact_original_parameterization_recovered is False
 
 
 def test_long_term_eq65_reverse_rate_is_ln2_over_ten_days():
@@ -168,6 +173,12 @@ def test_long_term_eq65_reverse_rate_is_ln2_over_ten_days():
     assert math.isclose(
         profile.obt_to_hto_d_1,
         math.log(2.0) / 10.0,
+        rel_tol=0.0,
+        abs_tol=1.0e-15,
+    )
+    assert math.isclose(
+        profile.obt_to_hto_h_1,
+        math.log(2.0) / 10.0 / 24.0,
         rel_tol=0.0,
         abs_tol=1.0e-15,
     )
@@ -195,6 +206,16 @@ def test_long_term_eq66_forward_rate_is_reconstructed_from_manual_mass_basis():
         abs_tol=5.0e-6,
     )
     assert profile.hto_to_obt_d_1_manual_rounded == 0.012
+
+
+def test_hourly_section_and_eq65_66_are_related_but_not_numerically_identical():
+    rates = ufotri_obt_rate_reconciliation()
+
+    assert math.isclose(rates.eq66_forward_h_1, 0.0004998657552114991, rel_tol=0.0, abs_tol=1.0e-15)
+    assert math.isclose(rates.eq65_loss_h_1, 0.0028881132523331052, rel_tol=0.0, abs_tol=1.0e-15)
+    assert math.isclose(rates.forward_relative_difference_vs_eq66, 0.20032227401961734, rel_tol=0.0, abs_tol=1.0e-14)
+    assert math.isclose(rates.loss_relative_difference_vs_eq65, 0.03874042944005375, rel_tol=0.0, abs_tol=1.0e-14)
+    assert rates.numerically_identical is False
 
 
 def test_short_term_and_long_term_profiles_are_not_interchangeable_defaults():
