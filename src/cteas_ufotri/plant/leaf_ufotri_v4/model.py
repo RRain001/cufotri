@@ -255,16 +255,30 @@ def resolve_monin_obukhov_provenance(
 
 
 def _stability_profile_term(
-    effective_height_m: float,
+    height_m: float,
+    displacement_height_m: float,
     roughness_length_m: float,
     monin_obukhov_length_m: float,
 ) -> float:
-    """Eq. (22)-(24) neutral/stable/unstable integrated wind-profile term."""
+    """Return the literal UFOTRI Eq. (22)-(24) wind-profile bracket.
 
-    effective = _positive(effective_height_m, field="effective_height_m")
+    The manual uses ``ln((z-d)/z0)`` for the roughness/displacement term, while
+    the stable correction ``4.7 z/L`` and the unstable Dyer-Businger ``Phi_m``
+    use the actual height ``z``.  Do not replace those latter ``z`` terms by
+    ``z-d``: doing so changes the recoverable manual semantics.
+    """
+
+    height = _positive(height_m, field="height_m")
+    displacement = _nonnegative(
+        displacement_height_m,
+        field="displacement_height_m",
+    )
     roughness = _positive(roughness_length_m, field="roughness_length_m")
+    if displacement >= height:
+        raise ValueError("height must exceed displacement height")
+    effective = height - displacement
     if effective <= roughness:
-        raise ValueError("effective height must exceed roughness length")
+        raise ValueError("height minus displacement must exceed roughness length")
     length = float(monin_obukhov_length_m)
     if math.isnan(length) or length == 0.0:
         raise ValueError("Monin-Obukhov length must be non-zero or +/-inf")
@@ -272,9 +286,9 @@ def _stability_profile_term(
     if math.isinf(length):
         result = log_term
     elif length > 0.0:
-        result = log_term + 4.7 * effective / length
+        result = log_term + 4.7 * height / length
     else:
-        phi_m = (1.0 - 15.0 * effective / length) ** -0.25
+        phi_m = (1.0 - 15.0 * height / length) ** -0.25
         inverse_phi = 1.0 / phi_m
         result = (
             log_term
@@ -325,17 +339,15 @@ def ufotri_eq25_wind_profile(
         stability_class=stability_class,
     )
     wind_100m = station_wind * (100.0 / station_height) ** exponent
-    reference_effective_height = 100.0 - geometry.displacement_height_m
-    vegetation_effective_height = (
-        geometry.canopy_height_m - geometry.displacement_height_m
-    )
     reference_term = _stability_profile_term(
-        reference_effective_height,
+        100.0,
+        geometry.displacement_height_m,
         geometry.roughness_length_m,
         monin.length_m,
     )
     vegetation_term = _stability_profile_term(
-        vegetation_effective_height,
+        geometry.canopy_height_m,
+        geometry.displacement_height_m,
         geometry.roughness_length_m,
         monin.length_m,
     )

@@ -1,0 +1,112 @@
+schema_version: v1
+stage: UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 61248e4abdfe80e9bce41e898e6c8d159caaa9d5
+scope: MANUAL_SEMANTIC_REGRESSION_AND_MINIMAL_FIDELITY_REMEDIATION
+
+dependencies:
+  a1_stage: UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1
+  a1_complete: true
+  a2_stage: UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1
+  a2_complete: true
+  a2_merge_sha: 881a1fff98cf28e19e789249872f58e97d38ea3d
+
+manual_authority:
+  artifact: ufotri_manual.md
+  report: KfK_4605
+  section: 2.2.2_Plant_Atmosphere_Exchange_Processes
+  equations:
+    - 12
+    - 13
+    - 14
+    - 18
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 27
+    - 28
+    - 29
+    - 30
+    - 31
+  representative_values:
+    daytime_stomatal_resistance_s_cm: 4.0
+    nighttime_stomatal_resistance_s_cm: 60.0
+    mean_lai_m2_m2: 3.0
+    liquid_air_isotope_ratio: 1.1
+  qualitative_rules:
+    - soil_available_water_exhaustion_switches_to_nighttime_resistance
+    - daytime_rain_canopy_resistance_goes_to_zero
+    - nighttime_rain_retains_epidermal_resistance
+    - z0_equals_0_1_H
+    - d_equals_0_6_H
+    - FLQH_equals_0_8_H_with_minimum_1m
+    - long_duration_interval_solution_is_additive
+
+independent_regression_finding:
+  defect_found: true
+  defect_id: EQ23_EQ24_STABILITY_HEIGHT_SEMANTICS
+  a2_behavior: stability_correction_used_z_minus_d
+  manual_behavior:
+    logarithmic_term_height: z_minus_d
+    stable_correction_height: z
+    unstable_phi_m_height: z
+  remediation_scope: src/cteas_ufotri/plant/leaf_ufotri_v4/model.py
+  neutral_equation_changed: false
+  rc1_changed: false
+  historical_v2_changed: false
+
+regression_matrix:
+  manual_default_canopy_values: REQUIRED
+  day_night_soil_water_rain_branches: REQUIRED
+  vegetation_geometry: REQUIRED
+  eq18_eq21_neutral_oracle: REQUIRED
+  eq23_stable_oracle: REQUIRED
+  eq24_unstable_oracle: REQUIRED
+  eq23_old_interpretation_discrimination: REQUIRED
+  eq27_to_eq31_closed_form: REQUIRED
+  constant_forcing_monotonic_no_overshoot: REQUIRED
+  figure8_shifted_pulse_additivity: REQUIRED
+  rc1_v2_isolation: REQUIRED
+
+benchmark_boundary:
+  canada_1987_in_a3: false
+  iter_in_a3: false
+  phase_g_benchmarks_unchanged: true
+  original_executable_regression_available: false
+  missing_original_data_invented: false
+
+claim_boundary:
+  leaf_manual_based_functional_reconstruction_candidate: true
+  empirical_validation: false
+  physical_accuracy_claim: false
+  parameter_calibration: false
+  production_parameter_activation: false
+  production_readiness: false
+  real_cteas_atmos_binding: false
+  original_ufotri_executable_equivalence: false
+  generic_empirical_leaf_r5: false
+
+frozen_boundaries:
+  v4_rc1_default_path_changed: false
+  historical_v2_leaf_path_changed: false
+  rc1_resistance_contract_changed: false
+  rc1_tfwt_contract_changed: false
+
+validation_required:
+  - targeted_a3_manual_regression_tests
+  - portable_current_integration_suite
+  - frozen_current_boundary_invariants
+  - existing_v4_machine_gates
+  - exact_head_remediation_ci
+  - exact_head_protected_ci
+  - post_merge_parent_tree_no_drift
+
+completion:
+  candidate_present: true
+  exact_head_ci_certified: false
+  merged: false
+  no_drift_audited: false
+  phase_a_leaf_complete: false
+  next_stage_after_clean_merge: UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1
