@@ -279,7 +279,7 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase D — UFOTRI food-chain and exposure reconciliation
 
-- Phase status: `IN_PROGRESS`
+- Phase status: `COMPLETE`
 
 #### D1. V2 continuous food-chain to post-RC1 reconciliation
 
@@ -381,11 +381,28 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### D5. Inhalation/skin/ingestion exposure reconciliation
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: D1-D4.
-- Goal: reconcile the recoverable Eq. (106)-(107) UFOTRI exposure pathways with the post-RC1 dose interfaces while keeping original-manual coefficient semantics separate from modern application coefficients and without asserting obsolete coefficients as modern production defaults.
+- Manual anchor: KfK 4605 Section 4 and Eq. (106)-(107), including HTO inhalation with 50% skin absorption, QF=1, representative green-vegetable/beef/milk ingestion, and the historical treatment of ingested OBT with the selected HTO dose coefficient.
+- Decision: added a separate opt-in `src/cteas_ufotri/dose/ufotri_manual_v4.py` manual-fidelity exposure path while leaving the retained modern `dose.public` application path unchanged. Eq. (106) is reconstructed literally as inhalation plus 50% skin absorption. Eq. (107) contains only green vegetable, beef and milk. HTO/OBT food activities remain separately visible upstream and are summed only before applying one selected manual coefficient. The named adult-reference helper exposes `1.7e-11 Sv/Bq`, but coefficient selection, breathing and consumption habits remain explicit/provenanced inputs. No implicit milk litre-to-kilogram conversion is performed.
+- Changed source files: one new opt-in source file, `src/cteas_ufotri/dose/ufotri_manual_v4.py`; D5 also added one machine script, one pytest file, ADR-070, governance YAML and report. No existing `dose.public`, V2/RC1, D3/D4, V4 integration, roadmap or workflow file changed in PR #80.
+- Numerical/policy closure: Eq. (106) inhalation identity, skin=`0.5×inhalation`, total `1.5` multiplier and residual closure; Eq. (107) exact three-food identity and residual closure; separate upstream HTO/OBT diagnostics with the same selected manual dose coefficient; deterministic repeat; one-day versus 24-hourly and 96-quarter-hour exposure partition equivalence; zero-exposure zero-dose; controlled distinction between manual adult reference `1.7e-11 Sv/Bq` and retained modern adult HPA HTO `1.8e-11 Sv/Bq`; retention of the modern separate OBT ingestion coefficient; and fail-closed invalid timestep/concentration/policy/habit inputs all pass.
+- PR: `#80`
+- Certified head: `e34c41934b89e1e2d9af0b112e6a6a93033d5b22`
+- Certified tree: `5a4a3905814a8ed9c51c1992aad2a247a8ccf356`
+- Remediation CI: `33174142590` (#210) — `SUCCESS`
+- Protected CI: `33174142585` (#221) — `SUCCESS`
+- Protected merge-ref: `f80549ef2c439c3f431b25264bd3849cefbf5a46`
+- Validation: portable `1576 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`. D5-specific Eq. (106)/(107), policy-boundary, partition-additivity and fail-closed assertions pass inside the portable suite.
+- Merge SHA: `1ff801e5b9b118b5bac47eef4137301aa26fdf89`
+- Merge tree: `5a4a3905814a8ed9c51c1992aad2a247a8ccf356`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `a888055ea9908e6d23cd5b06ca8c60b61c19dad9` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: `NONE_WITHIN_PHASE_D_FOOD_CHAIN_AND_EXPOSURE` for the recoverable manual-based food-chain/exposure semantics. Production exposure habits/coefficients, calibration, empirical validation and modern application policy remain separate and are not reclassified as original UFOTRI behavior.
+- Next stage: `UFOTRI_HT_BRANCH_RECONCILIATION_R1`.
+- Scope claim: `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION=COMPLETE`.
+- Non-claims: no production exposure parameter activation, no project breathing/consumption habits promoted to recovered UFOTRI defaults, no modern HPA coefficient relabeling, no separate OBT dose coefficient relabeled as original UFOTRI behavior, no drinking-water/root-crop/grain addition to manual Eq. (107), no calibration, empirical validation, physical-accuracy/production-readiness claim, real CTEAS-Atmos binding or original-executable equivalence.
 
 ---
 
@@ -534,16 +551,15 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
-2. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-3. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-4. HT-derived HTO re-emission/secondary-feedback reconciliation
-5. re-emission/area-source reconciliation
-6. Canada 1987 benchmark reconstruction
-7. ITER benchmark reconstruction
-8. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-9. final cross-module fidelity qualification
-10. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+2. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+3. HT-derived HTO re-emission/secondary-feedback reconciliation
+4. re-emission/area-source reconciliation
+5. Canada 1987 benchmark reconstruction
+6. ITER benchmark reconstruction
+7. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+8. final cross-module fidelity qualification
+9. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -576,7 +592,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 - [x] Pasture 40/60/0 root profile — PR #74, merge `c849f3d328c6d59c73fb1d1de85bff57dc5ec1ce`, no-drift PASS
 - [x] Vegetable/grass closure — PR #76, merge `238bbcbc82f5c417dc33663bd47695f6b20426ed`, no-drift PASS
 - [x] Cow/milk/beef closure — PR #78, merge `27f057474b750e299e2e5234f73552df5b06d558`, no-drift PASS
-- [ ] Inhalation/skin/ingestion exposure reconciliation
+- [x] Inhalation/skin/ingestion exposure reconciliation — PR #80, merge `1ff801e5b9b118b5bac47eef4137301aa26fdf89`, no-drift PASS
 
 ### HT and secondary HTO
 
@@ -617,6 +633,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
+`UFOTRI_HT_BRANCH_RECONCILIATION_R1`
 
-D5 must reconcile KfK 4605 Eq. (106)-(107) public exposure semantics against the retained V2 continuous dose topology and the post-RC1 interfaces. It must preserve the manual Eq. (106) inhalation-plus-50%-skin structure and Eq. (107) ingestion over the representative green-vegetable, beef and milk classes, while separating manual-fidelity coefficient policy from modern application policy. The manual adult HTO coefficient and its treatment of ingested OBT as HTO must not be silently replaced by, or confused with, the retained modern age-specific HTO and distinct OBT coefficients. Project breathing and consumption habits must remain explicit assumptions rather than recovered UFOTRI defaults. RC1 remains the stable fallback. No production exposure parameters, calibration, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D5.
+Phase D is complete for the recoverable manual-based food-chain and public-exposure semantics. E1 must now reconcile the HT branch contract and manual mapping before any HT process implementation is authorized. Internal E1-E3 work may use controlled synthetic/replay HT forcing and must remain distinct from deferred real CTEAS-Atmos HT transport. No HTO forcing may be silently relabeled as real HT, and no production parameter, calibration, empirical-validation, physical-accuracy or original-executable-equivalence claim is authorized by this roadmap transition.
