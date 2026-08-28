@@ -1,0 +1,122 @@
+stage: UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED
+phase: E
+substage: E3
+
+dependency:
+  e1_stage: UFOTRI_HT_BRANCH_RECONCILIATION_R1
+  e1_complete: true
+  e2_stage: UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1
+  e2_complete: true
+  real_cteas_atmos_required: false
+
+manual_authority:
+  source: KfK_4605
+  anchors:
+    - plant_eq_27_to_31_reemission_exchange
+    - soil_atmosphere_exchange_section_2_2_3
+    - soil_reemission_eq_38_to_44
+    - secondary_area_source_eq_4_role
+  recovered_roles:
+    plant_signed_reemission_role: true
+    topsoil_only_direct_soil_reemission_role: true
+    secondary_atmospheric_source_role: true
+    advanced_eq44_complete_executable_relation: false
+    original_area_source_numerics_recovered: false
+
+historical_v1_v2:
+  basic_mass_flux_reemission_exists: true
+  provisional_eq44_engineering_reconstruction_exists: true
+  environmental_inventory_loss_is_accounted: true
+  delayed_secondary_feedback_exists: true
+  area_source_feedback_exists: true
+  point_equivalent_feedback_exists: true
+  primary_plus_secondary_air_concentration_exists: true
+  feedback_uses_aggregate_total_reemission: true
+  primary_vs_ht_derived_origin_partition_exists: false
+
+source_ambiguity:
+  limitation: M_REEM_MANUAL_FIDELITY
+  rain_start_3_percent_status: PARTIAL
+  concentration_dependent_diff_status: PARTIAL
+  full_manual_mapping_demonstrated: false
+  concentration_gradient_reversal_represented_in_historical_engineering_mode: false
+  historical_eq44_promoted_to_manual_exact: false
+
+post_rc1_reusable_roles:
+  plant_reemission_owner: plant_leaf_ufotri_v4_eq27_31
+  soil_inventory_owner: plant_soil_v4
+  soil_reemission_sink_field: ThreeLayerSoilForcing.surface_reemission_hto_loss_bq_m2_s
+  soil_direct_layer: L1
+  e2_input_projection_owner: coupling_ht_to_hto_soil_v4
+  e2_primary_hto_flux_visible_before_aggregation: true
+  e2_ht_derived_hto_flux_visible_before_aggregation: true
+  e2_combined_flux_written_to_soil: true
+
+provenance_policy:
+  aggregate_soil_inventory_is_origin_resolved: false
+  aggregate_tfwt_inventory_is_origin_resolved: false
+  aggregate_reemission_may_be_relabelled_ht_derived: false
+  ht_derived_label_requires_explicit_origin_proof: true
+  mixed_or_unresolved_origin_must_remain_explicit: true
+  silent_proportional_origin_split_forbidden: true
+  primary_and_secondary_source_identity_must_not_be_conflated: true
+
+double_count_policy:
+  reemission_is_first_environmental_inventory_loss: true
+  later_atmospheric_source_may_consume_same_accounted_loss: true
+  later_atmospheric_source_is_not_new_environmental_activity_creation: true
+  routed_secondary_activity_must_not_exceed_accounted_reemission_loss: true
+
+implementation_decision:
+  reconciliation_only: true
+  existing_source_change_required_for_e3: false
+  new_e3_reemission_solver_authorized: false
+  historical_eq44_activation_authorized: false
+  historical_area_source_activation_authorized: false
+  phase_f_source_changes_expected: true
+  phase_f_owns_area_source_numerical_compatibility: true
+
+phase_f_handoff:
+  required_scope:
+    - provenance_aware_secondary_source_adapter
+    - area_source_or_equivalent_representation_reconciliation
+    - source_geometry_and_emission_height_reconciliation
+    - feedback_delay_and_time_discretization_reconciliation
+    - origin_aware_accounting_if_ht_derived_attribution_is_required
+    - reemission_loss_to_secondary_source_activity_identity
+  exact_next_stage_id_status: TO_BE_FROZEN_BY_E3_ROADMAP_SYNC
+
+forbidden_scope:
+  invent_complete_eq44_relation: true
+  promote_provisional_v2_eq44_to_manual_exact: true
+  silently_label_mixed_reemission_as_ht_derived: true
+  add_phase_f_area_source_numerics: true
+  activate_real_cteas_atmos_binding: true
+  activate_production_parameters: true
+  calibration: true
+  empirical_validation_claim: true
+  physical_accuracy_claim: true
+  production_readiness_claim: true
+  original_executable_equivalence_claim: true
+
+qualification:
+  machine_script: scripts/v4/check_ufotri_ht_derived_hto_reemission_secondary_feedback_reconciliation_r1.py
+  pytest: tests/v4/test_ufotri_ht_derived_hto_reemission_secondary_feedback_reconciliation_r1.py
+  required_gates:
+    - manual_topsoil_and_plant_roles_visible
+    - eq44_source_limit_explicit
+    - historical_feedback_topology_visible
+    - historical_aggregate_feedback_not_promoted
+    - v4_l1_reemission_sink_reused
+    - phase_a_signed_leaf_release_reused
+    - e2_preaggregation_provenance_visible
+    - postaggregation_ht_derived_label_fails_closed
+    - mixed_origin_policy_explicit
+    - phase_f_numerical_boundary_preserved
+    - no_existing_source_change
+
+candidate_scope_claim: UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION=COMPLETE
+next_scope_after_merge_and_roadmap_sync: re-emission/area-source compatibility
+next_stage_id_status: TO_BE_FROZEN_BY_E3_ROADMAP_SYNC
