@@ -119,29 +119,30 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### A2. Leaf fidelity implementation required by A1
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`
 - Replication requirement: `REQUIRED_BY_A1`
 - Dependency: A1.
-- Scope authorized by A1:
-  - manual day/night, LAI, soil-available-water exhaustion and rain canopy-resistance rules;
-  - Eq. (18) aerodynamic resistance with Eq. (22)-(25) wind-profile/geometry compatibility;
-  - Eq. (21) boundary-layer resistance `r_b = 2/(k u_*)`;
-  - Eq. (27) saturated-vapour equilibrium conversion;
-  - Eq. (27)-(30) analytic interval exchange/update;
-  - Eq. (31) compatibility re-emission diagnostic;
-  - explicit provenance for any Monin-Obukhov estimator substitution.
-- Forbidden scope creep:
-  - no unrelated crop physiology redesign;
-  - no generic empirical Leaf R5 physiology;
-  - no parameter calibration;
-  - no production activation;
-  - no silent replacement of RC1 leaf behavior.
-- Completion gate: manual-role unit tests, day/night/soil-water/rain and forcing-response tests, analytic-equation checks, conservation/integration checks, exact-head CI, merge/no-drift.
+- Manual anchor: Eq. (7)-(31), including recovered canopy/day-night/rain rules, Eq. (18), Eq. (21), Eq. (22)-(25), Eq. (27)-(31), and the recovered vegetation geometry relations.
+- Decision: implemented a separate opt-in `plant/leaf_ufotri_v4` compatibility path; RC1 and historical V2 defaults remain unchanged. Daytime-rain `r_c=0` is preserved exactly and is not replaced by epsilon. The Golder Monin-Obukhov route is explicitly identified as a literature approximation, not recovered original UFOTRI source logic.
+- Changed source files: new `src/cteas_ufotri/plant/leaf_ufotri_v4/{__init__.py,model.py,resistance_state.py}` only; no pre-existing RC1/V2 source file changed. ADR/governance/report and two V4 test files were also added.
+- PR: `#60`
+- Certified head: `c23b442c1061287a4f8fd9d8856d5c870b930e71`
+- Certified tree: `220423b79b4b1a678fa90a2a2bce3d0abaf51b7d`
+- Remediation CI: `33138592669` — `SUCCESS`
+- Protected CI: `33138592661` — `SUCCESS`
+- Validation: portable `1472 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `881a1fff98cf28e19e789249872f58e97d38ea3d`
+- Merge tree: `220423b79b4b1a678fa90a2a2bce3d0abaf51b7d`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `4ff6fc0d6fd5a5f93f8b65fc05c11d3e3b8ed507` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: deterministic manual-role regression/benchmark closure for the selected compatibility path; no empirical or original-executable equivalence has been established.
+- Next stage: `UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`.
+- Forbidden scope remains in force: no generic empirical Leaf R5 physiology, no parameter calibration, no production activation, no real CTEAS-Atmos binding, and no silent replacement of RC1 leaf behavior.
 
 #### A3. Leaf manual-regression/benchmark closure
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: A1 and A2.
 - Goal: prove that the selected compatibility path reproduces the recoverable manual semantics across deterministic synthetic/manual test cases.
@@ -404,23 +405,22 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`
-2. Leaf Eq. (7)-(31) manual-regression closure
-3. `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
-4. OBT conservation/numerical closure
-5. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
-6. coupled water/HTO hydrology verification
-7. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
-8. pasture / vegetable / grass / cow / milk / beef / exposure closure
-9. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-10. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-11. HT-derived HTO re-emission/secondary-feedback reconciliation
-12. re-emission/area-source reconciliation
-13. Canada 1987 benchmark reconstruction
-14. ITER benchmark reconstruction
-15. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-16. final cross-module fidelity qualification
-17. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`
+2. `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
+3. OBT conservation/numerical closure
+4. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
+5. coupled water/HTO hydrology verification
+6. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
+7. pasture / vegetable / grass / cow / milk / beef / exposure closure
+8. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+9. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+10. HT-derived HTO re-emission/secondary-feedback reconciliation
+11. re-emission/area-source reconciliation
+12. Canada 1987 benchmark reconstruction
+13. ITER benchmark reconstruction
+14. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+15. final cross-module fidelity qualification
+16. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -434,7 +434,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 ### Leaf
 
 - [x] Eq. (7)-(31) reconciliation — PR #58, merge `6aa1c3858265758927984f2be93b0450e1d1a9e3`, no-drift PASS
-- [ ] UFOTRI Eq. (7)-(31) fidelity implementation
+- [x] UFOTRI Eq. (7)-(31) fidelity implementation — PR #60, merge `881a1fff98cf28e19e789249872f58e97d38ea3d`, no-drift PASS
 - [ ] Leaf manual-regression closure
 
 ### OBT
@@ -494,6 +494,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_LEAF_EQ7_31_FIDELITY_IMPLEMENTATION_R1`
+`UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`
 
-This stage is an opt-in manual-fidelity implementation authorized by completed A1. It must preserve the RC1 fallback/default path and is limited to the Eq. (7)-(31) scope recorded above. It does not authorize generic empirical Leaf R5 physiology, runtime parameter activation, production-input work, or real CTEAS-Atmos binding.
+This stage must close deterministic manual-role regression for the A2 opt-in compatibility path before Phase B begins. It must exercise recoverable Eq. (7)-(31) semantics and limiting cases without inventing missing original-executable data. Passing A3 may support a manual-based functional leaf-reconstruction claim only; it does not establish empirical validation, calibrated/production parameters, physical accuracy, real CTEAS-Atmos binding, or original executable equivalence.
