@@ -1,0 +1,442 @@
+schema_version: v1
+stage: UFOTRI_REPLICATION_GAP_AUDIT_R1
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 38f9d5f5a863e195e7140444829d0e674acca6fc
+base_main_tree: 8a0c9f14f04629273740733282c567ba7d63c36b
+
+purpose: >-
+  Audit the frozen post-RC1 repository against the available UFOTRI KfK 4605
+  manual and decide which post-RC1 physics extensions are actually required for
+  a manual-based UFOTRI functional reconstruction. This stage does not modify
+  solver physics or the RC1 baseline.
+
+authority_and_limits:
+  ufotri_manual_available: true
+  ufotri_original_source_code_available: false
+  ufotri_original_executable_available: false
+  original_parameter_loader_available: false
+  exact_original_numerical_regression_possible: false
+  manual_based_functional_reconstruction_auditable: true
+  full_ufotri_manual_based_replication_complete: false
+  original_ufotri_numerical_equivalence_established: false
+  terminology_rule: >-
+    Even after all recoverable manual mechanisms are implemented, the strongest
+    defensible claim without original source/executable regression is
+    UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION, not exact original executable
+    reproduction.
+
+classification_ontology:
+  - MANUAL_ROLE_COVERED
+  - FUNCTIONAL_RECONSTRUCTION
+  - PARTIAL_RECONSTRUCTION
+  - HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+  - NOT_IMPLEMENTED
+  - PROJECT_REPLACEMENT_NOT_EQUIVALENT
+  - NOT_IMPLEMENTED_AS_VALIDATION
+  - UNVERIFIABLE_SOURCE_UNAVAILABLE
+
+summary_counts:
+  total_items: 30
+  MANUAL_ROLE_COVERED: 2
+  FUNCTIONAL_RECONSTRUCTION: 5
+  PARTIAL_RECONSTRUCTION: 5
+  HISTORICAL_IMPLEMENTATION_NOT_IN_RC1: 8
+  NOT_IMPLEMENTED: 5
+  PROJECT_REPLACEMENT_NOT_EQUIVALENT: 1
+  NOT_IMPLEMENTED_AS_VALIDATION: 2
+  UNVERIFIABLE_SOURCE_UNAVAILABLE: 2
+
+replication_matrix:
+  - id: UFR-01
+    process: HTO_PRIMARY_ATMOSPHERIC_DISPERSION
+    manual_anchor: MUSEMET_AND_SEC_2_1
+    status: FUNCTIONAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/atmosphere/gaussian.py
+      - src/cteas_ufotri/atmosphere/dispersion_parameters.py
+    replication_gap: >-
+      Functional Gaussian transport exists, but original MUSEMET executable
+      equivalence cannot be established and real CTEAS-Atmos coupling is a
+      separate deferred project dependency.
+    required_for_manual_reconstruction: true
+    current_action: DEFER_REAL_ATMOS_RECONCILIATION
+
+  - id: UFR-02
+    process: SECONDARY_AREA_SOURCE_FROM_REEMISSION
+    manual_anchor: EQ4_AND_SEC_2_2_1
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - docs/equations/manual_scope_and_mapping.md
+      - docs/v2/manual_to_code_matrix.md
+    replication_gap: >-
+      Area-source/re-emission feedback exists in historical V1/V2 paths but is
+      not part of the frozen V4 RC1 controlled chain.
+    required_for_manual_reconstruction: true
+    current_action: FUTURE_V2_TO_POST_RC1_RECONCILIATION
+
+  - id: UFR-03
+    process: HTO_DRY_DEPOSITION
+    manual_anchor: SEC_2_1_EQ48
+    status: PARTIAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/atmosphere/deposition.py
+      - src/cteas_ufotri/atmosphere/depletion.py
+    replication_gap: Project simplification is functional but not original-code equivalent.
+    required_for_manual_reconstruction: true
+    current_action: FIDELITY_REVIEW_LATER
+
+  - id: UFR-04
+    process: HTO_WET_WASHOUT
+    manual_anchor: SEC_2_1_EQ49_EQ50
+    status: PARTIAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/atmosphere/wet_deposition.py
+    replication_gap: >-
+      Functional washout exists, but the project parameterization is not frozen
+      as the exact UFOTRI two-rain-class mode.
+    required_for_manual_reconstruction: true
+    current_action: FIDELITY_REVIEW_LATER
+
+  - id: UFR-05
+    process: HT_PRIMARY_ATMOSPHERIC_TRANSPORT
+    manual_anchor: SEC_1_SEC_2_1_HT_AND_T2
+    status: NOT_IMPLEMENTED
+    current_basis: []
+    replication_gap: Selected V4 baseline is HTO-only and does not carry a separate HT plume state.
+    required_for_manual_reconstruction: true
+    current_action: DEFER_UNTIL_ATMOS_TRACK_READY
+
+  - id: UFR-06
+    process: HT_TO_HTO_SOIL_CONVERSION
+    manual_anchor: ABSTRACT_AND_SECONDARY_MODEL_HT_OXIDATION
+    status: NOT_IMPLEMENTED
+    current_basis: []
+    replication_gap: No production V4 HT deposition-to-soil-HTO oxidation pathway exists.
+    required_for_manual_reconstruction: true
+    current_action: REQUIRED_FUTURE_INTERNAL_CHEMISTRY_TRACK
+
+  - id: UFR-07
+    process: LEAF_RESISTANCE_COMPONENT_IDENTITY
+    manual_anchor: EQ12_EQ13_EQ14
+    status: MANUAL_ROLE_COVERED
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    replication_gap: None at the r_a+r_b+r_c identity level.
+    required_for_manual_reconstruction: true
+    current_action: PRESERVE
+
+  - id: UFR-08
+    process: LEAF_DYNAMIC_AERODYNAMIC_BOUNDARY_STOMATAL_RELATIONS
+    manual_anchor: EQ15_TO_EQ31
+    status: PARTIAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+      - src/cteas_ufotri/plant/leaf_exchange_resistance/resistance.py
+    replication_gap: >-
+      Historical V2 contains a manual-informed meteorology-responsive leaf path,
+      while frozen V4 RC1 consumes resistance components without activating the
+      complete manual dynamic chain. Historical V2 also contains literature
+      substitutions and is not an exact UFOTRI import.
+    required_for_manual_reconstruction: true
+    current_action: UFOTRI_LEAF_EQ7_31_RECONCILIATION_REQUIRED
+
+  - id: UFR-09
+    process: LEAF_EQ27_EQUILIBRIUM_CONCENTRATION
+    manual_anchor: EQ27
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - src/cteas_ufotri/plant/leaf_exchange.py
+    replication_gap: >-
+      UFOTRI Eq.27 saturated-water-vapour-density formulation exists in the
+      historical V2 leaf implementation but is supplied as an external
+      equilibrium quantity in the frozen V4 resistance boundary.
+    required_for_manual_reconstruction: true
+    current_action: INCLUDE_IN_LEAF_RECONCILIATION
+
+  - id: UFR-10
+    process: SOIL_HTO_INVENTORY_AND_SIGNED_ACTIVITY_TRANSPORT
+    manual_anchor: EQ1_EQ2
+    status: FUNCTIONAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/plant/soil_v3/soil_solver.py
+    replication_gap: Activity storage and signed transport are implemented with explicit conservation.
+    required_for_manual_reconstruction: true
+    current_action: PRESERVE
+
+  - id: UFR-11
+    process: SOIL_WATER_POTENTIAL_RICHARDS_DARCY_TRANSPORT
+    manual_anchor: EQ33_TO_EQ37
+    status: NOT_IMPLEMENTED
+    current_basis:
+      - src/cteas_ufotri/plant/soil_v3/soil_solver.py
+    replication_gap: >-
+      Soil transport flux is caller-supplied. Current V4 does not calculate the
+      interlayer water/HTO flux from UFOTRI water-potential and Darcy/Richards
+      relations.
+    required_for_manual_reconstruction: true
+    current_action: UFOTRI_EQ33_37_HYDROLOGY_RECONSTRUCTION_REQUIRED
+
+  - id: UFR-12
+    process: SOIL_AND_PLANT_REEMISSION
+    manual_anchor: EQ38_TO_EQ44
+    status: PARTIAL_RECONSTRUCTION
+    current_basis:
+      - docs/equations/manual_scope_and_mapping.md
+      - docs/v2/manual_to_code_matrix.md
+    replication_gap: >-
+      Basic mass-flux re-emission and provisional REEM/DIFF/ZT reconstruction
+      exist historically, but the advanced empirical formulation is not frozen
+      as a verified UFOTRI-equivalent post-RC1 path.
+    required_for_manual_reconstruction: true
+    current_action: FIDELITY_REVIEW_LATER
+
+  - id: UFR-13
+    process: ROOT_TOTAL_WATER_UPTAKE
+    manual_anchor: PENMAN_EQ38_TO_EQ43_AND_CONTROLLED_EQ39_ROUTE
+    status: FUNCTIONAL_RECONSTRUCTION
+    current_basis:
+      - docs/v4/adr/ADR-045-v4-root-total-uptake-ufotri-eq39-implementation-r1.md
+    replication_gap: Controlled UFOTRI equilibrium-radiation route is implemented for the selected baseline.
+    required_for_manual_reconstruction: true
+    current_action: PRESERVE
+
+  - id: UFR-14
+    process: CROP_ROOT_LAYER_PROFILE
+    manual_anchor: EQ55_TO_EQ64_NUTRIENT_CROP_20_40_40
+    status: MANUAL_ROLE_COVERED
+    current_basis:
+      - docs/v4/governance/v4_root_ufotri_20_40_40_profile_r1.yaml
+    replication_gap: None for the selected nutrient-crop 20/40/40 layer fractions.
+    required_for_manual_reconstruction: true
+    current_action: PRESERVE
+
+  - id: UFR-15
+    process: PASTURE_ROOT_LAYER_PROFILE
+    manual_anchor: GRASS_SOIL_SYSTEM_40_60_0
+    status: NOT_IMPLEMENTED
+    current_basis: []
+    replication_gap: No post-RC1 pasture 40/60/0 root-layer profile is implemented.
+    required_for_manual_reconstruction: true
+    current_action: REQUIRED_WITH_GRASS_SYSTEM_RECONCILIATION
+
+  - id: UFR-16
+    process: ROOT_UPTAKE_SHORT_TERM_DELAY_OPTION
+    manual_anchor: SEC_2_2_5_APPROX_3H_OPTION
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - docs/equations/manual_scope_and_mapping.md
+    replication_gap: Historical implementation allowed an integral-step delay including the manual three-hour option; RC1 does not activate it.
+    required_for_manual_reconstruction: true
+    current_action: RECONCILE_AS_OPTIONAL_UFOTRI_MODE
+
+  - id: UFR-17
+    process: TFWT_DYNAMIC_BALANCE
+    manual_anchor: EQ3_EQ27_TO_EQ30
+    status: FUNCTIONAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py
+    replication_gap: Public TFWT inventory and signed leaf/root/loss/OBT flux roles are implemented.
+    required_for_manual_reconstruction: true
+    current_action: PRESERVE
+
+  - id: UFR-18
+    process: OBT_FIRST_ORDER_FORMATION_AND_LOSS
+    manual_anchor: SEC_2_2_6_EQ65_EQ66_EQ105
+    status: PARTIAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/plant/obt_v3/obt_solver.py
+      - docs/v4/governance/v4_obt_ufotri_baseline_r1.yaml
+    replication_gap: >-
+      Reduced k_f/k_r reproduces first-order formation/loss roles but collapses
+      UFOTRI exchangeable/non-exchangeable distinctions and broader crop/food
+      compartment semantics.
+    required_for_manual_reconstruction: true
+    current_action: PRESERVE_AS_RC1_FALLBACK
+
+  - id: UFR-19
+    process: EXCHANGEABLE_AND_NONEXCHANGEABLE_OBT_COMPARTMENTS
+    manual_anchor: SEC_2_2_6
+    status: NOT_IMPLEMENTED
+    current_basis:
+      - src/cteas_ufotri/plant/obt_v3/obt_solver.py
+    replication_gap: Current V4 OBT state is one aggregate inventory.
+    required_for_manual_reconstruction: true
+    current_action: UFOTRI_E_N_OBT_COMPARTMENT_RECONSTRUCTION_REQUIRED
+
+  - id: UFR-20
+    process: VEGETABLE_INGESTION_SUBSYSTEM
+    manual_anchor: EQ45_TO_EQ66
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - src/cteas_ufotri/foodchain/model.py
+      - docs/v2/manual_to_code_matrix.md
+    replication_gap: Historical V2 food-chain functionality exists but frozen V4 uses a terminal harvest-event adapter instead of the continuous UFOTRI compartment system.
+    required_for_manual_reconstruction: true
+    current_action: FUTURE_V2_TO_POST_RC1_RECONCILIATION
+
+  - id: UFR-21
+    process: GRASS_SOIL_ATMOSPHERE_SUBSYSTEM
+    manual_anchor: EQ67_TO_EQ81
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - src/cteas_ufotri/foodchain/model.py
+      - docs/v2/manual_to_code_matrix.md
+    replication_gap: Historical pasture pathway exists only partially relative to the original continuous subsystem and is not in RC1.
+    required_for_manual_reconstruction: true
+    current_action: FUTURE_V2_TO_POST_RC1_RECONCILIATION
+
+  - id: UFR-22
+    process: COW_COMPARTMENT
+    manual_anchor: SEC_2_2_7_EQ82_TO_EQ105
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - src/cteas_ufotri/foodchain/model.py
+    replication_gap: Animal HTO/OBT inventories and transfers exist historically but are outside frozen V4 RC1 and are not certified as original-equation equivalent.
+    required_for_manual_reconstruction: true
+    current_action: FUTURE_V2_TO_POST_RC1_RECONCILIATION
+
+  - id: UFR-23
+    process: MILK_AND_BEEF_PRODUCT_PATHWAYS
+    manual_anchor: EQ85_TO_EQ105
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - src/cteas_ufotri/foodchain/model.py
+    replication_gap: Milk/slaughter/beef inventory functionality exists historically; exact UFOTRI compartment mapping remains to be reconciled.
+    required_for_manual_reconstruction: true
+    current_action: FUTURE_V2_TO_POST_RC1_RECONCILIATION
+
+  - id: UFR-24
+    process: INHALATION_AND_SKIN_DOSE
+    manual_anchor: EQ106
+    status: HISTORICAL_IMPLEMENTATION_NOT_IN_RC1
+    current_basis:
+      - docs/v2/manual_to_code_matrix.md
+    replication_gap: Historical V2 dose path exists, but it is not part of the current V4 food-intake-dose controlled endpoint.
+    required_for_manual_reconstruction: true
+    current_action: FUTURE_V2_TO_POST_RC1_RECONCILIATION
+
+  - id: UFR-25
+    process: INGESTION_DOSE
+    manual_anchor: EQ107
+    status: FUNCTIONAL_RECONSTRUCTION
+    current_basis:
+      - src/cteas_ufotri/exposure/intake_v3/intake_solver.py
+      - src/cteas_ufotri/exposure/dose_v3/dose_solver.py
+    replication_gap: Generic I=C*R and D=I*e roles are implemented; modern age/pathway coefficients are project extensions rather than original UFOTRI defaults.
+    required_for_manual_reconstruction: true
+    current_action: ADD_MANUAL_COMPATIBILITY_PROFILE_LATER
+
+  - id: UFR-26
+    process: CONTINUOUS_INGESTION_COMPARTMENT_SYSTEM
+    manual_anchor: EQ45_TO_EQ105
+    status: PROJECT_REPLACEMENT_NOT_EQUIVALENT
+    current_basis:
+      - src/cteas_ufotri/plant/food_v3/food_transfer_solver.py
+    replication_gap: Frozen V4 KEEP_HARVEST_EVENT is a project boundary and is not equivalent to the original continuous first-order ingestion compartment system.
+    required_for_manual_reconstruction: true
+    current_action: RECONCILE_HISTORICAL_V2_CONTINUOUS_PATH
+
+  - id: UFR-27
+    process: CANADA_1987_EXPERIMENT_REPRODUCTION
+    manual_anchor: SEC_5_2
+    status: NOT_IMPLEMENTED_AS_VALIDATION
+    current_basis: []
+    replication_gap: No accepted post-RC1 regression reproduces the manual Canada 1987 figures/metrics.
+    required_for_manual_reconstruction: true
+    current_action: REQUIRED_FINAL_MANUAL_BENCHMARK
+
+  - id: UFR-28
+    process: ITER_BENCHMARK_REPRODUCTION
+    manual_anchor: SEC_5_3_TABLE8_TO_TABLE13
+    status: NOT_IMPLEMENTED_AS_VALIDATION
+    current_basis: []
+    replication_gap: No accepted post-RC1 regression reproduces the manual ITER HTO/HT benchmark outputs.
+    required_for_manual_reconstruction: true
+    current_action: REQUIRED_FINAL_MANUAL_BENCHMARK
+
+  - id: UFR-29
+    process: ORIGINAL_EXECUTABLE_NUMERICAL_EQUIVALENCE
+    manual_anchor: ORIGINAL_UFOTRI_SOFTWARE
+    status: UNVERIFIABLE_SOURCE_UNAVAILABLE
+    current_basis:
+      - docs/v3/reports/v3_p7_6c2_ufotri_source_inventory.md
+    replication_gap: Original UFOTRI source/executable was not recovered.
+    required_for_manual_reconstruction: false
+    current_action: PERMANENT_EVIDENCE_LIMIT_UNLESS_SOURCE_RECOVERED
+
+  - id: UFR-30
+    process: ORIGINAL_PARAMETER_LOADER_AND_HIDDEN_DEFAULTS
+    manual_anchor: ORIGINAL_UFOTRI_SOFTWARE
+    status: UNVERIFIABLE_SOURCE_UNAVAILABLE
+    current_basis:
+      - docs/v3/reports/v3_p7_6c2_ufotri_source_inventory.md
+    replication_gap: Original software-specific field names, parameter loader and undocumented defaults are unavailable.
+    required_for_manual_reconstruction: false
+    current_action: PERMANENT_EVIDENCE_LIMIT_UNLESS_SOURCE_RECOVERED
+
+candidate_extension_decisions:
+  leaf_r5:
+    candidate_name: LEAF_R5_DYNAMIC_STOMATAL_IMPLEMENTATION
+    decision: CURRENT_R5_AS_DESIGNED_NOT_REQUIRED_FOR_REPLICATION
+    replication_need: UFOTRI_LEAF_EQ7_31_FIDELITY_RECONCILIATION_REQUIRED
+    rationale: >-
+      UFOTRI requires its manual aerodynamic/boundary/stomatal/LAI/day-night/
+      meteorological exchange relations. The repository already contains a
+      historical manual-informed V2 implementation. The current R5 candidate
+      introduces an empirical g_s_max*F_light*F_vpd*F_temp*F_stage structure
+      that is not itself established as the UFOTRI manual equation set. First
+      reconcile and port the recoverable manual path; only residual evidence-
+      driven improvements remain optional.
+    next_stage: UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1
+
+  richards_darcy:
+    candidate_name: FULL_RICHARDS_DARCY_HYDROLOGY
+    decision: REPLICATION_REQUIRED_MANUAL_EQ33_37
+    replication_need: UFOTRI_EQ33_37_SOIL_HYDROLOGY_REQUIRED
+    rationale: >-
+      UFOTRI explicitly includes soil water potential and Darcy/Richards
+      transport. Current V4 accepts signed transport fluxes from the caller and
+      therefore omits the manual hydrologic closure. The required work should
+      reproduce the UFOTRI Eq.33-37 mechanism and discretization semantics, not
+      build an unconstrained general-purpose hydrology model.
+    priority_after_leaf_reconciliation: true
+
+  multi_pool_obt:
+    candidate_name: MULTI_POOL_OBT
+    decision: REPLICATION_REQUIRED_IN_NARROW_UFOTRI_FORM_ONLY
+    replication_need: UFOTRI_EXCHANGEABLE_NONEXCHANGEABLE_OBT_COMPARTMENTS_REQUIRED
+    rationale: >-
+      A one-pool k_f/k_r OBT state is not sufficient for the manual's explicit
+      exchangeable/non-exchangeable distinction. However, a generic or
+      precursor-rich multi-pool architecture is not automatically UFOTRI-
+      equivalent. First reconstruct the manual E/N compartment semantics and
+      only add extra pools if separately justified.
+    next_decision_stage: UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1
+
+post_audit_ranking:
+  immediate_internal_next_stage: UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1
+  subsequent_high_priority_items:
+    - UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1
+    - UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1
+    - UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1
+  deferred_but_replication_required:
+    - HT_PRIMARY_ATMOSPHERIC_TRANSPORT
+    - HT_TO_HTO_SOIL_CONVERSION
+    - REAL_ATMOSPHERIC_RECONCILIATION
+  final_replication_acceptance:
+    - CANADA_1987_EXPERIMENT_REPRODUCTION
+    - ITER_BENCHMARK_REPRODUCTION
+
+hard_boundaries:
+  rc1_baseline_modified: false
+  solver_physics_modified: false
+  src_modified: false
+  production_input_work_reopened: false
+  real_cteas_atmos_binding_reopened: false
+  empirical_validation_claimed: false
+  physical_accuracy_claimed: false
+  exact_original_numerical_equivalence_claimed: false
+  leaf_r5_implementation_authorized: false
+  generic_multi_pool_obt_implementation_authorized: false
+  generic_full_hydrology_implementation_authorized: false
+  next_stage_authorized_after_clean_merge: UFOTRI_LEAF_EQ7_31_RECONCILIATION_R1
