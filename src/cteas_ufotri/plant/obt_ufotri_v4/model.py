@@ -10,23 +10,26 @@ OBT inventory. ``TFWTState`` remains the model representation for free HTO and
 the exchangeable-OBT role, while ``OBTState`` is interpreted narrowly as the
 non-exchangeable organic-tritium compartment.
 
-KfK 4605 also contains two OBT parameter contexts that must not be conflated:
+KfK 4605 provides two linked numerical descriptions of plant HTO/OBT transfer:
 
-* Section 2.2.6, the hourly atmospheric/dispersion calculation, states a daily
-  average non-exchangeable OBT incorporation rate of 0.06 % h^-1 of plant HTO
-  and a mean organic-tritium loss rate of 0.3 % h^-1. It states daytime uptake
-  is increased and nighttime uptake reduced, but the recovered text does not
-  provide an unambiguous normalized day/night multiplier pair. The recovered
-  wording is concentration-based and does not explicitly recover the mapping
-  to the current TFWT/OBT inventory bases, so exact numerical binding remains
-  fail-closed at B1.
-* Section 3.3.3, the longer-term ingestion compartment system, gives Eq. (65)
-  and Eq. (66): an organic-compartment loss half-time of about 10 d and a
-  hydrogen-inventory-balanced HTO -> OBT coefficient of about 0.012 d^-1 for
-  the stated 0.1 kg m^-2 organic and 0.4 kg m^-2 inorganic plant masses.
+* Section 2.2.6, for the hourly atmospheric/dispersion calculation, states a
+  daily-average non-exchangeable OBT incorporation rate of 0.06 % h^-1 of
+  plant HTO and a mean organic-tritium loss rate of 0.3 % h^-1. It also states
+  daytime uptake is increased and nighttime uptake reduced, but the recovered
+  text does not provide an unambiguous normalized multiplier pair.
+* Section 3.3.3, for the ingestion compartment system, gives Eq. (65)-(66): an
+  organic-compartment loss half-time of about 10 d and a hydrogen-inventory-
+  balanced HTO -> OBT coefficient of about 0.012 d^-1 for the stated 0.1 kg
+  m^-2 organic and 0.4 kg m^-2 inorganic plant masses.
 
-Those are distinct manual roles. This module keeps both visible and leaves the
-frozen V4 short-term numerical baseline untouched for later B2 qualification.
+Section 2.2.6 explicitly says the ingestion transfer paths/rates are transmitted
+to the dispersion submodule after adaptation to hourly time steps. Therefore
+the first-order inventory transfer structure is recoverable: plant HTO drives
+non-exchangeable OBT formation and the non-exchangeable OBT compartment has a
+first-order loss. However, the two stated numerical forms are not identical:
+Eq. (66)/24 is about 0.0004999 h^-1 rather than 0.0006 h^-1, while Eq. (65)/24
+is about 0.002888 h^-1 rather than 0.003 h^-1. B1 preserves this internal manual
+numerical tension instead of inventing an exact-original parameter choice.
 """
 
 from __future__ import annotations
@@ -63,6 +66,7 @@ LONG_TERM_INORGANIC_PLANT_MASS_KG_M2 = 0.4
 LONG_TERM_WATER_HYDROGEN_DIVISOR = 9.0
 LONG_TERM_ORGANIC_HYDROGEN_DIVISOR = 13.0
 LONG_TERM_MANUAL_ROUNDED_HTO_TO_OBT_D_1 = 0.012
+HOURS_PER_DAY = 24.0
 
 
 @dataclass(frozen=True)
@@ -74,7 +78,8 @@ class UFOTRIOBTRoleMap:
     separate_exchangeable_obt_pool: bool = False
     exchangeable_obt_extra_inventory_added: bool = False
     double_counting_prohibited: bool = True
-    manual_section: str = "KfK4605_2.2.6"
+    first_order_inventory_transfer_structure_recovered: bool = True
+    manual_section: str = "KfK4605_2.2.6_and_3.3.3"
 
 
 @dataclass(frozen=True)
@@ -86,8 +91,9 @@ class UFOTRIShortTermOBTProfile:
     daylight_multiplier: float | None = None
     nighttime_multiplier: float | None = None
     day_night_split_recovered: bool = False
-    exact_mass_basis_mapping_recovered: bool = False
-    direct_manual_numerical_binding_authorized: bool = False
+    inventory_transfer_structure_recovered: bool = True
+    exact_original_parameterization_recovered: bool = False
+    controlled_daily_average_binding_authorized: bool = True
     context: str = SHORT_TERM_CONTEXT
     source_section: str = "KfK4605_2.2.6"
 
@@ -103,7 +109,9 @@ class UFOTRIShortTermOBTProfile:
     def source_ambiguities(self) -> tuple[str, ...]:
         return (
             "NORMALIZED_DAY_NIGHT_FORMATION_MULTIPLIERS_NOT_RECOVERED",
-            "SECTION_2_2_6_CONCENTRATION_TO_CURRENT_INVENTORY_BASIS_NOT_EXPLICITLY_RECOVERED",
+            "SECTION_2_2_6_AND_EQ66_FORWARD_RATE_NUMBERS_NOT_IDENTICAL",
+            "SECTION_2_2_6_AND_EQ65_LOSS_RATE_NUMBERS_NOT_IDENTICAL",
+            "ORIGINAL_EXECUTABLE_PARAMETER_SELECTION_UNAVAILABLE",
         )
 
 
@@ -122,6 +130,43 @@ class UFOTRILongTermIngestionOBTProfile:
     downstream_stage: str = "UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1"
     context: str = LONG_TERM_CONTEXT
     source_section: str = "KfK4605_3.3.3_Eq65_66"
+
+    @property
+    def obt_to_hto_h_1(self) -> float:
+        return self.obt_to_hto_d_1 / HOURS_PER_DAY
+
+    @property
+    def hto_to_obt_h_1_exact_from_stated_masses(self) -> float:
+        return self.hto_to_obt_d_1_exact_from_stated_masses / HOURS_PER_DAY
+
+
+@dataclass(frozen=True)
+class UFOTRIOBTRateReconciliation:
+    """Quantify the manual's hourly-vs-ingestion numerical tension."""
+
+    section_2_2_6_forward_h_1: float
+    eq66_forward_h_1: float
+    section_2_2_6_loss_h_1: float
+    eq65_loss_h_1: float
+
+    @property
+    def forward_relative_difference_vs_eq66(self) -> float:
+        return (
+            self.section_2_2_6_forward_h_1 - self.eq66_forward_h_1
+        ) / self.eq66_forward_h_1
+
+    @property
+    def loss_relative_difference_vs_eq65(self) -> float:
+        return (
+            self.section_2_2_6_loss_h_1 - self.eq65_loss_h_1
+        ) / self.eq65_loss_h_1
+
+    @property
+    def numerically_identical(self) -> bool:
+        return (
+            self.section_2_2_6_forward_h_1 == self.eq66_forward_h_1
+            and self.section_2_2_6_loss_h_1 == self.eq65_loss_h_1
+        )
 
 
 @dataclass(frozen=True)
@@ -182,7 +227,7 @@ def ufotri_obt_role_map() -> UFOTRIOBTRoleMap:
 
 
 def ufotri_short_term_obt_profile() -> UFOTRIShortTermOBTProfile:
-    """Return Section 2.2.6 values with unresolved semantics left explicit."""
+    """Return Section 2.2.6 daily-average values and explicit ambiguities."""
 
     return UFOTRIShortTermOBTProfile()
 
@@ -211,14 +256,25 @@ def ufotri_long_term_ingestion_obt_profile() -> UFOTRILongTermIngestionOBTProfil
     )
 
 
+def ufotri_obt_rate_reconciliation() -> UFOTRIOBTRateReconciliation:
+    """Compare Section 2.2.6 hourly rates with Eq. (65)-(66) / 24."""
+
+    long_term = ufotri_long_term_ingestion_obt_profile()
+    return UFOTRIOBTRateReconciliation(
+        section_2_2_6_forward_h_1=SHORT_TERM_FORMATION_PER_HOUR,
+        eq66_forward_h_1=long_term.hto_to_obt_h_1_exact_from_stated_masses,
+        section_2_2_6_loss_h_1=SHORT_TERM_LOSS_PER_HOUR,
+        eq65_loss_h_1=long_term.obt_to_hto_h_1,
+    )
+
+
 def current_short_term_inventory_baseline() -> OBTParameters:
-    """Expose the frozen controlled numerical baseline without relabeling it.
+    """Expose the frozen controlled Section 2.2.6 daily-average baseline.
 
     The existing V4 profile uses 1/1 day/night multipliers solely to preserve
     the recovered daily-average Section 2.2.6 formation rate. This helper does
-    not claim that those multipliers reproduce the missing original day/night
-    split, nor that the original source's concentration/inventory basis has
-    been recovered exactly.
+    not claim those multipliers reproduce the missing original diurnal split,
+    nor that Section 2.2.6 and Eq. (65)-(66) select numerically identical rates.
     """
 
     parameters = ufotri_obt_baseline_parameters()
@@ -247,6 +303,7 @@ def make_ufotri_obt_state_view(
 
 __all__ = [
     "EXCHANGEABLE_OBT_MODEL_REPRESENTATION",
+    "HOURS_PER_DAY",
     "LONG_TERM_CONTEXT",
     "LONG_TERM_INORGANIC_PLANT_MASS_KG_M2",
     "LONG_TERM_MANUAL_ROUNDED_HTO_TO_OBT_D_1",
@@ -264,11 +321,13 @@ __all__ = [
     "SHORT_TERM_LOSS_S_1",
     "UFOTRILongTermIngestionOBTProfile",
     "UFOTRIOBTPlantStateView",
+    "UFOTRIOBTRateReconciliation",
     "UFOTRIOBTRoleMap",
     "UFOTRIShortTermOBTProfile",
     "current_short_term_inventory_baseline",
     "make_ufotri_obt_state_view",
     "ufotri_long_term_ingestion_obt_profile",
+    "ufotri_obt_rate_reconciliation",
     "ufotri_obt_role_map",
     "ufotri_short_term_obt_profile",
 ]
