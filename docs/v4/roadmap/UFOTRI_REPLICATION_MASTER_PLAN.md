@@ -331,10 +331,28 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### D3. Vegetable/grass compartment closure
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: B1/B2, C1/C2, D1 and D2.
+- Manual anchor: KfK 4605 Section 3.3.3 Eq. (65)-(66) for reversible vegetable plant HTO↔OBT and Section 3.4.1-3.4.2 Eq. (67)-(81) for the grass/soil/atmosphere compartment-role system; grass OBT Eq. (105-1)-(105-2) remains D4 scope because its reverse rate depends on cow/milk losses.
+- Decision: added a separate opt-in long-term `foodchain/ufotri_vegetable_grass_v4.py` path. Vegetable Eq. (65)-(66) is represented as a conservative analytic two-compartment TFWT/non-exchangeable-OBT system in which OBT→HTO returns activity to TFWT. The caller must explicitly select either the exact Eq. (66) rate reconstructed from the manual's stated masses/divisors or the manual-rounded `0.012 d^-1`; no original-executable selection is inferred. Eq. (67)-(81) grass rates are retained as a typed reference/ownership map only and are not activated as a second transport solver; active leaf, soil/hydrology and root roles remain owned by the previously qualified Phase A/C/D2 paths.
+- Changed source files: one new opt-in source file, `src/cteas_ufotri/foodchain/ufotri_vegetable_grass_v4.py`; D3 also added one machine script, one pytest file, ADR-068, governance YAML and report. No pre-existing RC1, V2, `obt_v3`, V4 integration or roadmap source was changed in PR #76.
+- Numerical closure: independent analytic agreement for exact and rounded Eq. (66) profiles, total HTO+OBT conservation, forward HTO→OBT transfer, reverse OBT→HTO return, deterministic repeat, restart/semigroup equivalence, 24×1 h partition equivalence, zero-inventory stability, exact-vs-rounded rate distinction, exact-profile equilibrium organic/inorganic specific-activity ratio of one, metadata/time-step fail-closed behavior, exact grass layer/root/reference-rate mapping, D2 40/60/0 preservation and explicit confirmation that Eq. (67)-(81) rates remain inactive all pass.
+- PR: `#76`
+- Certified head: `3d6967a3640d35b9374b1a80778db0487cff8d9d`
+- Certified tree: `b73231b61816da88302959b47f9544abc1abdd66`
+- Remediation CI: `33151263118` (#206) — `SUCCESS`
+- Protected CI: `33151263149` (#217) — `SUCCESS`
+- Protected merge-ref: `4b5af8ebca32f07bc6f749d2ed72c93336f62425`
+- Validation: portable `1537 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `238bbcbc82f5c417dc33663bd47695f6b20426ed`
+- Merge tree: `b73231b61816da88302959b47f9544abc1abdd66`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `50a82968959cb6a5cc2094cd97f7936ec08be7de` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: cow/milk/beef Eq. (82)-(105-2) closure including Eq. (98), grass OBT Eq. (105) completion through the animal-loss terms, and Eq. (106)-(107) exposure reconciliation remain D4-D5.
+- Next stage: `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`.
+- Scope claim: `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE=COMPLETE`.
+- Non-claims: no cow/milk/beef completion, no grass OBT Eq. (105) completion, no exposure completion, no production parameter activation, no calibration or empirical validation, no physical-accuracy/production-readiness claim, no real CTEAS-Atmos binding, no recovered original numerical discretization and no original-executable equivalence.
 
 #### D4. Cow/milk/beef compartment closure
 
@@ -499,18 +517,17 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
-2. `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
-3. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
-4. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-5. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-6. HT-derived HTO re-emission/secondary-feedback reconciliation
-7. re-emission/area-source reconciliation
-8. Canada 1987 benchmark reconstruction
-9. ITER benchmark reconstruction
-10. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-11. final cross-module fidelity qualification
-12. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
+2. `UFOTRI_INHALATION_SKIN_INGESTION_EXPOSURE_RECONCILIATION_R1`
+3. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+4. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+5. HT-derived HTO re-emission/secondary-feedback reconciliation
+6. re-emission/area-source reconciliation
+7. Canada 1987 benchmark reconstruction
+8. ITER benchmark reconstruction
+9. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+10. final cross-module fidelity qualification
+11. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -541,7 +558,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 - [x] V2 continuous food-chain reconciliation — PR #72, merge `1d09f65efb5bff70b65c9b4adfa41b2c09604739`, no-drift PASS
 - [x] Pasture 40/60/0 root profile — PR #74, merge `c849f3d328c6d59c73fb1d1de85bff57dc5ec1ce`, no-drift PASS
-- [ ] Vegetable/grass closure
+- [x] Vegetable/grass closure — PR #76, merge `238bbcbc82f5c417dc33663bd47695f6b20426ed`, no-drift PASS
 - [ ] Cow/milk/beef closure
 - [ ] Inhalation/skin/ingestion exposure reconciliation
 
@@ -584,6 +601,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_VEGETABLE_GRASS_COMPARTMENT_CLOSURE_R1`
+`UFOTRI_COW_MILK_BEEF_COMPARTMENT_CLOSURE_R1`
 
-D3 must reconcile the recoverable vegetable/grass continuous food-chain compartments against KfK 4605 and the preserved V2 topology, using the completed B1/B2 OBT roles, C1/C2 hydrology contracts, D1 compatibility boundary and D2 pasture root allocation. It must separate manual-supported compartment/rate semantics from project-specific biomass, support-area, intake or production assumptions; preserve RC1 as the stable fallback; and close conservation and numerical behavior on an explicit opt-in fidelity path. No cow/milk/beef completion, exposure completion, production parameter activation, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D3.
+D4 must close the recoverable KfK 4605 cow/milk/beef compartment roles and Eq. (82)-(105-2) animal-chain transfers against the D1 historical-topology reconciliation and D3 vegetable/grass boundary. It must explicitly reconstruct the Eq. (98) cow inhalation/skin uptake gap identified by D1; preserve HTO/OBT/feed/drinking-water/milk/beef transfer and loss accounting; and separate manual-supported transfer-rate semantics from project herd geometry, support area, intake, slaughter/turnover and modern application assumptions. Grass OBT Eq. (105-1)-(105-2) may only be closed consistently with the animal-loss pathways it references. RC1 remains the stable fallback. No public exposure completion, production parameter activation, calibration, empirical validation, physical-accuracy claim, real CTEAS-Atmos binding or original-executable equivalence is authorized by D4.
