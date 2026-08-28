@@ -440,26 +440,40 @@ The branch is split so that internal HT environmental mechanisms can progress in
 
 #### E2. HT→HTO soil conversion/oxidation reconstruction
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: E1.
-- Scope:
-  - HT deposition/entry to soil as supported by the manual;
-  - microbial/soil conversion of HT to HTO;
-  - resulting HTO entry into the existing soil inventory system;
-  - conservation ledger linking HT loss to HTO gain where physically defined.
-- This stage can use controlled synthetic HT forcing and does **not** require real CTEAS-Atmos output.
+- Manual anchor: KfK 4605 secondary-model soil balances Eq. (1)-(2) plus Section 2.2.3 soil/atmosphere exchange. The soil state is HTO; atmospheric HT contributes directly through the effective deposition term, while deposited HT is described as being transformed very rapidly by microorganism activity and only the transformed part remains in soil.
+- Decision: added the isolated opt-in `src/cteas_ufotri/coupling/ht_to_hto_soil_v4.py` compatibility path. E2 consumes the reviewed E1 `HTSoilDepositionBoundary` and maps the accepted deposited HT activity directly to soil HTO on a 1:1 activity basis. No independent soil-HT kinetic pool, microbial half-time, generic oxidation rate, or tunable conversion fraction is invented. Generated HTO is added to, not substituted for, primary HTO in the existing `ThreeLayerSoilForcing.surface_deposition_flux_bq_m2_s`; the projection keeps primary HTO, HT-derived HTO, combined HTO and upstream HT/T2 provenance separately visible.
+- Changed source files: one new opt-in source file, `src/cteas_ufotri/coupling/ht_to_hto_soil_v4.py`; E2 also added one machine script, one pytest file, ADR-072, governance YAML and report. No existing E1, HTO, soil/hydrology/root/TFWT/OBT, V2/RC1/V4 integration, roadmap or workflow file changed in PR #84.
+- Conservation/numerical closure: exact `HT input - generated HTO - residual HT = 0`; generated HTO equals accepted deposited HT and residual independent soil HT is zero; generated flux integrates to the generated amount; one-hour versus four-quarter-hour partition additivity; explicit HT/T2 provenance retention; additive primary-HTO + HT-derived-HTO projection; existing L1 soil HTO inventory/global-balance integration; zero direct L2/L3 injection; benchmark non-activation; absence of atmospheric HT oxidation and E3 re-emission; and fail-closed type/time/interval contracts all pass.
+- PR: `#84`
+- Certified head: `4c2011bbe7d6c39503edbe1f8c4c3a09d4fcbc25`
+- Certified tree: `7f547ba0d5d44a3bd67b867ff5ed8704cc5fdd04`
+- Remediation CI: `33182342401` (#218) — `SUCCESS`
+- Protected CI: `33182342345` (#229) — `SUCCESS`
+- Validation: portable `1612 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `5c35aa95c61d221b73f4df0da698b9e5ea1c747e`
+- Merge tree: `7f547ba0d5d44a3bd67b867ff5ed8704cc5fdd04`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `e6b9b1769a29bf0c0ede922892a057fe729cbb48` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: E3 must reconcile HT-derived HTO re-emission/secondary-feedback ownership and provenance without double counting. E4 real CTEAS-Atmos HT binding remains a separate deferred external dependency.
+- Next stage: `UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION_R1`.
+- Scope claim: `UFOTRI_HT_TO_HTO_SOIL_CONVERSION=COMPLETE`.
+- Non-claims: no E3 secondary HTO re-emission completion, no atmospheric HT oxidation, no real HT atmospheric binding, no production benchmark parameter activation, no calibration, empirical validation, physical-accuracy/production-readiness claim, original numerical-discretization recovery or original-executable equivalence.
 
 #### E3. HT-derived HTO re-emission and secondary-feedback reconciliation
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: E2.
 - Goal:
-  - reconcile soil/plant re-emission and area-source feedback behavior from historical implementations with the UFOTRI manual;
-  - distinguish primary atmospheric HTO from secondary HTO generated after HT oxidation;
-  - preserve mass provenance across HT→HTO→atmosphere/plant pathways.
+  - reconcile soil/plant re-emission and secondary-feedback ownership from historical implementations with the UFOTRI manual;
+  - distinguish primary atmospheric HTO from secondary HTO generated after HT deposition/conversion;
+  - preserve HT→HTO→secondary-atmosphere/plant provenance and activity accounting without double counting;
+  - keep the later atmosphere/area-source numerical compatibility boundary isolated for Phase F.
+- E3 may use controlled synthetic/replay feedback contracts and does **not** require real CTEAS-Atmos output.
 
 #### E4. Separate HT atmospheric transport and real CTEAS-Atmos binding
 
@@ -567,14 +581,13 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-2. HT-derived HTO re-emission/secondary-feedback reconciliation
-3. re-emission/area-source reconciliation
-4. Canada 1987 benchmark reconstruction
-5. ITER benchmark reconstruction
-6. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-7. final cross-module fidelity qualification
-8. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION_R1`
+2. re-emission/area-source reconciliation
+3. Canada 1987 benchmark reconstruction
+4. ITER benchmark reconstruction
+5. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+6. final cross-module fidelity qualification
+7. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -612,8 +625,8 @@ The order after A1 may be changed only by an explicit governance decision that r
 ### HT and secondary HTO
 
 - [x] HT branch contract/manual mapping — PR #82, merge `a71a6859f10413038b642009081ea5c730e0a2c3`, no-drift PASS
-- [ ] HT→HTO soil conversion
-- [ ] HT-derived HTO re-emission/secondary feedback
+- [x] HT→HTO soil conversion — PR #84, merge `5c35aa95c61d221b73f4df0da698b9e5ea1c747e`, no-drift PASS
+- [ ] HT-derived HTO re-emission/secondary feedback — `UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION_R1`
 - [ ] Re-emission/area-source compatibility
 - [ ] Real HT atmospheric transport / CTEAS-Atmos binding — deferred external dependency
 - [ ] End-to-end HT→HTO compatibility with real Atmos — deferred external dependency
@@ -648,6 +661,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+`UFOTRI_HT_DERIVED_HTO_REEMISSION_SECONDARY_FEEDBACK_RECONCILIATION_R1`
 
-E1 is complete for the recoverable HT branch contract/manual mapping. E2 is now authorized to reconstruct HT deposition/entry, microbial HT→HTO soil conversion, transfer of generated HTO into the existing soil inventory, and an explicit HT-loss/HTO-gain conservation ledger using controlled synthetic/replay HT forcing. Real CTEAS-Atmos HT transport remains deferred to E4; no benchmark parameter, calibration, empirical-validation, physical-accuracy, production-readiness or original-executable-equivalence claim is authorized by this roadmap transition.
+E2 is complete for the recoverable HT-deposition→soil-HTO conversion boundary and its activity/provenance ledger. E3 is now authorized to reconcile HT-derived HTO re-emission and secondary-feedback ownership, distinguish primary atmospheric HTO from HT-derived secondary HTO, and preserve activity/provenance across the synthetic/manual feedback boundary without double counting. Phase F retains ownership of the later re-emission/atmosphere area-source numerical compatibility boundary, and real CTEAS-Atmos HT transport remains deferred to E4. No benchmark parameter, calibration, empirical-validation, physical-accuracy, production-readiness or original-executable-equivalence claim is authorized by this roadmap transition.
