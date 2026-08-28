@@ -168,9 +168,9 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase B — UFOTRI OBT compartment fidelity
 
-- Phase status: `IN_PROGRESS`
-- Completed scope: plant exchangeable/non-exchangeable state-role semantics and recoverable first-order HTO↔OBT transfer topology.
-- Remaining scope: B2 conservation/numerical qualification; original day/night multipliers and original executable parameter selection remain unresolved source questions.
+- Phase status: `COMPLETE`
+- Completed scope: plant exchangeable/non-exchangeable state-role semantics, recoverable first-order HTO↔OBT transfer topology, and controlled conservation/numerical qualification for both recoverable manual rate contexts.
+- Remaining source boundary: original day/night formation multipliers and exact original executable parameter selection remain unresolved because the original source/executable is unavailable; these do not block recoverable manual-based Phase B closure. No empirical, production, physical-accuracy, or original-executable-equivalence claim is made.
 
 #### B1. Exchangeable/non-exchangeable OBT reconstruction
 
@@ -196,19 +196,27 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### B2. OBT compartment conservation and numerical integration
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: B1.
-- Required checks:
-  - mass/inventory conservation;
-  - deterministic repeat;
-  - restart equivalence;
-  - timestep refinement;
-  - compatibility with TFWT/root operator split;
-  - explicit comparison against reduced RC1 OBT behavior;
-  - explicit Section-2.2.6 versus Eq. (65)-(66) profile comparison without promoting either profile to recovered original-executable truth;
-  - no third exchangeable-OBT inventory or double counting.
+- Manual anchor: KfK 4605 Section 2.2.6 and Section 3.3.3 Eq. (65)-(66).
+- Decision: qualification-only closure using two explicit manual rate contexts under identical controlled forcing: `SECTION_2_2_6_DAILY_AVERAGE_CONTROLLED_BASELINE` (`kf=0.0006 h^-1`, `kr=0.003 h^-1`) and `EQ65_66_DERIVED_HOURLY_COMPARISON` (`kf≈0.0004998658 h^-1`, `kr≈0.0028881133 h^-1`). Neither comparison profile is promoted to recovered original-executable truth. Constant day/night multipliers `1/1` are used only for controlled numerical comparison; original diurnal multipliers remain unresolved.
+- Changed source files: `NO_EXISTING_SOURCE_CHANGE`; B2 adds only `scripts/v4/run_ufotri_obt_compartment_conservation_numerical_integration_r1.py`, `tests/v4/test_ufotri_obt_compartment_conservation_numerical_integration_r1.py`, ADR-063, governance and report artifacts. Existing `obt_v3`, `tfwt_v3`, V4 integrator, selected operator split and RC1/V3 defaults are unchanged.
+- Numerical closure: both rate profiles pass conservation, deterministic repeat, restart equivalence, timestep refinement (`3600→1800→900→450 s` against `225 s`), nonzero OBT formation, independent constant-TFWT analytic oracle and zero-TFWT pure OBT decay. Section-2.2.6 profile exactly reproduces the frozen controlled baseline; no third exchangeable-OBT inventory is introduced; the two manual profiles retain a nonzero controlled numerical consequence without physical-validity ranking.
+- PR: `#66`
+- Certified head: `e98cd4d0429302fbc08d3c8fccda09e1c14c6418`
+- Certified tree: `0b6ed18cb952b3f8e5cfb4c121d02fcd0f7f64d3`
+- Remediation CI: `33141481585` — `SUCCESS`
+- Protected CI: `33141481600` — `SUCCESS`
+- Protected merge-ref: `9595555e425c60ee1a2d3cd3f53bf43efdd913f6`
+- Validation: portable `1499 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `cb26e9f3d245e31a4597b4f8e6a4abd93d004f28`
+- Merge tree: `0b6ed18cb952b3f8e5cfb4c121d02fcd0f7f64d3`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `b86886d5a87409f76dadd76ad3f5d2c19b3cd520` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: `NONE_WITHIN_PHASE_B_OBT` for recoverable manual-based state roles and controlled numerical qualification. Original day/night formation multipliers and exact original executable parameter selection remain source-blocked and are not reconstructed by B2.
+- Next stage: `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`.
+- Non-claims remain: no empirical validation, calibration, production parameter activation, real CTEAS-Atmos binding, generic multi-pool OBT, physical-accuracy claim, or original-executable numerical equivalence.
 
 ---
 
@@ -437,20 +445,19 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`
-2. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
-3. coupled water/HTO hydrology verification
-4. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
-5. pasture / vegetable / grass / cow / milk / beef / exposure closure
-6. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-7. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-8. HT-derived HTO re-emission/secondary-feedback reconciliation
-9. re-emission/area-source reconciliation
-10. Canada 1987 benchmark reconstruction
-11. ITER benchmark reconstruction
-12. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-13. final cross-module fidelity qualification
-14. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
+2. coupled water/HTO hydrology verification
+3. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
+4. pasture / vegetable / grass / cow / milk / beef / exposure closure
+5. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+6. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+7. HT-derived HTO re-emission/secondary-feedback reconciliation
+8. re-emission/area-source reconciliation
+9. Canada 1987 benchmark reconstruction
+10. ITER benchmark reconstruction
+11. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+12. final cross-module fidelity qualification
+13. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -470,7 +477,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 ### OBT
 
 - [x] Exchangeable/non-exchangeable reconstruction — PR #64, merge `f98b9d54300d53736c25ebf3bf5502f67cf89f07`, no-drift PASS
-- [ ] OBT conservation/numerical integration closure
+- [x] OBT conservation/numerical integration closure — PR #66, merge `cb26e9f3d245e31a4597b4f8e6a4abd93d004f28`, no-drift PASS
 
 ### Soil hydrology
 
@@ -524,6 +531,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_OBT_COMPARTMENT_CONSERVATION_NUMERICAL_INTEGRATION_R1`
+`UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
 
-B2 must numerically qualify the B1 OBT state-role reconstruction without changing the frozen RC1/V3 default path. It must close mass/inventory conservation, deterministic repeat, restart equivalence, timestep refinement, TFWT/root operator-split compatibility, and an explicit comparison against the reduced RC1 OBT behavior. It must also compare the controlled Section-2.2.6 daily-average profile with the Eq. (65)-(66)-derived hourly profile while preserving the documented source ambiguity: neither profile may be promoted to exact original-executable truth, and missing normalized day/night formation multipliers must remain unresolved rather than being invented.
+C1 must reconstruct the UFOTRI-specific Eq. (33)-(37) soil water-potential and Darcy/Richards transport closure that is still absent from the current three-layer inventory model. The scope is deliberately narrow: generate the manual-required interlayer water-flux mechanism, couple it to the existing three-layer HTO inventory interfaces, and preserve explicit caller-supplied flux compatibility for RC1/replay. This stage does not authorize a generic modern Richards solver, calibration, production hydrology, empirical validation, or real CTEAS-Atmos binding.
