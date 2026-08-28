@@ -50,6 +50,10 @@ qualification:
     - deterministic_repeat
     - restart_equivalence
     - timestep_refinement
+  dry_zero_flow_tolerance_m_s: 1.0e-24
+  dry_zero_flow_tolerance_role: FLOATING_POINT_ROUNDOFF_ONLY
+  failed_candidate_observation_m_s: 7.401486830834377e-26
+  tolerance_scope: DOES_NOT_CHANGE_EQUATIONS_CONSTITUTIVE_INPUTS_CONSERVATION_OR_REFINEMENT_GATES
   timestep_refinement_s: [3600, 1800, 900, 450, 225]
   reference_role: 225_SECOND_NUMERICAL_COMPARISON_ONLY
 operator_split:
