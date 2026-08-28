@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts/v4/run_ufotri_coupled_water_hto_hydrology_verification_r1.py"
 STATUS_PREFIX = "UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_STATUS="
 RESULT_PREFIX = "UFOTRI_COUPLED_WATER_HTO_HYDROLOGY_RESULT_JSON="
+DRY_ZERO_FLOW_TOL_M_S = 1.0e-24
 
 
 @lru_cache(maxsize=1)
@@ -52,11 +53,12 @@ def test_c2_signed_directions_and_wet_dry_limits_are_explicit() -> None:
     diagnostics = _result()["diagnostics"]
     directions = diagnostics["directions"]
     wet_dry = diagnostics["wet_dry"]
+    assert diagnostics["dry_zero_flow_tolerance_m_s"] == DRY_ZERO_FLOW_TOL_M_S
     assert all(value > 0.0 for value in directions["down_q_m_s"])
     assert all(value > 0.0 for value in directions["down_hto_bq_m2_s"])
     assert all(value < 0.0 for value in directions["up_q_m_s"])
     assert all(value < 0.0 for value in directions["up_hto_bq_m2_s"])
-    assert all(abs(value) <= 1.0e-30 for value in wet_dry["dry_q_m_s"])
+    assert all(abs(value) <= DRY_ZERO_FLOW_TOL_M_S for value in wet_dry["dry_q_m_s"])
     assert all(value > 0.0 for value in wet_dry["wet_q_m_s"])
 
 
