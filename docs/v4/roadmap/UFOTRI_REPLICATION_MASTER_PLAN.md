@@ -97,6 +97,10 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 ### Phase A — UFOTRI leaf-exchange fidelity
 
+- Phase status: `COMPLETE`
+- Scope claim: `UFOTRI_LEAF_EQ7_31_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION=COMPLETE`
+- Non-claims: no empirical validation, no production readiness, no real CTEAS-Atmos binding, no whole-model UFOTRI completion, and no original-executable equivalence.
+
 #### A1. UFOTRI Eq. (7)-(31) reconciliation
 
 - Status: `COMPLETE`
@@ -141,11 +145,24 @@ If a stage only performs reconciliation and concludes that existing code is alre
 
 #### A3. Leaf manual-regression/benchmark closure
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: A1 and A2.
-- Goal: prove that the selected compatibility path reproduces the recoverable manual semantics across deterministic synthetic/manual test cases.
+- Manual anchor: KfK 4605 Section 2.2.2, including Eq. (12)-(14), Eq. (18), Eq. (21)-(25), Eq. (27)-(31), representative day/night stomatal resistances, LAI, rain/soil-water rules, geometry relations, and the stated long-duration interval additivity property.
+- Decision: deterministic manual-semantic regression closes the recoverable leaf fidelity scope. A3 found and corrected one A2 manual-literal defect: Eq. (23)-(24) stability corrections must use actual height `z`, while the logarithmic term alone uses `z-d`. Neutral Eq. (22) remains unchanged.
+- Changed source files: only opt-in `src/cteas_ufotri/plant/leaf_ufotri_v4/model.py`; RC1 and historical V2 source paths were not changed. ADR/governance/report and one independent manual-regression test file were added.
+- PR: `#62`
+- Certified head: `ff0e4e399ac3a864328c1298ed84bae1ba0c4752`
+- Certified tree: `682aac573b8ec66e5f0d0029bbebf3b61535456a`
+- Remediation CI: `33139484014` — `SUCCESS`
+- Protected CI: `33139483922` — `SUCCESS`
+- Validation: portable `1482 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `cf33d25d9af55be66066bb8fee038c19541898c2`
+- Merge tree: `682aac573b8ec66e5f0d0029bbebf3b61535456a`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `61248e4abdfe80e9bce41e898e6c8d159caaa9d5` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: `NONE_WITHIN_PHASE_A_LEAF`; Canada 1987/ITER empirical benchmark obligations remain in Phase G and are not part of A3 closure.
+- Next stage: `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`.
 
 ---
 
@@ -405,22 +422,21 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`
-2. `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
-3. OBT conservation/numerical closure
-4. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
-5. coupled water/HTO hydrology verification
-6. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
-7. pasture / vegetable / grass / cow / milk / beef / exposure closure
-8. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
-9. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
-10. HT-derived HTO re-emission/secondary-feedback reconciliation
-11. re-emission/area-source reconciliation
-12. Canada 1987 benchmark reconstruction
-13. ITER benchmark reconstruction
-14. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-15. final cross-module fidelity qualification
-16. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
+2. OBT conservation/numerical closure
+3. `UFOTRI_EQ33_37_SOIL_HYDROLOGY_RECONSTRUCTION_R1`
+4. coupled water/HTO hydrology verification
+5. `UFOTRI_V2_CONTINUOUS_FOODCHAIN_TO_POST_RC1_RECONCILIATION_R1`
+6. pasture / vegetable / grass / cow / milk / beef / exposure closure
+7. `UFOTRI_HT_BRANCH_RECONCILIATION_R1`
+8. `UFOTRI_HT_TO_HTO_SOIL_CONVERSION_R1`
+9. HT-derived HTO re-emission/secondary-feedback reconciliation
+10. re-emission/area-source reconciliation
+11. Canada 1987 benchmark reconstruction
+12. ITER benchmark reconstruction
+13. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+14. final cross-module fidelity qualification
+15. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -435,7 +451,7 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 - [x] Eq. (7)-(31) reconciliation — PR #58, merge `6aa1c3858265758927984f2be93b0450e1d1a9e3`, no-drift PASS
 - [x] UFOTRI Eq. (7)-(31) fidelity implementation — PR #60, merge `881a1fff98cf28e19e789249872f58e97d38ea3d`, no-drift PASS
-- [ ] Leaf manual-regression closure
+- [x] Leaf manual-regression closure — PR #62, merge `cf33d25d9af55be66066bb8fee038c19541898c2`, no-drift PASS
 
 ### OBT
 
@@ -494,6 +510,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_LEAF_EQ7_31_MANUAL_REGRESSION_CLOSURE_R1`
+`UFOTRI_OBT_E_N_COMPARTMENT_RECONSTRUCTION_R1`
 
-This stage must close deterministic manual-role regression for the A2 opt-in compatibility path before Phase B begins. It must exercise recoverable Eq. (7)-(31) semantics and limiting cases without inventing missing original-executable data. Passing A3 may support a manual-based functional leaf-reconstruction claim only; it does not establish empirical validation, calibrated/production parameters, physical accuracy, real CTEAS-Atmos binding, or original executable equivalence.
+B1 must first reconcile KfK 4605 Section 2.2.6 against the existing `obt_v3` solver and UFOTRI baseline. The manual explicitly states that exchangeable organically bound tritium is in equilibrium with free plant HTO and need not be distinguished from free HTO in the model; therefore B1 must not introduce a generic exchangeable/non-exchangeable multi-pool structure merely to satisfy the stage name. The distinct replication target is the recoverable non-exchangeable organic-tritium behavior, including the daily-average incorporation rate of approximately `0.06% per hour`, the reported day/night asymmetry where recoverable, and the mean organic-tritium loss rate of approximately `0.3% per hour`. Missing normalized day/night multipliers must remain unresolved rather than being invented.
