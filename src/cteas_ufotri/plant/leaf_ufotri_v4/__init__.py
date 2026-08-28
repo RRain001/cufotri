@@ -23,6 +23,10 @@ from .model import (
     ufotri_eq27_equilibrium_air_concentration_bq_m3,
     ufotri_manual_leaf_geometry,
 )
+from .resistance_state import (
+    UFOTRIManualResistanceState,
+    build_ufotri_eq7_25_manual_resistance_state,
+)
 
 __all__ = [
     "EXPLICIT_MONIN_OBUKHOV_METHOD",
@@ -31,12 +35,14 @@ __all__ = [
     "UFOTRIAnalyticLeafTransfer",
     "UFOTRILeafGeometry",
     "UFOTRILeafResistanceResult",
+    "UFOTRIManualResistanceState",
     "UFOTRITFWTCompatibilityStep",
     "UFOTRIWindProfileResult",
     "UFOTRI_EQ21_FORMULA_ID",
     "UFOTRI_EQ27_30_FORMULA_ID",
     "UFOTRI_EQ31_DIAGNOSTIC_ID",
     "advance_tfwt_with_ufotri_analytic_leaf_exchange",
+    "build_ufotri_eq7_25_manual_resistance_state",
     "build_ufotri_eq7_25_resistance_chain",
     "manual_canopy_resistance_s_m",
     "resolve_monin_obukhov_provenance",
