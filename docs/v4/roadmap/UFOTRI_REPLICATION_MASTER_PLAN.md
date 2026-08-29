@@ -512,19 +512,31 @@ The branch is split so that internal HT environmental mechanisms can progress in
 
 ### Phase F — Re-emission and atmosphere/area-source compatibility
 
+- Phase status: `COMPLETE`
+- Scope claim: `UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION=COMPLETE` under controlled synthetic/replay/manual-compatible forcing only.
+
 #### F1. Re-emission/area-source reconciliation
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION_R1`
 - Replication requirement: `REQUIRED`
 - Dependency: E3.
-- Goal:
-  - reconcile historical soil/plant re-emission code with recoverable UFOTRI semantics;
-  - define how the same accounted environmental re-emission loss is handed to secondary atmospheric forcing without double counting;
-  - reconcile source representation, source geometry/emission height, feedback delay/time discretization and concentration feedback under synthetic/replay forcing;
-  - make source provenance explicit for primary release versus secondary environmental feedback and preserve E3's mixed-origin fail-closed rule.
-- Real CTEAS-Atmos numerical binding remains deferred, but internal compatibility can be tested with replay/synthetic atmosphere adapters.
-- F1 must not promote the provisional historical Eq. (44) engineering rate to manual-exact behavior and must not silently invent an HT-derived split after aggregate environmental mixing.
+- Manual anchor: KfK 4605 Section 2.2.1 Eq. (4)-(6), including rectangular area-source semantics, selected centre-point representation, Eq. (5) initial lateral widening, Eq. (6) reduced-time Gaussian concentration, common soil/plant source height and hour-N→hour-N+1 secondary-model cadence.
+- Decision: added an isolated opt-in `src/cteas_ufotri/coupling/reemission_area_source_v4.py` compatibility adapter while leaving historical `case.py`, `config.py`, legacy Gaussian functions and default YAML unchanged. The same activity already accounted as an environmental soil/plant re-emission loss is handed to the secondary atmospheric source with an explicit `environmental_loss = routed + unrouted` ledger. Soil and plant remain distinct source channels until concentration superposition. Eq. (5) uses `sigma_y0=width/4.3`; the visible printed Eq. (6) is reproduced literally with `sigma_y*sigma_z` in the denominator and `sigma_yg` only in the lateral exponential, without claiming that this proves the unavailable original-executable normalization. Phase-A `max(0.8H,1m)` source-height semantics are reused; fallout/washout factors remain explicit. Hourly handoff accumulates activity over exactly 3600 s and exposes it in the following source hour for time steps that exactly divide one hour. `HT_DERIVED_HTO` attribution requires explicit origin proof; mixed origin remains fail closed.
+- Changed source files: one new opt-in source file, `src/cteas_ufotri/coupling/reemission_area_source_v4.py`; F1 also added one machine script, one pytest file, ADR-074, governance YAML and report. No pre-existing source/default/roadmap/workflow file changed in PR #89.
+- Qualification: printed Eq. (5)/(6) identities, minimum/common source height, explicit fallout/washout factors, soil/plant separate-source superposition, first-hour-zero and hour-N→N+1 timing, 300 s/600 s timestep activity invariance, environmental-loss/source-handoff ledger closure, mixed-origin preservation, explicit HT-derived provenance proof, invalid-input fail-closed behavior and legacy/default non-promotion all pass.
+- PR: `#89` (`#88` was closed unmerged only because the connector draft→Ready mutation was schema-incompatible; the candidate was unchanged and #89 independently reran exact-head CI).
+- Certified head: `a971814ccda46246268e9398d9ca58790413d224`
+- Certified tree: `44ac94944fbe87a9d9131e74cf0358b5c9635aaa`
+- Remediation CI: `33222301744` (#227) — `SUCCESS`
+- Protected CI: `33222301754` (#238) — `SUCCESS`
+- Validation: portable `1628 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `43b1b0d09fe1c6a041a88b0448a784c4603c1570`
+- Merge tree: `44ac94944fbe87a9d9131e74cf0358b5c9635aaa`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `e1a3f1ffd94ee91daf5385d21f1076d1d549e630` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: `NONE_WITHIN_PHASE_F_REEMISSION_AREA_SOURCE_COMPATIBILITY` for the recoverable internal/manual-compatible handoff and area-source semantics. Complete Eq. (44) rate recovery remains source-limited; E4/E5 real CTEAS-Atmos dependencies remain deferred; benchmark validation remains Phase G.
+- Next stage: `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`.
+- Non-claims: no complete Eq. (44) recovery, no real CTEAS-Atmos binding, no empirical benchmark validation yet, no production parameter activation, no physical-accuracy/production-readiness claim and no original MUSEMET/ISOLA/UFOTRI executable equivalence.
 
 ---
 
@@ -533,6 +545,7 @@ The branch is split so that internal HT environmental mechanisms can progress in
 #### G1. Canada 1987 benchmark reconstruction
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
 - Replication requirement: `REQUIRED_AS_VALIDATION`
 - Goal: reconstruct the recoverable manual benchmark inputs, observables, timing, and comparison metrics without inventing missing values.
 - Missing/ambiguous inputs must remain explicitly unresolved rather than silently filled.
@@ -598,12 +611,11 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION_R1`
-2. Canada 1987 benchmark reconstruction
-3. ITER benchmark reconstruction
-4. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-5. final cross-module fidelity qualification
-6. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
+2. ITER benchmark reconstruction
+3. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+4. final cross-module fidelity qualification
+5. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -643,13 +655,13 @@ The order after A1 may be changed only by an explicit governance decision that r
 - [x] HT branch contract/manual mapping — PR #82, merge `a71a6859f10413038b642009081ea5c730e0a2c3`, no-drift PASS
 - [x] HT→HTO soil conversion — PR #84, merge `5c35aa95c61d221b73f4df0da698b9e5ea1c747e`, no-drift PASS
 - [x] HT-derived HTO re-emission/secondary feedback — PR #86, merge `ef11dc4d90478aa4ee3fc1dabefd1cb99a4d2d3d`, no-drift PASS
-- [ ] Re-emission/area-source compatibility — `UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION_R1`
+- [x] Re-emission/area-source compatibility — PR #89, merge `43b1b0d09fe1c6a041a88b0448a784c4603c1570`, no-drift PASS
 - [ ] Real HT atmospheric transport / CTEAS-Atmos binding — deferred external dependency
 - [ ] End-to-end HT→HTO compatibility with real Atmos — deferred external dependency
 
 ### Benchmarks / final gate
 
-- [ ] Canada 1987 benchmark
+- [ ] Canada 1987 benchmark — `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
 - [ ] ITER benchmark
 - [ ] Cross-module fidelity qualification
 - [ ] `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE`
@@ -677,6 +689,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION_R1`
+`UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
 
-E3 is complete as a reconciliation-only stage: conservative soil/plant HTO loss ownership, historical secondary-feedback topology, HT-derived provenance boundaries and no-double-counting rules are now closed under exact-head CI and merge/no-drift evidence. F1 is authorized to reconcile the secondary atmospheric source handoff, source representation/geometry/emission height, feedback delay/time discretization and concentration feedback under controlled synthetic/replay forcing while preserving E3's mixed-origin fail-closed rule. Real CTEAS-Atmos HT/HTO binding remains deferred; F1 must not promote the provisional Eq. (44) engineering relation, invent an HT-derived split after aggregate mixing, activate production parameters, or claim calibration, empirical validation, physical accuracy, production readiness or original-executable equivalence.
+F1 is complete under exact-head CI and merge/no-drift evidence. The recoverable internal/manual-compatible secondary-source handoff, Eq. (5)/(6) centre-source area representation, common source height, hour-N→N+1 timing, soil/plant superposition and E3 provenance/no-double-counting rules are now closed without changing the frozen historical/default path. G1 is authorized to reconstruct the Canada 1987 benchmark from recoverable manual/repository evidence, keeping every missing or ambiguous benchmark input explicit rather than filling it silently. Real CTEAS-Atmos HT/HTO binding remains deferred, complete Eq. (44) rate recovery remains source-limited, and G1 must not claim empirical reproduction beyond the observables and inputs actually recoverable from the evidence.
