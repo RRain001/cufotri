@@ -99,28 +99,27 @@ If a later authoritative UFOTRI version proves that atmospheric oxidation became
 
 ### H2 — Hourly bent/segmented MUSEMET trajectory
 
-- Status: `AUTHORIZED_NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_NATIVE_HOURLY_TRAJECTORY_R1`
-- Primary authority: KfK 4605 Section 2.1 plus KfK 4332, *UFOMOD - atmospheric dispersion and deposition*.
-- Required recovery:
-  - a trajectory starts at the source for each hourly start time;
-  - one meteorological station represents the source region in MUSEMET;
-  - meteorology is homogeneous within each hourly interval;
-  - each trajectory stores successive horizontal coordinates relative to the source Cartesian system;
-  - wind direction and wind speed of each subsequent hour advance the single precomputed segmented trajectory;
-  - stability, precipitation and mixing-layer state remain attached to the corresponding segment;
-  - travel-time / maximum-distance termination is explicit;
-  - deterministic restart and coordinate invariance are tested.
-- Forbidden:
-  - do not substitute a multiple-puff model;
-  - do not make all already-released plume elements instantaneously adopt a new wind direction;
-  - do not use CTEAS-Atmos wind fields;
-  - do not invent spatially varying meteorology absent from MUSEMET.
-- Next stage after clean closure: `UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1`.
+- PR: `#102`
+- Certified head: `f39d8491ba4b5335d9d7a5a6170d96ec9c51dc31`
+- Certified tree: `0449a206422b2012d567c0dded99e0ce67824ae6`
+- Merge SHA: `5e1d079a75ee1b58657b5804331a308c6aea298a`
+- Merge tree: `0449a206422b2012d567c0dded99e0ce67824ae6`
+- Exact-head Remediation CI: `33301029851` (#254) — `SUCCESS`
+- Exact-head Protected CI: `33301029855` (#265) — `SUCCESS`
+- Protected synthetic merge-ref: `9a76d90ba63e63da8d19122681e48685d046f47c`
+- Portable suite: `1680 passed, 1 skipped, 57 deselected, 1 warning`
+- Frozen/current-boundary suite: `375 passed`
+- Existing five V4 integration gates: `PASS`
+- Validation: `PASS_UFOTRI_NATIVE_HOURLY_TRAJECTORY`; one trajectory starts at each hourly source time; later winds bend only subsequent straight segments; per-segment stability/precipitation/mixing-layer state is retained; meteorological FROM direction is converted explicitly to the downwind TO vector; radial source-distance and travel-time termination, deterministic restart and rigid coordinate-frame invariance are qualified.
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `e36288b7423892119d0027b848e647af6e3cc2f5` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Non-claims: no multiple-puff substitution, no spatially varying meteorology, no CTEAS-Atmos wind field, no H3 forcing adapter, no H4 process closure and no original MUSEMET numerical equivalence.
+- Next stage: `UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1`.
 
 ### H3 — Native HT/HTO environmental forcing adapters
 
-- Status: `NOT_STARTED`
+- Status: `AUTHORIZED_NOT_STARTED`
 - Stage: `UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1`
 - Dependency: H1 + H2.
 - Required closure:
@@ -187,6 +186,6 @@ These may be required for the broader CTEAS software product and real project ap
 
 ## 6. Immediate next stage
 
-`UFOTRI_NATIVE_HOURLY_TRAJECTORY_R1`
+`UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1`
 
 No production calibration, empirical site calibration, unrelated CTEAS-Atmos development, original-executable-equivalence claim, or optional ecological extension is authorized before the native-atmosphere sequence is closed.
