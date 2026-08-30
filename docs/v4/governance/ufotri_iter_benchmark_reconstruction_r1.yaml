@@ -131,20 +131,34 @@ reference_1km_tables:
     20_m: [2.1e-7, 8.9e-5, 2.4e-4, 2.2e-4, 4.6e-3, 3.1e-4, 4.8e-3]
     60_m: [5.9e-8, 9.3e-6, 2.5e-5, 3.7e-5, 8.9e-4, 3.8e-5, 9.2e-4]
     20_m_with_building_wake: [2.3e-7, 1.2e-4, 3.2e-4, 2.4e-4, 5.5e-3, 3.6e-4, 5.8e-3]
+known_printed_table_inconsistency:
+  id: ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY
+  table: 13
+  chemical_form: HT
+  stability: F
+  release_height_m: 60.0
+  early_inhalation_skin_plume_reemission_sv: 9.3e-6
+  early_ingestion_sv: 3.7e-5
+  component_sum_sv: 4.63e-5
+  printed_sum_early_sv: 3.8e-5
+  relative_difference_from_component_sum: 0.1792656587473002
+  resolution: PRESERVE_PRINTED_VALUES_AND_FLAG_INCONSISTENCY
 acceptance_policy:
   r1_gate: MANUAL_TABULATED_ITER_BENCHMARK_CONTRACT_AND_1KM_REFERENCE_QUALIFIED
   table10_13_as_authoritative_printed_reference: true
   figure_chart_helper_tables_as_exact_oracle: false
   release_height_conflict_silently_resolved: false
-  sum_identity_rounding_relative_tolerance: 0.05
+  printed_sum_identity_rounding_relative_tolerance: 0.05
+  table13_60m_early_sum_silently_repaired: false
   full_atmospheric_numeric_replay_complete: false
   empirical_validation_complete: false
 unresolved_boundaries:
   - ITER_RELEASE_HEIGHT_0_VS_10_M
+  - ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY
   - ITER_ORIGINAL_BUILDING_WAKE_NUMERICS
   - ITER_ORIGINAL_ATMOSPHERIC_NUMERICAL_EQUIVALENCE
   - ITER_REAL_CTEAS_ATMOS_BINDING
-  - ITER_FIGURE_29_64_65_POINTWISE_SERIES
+  - ITER_FIGURE_POINTWISE_SERIES
 qualification:
   machine_gate: scripts/v4/check_ufotri_iter_benchmark_reconstruction_r1.py
   pytest: tests/v4/test_ufotri_iter_benchmark_reconstruction_r1.py
