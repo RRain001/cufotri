@@ -16,6 +16,8 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 STAGE = "UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1"
+SUM_ROUNDING_REL_TOL = 0.05
+KNOWN_SUM_INCONSISTENCY = "ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY"
 
 COLUMNS = [
     "early_inhalation_skin_plume_sv",
@@ -164,18 +166,26 @@ def _benchmark_inputs() -> dict[str, Any]:
     }
 
 
-def _sum_identity_checks(relative_tolerance: float = 0.05) -> dict[str, dict[str, bool]]:
+def _sum_identity_checks() -> dict[str, dict[str, bool]]:
+    """Validate all printed sum identities except one explicit source-table anomaly."""
     checks: dict[str, dict[str, bool]] = {}
     for table_name, table in REFERENCE_1KM.items():
         table_checks: dict[str, bool] = {}
         for case_name, row in table.items():
             early_expected = row[1] + row[3]
             chronic_expected = row[2] + row[4]
-            table_checks[f"{case_name}_early"] = math.isclose(
-                row[5], early_expected, rel_tol=relative_tolerance, abs_tol=0.0
-            )
+            if table_name == "table13_ht_F" and case_name == "60_m":
+                table_checks[f"{case_name}_early_known_source_inconsistency_preserved"] = (
+                    not math.isclose(row[5], early_expected, rel_tol=SUM_ROUNDING_REL_TOL, abs_tol=0.0)
+                    and math.isclose(early_expected, 4.63e-5, rel_tol=0.0, abs_tol=1.0e-15)
+                    and math.isclose(row[5], 3.8e-5, rel_tol=0.0, abs_tol=1.0e-15)
+                )
+            else:
+                table_checks[f"{case_name}_early"] = math.isclose(
+                    row[5], early_expected, rel_tol=SUM_ROUNDING_REL_TOL, abs_tol=0.0
+                )
             table_checks[f"{case_name}_chronic"] = math.isclose(
-                row[6], chronic_expected, rel_tol=relative_tolerance, abs_tol=0.0
+                row[6], chronic_expected, rel_tol=SUM_ROUNDING_REL_TOL, abs_tol=0.0
             )
         checks[table_name] = table_checks
     return checks
@@ -194,7 +204,6 @@ def _ordering_checks() -> dict[str, bool]:
 
 
 def _source_trend_checks() -> dict[str, bool]:
-    # These checks are deliberately limited to robust relations visible in Tables 10-13.
     return {
         "hto_F_sum_chronic_gt_D_all_cases": all(
             REFERENCE_1KM["table11_hto_F"][case][6]
@@ -234,6 +243,17 @@ def build_result() -> dict[str, Any]:
             and ambiguity["section53_result_value_m"] == 10.0
             and ambiguity["resolution"] == "PRESERVE_AMBIGUITY"
         ),
+        "table13_60m_early_sum_inconsistency_preserved": (
+            KNOWN_SUM_INCONSISTENCY in governance
+            and REFERENCE_1KM["table13_ht_F"]["60_m"][5] == 3.8e-5
+            and math.isclose(
+                REFERENCE_1KM["table13_ht_F"]["60_m"][1]
+                + REFERENCE_1KM["table13_ht_F"]["60_m"][3],
+                4.63e-5,
+                rel_tol=0.0,
+                abs_tol=1.0e-15,
+            )
+        ),
         "figure_helper_tables_exact_oracle": False,
         "full_atmospheric_numeric_replay_complete": False,
         "empirical_validation_complete": False,
@@ -257,12 +277,15 @@ def build_result() -> dict[str, Any]:
             and all(list(table) == CASES for table in REFERENCE_1KM.values())
             and all(len(row) == len(COLUMNS) for table in REFERENCE_1KM.values() for row in table.values())
         ),
-        "printed_sum_identities": all(
+        "printed_sum_identities_and_known_anomaly": all(
             value for table in sum_checks.values() for value in table.values()
         ),
         "release_height_and_wake_ordering": all(ordering.values()),
         "robust_table_trends": all(trends.values()),
         "release_height_ambiguity_preserved": source_boundary["release_height_conflict_preserved"],
+        "known_table13_sum_inconsistency_preserved": source_boundary[
+            "table13_60m_early_sum_inconsistency_preserved"
+        ],
         "fail_closed_nonclaims": (
             source_boundary["figure_helper_tables_exact_oracle"] is False
             and source_boundary["full_atmospheric_numeric_replay_complete"] is False
@@ -297,6 +320,7 @@ def build_result() -> dict[str, Any]:
             "workflow_changed": False,
             "roadmap_changed_in_stage_pr": False,
             "table8_zero_m_silently_replaced_by_10m": False,
+            "table13_60m_printed_sum_silently_repaired": False,
             "figure_chart_values_promoted_to_exact_oracle": False,
         },
         "non_claims": {
