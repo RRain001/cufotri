@@ -19,12 +19,12 @@ Where the historical master plan states any of the following, this later correct
 - all primary HT/HTO atmospheric transport is owned by CTEAS-Atmos;
 - E4 is the only route by which real atmospheric HT/HTO transport can enter the replication sequence.
 
-Historical G4 evidence is not deleted or rewritten. It remains valid for the scope that G4 actually audited. The current whole-model claim is reopened until the UFOTRI-native atmospheric sequence below is closed.
+Historical G4 evidence is not deleted or rewritten. It remains valid for the scope that G4 actually audited. The current whole-model claim was reopened until the UFOTRI-native atmospheric sequence below was closed by H6 R2.
 
 Current state:
 
 - `V4_SOFTWARE_DEVELOPMENT_BASELINE_COMPLETE=TRUE`
-- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE_PENDING_NATIVE_ATMOSPHERE_CLOSURE`
+- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`
 - `UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`
 - `UFOTRI_ORIGINAL_NUMERICAL_EQUIVALENCE=NOT_ESTABLISHED`
 - `CTEAS_ATMOS_BACKEND=DEFERRED_OPTIONAL_HIGHER_FIDELITY_BACKEND`
@@ -188,13 +188,24 @@ If a later authoritative UFOTRI version proves that atmospheric oxidation became
 
 ### H6 — Corrected final reconstruction gate
 
-- Status: `AUTHORIZED_NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`
-- Dependency: H1-H5 complete.
-- Required decision:
-  - audit historical A-G stages plus H1-H5;
-  - supersede G4 only as the current final-gate status, without rewriting G4 history;
-  - restore `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE` only if no recoverable internal mechanism remains.
+- PR: `#110`
+- Certified head: `c5e4951d75445b74347a89be1f4368f89cca75dc`
+- Certified tree: `170e600bef80794d636a62b113d8fbd9ba44124a`
+- Merge SHA: `0cdaaa4c526fdf632360219cc26a70934ad33507`
+- Merge tree: `170e600bef80794d636a62b113d8fbd9ba44124a`
+- Exact-head Remediation CI: `33307016094` (#265) — `SUCCESS`
+- Exact-head Protected CI: `33307016067` (#276) — `SUCCESS`
+- Protected synthetic merge-ref: `0934b962812a6a085a57c0230af98961db083d7f`
+- Portable suite: `1711 passed, 1 skipped, 57 deselected, 1 warning`
+- Frozen/current-boundary suite: `375 passed`
+- Existing five V4 integration gates: `PASS`
+- Validation: `PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`.
+- Qualification: H1-H5 machine gates were re-executed; the historical G3 aggregate gate was re-executed; historical G4 evidence was preserved without rewriting its original scope; the H4/H5 source-limited boundaries and non-claims remained explicit.
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `23ca602fe136a805d9be268acf33194b8ce9fd35` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA at H6 closure.
+- Claim: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE` is now permitted for the standalone manual-based reconstruction scope.
+- Non-claims: `UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`; `UFOTRI_ORIGINAL_NUMERICAL_EQUIVALENCE=NOT_ESTABLISHED`; CTEAS-Atmos binding remains optional/deferred; production readiness, calibration, empirical validation and physical-accuracy validation are not claimed.
 
 ## 5. CTEAS-Atmos after H6
 
@@ -208,6 +219,6 @@ These may be required for the broader CTEAS software product and real project ap
 
 ## 6. Immediate next stage
 
-`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`
+`NO_IMMEDIATE_INTERNAL_MANUAL_RECONSTRUCTION_STAGE`
 
-No production calibration, empirical site calibration, unrelated CTEAS-Atmos development, original-executable-equivalence claim, or optional ecological extension is authorized before the native-atmosphere sequence is closed.
+The standalone manual-based UFOTRI reconstruction sequence is closed. No new internal reconstruction stage is authorized. Production calibration, empirical site validation, original-executable numerical equivalence, optional ecological extensions, and CTEAS-Atmos higher-fidelity backend integration remain separate future workstreams and must not be silently promoted into the completed reconstruction claim.
