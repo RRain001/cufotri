@@ -1,0 +1,40 @@
+stage: UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+authority:
+  roadmap: docs/v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md
+  h1: UFOTRI_NATIVE_PRIMARY_ATMOSPHERE_CORE_R1
+  h2: UFOTRI_NATIVE_HOURLY_TRAJECTORY_R1
+  ht_contract: src/cteas_ufotri/coupling/ht_v4.py
+  ht_to_hto_soil: src/cteas_ufotri/coupling/ht_to_hto_soil_v4.py
+  hto_contract: src/cteas_ufotri/coupling/atmos_v3/forcing.py
+implementation:
+  module: src/cteas_ufotri/coupling/ufotri_native_atmos_forcing_v4.py
+  machine_gate: scripts/v4/run_ufotri_native_atmospheric_forcing_adapter_r1.py
+  tests: tests/v4/test_ufotri_native_atmospheric_forcing_adapter_r1.py
+contracts:
+  native_ht_source_kind: UFOTRI_NATIVE
+  cteas_atmos_source_kind: FAIL_CLOSED_UNCHANGED
+  ht_to_e1: IDENTITY_MAPPING
+  ht_deposition_to_e2: EXISTING_E1_BOUNDARY_THEN_EXISTING_E2_CONVERSION
+  hto_to_p7: IDENTITY_MAPPING
+  atmospheric_ht_to_hto: DISABLED
+  hto_wet_source_loss_to_local_flux: EXPLICIT_LOCAL_FLUX_REQUIRED
+  inferred_meteorology: FORBIDDEN
+ledgers:
+  native_concentration_to_mapped_concentration: REQUIRED_ZERO_RESIDUAL
+  native_dry_plus_explicit_wet_to_mapped_surface_flux: REQUIRED_ZERO_RESIDUAL
+  h1_source_depletion_residual: REQUIRED_ZERO_RESIDUAL
+  e2_ht_to_hto_activity_residual: REQUIRED_ZERO_RESIDUAL
+hard_boundaries:
+  h4_washout_parameter_recovery: false
+  h4_source_depletion_reconstruction: false
+  building_wake_reconciliation: false
+  thermal_lift_reconciliation: false
+  cteas_atmos_binding: false
+  production_parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  original_musemet_numerical_equivalence: false
+  wet_source_loss_relabelled_as_surface_flux: false
+expected_machine_result: PASS_UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER
+next_stage_after_clean_closure: UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1
