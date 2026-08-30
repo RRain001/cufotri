@@ -1,0 +1,137 @@
+schema_version: v1
+stage: UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 7a70c49dde2edcb54adc0b826c4a6d99ba0e5ada
+branch: codex/ufotri-native-atmosphere-to-dose-qualification-r1
+
+authority:
+  roadmap: docs/v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md
+  prerequisite_h4: UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1
+  prerequisite_h4_merge: caa36cd56222cad739bc0ca264d74db5463b4b2a
+  h4_roadmap_sync_merge: 7a70c49dde2edcb54adc0b826c4a6d99ba0e5ada
+
+implementation:
+  new_composition_module: src/cteas_ufotri/v4_integration/native_atmosphere_to_dose_v4.py
+  machine_gate: scripts/v4/run_ufotri_native_atmosphere_to_dose_qualification_r1.py
+  tests: tests/v4/test_ufotri_native_atmosphere_to_dose_qualification_r1.py
+  replacement_whole_model_pipeline: false
+  existing_solver_equations_modified: false
+  rc1_default_modified: false
+  roadmap_modified_in_candidate: false
+  workflow_modified: false
+
+native_to_environment:
+  hto_air_owner: H4_RECONCILED_UFOTRI_NATIVE
+  hto_primary_surface_flux_owner: H4_H3
+  ht_surface_flux_owner: H4_H3_E1
+  ht_to_soil_hto_owner: E2
+  ht_to_soil_hto_activity_basis: ONE_TO_ONE_DEPOSITED_ACTIVITY
+  atmospheric_ht_to_hto_conversion: DISABLED_KFK4605
+  aggregate_soil_hto_input: PRIMARY_HTO_PLUS_HT_DERIVED_HTO
+  preaggregation_origin_sidecar_retained: true
+  wet_source_loss_to_local_surface_flux_inferred: false
+  nonzero_wet_source_loss_requires_explicit_local_flux: true
+
+conservative_backbone:
+  orchestrator: V4ReplayInputSystemOrchestrator
+  soil_transport: EXPLICIT_THREE_LAYER_TRANSPORT_PLUS_EXISTING_MANUAL_HYDROLOGY_REQUALIFICATION
+  root_profile_controlled: UFOTRI_20_40_40
+  selected_operator_split: PRESERVE_V3_POST_OBT_ROOT_GAIN
+  manual_eq7_25_resistance_projected_when_rc1_contract_can_represent_exactly: true
+  replay_leaf_operator_claimed_equal_to_manual_eq27_30: false
+  manual_eq27_30_crosscheck_required: true
+  original_monin_obukhov_estimator_recovered: false
+  controlled_monin_obukhov_route: GOLDER_1972_APPROXIMATION
+
+secondary_feedback:
+  environmental_loss_owner: ThreeLayerSoilForcing.surface_reemission_hto_loss_bq_m2_s
+  atmospheric_handoff_owner: HourlyReemissionHandoffBuffer
+  source_hour_seconds: 3600
+  one_hour_lag_required: true
+  environmental_loss_equals_routed_plus_unrouted: true
+  controlled_case_fully_routed: true
+  second_environmental_loss_created_by_handoff: false
+  secondary_air_creates_implicit_surface_deposition: false
+  aggregate_soil_reemission_origin: UNRESOLVED_HTO_ORIGIN
+  ht_derived_label_without_origin_proof: forbidden
+
+food_and_dose:
+  vegetable: UFOTRIVegetableExchangeSolver_D3
+  animal: UFOTRICowMilkBeefSolver_D4
+  slaughter: EXPLICIT_ACTIVITY_TRANSFER
+  exposure: UFOTRI_MANUAL_EQ106_EQ107_D5
+  pathways:
+    - HTO_INHALATION
+    - HTO_SKIN_50_PERCENT_OF_INHALATION
+    - GREEN_VEGETABLE_INGESTION
+    - BEEF_INGESTION
+    - MILK_INGESTION
+  hto_obt_food_activity_kept_separate_upstream: true
+  qualification_mass_projection_only: true
+  qualification_mass_projection_is_production_default: false
+  production_habit_binding: false
+
+numerical_acceptance:
+  deterministic_repeat: REQUIRED
+  restart_equivalence: REQUIRED
+  native_surface_flux_partition_1h_vs_2x30m: REQUIRED
+  reemission_source_hour_partition_1h_vs_2x30m: REQUIRED
+  manual_exposure_partition_1h_vs_2x30m: REQUIRED
+  soil_balance: REQUIRED
+  root_identity: REQUIRED
+  plant_balance: REQUIRED
+  coupled_balance: REQUIRED
+  vegetable_balance: REQUIRED
+  animal_balance: REQUIRED
+  slaughter_balance: REQUIRED
+  eq106_residual: REQUIRED
+  eq107_residual: REQUIRED
+
+reexecuted_existing_gates:
+  manual_hydrology:
+    script: scripts/v4/run_ufotri_coupled_water_hto_hydrology_verification_r1.py
+    expected: PASS
+  reemission_area_source:
+    script: scripts/v4/check_ufotri_reemission_area_source_reconciliation_r1.py
+    expected: PASS
+  canada_1987_contract:
+    script: scripts/v4/check_ufotri_canada_1987_benchmark_reconstruction_r1.py
+    expected: PASS_SOURCE_LIMITED_CONTRACT
+  iter_contract:
+    script: scripts/v4/check_ufotri_iter_benchmark_reconstruction_r1.py
+    expected: PASS_CONTRACT_WITH_FULL_ATMOS_REPLAY_NONCLAIM
+
+benchmark_boundaries:
+  canada_full_numeric_replay: false
+  canada_empirical_validation: false
+  iter_full_atmospheric_numeric_replay: false
+  iter_empirical_validation: false
+  original_executable_equivalence: false
+
+source_limited_boundaries_preserved:
+  h4_iwash1_regtim_numeric_default: SOURCE_LIMITED
+  kfk4332_liftoff_eq322_numeric: SOURCE_LIMITED_OCR_AMBIGUOUS
+  building_wake_complete_numerics: SOURCE_LIMITED
+  plume_rise_complete_numerics: SOURCE_LIMITED
+  eq44_reemission_rate_generation: SOURCE_LIMITED
+  mixed_environmental_hto_origin_partition: NOT_INFERRED
+
+hard_boundaries:
+  production_parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  physical_accuracy_claim: false
+  cteas_atmos_binding: false
+  original_ufotri_executable_equivalence: false
+  modern_endpoint_replaced: false
+
+expected_machine_result: PASS_UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION
+next_stage_after_clean_closure: UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2
+closure_rule:
+  focused_tests_required: true
+  exact_head_remediation_ci_required: true
+  exact_head_protected_ci_required: true
+  expected_head_merge_required: true
+  post_merge_no_drift_required: true
+  separate_roadmap_sync_required: true
