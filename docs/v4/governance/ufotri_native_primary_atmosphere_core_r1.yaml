@@ -1,0 +1,100 @@
+schema_version: v1
+stage: UFOTRI_NATIVE_PRIMARY_ATMOSPHERE_CORE_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+repository: RRain001/CTEAS_ufotri
+base_main_sha: 63461c42cce2bb13719500f7693ab507b6a66245
+branch: codex/ufotri-native-atmospheric-fidelity-r1
+
+classification_correction:
+  previous_externalization: REAL_CTEAS_ATMOS_OWNED_ALL_PRIMARY_ATMOSPHERIC_TRANSPORT
+  corrected_model: UFOTRI_NATIVE_PRIMARY_ATMOSPHERE_PLUS_OPTIONAL_CTEAS_ATMOS_BACKEND
+  historical_g4_evidence_rewritten: false
+  no_immediate_internal_replication_stage_still_valid: false
+  reconstruction_complete_flag_requires_reopen_on_roadmap_sync: true
+
+manual_authority:
+  primary: ufotri_manual.md
+  section_21: KFK4605_PRIMARY_DISPERSION_MODEL_MUSEMET
+  section_22: KFK4605_SECONDARY_MODEL_AIR_CONVERSION_EXCLUSION
+  appendix_b_table_8: ITER_PARAMETER_SET
+  appendix_b_table_9: MOL_A_TO_F_DIFFUSION_COEFFICIENTS
+
+recovered_semantics:
+  chemical_forms: [HT, HTO]
+  source_longer_than_one_hour_split: true
+  maximum_release_slice_seconds: 3600
+  segmented_gaussian_role: true
+  mol_smooth_terrain_coefficients_a_to_f: true
+  sigma_power_law: true
+  sigma_z_mixing_lid_limit: 0.8
+  wind_height_power_law: true
+  dry_deposition_species_specific: true
+  source_depletion_role: true
+  ht_wet_deposition: NEGLIGIBLE_FAIL_CLOSED
+  hto_washout: EXPLICIT_COEFFICIENT_ONLY
+  atmospheric_ht_to_hto_conversion: DISABLED_KFK4605_SECTION_2_2
+
+source_conflict:
+  id: KFK4605_AIR_OXIDATION_SECTION22_VS_ITER_TABLE8
+  section_22_statement: ATMOSPHERIC_HT_TO_HTO_NOT_INCLUDED
+  section_22_reason: CONVERSION_SLOW_HALF_TIME_SOME_YEARS
+  appendix_b_iter_input_fraction_d_1: 0.005
+  resolution: PRESERVE_CONFLICT_DO_NOT_ACTIVATE
+
+iter_benchmark_evidence:
+  ht_dry_deposition_velocity_m_s: 0.0005
+  hto_dry_deposition_velocity_m_s: 0.018
+  air_oxidation_fraction_d_1_evidence_only: 0.005
+  parameter_activation_global: false
+
+mol_table_9:
+  A: {p_y: 0.946, q_y: 0.796, p_z: 1.321, q_z: 0.711}
+  B: {p_y: 0.826, q_y: 0.796, p_z: 0.950, q_z: 0.711}
+  C: {p_y: 0.586, q_y: 0.796, p_z: 0.700, q_z: 0.711}
+  D: {p_y: 0.418, q_y: 0.796, p_z: 0.520, q_z: 0.711}
+  E: {p_y: 0.297, q_y: 0.796, p_z: 0.382, q_z: 0.711}
+  F: {p_y: 0.235, q_y: 0.796, p_z: 0.311, q_z: 0.711}
+
+implementation:
+  source_file: src/cteas_ufotri/atmosphere/ufotri_native_v4.py
+  existing_rc1_atmosphere_changed: false
+  existing_case_changed: false
+  existing_defaults_changed: false
+  existing_workflow_changed: false
+  cteas_atmos_changed: false
+  production_parameter_activation: false
+
+source_depletion:
+  original_musemet_discretisation_recovered: false
+  compatibility_formula: FIRST_ORDER_REMOVAL_VD_OVER_H_PLUS_EXPLICIT_WASHOUT
+  claim: CONTROLLED_COMPATIBILITY_APPROXIMATION_NOT_ORIGINAL_NUMERICAL_EQUIVALENCE
+
+qualification:
+  machine_script: scripts/v4/run_ufotri_native_primary_atmosphere_core_r1.py
+  pytest_file: tests/v4/test_ufotri_native_primary_atmosphere_core_r1.py
+  exact_head_ci_required: true
+  protected_ci_required: true
+  post_merge_no_drift_required: true
+
+remaining_native_atmosphere_work:
+  - HOURLY_BENT_SEGMENT_TRAJECTORY
+  - PRIMARY_HT_HTO_FORCING_ADAPTERS
+  - HTO_TWO_REGIME_WASHOUT_PARAMETER_RECOVERY
+  - BUILDING_WAKE_FIDELITY
+  - THERMAL_LIFT_FIDELITY
+  - NATIVE_END_TO_END_ATMOS_TO_DOSE_QUALIFICATION
+
+external_backend_boundary:
+  cteas_atmos_role: OPTIONAL_HIGHER_FIDELITY_BACKEND
+  cteas_atmos_required_for_standalone_ufotri_replication: false
+  real_cteas_atmos_binding_status: DEFERRED_EXTERNAL_DEPENDENCY
+
+non_claims:
+  original_musemet_numerical_equivalence: false
+  original_ufotri_executable_equivalence: false
+  complete_hourly_trajectory_recovered: false
+  building_wake_original_numerics_recovered: false
+  thermal_lift_original_numerics_recovered: false
+  atmospheric_ht_to_hto_conversion_active: false
+  production_ready: false
+  empirical_validation_complete: false
