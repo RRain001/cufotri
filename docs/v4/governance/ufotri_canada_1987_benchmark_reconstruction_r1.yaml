@@ -16,7 +16,8 @@ primary_repository_evidence:
   - src/cteas_ufotri/coupling/ht_to_hto_soil_v4.py
   - src/cteas_ufotri/coupling/reemission_area_source_v4.py
 manual_reference_44:
-  citation: "G.L. Ogram, The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report, CFFTP-G-88027 (1988)"
+  citation: "G.L. Ogram, The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report (DRAFT), Canadian Fusion Fuels Technology Project (1988)"
+  report_identifier_in_repository_manual: NOT_STATED
   raw_report_present_as_repository_benchmark_input: false
 recovered_release:
   chemical_form: HT
