@@ -19,11 +19,11 @@ UFOTRI_ORIGINAL_NUMERICAL_EQUIVALENCE = NOT_ESTABLISHED
 
 Primary repository evidence is KfK 4605 Section 5.2 in `ufotri_manual.md`.
 
-The manual identifies the underlying experiment report as:
+The repository manual identifies the underlying experiment report as:
 
-G.L. Ogram, *The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report*, Canadian Fusion Fuels Technology Project, CFFTP-G-88027 (1988), reference /44.
+G.L. Ogram, *The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report (DRAFT)*, Canadian Fusion Fuels Technology Project (1988), reference /44.
 
-The raw CFFTP-G-88027 data are not present as repository benchmark inputs. Therefore this stage uses only values and semantics recoverable from the available manual transcription.
+The repository manual transcription does not state a report identifier. The underlying reference /44 report/raw field data are not present as repository benchmark inputs. Therefore this stage uses only values and semantics recoverable from the available manual transcription.
 
 ## Recovered experiment/site semantics
 
@@ -99,7 +99,7 @@ This compatibility mapping is structural only. It does not establish original MU
 
 ## Explicit blockers to a full numeric replay
 
-1. `CAN1987_REFERENCE_44_RAW_REPORT_AND_DATA` — CFFTP-G-88027 raw data are not repository benchmark inputs.
+1. `CAN1987_REFERENCE_44_RAW_REPORT_AND_DATA` — the underlying reference /44 report/raw data are not repository benchmark inputs.
 2. `CAN1987_RAW_HOURLY_MET_SERIES` — the hourly numerical weather sequence is absent.
 3. `CAN1987_RELEASE_CLOCK_ALIGNMENT` — exact release timestamp alignment to the weather sequence is absent.
 4. `CAN1987_PRECIPITATION_EVENT_TIMING` — only an event total is described, not hourly precipitation.
