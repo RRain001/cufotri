@@ -1,0 +1,118 @@
+stage: UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED_AS_VALIDATION
+base_main_sha: 9b1d6ff34b7306175601e9257fdddf393a4e8d3c
+scope:
+  benchmark_contract_reconstruction: true
+  empirical_numeric_replay: false
+  production_source_change: false
+  default_parameter_change: false
+  roadmap_change_in_stage_pr: false
+  real_cteas_atmos_binding: false
+primary_repository_evidence:
+  - ufotri_manual.md#5.2
+  - docs/v4/roadmap/UFOTRI_REPLICATION_MASTER_PLAN.md
+  - src/cteas_ufotri/coupling/ht_v4.py
+  - src/cteas_ufotri/coupling/ht_to_hto_soil_v4.py
+  - src/cteas_ufotri/coupling/reemission_area_source_v4.py
+manual_reference_44:
+  citation: "G.L. Ogram, The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report, CFFTP-G-88027 (1988)"
+  raw_report_present_as_repository_benchmark_input: false
+recovered_release:
+  chemical_form: HT
+  rate_bq_s: 1.9e9
+  duration_s: 1800
+  integrated_activity_bq: 3.42e12
+  release_height_m: 1.0
+recovered_dispersion:
+  pasquill_gifford_class: B
+  met_instrument_height_m: 2.75
+  terrain_description: SMOOTH_TERRAIN_ROUGHNESS_LENGTH_0_1_TO_1_M
+  canada_specific_sigma_numeric_table_recovered: false
+recovered_deposition:
+  ht_cm_s: 0.055
+  ht_m_s: 5.5e-4
+  reemitted_hto_cm_s: 0.5
+  reemitted_hto_m_s: 5.0e-3
+recovered_soil_plant:
+  initial_soil_water_fraction: 0.20
+  plant_inorganic_water_g: 200
+  plant_organic_matter_g: 100
+  leaf_area_index_m2_m2: 3
+  day_leaf_diffusion_resistance_s_cm: 4
+  night_leaf_diffusion_resistance_s_cm: 60
+recovered_reemission:
+  soil_day: CALCULATED_EACH_HOUR_EXCEPT_RAIN
+  soil_night_start_percent: 1
+  soil_rain_start_percent: 3
+  night_and_rain_rates_decrease_with_time: true
+meteorology_contract:
+  stated_window: 1987-06-09_TO_1987-06-26
+  stated_hourly_variables:
+    - wind_direction
+    - wind_speed
+    - temperature
+    - net_solar_radiation
+    - relative_humidity
+  raw_hourly_series_recovered: false
+  precipitation_hourly_series_recovered: false
+  precipitation_manual_semantics: EVENT_TOTAL_ONLY_FOR_A_SEVERAL_HOUR_RAIN_EVENT
+observable_contract:
+  - figure: 21
+    quantity: HT_AIR_CONCENTRATION_DURING_PLUME_PASSAGE
+    geometry: PLUME_CENTERLINE_DISTANCE_SERIES
+  - figure: 22
+    quantity: HT_SOIL_CONCENTRATION_AFTER_PLUME_PASSAGE
+    geometry: PLUME_CENTERLINE_DISTANCE_SERIES
+  - figure: 23
+    quantity: HTO_SOIL_CONCENTRATION_TIME_SERIES
+    distance_m: 50
+  - figure: 24
+    quantity: HTO_SOIL_CONCENTRATION_TIME_SERIES
+    distance_m: 180
+  - figure: 25
+    quantity: HTO_AIR_CONCENTRATION_TIME_SERIES
+    distance_m: 50
+    measurement_height_note: FIRST_30_HOURS_INCLUDE_0_4_TO_1_M_MEASUREMENTS
+  - figure: 26
+    quantity: HTO_AIR_CONCENTRATION_TIME_SERIES
+    distance_m: 400
+    measurement_height_m: 1.0
+  - figure: 27
+    quantity: HTO_VEGETATION_WATER_CONCENTRATION_TIME_SERIES
+    distance_m: 40
+  - figure: 28
+    quantity: HTO_VEGETATION_WATER_CONCENTRATION_TIME_SERIES
+    distance_m: null
+    distance_ambiguity_m:
+      - 175
+      - 180
+    resolution: PRESERVE_AMBIGUITY
+unresolved_blockers:
+  - CAN1987_REFERENCE_44_RAW_REPORT_AND_DATA
+  - CAN1987_RAW_HOURLY_MET_SERIES
+  - CAN1987_RELEASE_CLOCK_ALIGNMENT
+  - CAN1987_PRECIPITATION_EVENT_TIMING
+  - CAN1987_RAW_MEASURED_AND_CALCULATED_SERIES
+  - CAN1987_SIGMA_PARAMETER_NUMERIC_PROVENANCE
+  - CAN1987_COMPLETE_EQ44_REEMISSION_RATE_RECOVERY
+  - CAN1987_PRIMARY_ATMOS_NUMERICAL_EQUIVALENCE
+acceptance_policy:
+  r1_gate: RECOVERABLE_CONTRACT_RECONSTRUCTED_WITH_EXPLICIT_BLOCKERS
+  manual_declared_target: QUALITATIVE_TIME_DEPENDENCE_OF_AIR_SOIL_AND_VEGETATION_CONCENTRATIONS_OVER_SEVERAL_DAYS
+  pointwise_rmse_from_chart_transcription: FORBIDDEN
+  chart_transcription_as_ground_truth: FORBIDDEN
+  silent_fill_of_missing_inputs: FORBIDDEN
+  full_numeric_replay_ready: false
+  empirical_reproduction_executed: false
+  empirical_validation_complete: false
+qualification:
+  machine_gate: scripts/v4/check_ufotri_canada_1987_benchmark_reconstruction_r1.py
+  pytest: tests/v4/test_ufotri_canada_1987_benchmark_reconstruction_r1.py
+non_claims:
+  canada_1987_empirical_reproduction: false
+  physical_accuracy: false
+  production_readiness: false
+  original_ufotri_executable_equivalence: false
+  original_musemet_equivalence: false
+next_stage_after_certified_merge_and_roadmap_sync: UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1
