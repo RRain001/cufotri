@@ -73,6 +73,10 @@ def _sha(section: str, label: str) -> str:
     return match.group(1)
 
 
+def _h6_complete(roadmap: str) -> bool:
+    return "- Status: `COMPLETE`" in _section(roadmap, STAGE)
+
+
 def _ledger(roadmap: str) -> dict[str, Any]:
     records: dict[str, Any] = {}
     for key, (stage, _script, _token) in NATIVE.items():
@@ -94,10 +98,16 @@ def _ledger(roadmap: str) -> dict[str, Any]:
         }
         records[key] = {"stage": stage, "head": head, "merge": merge, "tree": merge_tree, "checks": checks, "pass": all(checks.values())}
     h6 = _section(roadmap, STAGE)
+    complete = "- Status: `COMPLETE`" in h6
+    h6_lifecycle_valid = (
+        "- Validation: `PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`" in h6
+        and "MERGE_TREE_DRIFT=FALSE" in h6
+    ) if complete else "- Status: `AUTHORIZED_NOT_STARTED`" in h6
     return {
         "stages": records,
         "all_h1_h5_complete_no_drift": all(record["pass"] for record in records.values()),
-        "h6_authorized_not_started": "- Status: `AUTHORIZED_NOT_STARTED`" in h6,
+        "h6_lifecycle_state": "COMPLETE_POST_MERGE" if complete else "CANDIDATE_PRE_MERGE",
+        "h6_lifecycle_valid": h6_lifecycle_valid,
     }
 
 
@@ -163,26 +173,58 @@ def _boundaries(roadmap: str) -> dict[str, Any]:
 
 
 def _lifecycle(roadmap: str) -> dict[str, Any]:
-    checks = {
-        "reconstruction_still_pending": "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE_PENDING_NATIVE_ATMOSPHERE_CLOSURE`" in roadmap,
+    complete = _h6_complete(roadmap)
+    common = {
         "broader_replication_false": "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`" in roadmap,
         "original_equivalence_not_established": "- `UFOTRI_ORIGINAL_NUMERICAL_EQUIVALENCE=NOT_ESTABLISHED`" in roadmap,
         "cteas_atmos_optional": "- `CTEAS_ATMOS_BACKEND=DEFERRED_OPTIONAL_HIGHER_FIDELITY_BACKEND`" in roadmap,
-        "h6_immediate": "## 6. Immediate next stage\n\n`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`" in roadmap,
     }
-    return {"checks": checks, "pass": all(checks.values())}
+    if complete:
+        specific = {
+            "reconstruction_true_post_merge": "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`" in roadmap,
+            "no_immediate_internal_stage": "## 6. Immediate next stage\n\n`NO_IMMEDIATE_INTERNAL_MANUAL_RECONSTRUCTION_STAGE`" in roadmap,
+        }
+        state = "COMPLETE_POST_MERGE"
+    else:
+        specific = {
+            "reconstruction_still_pending": "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE_PENDING_NATIVE_ATMOSPHERE_CLOSURE`" in roadmap,
+            "h6_immediate": "## 6. Immediate next stage\n\n`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`" in roadmap,
+        }
+        state = "CANDIDATE_PRE_MERGE"
+    checks = {**common, **specific}
+    return {"state": state, "checks": checks, "pass": all(checks.values())}
 
 
-def _scope() -> dict[str, Any]:
-    changed = {line.strip() for line in _gt("diff", "--name-only", f"{BASE}..HEAD").splitlines() if line.strip()}
+def _scope(roadmap: str) -> dict[str, Any]:
+    complete = _h6_complete(roadmap)
+    lifecycle_checks: dict[str, bool] = {}
+    if complete:
+        h6 = _section(roadmap, STAGE)
+        head = _sha(h6, "Certified head")
+        merge = _sha(h6, "Merge SHA")
+        target = head
+        head_tree = _gt("rev-parse", f"{head}^{{tree}}")
+        merge_tree = _gt("rev-parse", f"{merge}^{{tree}}")
+        parents = _gt("show", "-s", "--format=%P", merge).split()
+        lifecycle_checks = {
+            "h6_head_is_merge_parent": head in parents,
+            "h6_head_tree_equals_merge_tree": head_tree == merge_tree,
+            "h6_merge_ancestor_of_current_head": _git("merge-base", "--is-ancestor", merge, "HEAD", check=False).returncode == 0,
+        }
+        mode = "CERTIFIED_H6_HISTORICAL_SCOPE"
+    else:
+        target = "HEAD"
+        mode = "H6_CANDIDATE_SCOPE"
+    changed = {line.strip() for line in _gt("diff", "--name-only", f"{BASE}..{target}").splitlines() if line.strip()}
     checks = {
         "exact_five_files": changed == ALLOWED,
         "no_src": not any(path.startswith("src/") for path in changed),
         "no_configs": not any(path.startswith("configs/") for path in changed),
         "no_workflows": not any(path.startswith(".github/workflows/") for path in changed),
         "no_roadmap": not any(path.startswith("docs/v4/roadmap/") for path in changed),
+        **lifecycle_checks,
     }
-    return {"changed_paths": sorted(changed), "allowed_paths": sorted(ALLOWED), "checks": checks, "pass": all(checks.values())}
+    return {"mode": mode, "audit_target": target, "changed_paths": sorted(changed), "allowed_paths": sorted(ALLOWED), "checks": checks, "pass": all(checks.values())}
 
 
 def build_result() -> dict[str, Any]:
@@ -193,22 +235,24 @@ def build_result() -> dict[str, Any]:
     g4 = _historical_g4()
     boundaries = _boundaries(roadmap)
     lifecycle = _lifecycle(roadmap)
-    scope = _scope()
+    scope = _scope(roadmap)
     gates = {
         "h1_h5_complete_and_merge_no_drift": ledger["all_h1_h5_complete_no_drift"],
-        "h6_authorized": ledger["h6_authorized_not_started"],
+        "h6_lifecycle_valid": ledger["h6_lifecycle_valid"],
         "h1_h5_machine_reexecution": native["pass"],
         "historical_g3_reexecution": g3["pass"],
         "historical_g4_preserved": g4["pass"],
         "source_limited_boundaries_preserved": boundaries["pass"],
-        "claim_lifecycle_not_preempted": lifecycle["pass"],
+        "claim_lifecycle_valid": lifecycle["pass"],
         "qualification_only_scope": scope["pass"],
     }
     passed = all(gates.values())
+    complete = _h6_complete(roadmap)
     return {
         "schema_version": "v2",
         "stage": STAGE,
         "status": "PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2" if passed else "FAIL_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2",
+        "lifecycle_state": "COMPLETE_POST_MERGE" if complete else "CANDIDATE_PRE_MERGE",
         "ledger": ledger,
         "native_gate_reexecution": native,
         "historical_g3": g3,
@@ -226,7 +270,13 @@ def build_result() -> dict[str, Any]:
         "physical_accuracy_validated": False,
         "cteas_atmos_binding_complete": False,
         "ufotri_original_numerical_equivalence": "NOT_ESTABLISHED",
-        "next_action_if_clean_merge_no_drift": "CORRECTION_ROADMAP_STATUS_SYNC_SET_RECONSTRUCTION_COMPLETE_TRUE" if passed else "DO_NOT_PROMOTE_RECONSTRUCTION_FLAG",
+        "next_action_if_clean_merge_no_drift": (
+            "NO_IMMEDIATE_INTERNAL_MANUAL_RECONSTRUCTION_STAGE"
+            if complete and passed
+            else "CORRECTION_ROADMAP_STATUS_SYNC_SET_RECONSTRUCTION_COMPLETE_TRUE"
+            if passed
+            else "DO_NOT_PROMOTE_RECONSTRUCTION_FLAG"
+        ),
     }
 
 
