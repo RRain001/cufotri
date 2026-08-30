@@ -1,12 +1,15 @@
-"""Opt-in typed HT forcing contract for UFOTRI Phase E1.
+"""Opt-in typed HT forcing contract for UFOTRI Phase E1/H3.
 
 E1 freezes the chemical identity, units, provenance, interval semantics and
 soil-boundary handoff for gaseous tritium without implementing HT->HTO
-conversion.  It intentionally remains separate from the frozen HTO forcing
+conversion. It intentionally remains separate from the frozen HTO forcing
 contract.
 
-Only synthetic/replay HT forcing is authorized in E1.  Real CTEAS-Atmos HT
-binding remains Phase E4.
+E1 originally authorized synthetic/replay inputs only and kept real
+CTEAS-Atmos HT binding deferred. H3 extends only the source-kind vocabulary so
+that the separately reconstructed UFOTRI-native atmosphere can enter this same
+typed boundary without being mislabeled as replay or CTEAS-Atmos. The original
+CTEAS-Atmos fail-closed boundary remains unchanged.
 """
 
 from __future__ import annotations
@@ -29,7 +32,7 @@ class HTContractError(ValueError):
 class GaseousTritiumSpecies(str, Enum):
     """Manual-supported gaseous tritium identities.
 
-    KfK 4605 explicitly describes gaseous tritium as HT/T2.  Other mixtures
+    KfK 4605 explicitly describes gaseous tritium as HT/T2. Other mixtures
     are not silently normalized into this manual-replication contract.
     """
 
@@ -40,6 +43,7 @@ class GaseousTritiumSpecies(str, Enum):
 class HTForcingSourceKind(str, Enum):
     SYNTHETIC = "synthetic"
     REPLAY = "replay"
+    UFOTRI_NATIVE = "ufotri_native"
     REAL_CTEAS_ATMOS = "real_cteas_atmos"
 
 
@@ -131,7 +135,7 @@ class HTManualEvidenceProfile:
 class AtmosphericHTForcing:
     """Typed E1 HT forcing record.
 
-    This is not interchangeable with AtmosphericHTOForcing.  The surface
+    This is not interchangeable with AtmosphericHTOForcing. The surface
     deposition value is still HT at the soil boundary; no HTO is created here.
     """
 
@@ -211,7 +215,7 @@ class AtmosphericHTForcing:
 class HTSoilDepositionBoundary:
     """E1 output handed to E2.
 
-    The inventory remains chemically HT.  E2 must own any conversion to HTO.
+    The inventory remains chemically HT. E2 must own any conversion to HTO.
     """
 
     start_utc: datetime
@@ -252,7 +256,7 @@ class HTSoilDepositionBoundary:
 
 @dataclass(frozen=True)
 class HTBranchOwnership:
-    """Machine-readable stage ownership boundary."""
+    """Machine-readable historical E1 ownership boundary."""
 
     e1_contract_and_mapping: bool = True
     e1_ht_to_hto_soil_conversion: bool = False
