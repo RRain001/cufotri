@@ -40,7 +40,7 @@ def build_result() -> dict:
         "segmented_gaussian_present": "two-dimensional Gaussian model (segmented plume model)" in manual,
         "source_over_one_hour_split_present": "Source terms of more than one hour are divided into one-hour intervals" in manual,
         "mol_table9_present": "Table 9. Diffusion coefficients of the S.C.N./C.E.N Mol" in manual,
-        "mixing_lid_sigma_cap_present": "sigma_{z}$ is limited to 0.8 h" in manual,
+        "mixing_lid_sigma_cap_present": "\\sigma_{z}$ is limited to 0.8 h" in manual,
         "dry_source_depletion_present": "Dry deposition of radioactivity from the plume is described by the source depletion model" in manual,
         "ht_wet_negligible_present": "They are very small for HT, i.e. wet deposition is negligible" in manual,
         "hto_washout_present": "wet deposition of tritium is in the model considered as washout from the whole plume" in manual,
