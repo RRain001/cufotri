@@ -566,16 +566,33 @@ The branch is split so that internal HT environmental mechanisms can progress in
 
 #### G2. ITER benchmark reconstruction
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
 - Replication requirement: `REQUIRED_AS_VALIDATION`
-- Goal: reproduce the recoverable ITER comparison/benchmark case described or referenced by the manual/evidence set, preserving case distinctions and source ambiguities instead of flattening them into one assumed scenario.
+- Manual anchor: KfK 4605 Section 5.3 and Appendix B Tables 8-13.
+- Decision: reconstructed the recoverable ITER benchmark contract and the four printed 1000 m dose reference tables (HTO-D, HTO-F, HT-D, HT-F) without promoting approximate/OCR-damaged figure helper tables to numerical oracles. The source-level `0 m` versus `10 m` release-height conflict is preserved as `ITER_RELEASE_HEIGHT_0_VS_10_M`. The Table 13 HT/F/60 m early-sum inconsistency is preserved as `ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY`; printed values are not silently repaired.
+- Changed source files: `NO_PRODUCTION_SOURCE_CHANGE`; G2 added ADR-076, governance/report artifacts, one machine gate and one focused pytest file. No `src/`, default, workflow or roadmap file changed in PR #93.
+- PR: `#93`
+- Certified head: `56ac13585f13b6b022aebae300677e592261bb11`
+- Certified tree: `36830e52f35a3c0d5437563e679165d94e28166d`
+- Remediation CI: `33288102430` (#241) — `SUCCESS`
+- Protected CI: `33288102443` (#252) — `SUCCESS`
+- Protected merge-ref: `bad97cceb2cb4ad73caeb99f1606cccfaec10148`
+- Validation: `PASS_MANUAL_TABULATED_ITER_BENCHMARK_RECONSTRUCTION`; portable `1642 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `69d21f34e0cd7a446b50dae46b9aa19d5ac4cee1`
+- Merge tree: `36830e52f35a3c0d5437563e679165d94e28166d`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `a78a56cb44a230d33571a194ea0b5375261db86f` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Remaining gap: `ITER_FULL_ATMOSPHERIC_NUMERIC_REPLAY_COMPLETE=FALSE` and `ITER_EMPIRICAL_VALIDATION_COMPLETE=FALSE`. The `0 m`/`10 m` source conflict, Table 13/F/60 m printed early-sum inconsistency, original building-wake numerics, original atmospheric numerical equivalence, real CTEAS-Atmos binding and authoritative pointwise figure arrays remain unresolved/source-limited.
+- Next stage: `UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1` while E4/E5 remain `DEFERRED_EXTERNAL_DEPENDENCY`.
+- Non-claims: no full ITER atmospheric replay, no empirical validation, no production-readiness/physical-accuracy claim, no real CTEAS-Atmos binding and no original MUSEMET/UFOTRI executable equivalence.
 
 #### G3. Cross-module fidelity qualification
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1`
 - Replication requirement: `REQUIRED`
-- Dependency: completed internal phases plus available deferred Atmos/HT items as required by benchmark scope.
+- Dependency: completed internal phases plus G1/G2 benchmark-contract reconstruction. E4/E5 remain `DEFERRED_EXTERNAL_DEPENDENCY`; their unavailability must be recorded and must not be replaced by an HTO surrogate or mislabeled as real Atmos validation.
+- Control-plane decision: because real CTEAS-Atmos HT/HTO binding remains explicitly deferred and the roadmap permits internal synthetic/manual reconstruction to proceed independently, G3 is authorized now under controlled synthetic/replay/manual-compatible forcing. Any G3 check that intrinsically requires real Atmos input must remain `DEFERRED_EXTERNAL_DEPENDENCY` rather than being fabricated or used to block unrelated internal qualification.
 - Required checks:
   - deterministic repeat;
   - restart equivalence;
@@ -626,12 +643,11 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
+1. `UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1`
 2. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-3. final cross-module fidelity qualification
-4. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+3. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate after G3 and dependency review
 
-The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
+This G2 status sync records the explicit ordering decision required by the roadmap: E4/E5 remain deferred because CTEAS-Atmos is not yet an available production dependency, so they do not block controlled internal G3 qualification. They remain required for full real-Atmos replication and are not reclassified as complete or unnecessary.
 
 ## 10. Progress checklist
 
@@ -676,8 +692,8 @@ The order after A1 may be changed only by an explicit governance decision that r
 ### Benchmarks / final gate
 
 - [x] Canada 1987 benchmark contract reconstruction — PR #91, merge `6101346f18b87faafb55417e03b08a4f911148ac`, no-drift PASS; full numerical/empirical replay remains source-limited
-- [ ] ITER benchmark — `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
-- [ ] Cross-module fidelity qualification
+- [x] ITER benchmark contract / 1 km tabulated reference qualification — PR #93, merge `69d21f34e0cd7a446b50dae46b9aa19d5ac4cee1`, no-drift PASS; full atmospheric replay remains incomplete
+- [ ] Cross-module fidelity qualification — `UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1`
 - [ ] `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE`
 
 ## 11. Update protocol
@@ -703,6 +719,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
+`UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1`
 
-G1 is complete as a source-limited benchmark-contract reconstruction under exact-head CI and merge/no-drift evidence. The recoverable Canada static inputs, eight observable families, qualitative historical comparison objective, unit conversions and Figure 28 175/180 m ambiguity are now frozen without promoting chart-helper values or invented inputs to ground truth. Canada full numerical replay remains explicitly not ready because eight primary/source/numerical blockers remain unresolved; this does not erase the required benchmark obligation or imply empirical validation. G2 is now authorized to reconstruct the ITER benchmark from the manual's Section 5.3/Appendix B evidence while preserving the distinct HT/HTO, stability, wind, mixing-layer, release-height/building-wake and model-comparison cases. Real CTEAS-Atmos HT/HTO binding remains deferred, complete Eq. (44) rate recovery remains source-limited, and `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged.
+G2 is complete as a manual-tabulated ITER benchmark-contract and 1000 m reference-table qualification under exact-head CI and merge/no-drift evidence. The benchmark's recoverable Table 8/9 inputs and Tables 10-13 outputs are now frozen without repairing the `0 m`/`10 m` source conflict, the Table 13/F/60 m printed early-sum inconsistency, or approximate figure transcriptions. Full ITER atmospheric numerical replay and empirical validation remain explicitly false. E4/E5 real CTEAS-Atmos HT/HTO work remains `DEFERRED_EXTERNAL_DEPENDENCY`; because that dependency is not yet available, it does not block the controlled internal cross-module checks enumerated in G3. G3 is therefore the immediate authorized stage, but it must keep every real-Atmos-dependent check deferred and must not relabel synthetic/replay forcing as production or real-Atmos validation. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged.
