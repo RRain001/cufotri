@@ -108,10 +108,18 @@ def test_tables_10_to_13_are_four_complete_authoritative_1km_reference_tables() 
     )
 
 
-def test_printed_table_sum_identities_close_with_rounding_only() -> None:
+def test_printed_sum_identities_close_except_the_explicit_table13_60m_anomaly() -> None:
     result = GATE.build_result()
     checks = result["sum_identity_checks"]
     assert all(value for table in checks.values() for value in table.values())
+
+    row = result["reference_1km_tables"]["table13_ht_F"]["60_m"]
+    component_sum = row[1] + row[3]
+    assert component_sum == pytest.approx(4.63e-5)
+    assert row[5] == pytest.approx(3.8e-5)
+    assert abs(row[5] - component_sum) / component_sum == pytest.approx(0.1792656587473002)
+    assert result["source_boundary"]["table13_60m_early_sum_inconsistency_preserved"] is True
+    assert result["decision"]["table13_60m_printed_sum_silently_repaired"] is False
 
 
 def test_robust_1km_release_height_wake_and_stability_ordering_is_preserved() -> None:
