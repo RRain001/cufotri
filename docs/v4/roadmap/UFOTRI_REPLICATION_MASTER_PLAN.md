@@ -12,6 +12,7 @@ The governing distinction is:
 
 - `V4_SOFTWARE_DEVELOPMENT_BASELINE_COMPLETE=TRUE`
 - `UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`
+- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`
 - `UFOTRI_ORIGINAL_NUMERICAL_EQUIVALENCE=NOT_ESTABLISHED`
 
 The frozen V4 RC1 baseline remains the stable fallback/default path. Replication-fidelity work must be developed as explicit post-RC1 compatibility/fidelity paths and must not silently rewrite RC1 behavior.
@@ -612,19 +613,25 @@ The branch is split so that internal HT environmental mechanisms can progress in
 
 #### G4. Final UFOTRI manual-based reconstruction gate
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1`
-- Target flag: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE`
+- Target flag: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`
 - Dependency: G3 complete and no-drift audited.
-- Control-plane authorization: `AUTHORIZED_AFTER_G3_ROADMAP_SYNC`; this gate evaluates internal recoverable manual-based functional reconstruction only. E4/E5 real CTEAS-Atmos work remains a separately tracked `DEFERRED_EXTERNAL_DEPENDENCY` required for full real-Atmos replication and must neither be fabricated nor silently reclassified as complete.
-- Gate may become `TRUE` only if:
-  - all recoverable manual-required internal mechanisms are complete;
-  - all required internal reconciliations are merged and no-drift audited;
-  - benchmark obligations are closed to the extent permitted by available evidence;
-  - the G3 30/30 gap disposition contains no remaining unimplemented recoverable internal mechanism;
-  - remaining internal unresolved items are only those provably blocked/source-limited by unavailable original assets/evidence rather than missing implementation work;
-  - separately deferred real-Atmos dependencies remain explicitly deferred and outside the internal-completion claim;
-  - no exact-original-executable equivalence claim is made without original regression material.
+- Decision: qualification-only final evidence/claim gate. G4 audited all 19 required A-G3 internal stage ledgers against actual Git ancestry/tree evidence, re-executed the merged G3 aggregate gate, verified the final 30/30 gap disposition contains no unimplemented recoverable internal mechanism, and preserved all real-Atmos/source-limited/original-asset boundaries. No `src/`, default, workflow or roadmap file changed in PR #97.
+- Changed source files: `NO_PRODUCTION_SOURCE_CHANGE`; G4 added ADR-078, governance/report artifacts, one machine final gate and one focused pytest file.
+- PR: `#97`
+- Certified head: `faa3cbcb26f36906149c257e9136363c49994cb2`
+- Certified tree: `345249ff685d109e38475062479d23510da402eb`
+- Remediation CI: `33290732289` (#245) — `SUCCESS`; historical boundary governance `108 passed`; current evergreen/synthetic verification `14 passed`.
+- Protected CI: `33290732271` (#256) — `SUCCESS`
+- Protected merge-ref: `b50e9b6778eed88a508a0a0826a4e4f8617dec72`
+- Validation: `PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE`; portable `1654 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`. The G4 focused gate passed 19/19 stage-ledger Git ancestry/tree checks, G3 aggregate re-execution, 30/30 final gap disposition, claim-boundary preservation and exact five-file candidate scope.
+- Merge SHA: `59ab5897b1ae2bddf6034a1fb32ae6ce4ffa6b39`
+- Merge tree: `345249ff685d109e38475062479d23510da402eb`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `e7dde52b405a467b6f3f17552f40ba9891f8da98` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Remaining gap: `NONE_WITHIN_RECOVERABLE_INTERNAL_MANUAL_BASED_RECONSTRUCTION`. E4/E5 real CTEAS-Atmos HT/HTO integration remains `DEFERRED_EXTERNAL_DEPENDENCY`; UFR-29/30 remain unavailable-original-asset limits; Canada full numerical/empirical replay, ITER full atmospheric replay, complete Eq. (44) recovery, empirical site validation, production readiness, physical-accuracy validation and original-executable numerical equivalence remain explicitly outside or beyond the completed internal reconstruction claim.
+- Next stage: `NO_IMMEDIATE_INTERNAL_REPLICATION_STAGE`; resume E4/E5 only when CTEAS-Atmos is available as the external dependency.
+- Non-claims: no full real-Atmos UFOTRI replication, no empirical validation, no production-readiness/physical-accuracy claim, no complete Eq. (44) recovery, no original parameter-loader recovery and no original MUSEMET/ISOLA/UFOTRI executable numerical equivalence.
 
 ## 7. Candidate extensions that are not automatically replication requirements
 
@@ -653,13 +660,13 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 ## 9. Current priority order
 
-Unless the final gate exposes a previously hidden recoverable internal blocker, the selected sequence is:
+The recoverable internal manual-based reconstruction sequence is complete. Remaining work is ordered by dependency rather than treated as unfinished internal G-stage work:
 
-1. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1`
-2. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-3. later production/application validation work outside the internal replication-development completion claim
+1. no immediate internal manual-reconstruction stage; `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`;
+2. deferred real HT/HTO Atmos reconciliation and E5 end-to-end real-Atmos compatibility when CTEAS-Atmos is ready;
+3. later empirical/production/application validation work outside the completed internal reconstruction claim.
 
-This G3 status sync records that controlled cross-module qualification is complete and that all 30 original UFR gaps now have explicit dispositions. E4/E5 remain deferred because CTEAS-Atmos is not yet an available production dependency; they remain required for full real-Atmos replication but are separate from the internal manual-based functional reconstruction gate. G4 must therefore audit the existing evidence and claim boundary rather than reopening Atmos work, calibration or production parameters.
+This G4 status sync records the strongest claim supported by the currently available manual/repository evidence. It does not change `UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`: E4/E5 real CTEAS-Atmos work remains required for full real-Atmos replication and is still `DEFERRED_EXTERNAL_DEPENDENCY`. Canada/ITER full replay, complete Eq. (44), empirical validation, production readiness, physical-accuracy validation and original-executable numerical equivalence also remain outside the completed reconstruction claim.
 
 ## 10. Progress checklist
 
@@ -706,7 +713,7 @@ This G3 status sync records that controlled cross-module qualification is comple
 - [x] Canada 1987 benchmark contract reconstruction — PR #91, merge `6101346f18b87faafb55417e03b08a4f911148ac`, no-drift PASS; full numerical/empirical replay remains source-limited
 - [x] ITER benchmark contract / 1 km tabulated reference qualification — PR #93, merge `69d21f34e0cd7a446b50dae46b9aa19d5ac4cee1`, no-drift PASS; full atmospheric replay remains incomplete
 - [x] Cross-module fidelity qualification — PR #95, merge `f6526bf26cf92f40021419427ae78232ea902ea3`, no-drift PASS
-- [ ] `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE`
+- [x] `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` — G4 PR #97, merge `59ab5897b1ae2bddf6034a1fb32ae6ce4ffa6b39`, no-drift PASS
 
 ## 11. Update protocol
 
@@ -731,6 +738,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1`
+`NO_IMMEDIATE_INTERNAL_REPLICATION_STAGE`
 
-G3 is complete under exact-head CI and merge/no-drift evidence with `PASS_CONTROLLED_CROSS_MODULE_FIDELITY_QUALIFICATION`. Deterministic repeat, restart equivalence, timestep-refinement evidence, cross-module conservation, HT/HTO provenance, plant/soil/food inventory accounting, RC1-versus-fidelity boundary comparison and the 30/30 original gap disposition are now qualified under controlled synthetic/replay/manual-compatible forcing. UFR-16 is closed by requalifying the existing optional 3 h historical root-delay mode without promoting it to the RC1 or `root_v4` default. E4/E5 real CTEAS-Atmos work remains `DEFERRED_EXTERNAL_DEPENDENCY`; Canada/ITER full replay, complete Eq. (44) recovery and original-executable equivalence retain their explicit evidence limits. G4 is therefore the immediate authorized internal gate. It must audit whether the existing merged evidence supports the strongest permitted claim and must not reopen Atmos integration, calibration, production parameters or optional scientific extensions. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged until G4 itself passes exact-head CI and merge/no-drift audit.
+G4 is complete under exact-head CI and merge/no-drift evidence with `PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE`. All 19 required internal A-G3 stage ledgers, their certified-head/merge Git trees and ancestry, G3 aggregate qualification, and the final 30/30 UFR gap disposition have been independently requalified by the G4 machine gate. Therefore `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE` is now authorized and recorded. This does not promote the broader `UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE`, which remains false while E4/E5 real CTEAS-Atmos HT/HTO work is `DEFERRED_EXTERNAL_DEPENDENCY`. Canada/ITER full replay, complete Eq. (44) recovery, empirical validation, production readiness, physical-accuracy validation and original-executable numerical equivalence remain explicitly false, source-limited or not established. No further internal replication stage is authorized now; resume E4/E5 only when the external CTEAS-Atmos dependency is ready.
