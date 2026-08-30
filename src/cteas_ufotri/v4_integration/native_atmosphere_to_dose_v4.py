@@ -266,6 +266,7 @@ def compose_native_atmosphere_replay_input(
     combined_forcing = replace(
         hto.forcing,
         air_hto_concentration=combined_air,
+        air_ht0_concentration=combined_air,
         deposition_flux=combined_flux,
     )
     replay_input = replace(template, atmospheric_forcing=combined_forcing)
