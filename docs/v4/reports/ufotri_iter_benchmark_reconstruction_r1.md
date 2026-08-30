@@ -47,23 +47,38 @@ The Appendix B 1000 m plume-centreline dose table is split according to its four
 - Table 12 — HT, category D;
 - Table 13 — HT, category F.
 
-Each contains four result cases: 10 m, 20 m, 60 m and 20 m with building wake. Seven dose columns are retained exactly as printed: early plume inhalation/skin; early inhalation/skin including re-emission; chronic inhalation/skin including re-emission; early ingestion; chronic ingestion; sum early; sum chronic.
+Each contains four result cases: 10 m, 20 m, 60 m and 20 m with building wake. Seven dose columns are retained with their printed values: early plume inhalation/skin; early inhalation/skin including re-emission; chronic inhalation/skin including re-emission; early ingestion; chronic ingestion; sum early; sum chronic.
 
-Qualification checks intentionally use only relationships supported by those tables:
+A direct arithmetic audit found one printed-table inconsistency that cannot be classified as ordinary rounding:
 
-1. `sum early = early inhalation/skin with re-emission + early ingestion` within 5% relative tolerance for printed rounding;
-2. `sum chronic = chronic inhalation/skin with re-emission + chronic ingestion` within the same tolerance;
-3. 10 m has the highest total chronic dose in each table;
-4. 60 m has the lowest total chronic dose in each table;
-5. 20 m with building wake exceeds ordinary 20 m in total chronic dose in each table;
-6. category F total chronic dose exceeds category D for matching 1 km HT and HTO cases;
-7. HTO total chronic dose exceeds HT for matching stability/release cases at 1 km.
+`ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY`
+
+For Table 13, HT/F, 60 m:
+
+- early inhalation/skin including re-emission = `9.3e-6 Sv`;
+- early ingestion = `3.7e-5 Sv`;
+- component sum = `4.63e-5 Sv`;
+- printed sum early = `3.8e-5 Sv`;
+- relative discrepancy from the component sum ≈ `17.93%`.
+
+G2 does not change any of those values and does not infer which printed cell is erroneous. The anomaly is a formal source boundary.
+
+Qualification checks intentionally use only relationships supported by the tables:
+
+1. every other `sum early` identity closes within 5% relative tolerance for printed rounding;
+2. every `sum chronic` identity closes within the same tolerance;
+3. the Table 13/F/60 m early-sum inconsistency is independently reproduced and remains unrepaired;
+4. 10 m has the highest total chronic dose in each table;
+5. 60 m has the lowest total chronic dose in each table;
+6. 20 m with building wake exceeds ordinary 20 m in total chronic dose in each table;
+7. category F total chronic dose exceeds category D for matching 1 km HT and HTO cases;
+8. HTO total chronic dose exceeds HT for matching stability/release cases at 1 km.
 
 These checks qualify transcription and benchmark semantics; they are not a substitute for reproducing the atmospheric calculation.
 
 ## 5. Figures and far-range evidence
 
-Section 5.3 uses Figures 29 onward for near/far-range concentration and dose behaviour. The Markdown helper tables beneath those figures contain approximate values and occasionally damaged OCR or incomplete series labels. G2 therefore does not use them as exact pointwise targets.
+Section 5.3 uses benchmark figures for near/far-range concentration and dose behaviour. The Markdown helper tables beneath those figures contain approximate values and occasionally damaged OCR or incomplete series labels. G2 therefore does not use them as exact pointwise targets.
 
 The narrative trends remain evidence-visible for later cross-module qualification, but G2 does not manufacture RMSE, pointwise tolerances or exact far-range arrays from chart transcription.
 
@@ -72,6 +87,7 @@ The narrative trends remain evidence-visible for later cross-module qualificatio
 The following remain unresolved after a passing G2 contract reconstruction:
 
 - `ITER_RELEASE_HEIGHT_0_VS_10_M`;
+- `ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY`;
 - exact original building-wake numerical implementation;
 - original MUSEMET/UFOTRI atmospheric numerical equivalence;
 - real CTEAS-Atmos HT/HTO binding;
