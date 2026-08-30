@@ -37,6 +37,7 @@ def test_h6_r2_machine_gate_passes() -> None:
     assert result["target_flag_value_after_clean_merge_no_drift_and_status_sync"] is True
     assert result["broader_replication_complete"] is False
     assert result["ufotri_original_numerical_equivalence"] == "NOT_ESTABLISHED"
+    assert result["lifecycle_state"] in {"CANDIDATE_PRE_MERGE", "COMPLETE_POST_MERGE"}
 
 
 def test_h6_r2_governance_does_not_preempt_claim() -> None:
@@ -53,17 +54,23 @@ def test_h6_r2_governance_does_not_preempt_claim() -> None:
     assert governance["cteas_atmos_role"]["blocks_standalone_manual_reconstruction"] is False
 
 
-def test_h6_r2_roadmap_is_still_premerge_lifecycle() -> None:
+def test_h6_r2_roadmap_lifecycle_is_consistent() -> None:
     roadmap = ROADMAP.read_text(encoding="utf-8")
-    assert (
-        "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE_PENDING_NATIVE_ATMOSPHERE_CLOSURE`"
-        in roadmap
-    )
     assert "### H5 — Native atmosphere → environmental chain → dose qualification" in roadmap
-    assert "- Status: `COMPLETE`" in roadmap
     assert "### H6 — Corrected final reconstruction gate" in roadmap
-    assert "- Status: `AUTHORIZED_NOT_STARTED`" in roadmap
-    assert (
-        "## 6. Immediate next stage\n\n`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`"
-        in roadmap
-    )
+    if "- Status: `COMPLETE`\n- Stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`" in roadmap:
+        assert "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`" in roadmap
+        assert (
+            "## 6. Immediate next stage\n\n`NO_IMMEDIATE_INTERNAL_MANUAL_RECONSTRUCTION_STAGE`"
+            in roadmap
+        )
+    else:
+        assert (
+            "- `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE_PENDING_NATIVE_ATMOSPHERE_CLOSURE`"
+            in roadmap
+        )
+        assert "- Status: `AUTHORIZED_NOT_STARTED`\n- Stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`" in roadmap
+        assert (
+            "## 6. Immediate next stage\n\n`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`"
+            in roadmap
+        )
