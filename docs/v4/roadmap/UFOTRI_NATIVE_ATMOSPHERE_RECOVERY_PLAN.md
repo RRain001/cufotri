@@ -141,21 +141,30 @@ If a later authoritative UFOTRI version proves that atmospheric oxidation became
 
 ### H4 — Atmospheric-process reconciliation
 
-- Status: `AUTHORIZED_NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1`
-- Dependency: H1-H3.
-- Required topics:
-  - recover/qualify the two HTO washout coefficient regimes if authoritative values are available;
-  - replace the H1 controlled source-depletion approximation with the KfK 4332/MUSEMET relation where recoverable;
-  - reconcile building-wake correction;
-  - reconcile thermal-lift/effective-release-height treatment;
-  - preserve source-limited boundaries where equations/numerics remain unavailable instead of inventing them.
-- Atmospheric HT→HTO remains disabled for KfK 4605 unless separate versioned evidence proves otherwise.
+- PR: `#106`
+- Certified head: `3ca2e6ae152d7d1fe2e3cbd17f4a5dca49514c54`
+- Certified tree: `6c21213961b586c8057815b840d7df008fb0238b`
+- Merge SHA: `caa36cd56222cad739bc0ca264d74db5463b4b2a`
+- Merge tree: `6c21213961b586c8057815b840d7df008fb0238b`
+- Exact-head Remediation CI: `33303660781` (#258) — `SUCCESS`
+- Exact-head Protected CI: `33303660733` (#269) — `SUCCESS`
+- Protected synthetic merge-ref: `c4be3edc1c924981f3265f6d301989da0814ccce`
+- Portable suite: `1704 passed, 1 skipped, 57 deselected, 1 warning`
+- Frozen/current-boundary suite: `375 passed`
+- Existing five V4 integration gates: `PASS`
+- Validation: `PASS_UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION`; KfK 4332 Eq. (2.20) dry source depletion is reconstructed by direct-equation deterministic regularised quadrature, Eq. (2.27) wet depletion is applied multiplicatively, and the H4+ authoritative transport is `transport_straight_segment_reconciled` while the H1 controlled approximation remains historical evidence only.
+- KfK 5194 washout: `IWASH=0` recovers the HTO classes `6e-5/1e-4/4e-4 s^-1` with `REGTIM=0.5/0.75/0.72`; `IWASH=1` recovers `lambda=9e-5*I^0.6`; HT wet deposition remains zero.
+- Source-limited boundaries: the `IWASH=1` power-law `REGTIM` numeric default is not invented; `Lp>30` lift-off semantics are preserved but Eq. (3.22) numerical evaluation remains source-limited because the recovered rendering is OCR-ambiguous; complete building-wake and `PLRISE/RISEFX` plume-rise numerics remain source-limited. No Briggs/AERMOD/CALPUFF/CTEAS-Atmos surrogate is inserted.
+- Chemical boundary: atmospheric HT→HTO remains disabled for the KfK 4605 route.
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `85adef07d15cd319384db41ed8668dcd59e9832a` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Non-claims: no original MUSEMET closed-form three-case numerical equivalence, numeric Eq. (3.22) equivalence, complete building-wake/plume-rise equivalence, CTEAS-Atmos binding, production parameter activation, calibration, empirical validation, or original executable numerical equivalence.
 - Next stage: `UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1`.
 
 ### H5 — Native atmosphere → environmental chain → dose qualification
 
-- Status: `NOT_STARTED`
+- Status: `AUTHORIZED_NOT_STARTED`
 - Stage: `UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1`
 - Dependency: H1-H4 plus already completed A-F internal environmental mechanisms.
 - Required execution:
@@ -166,7 +175,7 @@ If a later authoritative UFOTRI version proves that atmospheric oxidation became
   - root + leaf exchange;
   - TFWT + OBT;
   - food chain;
-  - inhalation/skin/ingestion dose;
+  - inhalation + skin + ingestion dose;
   - secondary area-source feedback without double counting;
   - deterministic repeat, restart, timestep/partition checks and cross-module activity conservation;
   - explicit comparison against Canada/ITER benchmark contracts only to the extent supported by authoritative data.
@@ -194,6 +203,6 @@ These may be required for the broader CTEAS software product and real project ap
 
 ## 6. Immediate next stage
 
-`UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1`
+`UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1`
 
 No production calibration, empirical site calibration, unrelated CTEAS-Atmos development, original-executable-equivalence claim, or optional ecological extension is authorized before the native-atmosphere sequence is closed.
