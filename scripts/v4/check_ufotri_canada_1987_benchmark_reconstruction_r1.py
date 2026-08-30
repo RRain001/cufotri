@@ -81,6 +81,10 @@ def _manual_anchor_gates(manual: str) -> dict[str, bool]:
 
 
 def _observable_contract(manual: str) -> list[dict[str, Any]]:
+    figure_28_caption = (
+        "Figure 28. Time dependent HTO concentrations in vegetation water in 180 m distance"
+        in manual
+    )
     return [
         {
             "figure": 21,
@@ -131,8 +135,9 @@ def _observable_contract(manual: str) -> list[dict[str, Any]]:
             "quantity": "HTO_VEGETATION_WATER_CONCENTRATION_TIME_SERIES",
             "distance_m": None,
             "distance_ambiguity_m": [175, 180],
+            "manual_caption_present": figure_28_caption,
             "manual_text_175_m_present": "Fig. 28 for 175 m" in manual,
-            "manual_caption_180_m_present": "Figure 28. Time dependent HTO concentrations in vegetation water in 180 m distance" in manual,
+            "manual_caption_180_m_present": figure_28_caption,
         },
     ]
 
