@@ -1,0 +1,181 @@
+schema_version: v1
+stage: UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+repository: RRain001/CTEAS_ufotri
+base_main_sha: ca2dd63022c66a311ec17c0a2cefe94b11109306
+branch: codex/ufotri-cross-module-fidelity-qualification-r1
+
+purpose: >-
+  Qualify the already-reconstructed recoverable UFOTRI fidelity mechanisms
+  across module boundaries under controlled synthetic/replay/manual-compatible
+  forcing, without creating a second production pipeline or substituting for
+  the deferred real CTEAS-Atmos dependency.
+
+authority:
+  roadmap: docs/v4/roadmap/UFOTRI_REPLICATION_MASTER_PLAN.md
+  gap_audit: docs/v4/governance/ufotri_replication_gap_audit_r1.yaml
+  manual: ufotri_manual.md
+
+qualification_strategy:
+  new_production_pipeline: false
+  production_source_change_required: false
+  reuse_existing_machine_gates: true
+  controlled_runtime_reexecution: true
+  historical_root_delay_requalification: true
+  rc1_vs_fidelity_comparison_type: MECHANISM_AND_BOUNDARY_COMPARISON_NOT_NUMERICAL_EQUALITY
+  real_atmos_checks: DEFERRED_EXTERNAL_DEPENDENCY
+
+required_checks:
+  deterministic_repeat: REQUIRED_RUNTIME
+  restart_equivalence: REQUIRED_RUNTIME
+  timestep_refinement: REQUIRED_RUNTIME_OR_EXISTING_NUMERICAL_GATE_REEXECUTION
+  cross_module_mass_conservation: REQUIRED_RUNTIME
+  ht_hto_provenance_conservation: REQUIRED_RUNTIME_CONTRACT_GATE
+  plant_soil_food_inventory_accounting: REQUIRED_RUNTIME
+  rc1_vs_fidelity_path_comparison: REQUIRED_EXPLICIT_DIFFERENCE_LEDGER
+  all_gap_entries_disposed: REQUIRED_30_OF_30
+
+runtime_components:
+  - id: RC1_COMPOSITION
+    script: scripts/v4/run_development_baseline_rc1.py
+    requirement: PASS_STATUS
+  - id: CONTROLLED_E2E
+    script: scripts/v4/run_controlled_ufotri_end_to_end_numerical_integration_r1.py
+    requirement: PASS_STATUS_AND_REQUIRED_GATES
+  - id: OBT_NUMERICAL
+    script: scripts/v4/run_ufotri_obt_compartment_conservation_numerical_integration_r1.py
+    requirement: PASS_STATUS_INCLUDING_DETERMINISM_RESTART_TIMESTEP_CONSERVATION
+  - id: HYDROLOGY_NUMERICAL
+    script: scripts/v4/run_ufotri_coupled_water_hto_hydrology_verification_r1.py
+    requirement: PASS_STATUS_INCLUDING_TIMESTEP_AND_CONSERVATION
+  - id: HT_DERIVED_HTO_PROVENANCE
+    script: scripts/v4/check_ufotri_ht_derived_hto_reemission_secondary_feedback_reconciliation_r1.py
+    requirement: PASS_STATUS
+  - id: REEMISSION_AREA_SOURCE
+    script: scripts/v4/check_ufotri_reemission_area_source_reconciliation_r1.py
+    requirement: PASS_STATUS
+  - id: CANADA_BENCHMARK_CONTRACT
+    script: scripts/v4/check_ufotri_canada_1987_benchmark_reconstruction_r1.py
+    requirement: PASS_STATUS
+  - id: ITER_BENCHMARK_CONTRACT
+    script: scripts/v4/check_ufotri_iter_benchmark_reconstruction_r1.py
+    requirement: PASS_STATUS
+
+root_delay_reconciliation:
+  gap_id: UFR-16
+  manual_anchor: KfK4605_SEC_2_2_5_APPROX_3H
+  manual_delay_seconds: 10800
+  historical_runtime_path: src/cteas_ufotri/case.py
+  configuration_field: soil.root_uptake_delay_seconds
+  queue_semantics: >-
+    root uptake at interval n uses the transpiration diagnostic from exactly
+    delay_seconds/dt completed intervals earlier; the queue is initialized with
+    zeros and the delay must be a non-negative integer multiple of dt.
+  reference_case: configs/advanced_test_case.yaml
+  reference_dt_seconds: 600
+  reference_delay_steps: 18
+  current_root_v4_hidden_delay: false
+  root_v4_owner: EXPLICIT_EXTERNAL_OR_UPSTREAM_FORCING
+  disposition: RECONCILED_EXISTING_HISTORICAL_OPTION_NO_NEW_PHYSICS
+
+rc1_vs_fidelity:
+  equality_required: false
+  reason: >-
+    RC1 is the frozen fallback development baseline while post-RC1 fidelity
+    paths intentionally restore manual mechanisms. Numerical equality would
+    erase the distinction that the roadmap requires preserving.
+  differences:
+    leaf_exchange:
+      rc1: BASELINE_RESISTANCE_CHAIN
+      fidelity: UFOTRI_EQ7_31_OPT_IN
+    obt:
+      rc1: REDUCED_UFOTRI_KF_KR_BASELINE
+      fidelity: RECOVERED_EXCHANGEABLE_ROLE_IN_TFWT_PLUS_NONEXCHANGEABLE_OBT
+    soil_hydrology:
+      rc1: CONTROLLED_THREE_LAYER_WITH_EXTERNAL_FLUX_BOUNDARY
+      fidelity: UFOTRI_EQ33_37_OPT_IN_HYDROLOGY
+    foodchain:
+      rc1: KEEP_HARVEST_EVENT_ENDPOINT
+      fidelity: RECOVERED_CONTINUOUS_UFOTRI_COMPARTMENT_PATHS
+    ht_branch:
+      rc1: ABSENT_FROM_CONTROLLED_BASELINE
+      fidelity: OPT_IN_HT_DEPOSITION_TO_SOIL_HTO_AND_PROVENANCE_HANDOFF
+    reemission_area_source:
+      rc1: CONTROLLED_LEGACY_COMPATIBILITY_BOUNDARY
+      fidelity: UFOTRI_EQ4_TO_EQ6_OPT_IN_ADAPTER
+    short_term_root_delay:
+      rc1: INACTIVE
+      fidelity: HISTORICAL_OPTION_REQUALIFIED_NOT_PROMOTED_TO_ROOT_V4_DEFAULT
+
+allowed_gap_dispositions:
+  - COMPLETE_INTERNAL
+  - RECONCILED_EXISTING_OPTION
+  - COMPLETE_WITH_SOURCE_LIMIT
+  - DEFERRED_EXTERNAL_DEPENDENCY
+  - BLOCKED_SOURCE_UNAVAILABLE
+
+gap_dispositions:
+  UFR-01: {disposition: DEFERRED_EXTERNAL_DEPENDENCY, closure: REAL_CTEAS_ATMOS_HTO_BINDING}
+  UFR-02: {disposition: COMPLETE_INTERNAL, closure: PHASE_F_REEMISSION_AREA_SOURCE}
+  UFR-03: {disposition: DEFERRED_EXTERNAL_DEPENDENCY, closure: REAL_CTEAS_ATMOS_HTO_DEPOSITION_RECONCILIATION}
+  UFR-04: {disposition: DEFERRED_EXTERNAL_DEPENDENCY, closure: REAL_CTEAS_ATMOS_HTO_WASHOUT_RECONCILIATION}
+  UFR-05: {disposition: DEFERRED_EXTERNAL_DEPENDENCY, closure: PHASE_E4_REAL_HT_ATMOS_TRANSPORT}
+  UFR-06: {disposition: COMPLETE_INTERNAL, closure: PHASE_E2_HT_TO_HTO_SOIL_CONVERSION}
+  UFR-07: {disposition: COMPLETE_INTERNAL, closure: PHASE_A_LEAF}
+  UFR-08: {disposition: COMPLETE_INTERNAL, closure: PHASE_A_LEAF}
+  UFR-09: {disposition: COMPLETE_INTERNAL, closure: PHASE_A_LEAF}
+  UFR-10: {disposition: COMPLETE_INTERNAL, closure: PHASE_C_SOIL_WATER_HTO}
+  UFR-11: {disposition: COMPLETE_INTERNAL, closure: PHASE_C_EQ33_37_HYDROLOGY}
+  UFR-12: {disposition: COMPLETE_WITH_SOURCE_LIMIT, closure: PHASE_E3_F_REEMISSION_EQ44_RATE_RECOVERY_REMAINS_SOURCE_LIMITED}
+  UFR-13: {disposition: COMPLETE_INTERNAL, closure: V4_ROOT_EQ39_CONTROLLED_BOUNDARY}
+  UFR-14: {disposition: COMPLETE_INTERNAL, closure: UFOTRI_20_40_40_PROFILE}
+  UFR-15: {disposition: COMPLETE_INTERNAL, closure: PHASE_D2_PASTURE_40_60_0}
+  UFR-16: {disposition: RECONCILED_EXISTING_OPTION, closure: G3_HISTORICAL_3H_DELAY_REQUALIFICATION}
+  UFR-17: {disposition: COMPLETE_INTERNAL, closure: TFWT_DYNAMIC_BALANCE_PRESERVED}
+  UFR-18: {disposition: COMPLETE_INTERNAL, closure: PHASE_B_OBT}
+  UFR-19: {disposition: COMPLETE_INTERNAL, closure: PHASE_B_OBT_STATE_ROLE_RECONSTRUCTION}
+  UFR-20: {disposition: COMPLETE_INTERNAL, closure: PHASE_D1_D3_CONTINUOUS_VEGETABLE_PATH}
+  UFR-21: {disposition: COMPLETE_INTERNAL, closure: PHASE_D2_D3_GRASS_SOIL_ATMOSPHERE_PATH}
+  UFR-22: {disposition: COMPLETE_INTERNAL, closure: PHASE_D4_COW}
+  UFR-23: {disposition: COMPLETE_INTERNAL, closure: PHASE_D4_MILK_BEEF}
+  UFR-24: {disposition: COMPLETE_INTERNAL, closure: PHASE_D5_INHALATION_SKIN}
+  UFR-25: {disposition: COMPLETE_INTERNAL, closure: PHASE_D5_INGESTION_DOSE}
+  UFR-26: {disposition: COMPLETE_INTERNAL, closure: PHASE_D1_CONTINUOUS_FOODCHAIN_RECONCILIATION}
+  UFR-27: {disposition: COMPLETE_WITH_SOURCE_LIMIT, closure: G1_CANADA_MANUAL_BENCHMARK_CONTRACT_FULL_EMPIRICAL_REPLAY_SOURCE_LIMITED}
+  UFR-28: {disposition: COMPLETE_WITH_SOURCE_LIMIT, closure: G2_ITER_TABULATED_BENCHMARK_FULL_ATMOS_REPLAY_SOURCE_LIMITED}
+  UFR-29: {disposition: BLOCKED_SOURCE_UNAVAILABLE, closure: ORIGINAL_SOURCE_EXECUTABLE_NOT_RECOVERED}
+  UFR-30: {disposition: BLOCKED_SOURCE_UNAVAILABLE, closure: ORIGINAL_PARAMETER_LOADER_HIDDEN_DEFAULTS_NOT_RECOVERED}
+
+external_dependencies:
+  real_cteas_atmos_hto_binding: DEFERRED_EXTERNAL_DEPENDENCY
+  real_cteas_atmos_ht_binding: DEFERRED_EXTERNAL_DEPENDENCY
+  real_atmos_end_to_end_ht_to_hto: DEFERRED_EXTERNAL_DEPENDENCY
+  rule: NO_SURROGATE_MAY_BE_RELABELLED_AS_REAL_ATMOS_VALIDATION
+
+benchmark_boundaries:
+  canada_full_numeric_replay_ready: false
+  canada_empirical_validation_complete: false
+  iter_full_atmospheric_numeric_replay_complete: false
+  iter_empirical_validation_complete: false
+  original_executable_equivalence: false
+
+hard_boundaries:
+  production_source_change: false
+  rc1_default_changed: false
+  parameter_activation: false
+  calibration_started: false
+  empirical_validation_claimed: false
+  physical_accuracy_claimed: false
+  real_cteas_atmos_binding_claimed: false
+  original_executable_equivalence_claimed: false
+  g4_final_gate_preempted: false
+
+completion:
+  g3_machine_gate_required: true
+  focused_pytest_required: true
+  exact_head_remediation_ci_required: true
+  exact_head_protected_ci_required: true
+  post_merge_no_drift_required: true
+  roadmap_sync_after_merge_required: true
+  manual_based_functional_reconstruction_complete_at_g3: false
+  next_stage_after_clean_merge_and_roadmap_sync: UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1
