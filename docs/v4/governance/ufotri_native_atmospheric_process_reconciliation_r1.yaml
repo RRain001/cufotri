@@ -1,0 +1,53 @@
+stage: UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+authority:
+  roadmap: docs/v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md
+  kfk4332:
+    report: UFOMOD - atmospheric dispersion and deposition
+    year: 1989
+    doi: 10.5445/IR/270028151
+  kfk5194:
+    report: Description of the New Version 4.0 of the Tritium Model UFOTRI Including User Guide
+    year: 1993
+    doi: 10.5445/IR/270034158
+implementation:
+  module: src/cteas_ufotri/atmosphere/ufotri_native_process_v4.py
+  machine_gate: scripts/v4/run_ufotri_native_atmospheric_process_reconciliation_r1.py
+  tests: tests/v4/test_ufotri_native_atmospheric_process_reconciliation_r1.py
+supersession:
+  h1_compatibility_function: source_depletion_compatibility
+  h1_compatibility_retained_for_history: true
+  h4_plus_authoritative_transport: transport_straight_segment_reconciled
+recovered:
+  kfk4332_eq220_dry_source_depletion: RECOVERED_DIRECT_EQUATION_DETERMINISTIC_QUADRATURE
+  kfk4332_eq227_wet_source_depletion: RECOVERED
+  kfk5194_iwash0_classes:
+    boundaries_mm_h: [1.0, 3.0]
+    hto_lambda_s_1: [0.00006, 0.00010, 0.00040]
+    hto_regtim: [0.5, 0.75, 0.72]
+    ht_lambda_s_1: [0.0, 0.0, 0.0]
+  kfk5194_iwash1:
+    hto_awash: 0.00009
+    hto_bwash: 0.6
+    ht_awash: 0.0
+    ht_bwash: 0.0
+  atmospheric_ht_to_hto_conversion: DISABLED_UNCHANGED
+source_limited:
+  original_musemet_three_case_closed_form: NO_NUMERICAL_EQUIVALENCE_CLAIM
+  kfk5194_iwash1_regtim: DO_NOT_INVENT
+  kfk4332_liftoff_threshold_lp: RECOVERED_30
+  kfk4332_liftoff_eq322_numeric: OCR_AMBIGUOUS_DO_NOT_IMPLEMENT
+  building_wake_complete_numerics: NOT_RECOVERED
+  plume_rise_plrise_risefx_complete_numerics: NOT_RECOVERED
+forbidden_substitutions:
+  brigg_plume_rise: true
+  aermod_wake_or_plume_rise: true
+  calpuff_wake_or_plume_rise: true
+  cteas_atmos_substitution: true
+hard_boundaries:
+  production_parameter_activation: false
+  calibration: false
+  empirical_validation: false
+  original_ufotri_executable_equivalence: false
+expected_machine_result: PASS_UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION
+next_stage_after_clean_closure: UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1
