@@ -1,0 +1,172 @@
+stage: UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1
+status: CANDIDATE_PENDING_EXACT_HEAD_CI
+replication_requirement: REQUIRED_AS_VALIDATION
+base_main_sha: a78a56cb44a230d33571a194ea0b5375261db86f
+scope:
+  benchmark_contract_reconstruction: true
+  tabulated_1km_reference_qualification: true
+  full_atmospheric_numeric_replay: false
+  empirical_validation: false
+  production_source_change: false
+  default_parameter_change: false
+  roadmap_change_in_stage_pr: false
+  real_cteas_atmos_binding: false
+primary_repository_evidence:
+  - ufotri_manual.md#5.3
+  - ufotri_manual.md#Appendix-B-Table-8
+  - ufotri_manual.md#Appendix-B-Table-9
+  - ufotri_manual.md#Appendix-B-Tables-10-13
+  - docs/v4/roadmap/UFOTRI_REPLICATION_MASTER_PLAN.md
+recovered_emission:
+  release_quantity_g: 100.0
+  chemical_forms:
+    - HT
+    - HTO
+  duration_s: 120.0
+  table8_release_heights_m:
+    - 0.0
+    - 20.0
+    - 60.0
+  result_release_heights_m:
+    - 10.0
+    - 20.0
+    - 60.0
+  result_additional_case: 20_M_WITH_BUILDING_WAKE
+release_height_ambiguity:
+  id: ITER_RELEASE_HEIGHT_0_VS_10_M
+  table8_value_m: 0.0
+  section53_tables_figures_value_m: 10.0
+  resolution: PRESERVE_AMBIGUITY
+recovered_meteorology:
+  stability:
+    D:
+      wind_speed_at_60m_m_s: 5.0
+      mixing_lid_m: 560.0
+      wind_profile_exponent: 0.34
+    F:
+      wind_speed_at_60m_m_s: 3.0
+      mixing_lid_m: 200.0
+      wind_profile_exponent: 0.44
+  air_temperature_c: 10.0
+  rain: NONE
+  plume_rise: NONE
+recovered_building_wake:
+  ordinary_table8_cases: NO_BUILDING_WAKE
+  wake_case_release_height_m: 20.0
+  building_width_m: 100.0
+  building_height_m: 70.0
+recovered_code_coefficients:
+  dry_deposition_velocity_hto_cm_s: 1.8
+  dry_deposition_velocity_ht_cm_s: 0.05
+  soil_diffusion_hto_cm2_s: 2.0e-5
+  soil_diffusion_ht_cm2_s: 5.0e-2
+  soil_hto_reemission_percent_per_h: 5.0
+  air_oxidation_percent_per_d: 0.5
+  breathing_rate_m3_s: 2.66e-4
+  quality_factor: 1.0
+  dose_conversion_7d_inhalation_sv_bq: 6.3e-12
+  dose_conversion_50a_inhalation_ingestion_sv_bq: 1.7e-11
+recovered_soil_vegetation:
+  soil_type: SANDY_LOAM
+  pore_volume_fraction: 0.50
+  pore_water_fraction: 0.40
+  pore_air_fraction: 0.60
+  transpiration_kg_h2o_per_kg_dry_matter_d: 1.0
+  vegetation_density_kg_dry_matter_m2: 1.0
+recovered_site_population:
+  population_density_people_km2: 50.0
+  exclusion_radius_km: 1.0
+  outer_radius_km: 80.0
+recovered_human_diet_kg_s:
+  milk: 3.5e-6
+  beef: 2.3e-6
+  lamb: 2.0e-7
+  other_vegetables: 9.0e-7
+  legumes: 9.0e-7
+  roots: 2.0e-6
+  grain: 2.0e-6
+  water: 1.7e-5
+  fish: 3.5e-7
+section53_ufotri_plant_additions:
+  stomatal_resistance_s_cm: 4.0
+  leaf_area_index_m2_m2: 3.0
+  very_stable_additional_aerodynamic_resistance_s_cm_approx: 10.0
+mol_diffusion_coefficients:
+  D:
+    p_y: 0.418
+    q_y: 0.796
+    p_z: 0.520
+    q_z: 0.711
+  F:
+    p_y: 0.235
+    q_y: 0.796
+    p_z: 0.311
+    q_z: 0.711
+reference_1km_columns:
+  - early_inhalation_skin_plume_sv
+  - early_inhalation_skin_plume_reemission_sv
+  - chronic_inhalation_skin_plume_reemission_sv
+  - early_ingestion_sv
+  - chronic_ingestion_sv
+  - sum_early_sv
+  - sum_chronic_sv
+reference_1km_tables:
+  table10_hto_D:
+    10_m: [1.2e-3, 2.3e-3, 6.2e-3, 6.5e-3, 4.1e-2, 8.8e-3, 4.7e-2]
+    20_m: [9.7e-4, 1.7e-3, 4.7e-3, 5.0e-3, 3.2e-2, 6.7e-3, 3.7e-2]
+    60_m: [5.4e-4, 7.6e-4, 2.1e-3, 2.3e-3, 1.4e-2, 3.1e-3, 1.6e-2]
+    20_m_with_building_wake: [1.1e-3, 2.0e-3, 5.4e-3, 5.7e-3, 3.6e-2, 7.7e-3, 4.1e-2]
+  table11_hto_F:
+    10_m: [5.5e-3, 1.1e-2, 3.0e-2, 1.6e-2, 2.8e-1, 2.7e-2, 3.1e-1]
+    20_m: [4.5e-3, 7.5e-3, 2.0e-2, 1.2e-2, 1.9e-1, 2.0e-2, 2.1e-1]
+    60_m: [1.4e-3, 1.8e-3, 4.9e-3, 2.9e-3, 4.6e-2, 4.7e-3, 5.1e-2]
+    20_m_with_building_wake: [4.8e-3, 8.6e-3, 2.3e-2, 1.3e-2, 2.2e-1, 2.2e-2, 2.4e-1]
+  table12_ht_D:
+    10_m: [5.6e-8, 2.6e-5, 7.0e-5, 6.7e-5, 5.5e-4, 9.3e-5, 6.2e-4]
+    20_m: [4.3e-8, 1.7e-5, 4.6e-5, 4.5e-5, 3.8e-4, 6.2e-5, 4.3e-4]
+    60_m: [2.2e-8, 4.7e-6, 1.2e-5, 1.5e-5, 1.3e-4, 2.0e-5, 1.4e-4]
+    20_m_with_building_wake: [5.0e-8, 2.0e-5, 5.4e-5, 5.2e-5, 4.4e-4, 7.2e-5, 4.9e-4]
+  table13_ht_F:
+    10_m: [3.1e-7, 1.8e-4, 4.9e-4, 3.6e-4, 7.8e-3, 5.4e-4, 8.3e-3]
+    20_m: [2.1e-7, 8.9e-5, 2.4e-4, 2.2e-4, 4.6e-3, 3.1e-4, 4.8e-3]
+    60_m: [5.9e-8, 9.3e-6, 2.5e-5, 3.7e-5, 8.9e-4, 3.8e-5, 9.2e-4]
+    20_m_with_building_wake: [2.3e-7, 1.2e-4, 3.2e-4, 2.4e-4, 5.5e-3, 3.6e-4, 5.8e-3]
+known_printed_table_inconsistency:
+  id: ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY
+  table: 13
+  chemical_form: HT
+  stability: F
+  release_height_m: 60.0
+  early_inhalation_skin_plume_reemission_sv: 9.3e-6
+  early_ingestion_sv: 3.7e-5
+  component_sum_sv: 4.63e-5
+  printed_sum_early_sv: 3.8e-5
+  relative_difference_from_component_sum: 0.1792656587473002
+  resolution: PRESERVE_PRINTED_VALUES_AND_FLAG_INCONSISTENCY
+acceptance_policy:
+  r1_gate: MANUAL_TABULATED_ITER_BENCHMARK_CONTRACT_AND_1KM_REFERENCE_QUALIFIED
+  table10_13_as_authoritative_printed_reference: true
+  figure_chart_helper_tables_as_exact_oracle: false
+  release_height_conflict_silently_resolved: false
+  printed_sum_identity_rounding_relative_tolerance: 0.05
+  table13_60m_early_sum_silently_repaired: false
+  full_atmospheric_numeric_replay_complete: false
+  empirical_validation_complete: false
+unresolved_boundaries:
+  - ITER_RELEASE_HEIGHT_0_VS_10_M
+  - ITER_TABLE13_60M_EARLY_SUM_INCONSISTENCY
+  - ITER_ORIGINAL_BUILDING_WAKE_NUMERICS
+  - ITER_ORIGINAL_ATMOSPHERIC_NUMERICAL_EQUIVALENCE
+  - ITER_REAL_CTEAS_ATMOS_BINDING
+  - ITER_FIGURE_POINTWISE_SERIES
+qualification:
+  machine_gate: scripts/v4/check_ufotri_iter_benchmark_reconstruction_r1.py
+  pytest: tests/v4/test_ufotri_iter_benchmark_reconstruction_r1.py
+non_claims:
+  full_atmospheric_numeric_replay: false
+  empirical_validation: false
+  physical_accuracy: false
+  production_readiness: false
+  original_ufotri_executable_equivalence: false
+  original_musemet_equivalence: false
+next_stage_after_certified_merge_and_roadmap_sync: ROADMAP_CONTROL_PLANE_DECIDES
