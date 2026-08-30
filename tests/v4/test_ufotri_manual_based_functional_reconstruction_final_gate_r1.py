@@ -79,16 +79,27 @@ def test_candidate_scope_forbids_source_defaults_workflow_and_roadmap_changes() 
     assert scope["roadmap_changes_allowed"] is False
 
 
-def test_roadmap_authorizes_only_the_internal_g4_gate() -> None:
+def test_roadmap_preserves_g4_claim_boundary_across_completion_transition() -> None:
     text = ROADMAP.read_text(encoding="utf-8")
-    assert "#### G4. Final UFOTRI manual-based reconstruction gate" in text
+    heading = "#### G4. Final UFOTRI manual-based reconstruction gate"
+    assert heading in text
     assert "Stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1`" in text
-    assert "Control-plane authorization: `AUTHORIZED_AFTER_G3_ROADMAP_SYNC`" in text
-    assert "E4/E5 real CTEAS-Atmos work remains `DEFERRED_EXTERNAL_DEPENDENCY`" in text
-    assert (
-        "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged until G4 itself passes exact-head CI and merge/no-drift audit."
-        in text
-    )
+    g4 = text.split(heading, 1)[1].split("## 7.", 1)[0]
+    assert "E4/E5 real CTEAS-Atmos" in g4
+    assert "`DEFERRED_EXTERNAL_DEPENDENCY`" in g4
+    if "- Status: `COMPLETE`" in g4:
+        assert "- Validation: `PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE`" in g4
+        assert "MERGE_TREE_DRIFT=FALSE" in g4
+        assert "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`" in text
+        assert "`UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`" in text
+        assert "`NO_IMMEDIATE_INTERNAL_REPLICATION_STAGE`" in text
+    else:
+        assert "- Status: `NOT_STARTED`" in g4
+        assert "Control-plane authorization: `AUTHORIZED_AFTER_G3_ROADMAP_SYNC`" in g4
+        assert (
+            "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged until G4 itself passes exact-head CI and merge/no-drift audit."
+            in text
+        )
 
 
 def test_g4_machine_gate_passes_and_only_makes_post_merge_flag_eligible(tmp_path: Path) -> None:
