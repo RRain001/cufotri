@@ -84,12 +84,21 @@ def test_rc1_vs_fidelity_comparison_preserves_distinct_paths() -> None:
     assert "REQUALIFIED" in comparison["differences"]["short_term_root_delay"]["fidelity"]
 
 
-def test_roadmap_still_authorizes_g3_without_preempting_final_gate() -> None:
+def test_roadmap_preserves_g3_boundary_across_final_gate_transition() -> None:
     text = ROADMAP.read_text(encoding="utf-8")
     assert "#### G3. Cross-module fidelity qualification" in text
     assert "Stage: `UFOTRI_CROSS_MODULE_FIDELITY_QUALIFICATION_R1`" in text
-    assert "#### G4. Final UFOTRI manual-based reconstruction gate" in text
-    assert "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged" in text
+    heading = "#### G4. Final UFOTRI manual-based reconstruction gate"
+    assert heading in text
+    g4 = text.split(heading, 1)[1].split("## 7.", 1)[0]
+    if "- Status: `COMPLETE`" in g4:
+        assert "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`" in text
+        assert "`UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`" in text
+        assert "E4/E5 real CTEAS-Atmos" in g4
+        assert "`DEFERRED_EXTERNAL_DEPENDENCY`" in g4
+    else:
+        assert "- Status: `NOT_STARTED`" in g4
+        assert "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged" in text
 
 
 def test_g3_machine_gate_passes() -> None:
