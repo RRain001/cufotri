@@ -249,7 +249,7 @@ def test_nonconsecutive_hourly_meteorology_fails_closed() -> None:
 def test_termination_limit_is_required_and_invalid_direction_fails_closed() -> None:
     with pytest.raises(UFOTRINativeAtmosphereError, match="explicit"):
         build_musemet_hourly_trajectory(_records(), start_meteorology_index=0)
-    with pytest.raises(UFOTRINativeAtmosphereError, match="\[0, 360\)"):
+    with pytest.raises(UFOTRINativeAtmosphereError, match=r"\[0, 360\)"):
         NativeHourlyMeteorology(T0, "SITE", 360.0, 1.0, "D", 0.0, 500.0)
 
 
