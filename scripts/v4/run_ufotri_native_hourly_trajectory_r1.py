@@ -65,7 +65,7 @@ def build_result() -> dict:
     direct = build_musemet_hourly_trajectory(
         records,
         start_meteorology_index=0,
-        max_travel_time_s=4.0 * 3600.0,
+        max_travel_time_s=3.5 * 3600.0,
     )
     first_half = build_musemet_hourly_trajectory(
         records,
@@ -75,14 +75,14 @@ def build_result() -> dict:
     second_half = resume_musemet_hourly_trajectory(
         records,
         first_half.checkpoint,
-        max_travel_time_s=4.0 * 3600.0,
+        max_travel_time_s=3.5 * 3600.0,
     )
     restarted_signature = _segments_signature(first_half.segments + second_half.segments)
 
     rotated = build_musemet_hourly_trajectory(
         records,
         start_meteorology_index=0,
-        max_travel_time_s=4.0 * 3600.0,
+        max_travel_time_s=3.5 * 3600.0,
         frame_rotation_deg_ccw=90.0,
     )
     distance_limited = build_musemet_hourly_trajectory(
@@ -92,7 +92,7 @@ def build_result() -> dict:
     )
     family = build_musemet_hourly_trajectory_family(
         records,
-        max_travel_time_s=3600.0,
+        max_travel_time_s=1800.0,
     )
 
     roadmap = Path("docs/v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md").read_text(
