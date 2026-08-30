@@ -72,6 +72,17 @@ def _single_sha(section: str, label: str) -> str:
     return match.group(1)
 
 
+def _g4_section(roadmap_text: str) -> str:
+    return _roadmap_section_for_stage(
+        roadmap_text,
+        "UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1",
+    )
+
+
+def _g4_is_complete(roadmap_text: str) -> bool:
+    return "- Status: `COMPLETE`" in _g4_section(roadmap_text)
+
+
 def _stage_ledger_probe(governance: dict[str, Any], roadmap_text: str) -> dict[str, Any]:
     required = list(governance["required_internal_stages"])
     results: dict[str, dict[str, Any]] = {}
@@ -186,9 +197,39 @@ def _gap_probe(governance: dict[str, Any], g3_governance: dict[str, Any]) -> dic
 def _boundary_probe(governance: dict[str, Any], g3_governance: dict[str, Any], roadmap_text: str) -> dict[str, Any]:
     e4 = _roadmap_heading_section(roadmap_text, "#### E4.")
     e5 = _roadmap_heading_section(roadmap_text, "#### E5.")
+    g4 = _g4_section(roadmap_text)
+    g4_complete = "- Status: `COMPLETE`" in g4
     source = governance["source_and_validation_boundaries"]
     claim = governance["claim_boundary"]
     g3_bench = g3_governance["benchmark_boundaries"]
+    lifecycle_checks = (
+        {
+            "roadmap_records_completed_g4": (
+                "- Status: `COMPLETE`" in g4
+                and "- Validation: `PASS_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE`" in g4
+                and "MERGE_TREE_DRIFT=FALSE" in g4
+            ),
+            "roadmap_records_reconstruction_true": (
+                "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=TRUE`" in roadmap_text
+            ),
+            "roadmap_keeps_broader_replication_false": (
+                "`UFOTRI_MANUAL_BASED_FUNCTIONAL_REPLICATION_COMPLETE=FALSE`" in roadmap_text
+            ),
+            "roadmap_records_no_immediate_internal_stage": (
+                "`NO_IMMEDIATE_INTERNAL_REPLICATION_STAGE`" in roadmap_text
+            ),
+        }
+        if g4_complete
+        else {
+            "roadmap_authorizes_g4": (
+                "- Control-plane authorization: `AUTHORIZED_AFTER_G3_ROADMAP_SYNC`" in g4
+            ),
+            "roadmap_flag_still_false_before_g4_merge": (
+                "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged until G4 itself passes exact-head CI and merge/no-drift audit."
+                in roadmap_text
+            ),
+        }
+    )
     checks = {
         "e4_remains_deferred": "- Status: `DEFERRED_EXTERNAL_DEPENDENCY`" in e4,
         "e5_remains_deferred": "- Status: `DEFERRED_EXTERNAL_DEPENDENCY`" in e5,
@@ -200,38 +241,66 @@ def _boundary_probe(governance: dict[str, Any], g3_governance: dict[str, Any], r
         "complete_eq44_not_claimed": source["complete_eq44_rate_recovery"] is False,
         "production_readiness_not_claimed": source["production_readiness_claimed"] is False,
         "physical_accuracy_not_claimed": source["physical_accuracy_claimed"] is False,
-        "candidate_flag_not_preempted": governance["candidate_target_flag_value"] is False,
+        "historical_candidate_flag_not_preempted": governance["candidate_target_flag_value"] is False,
         "post_merge_flag_eligibility_explicit": governance["target_flag_eligible_after_clean_merge_no_drift_and_roadmap_sync"] is True,
         "original_numerical_equivalence_not_established": (
             claim["remains_false_or_not_established"]["UFOTRI_ORIGINAL_NUMERICAL_EQUIVALENCE"]
             == "NOT_ESTABLISHED"
         ),
-        "roadmap_authorizes_g4": (
-            "- Control-plane authorization: `AUTHORIZED_AFTER_G3_ROADMAP_SYNC`" in roadmap_text
-            and "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R1`" in roadmap_text
-        ),
-        "roadmap_flag_still_false_before_g4_merge": (
-            "`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged until G4 itself passes exact-head CI and merge/no-drift audit."
-            in roadmap_text
-        ),
+        **lifecycle_checks,
     }
-    return {"checks": checks, "pass": all(checks.values())}
+    return {
+        "lifecycle_state": "COMPLETE_POST_MERGE" if g4_complete else "CANDIDATE_PRE_MERGE",
+        "checks": checks,
+        "pass": all(checks.values()),
+    }
 
 
-def _candidate_scope_probe(governance: dict[str, Any]) -> dict[str, Any]:
+def _candidate_scope_probe(governance: dict[str, Any], roadmap_text: str) -> dict[str, Any]:
     base = governance["base_main_sha"]
+    allowed = set(governance["candidate_scope"]["allowed_changed_paths"])
+    g4 = _g4_section(roadmap_text)
+    g4_complete = "- Status: `COMPLETE`" in g4
+
+    if g4_complete:
+        certified_head = _single_sha(g4, "Certified head")
+        merge_sha = _single_sha(g4, "Merge SHA")
+        audit_target = merge_sha
+        certified_tree = _git_text("rev-parse", f"{certified_head}^{{tree}}")
+        merge_tree = _git_text("rev-parse", f"{merge_sha}^{{tree}}")
+        parents = _git_text("show", "-s", "--format=%P", merge_sha).split()
+        lifecycle_checks = {
+            "certified_head_is_g4_merge_parent": certified_head in parents,
+            "certified_head_tree_equals_g4_merge_tree": certified_tree == merge_tree,
+            "g4_merge_is_ancestor_of_current_head": (
+                _git("merge-base", "--is-ancestor", merge_sha, "HEAD", check=False).returncode == 0
+            ),
+        }
+        mode = "CERTIFIED_G4_HISTORICAL_SCOPE"
+    else:
+        audit_target = "HEAD"
+        lifecycle_checks = {}
+        mode = "G4_CANDIDATE_SCOPE"
+
     changed = {
         line.strip()
-        for line in _git_text("diff", "--name-only", f"{base}..HEAD").splitlines()
+        for line in _git_text("diff", "--name-only", f"{base}..{audit_target}").splitlines()
         if line.strip()
     }
-    allowed = set(governance["candidate_scope"]["allowed_changed_paths"])
+    exact_scope_match = changed == allowed
+    checks = {
+        "exact_five_file_scope": exact_scope_match,
+        **lifecycle_checks,
+    }
     return {
+        "mode": mode,
         "base_main_sha": base,
+        "audit_target": audit_target,
         "changed_paths": sorted(changed),
         "allowed_paths": sorted(allowed),
-        "exact_scope_match": changed == allowed,
-        "pass": changed == allowed,
+        "exact_scope_match": exact_scope_match,
+        "checks": checks,
+        "pass": all(checks.values()),
     }
 
 
@@ -244,7 +313,8 @@ def build_result() -> dict[str, Any]:
     g3_result = _run_g3_gate()
     gaps = _gap_probe(governance, g3_governance)
     boundaries = _boundary_probe(governance, g3_governance, roadmap_text)
-    scope = _candidate_scope_probe(governance)
+    scope = _candidate_scope_probe(governance, roadmap_text)
+    g4_complete = _g4_is_complete(roadmap_text)
 
     gates = {
         "all_19_internal_stage_ledgers_complete_and_no_drift": stage_ledger["all_stage_ledgers_pass"],
@@ -253,7 +323,7 @@ def build_result() -> dict[str, Any]:
         "all_30_gaps_have_final_allowed_dispositions": gaps["pass"],
         "no_unimplemented_recoverable_internal_gap": gaps["unimplemented_recoverable_internal_gap_count"] == 0,
         "deferred_and_source_limited_boundaries_preserved": boundaries["pass"],
-        "candidate_scope_is_exactly_five_qualification_artifacts": scope["pass"],
+        "g4_stage_scope_remains_exactly_five_qualification_artifacts": scope["pass"],
     }
     pass_gate = all(gates.values())
     status = (
@@ -265,6 +335,7 @@ def build_result() -> dict[str, Any]:
         "schema_version": "v1",
         "stage": governance["stage"],
         "status": status,
+        "lifecycle_state": "COMPLETE_POST_MERGE" if g4_complete else "CANDIDATE_PRE_MERGE",
         "gate_scope": "RECOVERABLE_INTERNAL_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_ONLY",
         "stage_ledger_probe": stage_ledger,
         "g3_reexecution_status": g3_result["status"],
@@ -282,9 +353,13 @@ def build_result() -> dict[str, Any]:
         "physical_accuracy_validated": False,
         "ufotri_original_numerical_equivalence": "NOT_ESTABLISHED",
         "next_action_if_clean_merge_no_drift": (
-            "ROADMAP_STATUS_SYNC_SET_UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE_TRUE"
-            if pass_gate
-            else "DO_NOT_PROMOTE_FLAG"
+            "NO_FURTHER_INTERNAL_REPLICATION_STAGE"
+            if pass_gate and g4_complete
+            else (
+                "ROADMAP_STATUS_SYNC_SET_UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE_TRUE"
+                if pass_gate
+                else "DO_NOT_PROMOTE_FLAG"
+            )
         ),
     }
 
