@@ -119,21 +119,29 @@ If a later authoritative UFOTRI version proves that atmospheric oxidation became
 
 ### H3 — Native HT/HTO environmental forcing adapters
 
-- Status: `AUTHORIZED_NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1`
-- Dependency: H1 + H2.
-- Required closure:
-  - native HT concentration/deposition → existing typed E1 HT forcing;
-  - native HT deposition → existing E2 soil HT→HTO conversion;
-  - native HTO concentration/deposition/washout → existing HTO forcing contract;
-  - no HT/HTO chemistry aliasing;
-  - interval, units, spatial support and provenance preserved;
-  - activity/deposition ledgers close across the adapter.
+- PR: `#104`
+- Certified head: `db9b97c56f98bb6c5c2340bb1ed5edde6dcea114`
+- Certified tree: `8bb9ada4dfc3c1599d0efbcee265b55a8c648fa8`
+- Merge SHA: `c64f377f779253099a12583e90b6a92cc03e01af`
+- Merge tree: `8bb9ada4dfc3c1599d0efbcee265b55a8c648fa8`
+- Exact-head Remediation CI: `33302177645` (#256) — `SUCCESS`
+- Exact-head Protected CI: `33302177603` (#267) — `SUCCESS`
+- Protected synthetic merge-ref: `af3e61df921e9a5a4a1d16f619e5ab6d5e9eccef`
+- Portable suite: `1692 passed, 1 skipped, 57 deselected, 1 warning`
+- Frozen/current-boundary suite: `375 passed`
+- Existing five V4 integration gates: `PASS`
+- Validation: `PASS_UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER`; native HT is mapped to the existing E1 HT contract with explicit `UFOTRI_NATIVE` provenance and then through the existing E2 soil HT→HTO conversion; native HTO is mapped into the existing P7 HTO forcing; interval, units, spatial support and provenance remain explicit; source-depletion and E2 activity ledgers close.
+- Wet-deposition boundary: H1 wet source loss remains a plume/source ledger term in Bq/s and is not relabelled as a local Bq m^-2 s^-1 flux; a local wet surface flux must be supplied explicitly when wet source loss is nonzero.
+- Chemical boundary: atmospheric HT→HTO remains disabled for the KfK 4605 route; crossed HT/HTO adapters and generated atmospheric HTO fail closed; `REAL_CTEAS_ATMOS` remains fail-closed and distinct from `UFOTRI_NATIVE`.
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `297bd85500f268cc0114f9f41b3904a8a66ca5ee` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Non-claims: no H4 washout-parameter recovery, source-depletion reconstruction, building-wake or thermal-lift equivalence, CTEAS-Atmos binding, production parameter activation, calibration, empirical validation, or original executable numerical equivalence.
 - Next stage: `UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1`.
 
 ### H4 — Atmospheric-process reconciliation
 
-- Status: `NOT_STARTED`
+- Status: `AUTHORIZED_NOT_STARTED`
 - Stage: `UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1`
 - Dependency: H1-H3.
 - Required topics:
@@ -186,6 +194,6 @@ These may be required for the broader CTEAS software product and real project ap
 
 ## 6. Immediate next stage
 
-`UFOTRI_NATIVE_ATMOSPHERIC_FORCING_ADAPTER_R1`
+`UFOTRI_NATIVE_ATMOSPHERIC_PROCESS_RECONCILIATION_R1`
 
 No production calibration, empirical site calibration, unrelated CTEAS-Atmos development, original-executable-equivalence claim, or optional ecological extension is authorized before the native-atmosphere sequence is closed.
