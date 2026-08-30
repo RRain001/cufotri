@@ -47,7 +47,7 @@ def _manual_anchor_gates(manual: str) -> dict[str, bool]:
         "reference_44_present": (
             "The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report"
             in manual
-            and "CFFTP-G-88027" in manual
+            and "Canadian Fusion Fuels Technology Project (1988)" in manual
         ),
         "release_rate_present": "1.9 \\times 10^{9}" in manual and "release rate" in manual,
         "half_hour_release_present": "duration was half an hour" in manual,
@@ -141,7 +141,7 @@ def _unresolved_blockers() -> list[dict[str, Any]]:
     return [
         {
             "id": "CAN1987_REFERENCE_44_RAW_REPORT_AND_DATA",
-            "reason": "Reference /44 is cited by KfK 4605, but the raw CFFTP-G-88027 report/data set is not present as benchmark input data in this repository.",
+            "reason": "Reference /44 is cited by KfK 4605, but the underlying Ogram summary report and raw data set are not present as benchmark input data in this repository.",
             "required_for_full_numeric_replay": True,
         },
         {
