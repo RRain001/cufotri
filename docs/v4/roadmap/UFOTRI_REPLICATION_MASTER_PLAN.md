@@ -544,17 +544,32 @@ The branch is split so that internal HT environmental mechanisms can progress in
 
 #### G1. Canada 1987 benchmark reconstruction
 
-- Status: `NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
 - Replication requirement: `REQUIRED_AS_VALIDATION`
-- Goal: reconstruct the recoverable manual benchmark inputs, observables, timing, and comparison metrics without inventing missing values.
-- Missing/ambiguous inputs must remain explicitly unresolved rather than silently filled.
+- Manual anchor: KfK 4605 Section 5.2 and Figures 21-28.
+- Decision: source-limited benchmark-contract reconstruction only. Recoverable static inputs, eight observable families, unit conversions, qualitative historical comparison intent, Figure 28 `175 m` prose versus `180 m` caption/TOC ambiguity, and replay blockers are frozen without inventing missing values. Markdown chart-helper values are not promoted to authoritative raw measured/calculated arrays.
+- Changed source files: `NO_PRODUCTION_SOURCE_CHANGE`; G1 added ADR-075, governance/report artifacts, one machine gate and one focused pytest file. No `src/`, default, workflow or roadmap file changed in PR #91.
+- PR: `#91`
+- Certified head: `5cff21a0b3e7e1cb46592602662c767d9d5ace4e`
+- Certified tree: `60712fdf32231af8c5cd5e28882bd1894ed53561`
+- Remediation CI: `33286810982` (#234) — `SUCCESS`
+- Protected CI: `33286810988` (#245) — `SUCCESS`
+- Protected merge-ref: `d306b99eaef94275ac9729afffdd3e3cf8d6a50c`
+- Validation: `PASS_SOURCE_LIMITED_CANADA_1987_BENCHMARK_RECONSTRUCTION`; portable `1634 passed, 1 skipped, 57 deselected, 1 warning`; frozen/current-boundary `375 passed`; sensitivity screening `PASS_SOFTWARE_SCREENING`; root split `PASS_SELECTION`; soil-root-TFWT-OBT `PASS_INTEGRATION`; replay orchestration `PASS_REPLAY_ORCHESTRATION_SOFTWARE_INTEGRATION`; food/intake/dose adapter `PASS_FOOD_INTAKE_DOSE_ADAPTER_SOFTWARE_INTEGRATION`.
+- Merge SHA: `6101346f18b87faafb55417e03b08a4f911148ac`
+- Merge tree: `60712fdf32231af8c5cd5e28882bd1894ed53561`
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `9b1d6ff34b7306175601e9257fdddf393a4e8d3c` and the certified head; certified-head tree equals merge tree; remote `main` equals the merge SHA.
+- Remaining gap: Canada 1987 full numerical replay and empirical validation remain source-limited by the absent underlying reference /44 raw report/data, hourly meteorology, exact release-clock alignment, hourly precipitation allocation, authoritative measured/calculated series, Canada-specific sigma numerical provenance, complete Eq. (44) recovery and original/real atmospheric numerical binding. `CANADA_1987_FULL_NUMERIC_REPLAY_READY=FALSE` and `CANADA_1987_EMPIRICAL_VALIDATION_COMPLETE=FALSE` remain explicit.
+- Next stage: `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`.
+- Non-claims: no Canada empirical reproduction, no pointwise RMSE from chart transcription, no production-readiness/physical-accuracy claim and no original MUSEMET/UFOTRI executable equivalence.
 
 #### G2. ITER benchmark reconstruction
 
 - Status: `NOT_STARTED`
+- Stage: `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
 - Replication requirement: `REQUIRED_AS_VALIDATION`
-- Goal: reproduce the recoverable ITER comparison/benchmark case described or referenced by the manual/evidence set.
+- Goal: reproduce the recoverable ITER comparison/benchmark case described or referenced by the manual/evidence set, preserving case distinctions and source ambiguities instead of flattening them into one assumed scenario.
 
 #### G3. Cross-module fidelity qualification
 
@@ -611,11 +626,10 @@ Synthetic, replay, and manual benchmark inputs may be used for software/fidelity
 
 Unless a reconciliation stage exposes a hard dependency that requires re-ordering, the selected sequence is:
 
-1. `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
-2. ITER benchmark reconstruction
-3. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
-4. final cross-module fidelity qualification
-5. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
+1. `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
+2. deferred real HT/HTO Atmos reconciliation when CTEAS-Atmos is ready
+3. final cross-module fidelity qualification
+4. `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE` gate
 
 The order after A1 may be changed only by an explicit governance decision that records the dependency and preserves completed evidence.
 
@@ -661,8 +675,8 @@ The order after A1 may be changed only by an explicit governance decision that r
 
 ### Benchmarks / final gate
 
-- [ ] Canada 1987 benchmark — `UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
-- [ ] ITER benchmark
+- [x] Canada 1987 benchmark contract reconstruction — PR #91, merge `6101346f18b87faafb55417e03b08a4f911148ac`, no-drift PASS; full numerical/empirical replay remains source-limited
+- [ ] ITER benchmark — `UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
 - [ ] Cross-module fidelity qualification
 - [ ] `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE`
 
@@ -689,6 +703,6 @@ If a stage proves that a planned implementation is unnecessary because existing 
 
 ## 12. Immediate next stage
 
-`UFOTRI_CANADA_1987_BENCHMARK_RECONSTRUCTION_R1`
+`UFOTRI_ITER_BENCHMARK_RECONSTRUCTION_R1`
 
-F1 is complete under exact-head CI and merge/no-drift evidence. The recoverable internal/manual-compatible secondary-source handoff, Eq. (5)/(6) centre-source area representation, common source height, hour-N→N+1 timing, soil/plant superposition and E3 provenance/no-double-counting rules are now closed without changing the frozen historical/default path. G1 is authorized to reconstruct the Canada 1987 benchmark from recoverable manual/repository evidence, keeping every missing or ambiguous benchmark input explicit rather than filling it silently. Real CTEAS-Atmos HT/HTO binding remains deferred, complete Eq. (44) rate recovery remains source-limited, and G1 must not claim empirical reproduction beyond the observables and inputs actually recoverable from the evidence.
+G1 is complete as a source-limited benchmark-contract reconstruction under exact-head CI and merge/no-drift evidence. The recoverable Canada static inputs, eight observable families, qualitative historical comparison objective, unit conversions and Figure 28 175/180 m ambiguity are now frozen without promoting chart-helper values or invented inputs to ground truth. Canada full numerical replay remains explicitly not ready because eight primary/source/numerical blockers remain unresolved; this does not erase the required benchmark obligation or imply empirical validation. G2 is now authorized to reconstruct the ITER benchmark from the manual's Section 5.3/Appendix B evidence while preserving the distinct HT/HTO, stability, wind, mixing-layer, release-height/building-wake and model-comparison cases. Real CTEAS-Atmos HT/HTO binding remains deferred, complete Eq. (44) rate recovery remains source-limited, and `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_COMPLETE=FALSE` remains unchanged.
