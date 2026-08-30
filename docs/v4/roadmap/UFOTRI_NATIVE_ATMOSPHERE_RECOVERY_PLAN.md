@@ -164,26 +164,31 @@ If a later authoritative UFOTRI version proves that atmospheric oxidation became
 
 ### H5 — Native atmosphere → environmental chain → dose qualification
 
-- Status: `AUTHORIZED_NOT_STARTED`
+- Status: `COMPLETE`
 - Stage: `UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1`
-- Dependency: H1-H4 plus already completed A-F internal environmental mechanisms.
-- Required execution:
-  - source term → native HT/HTO atmosphere;
-  - species-specific deposition/washout;
-  - HT soil conversion to HTO;
-  - soil HTO transport and re-emission;
-  - root + leaf exchange;
-  - TFWT + OBT;
-  - food chain;
-  - inhalation + skin + ingestion dose;
-  - secondary area-source feedback without double counting;
-  - deterministic repeat, restart, timestep/partition checks and cross-module activity conservation;
-  - explicit comparison against Canada/ITER benchmark contracts only to the extent supported by authoritative data.
-- Completion of H5 allows a new final reconstruction gate.
+- PR: `#108`
+- Certified head: `42aceec5328895ad80eac9b9840b7828371837d9`
+- Certified tree: `3737dc663bc93d7258a7715fb5199867d32c0dba`
+- Merge SHA: `e23896e0bfcb94582a5226d56df6073582d167e5`
+- Merge tree: `3737dc663bc93d7258a7715fb5199867d32c0dba`
+- Exact-head Remediation CI: `33306266651` (#261) — `SUCCESS`
+- Exact-head Protected CI: `33306266650` (#272) — `SUCCESS`
+- Protected synthetic merge-ref: `267fe7e7499d652846083ab38dcf6a1c9f96d678`
+- Portable suite: `1708 passed, 1 skipped, 57 deselected, 1 warning`
+- Frozen/current-boundary suite: `375 passed`
+- Existing five V4 integration gates: `PASS`
+- Validation: `PASS_UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION`; the H4 reconciled native atmosphere is composed through the H3 forcing adapters and E2 deposited-HT→soil-HTO conversion into the existing soil/root/leaf/TFWT/OBT orchestration, then through the recovered food and Eq. (106)/(107) exposure paths.
+- Conservation/restart: primary HTO and HT-derived HTO origins remain explicit pre-aggregation; atmospheric and E2 ledgers close; deterministic repeat, restart, interval partition, secondary-hour routing and exposure partition checks pass; F1 re-emission is handed off only after the environmental loss is accounted and is not double counted.
+- Wet-deposition boundary: plume wet source loss remains distinct from local surface wet flux; the controlled H5 wet case supplies an explicit local qualification flux rather than inferring spatial closure.
+- Leaf boundary: A-stage manual Eq. (27)-(30) transfer is independently cross-checked, but the replay leaf operator is not claimed numerically identical to the original interval discretisation; the original Monin-Obukhov estimator remains unrecovered.
+- Benchmark boundary: Canada and ITER benchmark contracts are requalified only within their existing source-limited/reference scopes; no full numerical or empirical replay is claimed.
+- No-drift: `MERGE_TREE_DRIFT=FALSE`; merge parents are `7a70c49dde2edcb54adc0b826c4a6d99ba0e5ada` and the certified head; certified-head tree equals merge tree; head→merge files are empty; remote `main` equals the merge SHA.
+- Non-claims: no original UFOTRI leaf-discretisation identity, original Monin-Obukhov estimator, plume-wet-loss/local-flux spatial equivalence, origin-resolved mixed soil HTO, complete building-wake/plume-rise equivalence, Canada empirical reproduction, ITER full atmospheric replay, CTEAS-Atmos binding, production parameter activation, calibration, empirical validation, physical-accuracy claim, or original executable numerical equivalence.
+- Next stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`.
 
 ### H6 — Corrected final reconstruction gate
 
-- Status: `NOT_STARTED`
+- Status: `AUTHORIZED_NOT_STARTED`
 - Stage: `UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`
 - Dependency: H1-H5 complete.
 - Required decision:
@@ -203,6 +208,6 @@ These may be required for the broader CTEAS software product and real project ap
 
 ## 6. Immediate next stage
 
-`UFOTRI_NATIVE_ATMOSPHERE_TO_DOSE_QUALIFICATION_R1`
+`UFOTRI_MANUAL_BASED_FUNCTIONAL_RECONSTRUCTION_FINAL_GATE_R2`
 
 No production calibration, empirical site calibration, unrelated CTEAS-Atmos development, original-executable-equivalence claim, or optional ecological extension is authorized before the native-atmosphere sequence is closed.
