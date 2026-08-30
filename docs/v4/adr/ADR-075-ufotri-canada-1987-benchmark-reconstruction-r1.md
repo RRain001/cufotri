@@ -12,7 +12,7 @@ Base: `main@9b1d6ff34b7306175601e9257fdddf393a4e8d3c`
 
 The replication master plan requires the Canada 1987 HT release comparison as G1 validation evidence. KfK 4605 Section 5.2 contains a useful but incomplete reconstruction basis: site description, a set of static model inputs, the observable families in Figures 21–28, and a qualitative interpretation of calculated-versus-measured behaviour.
 
-The manual also states that the underlying hourly meteorological variables existed for nearly every hour from June 9 to June 26, while precipitation was available only as an event total. Those numerical hourly series are not tabulated in the repository transcription. Reference /44 is identified as G.L. Ogram, `The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report`, CFFTP-G-88027 (1988), but its raw field/model data are not present as repository benchmark inputs.
+The manual also states that the underlying hourly meteorological variables existed for nearly every hour from June 9 to June 26, while precipitation was available only as an event total. Those numerical hourly series are not tabulated in the repository transcription. Reference /44 is identified in the repository manual as G.L. Ogram, `The Canadian HT Dispersion Experiment at Chalk River - June 1987: Summary Report (DRAFT)`, Canadian Fusion Fuels Technology Project (1988). The repository transcription does not state a report identifier, and the underlying report/raw field data are not present as repository benchmark inputs.
 
 The current repository now contains manual-compatible seams for the HT branch, HT→HTO soil conversion and secondary re-emission area-source handoff. This is enough to define a benchmark contract, but not enough to claim a numerically faithful replay of the 1987 experiment.
 
@@ -57,7 +57,7 @@ These values are benchmark evidence, not production defaults.
 
 A full numerical Canada replay remains blocked by at least:
 
-- absence of the raw CFFTP-G-88027 report/data set in repository benchmark inputs;
+- absence of the underlying reference /44 report/raw data in repository benchmark inputs;
 - missing hourly wind direction, wind speed, temperature, net solar radiation and relative humidity values;
 - missing exact release clock alignment to those hourly data;
 - precipitation available in the manual only as an event-total description, not an hourly allocation;
