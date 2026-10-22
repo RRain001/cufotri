@@ -1,0 +1,127 @@
+# SOURCE: original KfK 5194 August 1993 printed PDF, read-only evidence for P0 audit.
+schema_version: 1
+source_identity:
+  target_model: "UFOTRI_4_0_1993"
+  report: "KfK 5194"
+  pdf_url: "https://publikationen.bibliothek.kit.edu/270034158/3813483"
+  baseline: "KfK 4605 (1990)"
+  comparison: "KfK 4853 (1991)"
+status: "SELECTED_1993_INPUT_AND_WASHOUT_PRINTED_PAGES_CHECKED_P0_OPEN"
+scope: "PRIMARY_SOURCE_DOCUMENTATION_ONLY_NO_ACTIVE_SOLVER_OR_INPUT_PARSER"
+executable_equivalence: "NOT_ESTABLISHED"
+source_page_indexing: "Printed page = PDF zero-based page - 9"
+input_structure:
+  source_printed_page: 35
+  pdf_index: 44
+  mandatory_groups: ["METEOZON","SOURCE","END"]
+  optional_groups: ["PRINTOUT","POLGRID","ISOTOPE","METEOROL","TRIDAT"]
+  ordering_edges:
+    - ["ISOTOPE","SOURCE"]
+    - ["POLGRID","METEOZON"]
+    - ["PRINTOUT","POLGRID"]
+    - ["END","TRIDAT"]
+  terminal_ufotri_group: "END"
+  tridat_after_end: true
+  note: "Ordering rules are conditional on groups actually present; not a mandate to include every optional group."
+isotope:
+  source_printed_pages: [46,47]
+  pdf_indexes: [55,56]
+  nuclide_count_default: 2
+  nuclide_order: ["HT","HTO"]
+  deposition_correction_factors: [1,1]
+  deposition_velocity_m_per_s: [0.0005,0.005]
+  washout_mode_default: 0
+  mode_zero:
+    label: "THREE_PRECIPITATION_CLASSES"
+    rain_class_boundaries_source_scaled: [100,300]
+    source_unit: "0.01 mm/h"
+    physical_boundaries_mm_per_h: [1,3]
+    hto_washout_rate_per_s: [0.00006,0.0001,0.0004]
+    ht_washout_rate_per_s: [0,0,0]
+    hto_relative_precipitation_duration: [0.5,0.75,0.72]
+    ht_relative_precipitation_duration: [0,0,0]
+    source_array_order: "AMDA(NN,IR), NN=HT first then HTO, IR=1..3"
+  mode_one:
+    label: "POWER_LAW"
+    source_equation: "XLAM(NN)=AWASH(NN)*I**BWASH(NN)"
+    rain_rate_unit: "mm/h"
+    AWASH_HT: 0
+    AWASH_HTO: 0.00009
+    BWASH_HT: 0
+    BWASH_HTO: 0.6
+    source_rate_unit: "1/s, from the same original §7.3.3 washout definition"
+    branch_duration_note: "The report refers REGTIM(NN,1) to preceding definitions; no claim about execution path or calibration."
+  proof_scope: "KfK5194 §7.3.3 printed pp.46–47; source defaults are not CUFOTRI runtime defaults."
+meteorology:
+  source_printed_page: 48
+  pdf_index: 57
+  metin_default: 0
+  metin_zero: "time-varying meteorology read from input file"
+  metin_nonzero: "single fixed-meteorology Gaussian case described in §7.3.4; §7.4.9 states METIN=1 for fixed-run auxiliary parameters"
+  noshft_default: 2
+  noshft_modes:
+    0: "all release phases same wind direction"
+    1: "each phase direction at beginning"
+    2: "hourly wind-direction changes within release phase"
+  iWNDR_default_deg: 360
+  iWNDG_default_scaled: 500
+  iWNDG_unit: "0.01 m/s"
+  iWNDG_physical_default_m_per_s: 5
+  iDIKAT_default: 4
+  iREGN_default_scaled: 0
+  iREGN_unit: "0.01 mm/h"
+  hght_default_m: [50,100,180]
+  mixlh_default_m: [1600,1200,800,560,320,200]
+  wpe_default_by_category: [0.07,0.13,0.21,0.34,0.44,0.44]
+  wpe_source_printed_page: 49
+  wpe_pdf_index: 58
+  note: "METPAR is original FORTRAN input encoding; modern SI forcing or Gaussian parameters must not reuse scaled integers without conversion."
+fixed_run:
+  source_printed_page: 66
+  pdf_index: 75
+  original_advice: "only recommended for testing"
+  irfix_default: 0
+  irfix_one: "fixed soil HTO re-emission; report warns program changes required to alter fixed re-emission and plant deposition rates"
+  refest_default: 5
+  refest_unit: "percent/hour"
+  itempe_default_scaled: 1000
+  itempe_source_unit: "Celsius times 100"
+  itempe_derived_celsius: 10
+  istrbe_default: 100
+  istrbe_source_unit: "Watt (as printed), not assumed W/m²"
+  relfa_default: 0.5
+  relfa_source_label: "fixed relative humidity in percent"
+  relfa_dimension_warning: "Source calls this percent but default 0.5 is ambiguous: do not silently interpret as either 0.5% or 50%."
+diagnostics:
+  source_printed_page: 67
+  pdf_index: 76
+  ifachs_default: 28
+  ieinr_defaults: [6,8,12,16]
+  izuaus_default: 0
+  kausdr_default: [0,0,0,0,0,0,0,0,0,0,0,0]
+  known_diagnostic_routes:
+    4: "dose calculations"
+    5: "food restrictions"
+    7: "transfer factors"
+    8: "re-emission area and source strength"
+    9: "soil/plant processes"
+    10: "re-emission dispersion/environment"
+    11: "re-emission dispersion/environment"
+    12: "long-term ingestion doses"
+  note: "Printer/diagnostic output controls are not physical switches or proof that values were emitted for all cases."
+unresolved:
+  - key: "HISTORICAL_INPUT_UNITS"
+    why: "Wind speed and rain rate use integer 1/100 units; importing modern m/s, mm/h directly changes physics."
+    status: "REQUIRES_P1_EXPLICIT_UNIT_ADAPTER"
+  - key: "WASHOUT_DEFAULT_BRANCH"
+    why: "IWASH default 0 with class-specific coefficients; documented power law is an alternative, not automatically the default."
+    status: "SOURCE_CONFIRMED_NOT_IMPLEMENTED"
+  - key: "RELFA_PERCENT_OR_FRACTION"
+    why: "Fixed humidity source label percent, default 0.5; unit convention not resolved."
+    status: "SOURCE_LIMITED"
+  - key: "FIXED_RUN_USAGE"
+    why: "Report recommends fixed stationary mode only for testing and indicates hard-coded rates for IRFIX 1."
+    status: "NO_GENERAL_DEPLOYMENT_CLAIM"
+  - key: "1990_1991_EXACT_INPUT_EQUIVALENCE"
+    why: "Versioned 1990/1991 parser and defaults are not completely audited."
+    status: "P0_OPEN"
