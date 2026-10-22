@@ -1,0 +1,61 @@
+# CUFOTRI scientific documentation index
+
+This is a navigation map, not a new scientific acceptance statement. Start with the [current project status](../STATUS.md), then consult the versioned source documents below. **Manual-based functional reconstruction, numerical equivalence to original UFOTRI, and empirical validation are different claims.**
+
+## Current scientific authority (read first)
+
+| Question | Source | Interpretation |
+|---|---|---|
+| Which claims are established today? | [STATUS.md](../STATUS.md) | Current top-level scope and explicit exclusions |
+| What stages were planned and audited? | [UFOTRI replication master plan](v4/roadmap/UFOTRI_REPLICATION_MASTER_PLAN.md) | Historical A–G stage ledger; its earlier atmospheric classification is superseded where corrected |
+| Why was UFOTRI-native atmospheric recovery added? | [Native atmosphere recovery correction](v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md) | Authoritative post-G4 H1–H6 correction and current manual-fidelity boundaries |
+| What is the frozen internal development baseline? | [V4 RC1 baseline](v4/adr/ADR-057-v4-development-baseline-rc1.md) | Synthetic/replay software baseline, **not** field qualification |
+| What is the final manual-reconstruction audit? | [H6 R2 final gate](v4/adr/ADR-084-ufotri-manual-based-functional-reconstruction-final-gate-r2.md) | Stage-specific handoff and limitations, not proof of original executable equivalence |
+
+For current claims, read these in conjunction with `STATUS.md`. Historical documents may contain older time-bounded statuses; they should not be rewritten retroactively.
+
+## Physical equations and implementation boundaries
+
+- [Variables and SI units](equations/variables_and_units.md)
+- [Manual scope and implementation mapping](equations/manual_scope_and_mapping.md)
+- [Atmospheric transport and deposition equations](equations/atmosphere.md)
+- [Soil transport equations](equations/soil.md)
+- [Plant transfer equations](equations/plant.md)
+- [Evapotranspiration](equations/evapotranspiration.md)
+- [Coupling contracts](equations/coupling.md)
+- Formal source code: [`src/cteas_ufotri/`](../src/cteas_ufotri/), with separate atmospheric, soil, plant, food-chain, exposure and V3/V4 coupling components.
+
+Physical equations and code must retain traceability to the available UFOTRI manual; a code-level PASS does not certify site-specific or empirical accuracy.
+
+## Scientific validation and external inputs
+
+- [Validation workspace](../validation/README.md): adapters, case contracts, reference comparisons, admissibility and provenance.
+- [External evidence recovery](ci/EXTERNAL_EVIDENCE_RECOVERY.md): public upstream candidate sources, historical SHA, licensing and **missing** SB1/SB4/ERA5/D3 inputs.
+- [Data-independent tests](../tests/): `tests/unit/`, `tests/integration/`, `tests/architecture/`, `tests/v3/`, `tests/v4/`.
+- [SB1 source inventory](../validation/benchmarks/emras_soybean_sb1/source_inventory.yaml) and [SB4 source inventory](../validation/benchmarks/emras_soybean_sb4/source_inventory.yaml).
+
+SB1/SB4 literature-derived and ERA5-based benchmarks remain separate from independent empirical qualification. D3 original private blind-key evidence must not be fabricated or treated as restored. `external-evidence.yml` is manually dispatched and fails closed in strict mode.
+
+## Cloud development, containers and reproducibility
+
+- [Docker + uv workflow](ci/DOCKER_WORKFLOW.md): Python 3.11 locked two-stage build, verification and minimal non-root runtime.
+- [Dependency lock policy](ci/DEPENDENCY_LOCK.md): `pyproject.toml`, `.python-version`, `uv.lock` and controlled dependency updates.
+- [GitHub Actions](../.github/workflows/): Protected Integration Gate, Remediation CI, Python smoke, Docker stage verification and manual evidence audit.
+- [Agent development rules](../AGENTS.md): branch/PR workflow, provenance, physical equations and forbidden overclaims.
+- [Root README](../README.md): starting point and reproducible commands.
+
+The official Python 3.11 Docker base is identified by the digest in [Dockerfile](../Dockerfile). Build cache is only an acceleration mechanism, not a scientific data store or substitute for the committed dependency lock.
+
+## Historical archives — preserve, do not restructure
+
+| Archive | Purpose |
+|---|---|
+| [V2 documents](v2/) | Early HTO pathways, implementation and validation milestones |
+| [V3 documents](v3/) | Physical database/evidence-governance experiments, frozen boundary and review decisions |
+| [V3.1 documents](v3_1/) | Mass-basis follow-up and independent review |
+| [V4 documents](v4/) | H1–H6, physics reconciliation, ADRs, audited evidence and technical reports |
+| [Legacy implementation ledger](implementation_status.md) | Chronological record last updated in August 2026; **not** today's project authority |
+| [Historical V1/V2 README](reference/legacy-readme-v2-20261022.md) | Original documentation retained for provenance |
+| [Git cleanup history](history/) | SHA evidence and historical branch traceability |
+
+Do not delete, move or combine frozen ADRs simply to simplify this index. Any future change to physical readiness should update `STATUS.md`, cite source evidence, and pass the applicable independent scientific gate.

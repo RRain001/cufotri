@@ -6,7 +6,7 @@ Open-source, research-oriented reconstruction of tritium transport and environme
 
 ## Current status
 
-See [STATUS.md](STATUS.md) for the current claim boundary and CI requirements. Detailed traceability and stage evidence remain in:
+See [STATUS.md](STATUS.md) for the current claim boundary and CI requirements, and [the scientific documentation index](docs/INDEX.md) to navigate versioned methods, evidence and historical ADRs. Detailed traceability and stage evidence remain in:
 
 - [UFOTRI replication master plan](docs/v4/roadmap/UFOTRI_REPLICATION_MASTER_PLAN.md)
 - [Native atmosphere recovery correction](docs/v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md), which supersedes older atmospheric status descriptions

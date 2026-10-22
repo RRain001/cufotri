@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cteas-ufotri"
 version = "0.1.0"
-description = "Minimal coupled HTO atmosphere-soil-plant model"
+description = "Research reconstruction of UFOTRI tritium transport, environmental pathways, and public exposure"
 requires-python = ">=3.11,<3.12"
 dependencies = [
   "numpy>=1.26",

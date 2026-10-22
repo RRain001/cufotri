@@ -8,17 +8,18 @@ minor, aligned with CTEAS-next's Docker/Ubuntu Python version. The existing
 The container layout parallels CTEAS-next's separate verification and
 runtime images, without introducing a new physics or evidence claim.
 
-The Dockerfile has two public build targets and one internal dependency stage:
+The Dockerfile has two public build targets and two internal dependency stages:
 
 - `python-deps`: uv 0.13.5 resolves and installs runtime-only packages
   non-editably using `uv sync --locked --no-dev --no-editable`.
-- `verification`: adds `git`, the full source tree including Git history,
-  and `pytest` using `uv sync --locked --extra test`. Used for all scientific
-  GitHub Actions and **not** a distribution image.
+- `verification-deps`: adds `git` and locked `pytest` dependencies using `uv sync --locked --extra test` **before** the complete repository and Git history are copied. Only this non-sensitive dependency stage can be exported to the BuildKit GitHub Actions cache.
+- `verification`: adds the full source tree and Git history to the cached dependency stage. Used for all scientific GitHub Actions and **not** a distribution image.
 - `runtime`: starts from a new slim Python 3.11 base, copies only the
   preinstalled runtime environment and `configs/`, and runs as UID/GID 10001.
   It deliberately has no `uv`, `pytest`, `git`, `tests/`, project source
   checkout, historical reports or raw scientific inputs.
+
+The official multi-platform `python:3.11-slim-bookworm` base is digest-pinned in `Dockerfile` (verified 2026-10-22). To update it, review an authoritative `docker buildx imagetools inspect` result, test the supported platforms and commit the changed digest through a dedicated PR. A package/SHA/image-ID record is uploaded by `docker-portable.yml`.
 
 The verification image includes the Git object database because some frozen
 audit tests require historical SHA lookups. GitHub Actions checks out with
@@ -40,7 +41,12 @@ docker run --rm cufotri:verify python -m pytest \
 The Protected Integration Gate also executes its frozen V3/V4 boundary suite
 and five explicit V4 machine composition runners, now **inside Docker**.
 The remediation and Python 3.11 smoke CI jobs similarly build/run the same
-verification image (job-local; no Docker image registry is required).
+verification image (job-local; no Docker image registry is required). Buildx
+reads from the shared GitHub cache scope `cufotri-py311-deps-v1` in all four
+scientific workflows. Only the Docker dual-stage workflow **writes** that scope,
+from target `verification-deps`. Parallel first-time PR runs may have a cold
+cache; subsequent runs reuse the pinned Python dependency layers. A cache hit
+is a performance improvement, **not** a scientific acceptance criterion.
 
 Build the data-free runtime:
 
@@ -82,9 +88,9 @@ and non-synthetic claims. The stock public GitHub runner has no such data.
 ## Reproducibility boundaries
 
 `uv.lock` freezes Python dependency selection but not the interpreter patch
-version, Debian package revisions, CPU behavior, or source data. The base image
-tag `python:3.11-slim-bookworm` is a *minor-version* pin; digest-pinning and
-a release SBOM are future supply-chain hardening tasks. Record `github.sha`
+version, Debian package revisions, CPU behavior, or source data. The multi-architecture base-image index is pinned by SHA-256 in the Dockerfile.
+A full release SBOM, per-platform numerical parity and dependency vulnerability
+scanning remain future supply-chain qualification tasks. Record `github.sha`
 in the runtime OCI image label; the container CI records the image ID and
 installed package list. Do not assert numerical bit identity across
 AMD64/ARM64 or real-world physical validation from these build checks.

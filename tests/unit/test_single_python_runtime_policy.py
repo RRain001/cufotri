@@ -34,6 +34,8 @@ def test_docker_has_separate_locked_verify_and_minimal_runtime() -> None:
     assert "uv==0.13.5" in df
     assert "uv sync --locked --no-dev --no-editable" in df
     assert "uv sync --locked --extra test" in df
+    assert "uv sync --locked --no-dev --no-install-project" in df
+    assert "AS verification-deps" in df
     assert "AS verification" in df
     assert "AS runtime" in df
     assert "USER 10001:10001" in df
@@ -54,7 +56,10 @@ def test_actions_run_python_tests_in_docker_only(filename: str) -> None:
     assert "matrix.python-version" not in source
     assert "actions/setup-python@" not in source
     assert "python -m pip install" not in source
-    assert "docker build --progress=plain --target verification" in source
+    assert "docker/setup-buildx-action@v3" in source
+    assert "docker/build-push-action@v6" in source
+    assert "target: verification" in source
+    assert "cache-from: type=gha,scope=cufotri-py311-deps-v1" in source
     assert "cufotri:verification-${{ github.sha }}" in source
     assert "docker run --rm" in source
     assert parsed["jobs"]

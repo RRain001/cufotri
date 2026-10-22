@@ -26,10 +26,30 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Build locked Python 3.11 verification stage
-        run: |
-          docker build --progress=plain --target verification \
-            --tag cufotri:verify-${{ github.sha }} .
+      - name: Initialize Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Only this workflow exports dependencies to GitHub's cache. Other CI
+      # workflows are read-only consumers, avoiding concurrent cache writers.
+      # The cached stage excludes the full Git checkout and review history.
+      - name: Populate reusable Python 3.11 dependency cache
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: verification-deps
+          cache-from: type=gha,scope=cufotri-py311-deps-v1
+          cache-to: type=gha,scope=cufotri-py311-deps-v1,mode=max
+
+      - name: Build and load locked Python 3.11 verification stage
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: verification
+          load: true
+          tags: cufotri:verify-${{ github.sha }}
+          cache-from: type=gha,scope=cufotri-py311-deps-v1
 
       - name: Check Python, git and locked test dependencies inside Docker
         run: |
@@ -39,11 +59,17 @@ jobs:
             python -m pytest -q tests/unit/test_single_python_runtime_policy.py
           '
 
-      - name: Build production-only runtime image
-        run: |
-          docker build --progress=plain --target runtime \
-            --build-arg SOURCE_REVISION="${{ github.sha }}" \
-            --tag cufotri:runtime-${{ github.sha }} .
+      - name: Build and load production-only runtime image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: runtime
+          load: true
+          tags: cufotri:runtime-${{ github.sha }}
+          build-args: |
+            SOURCE_REVISION=${{ github.sha }}
+          cache-from: type=gha,scope=cufotri-py311-deps-v1
 
       - name: Check no uv, pytest, git, source tree or test data in runtime
         run: |
@@ -66,9 +92,30 @@ jobs:
           docker run --rm --tmpfs /results:rw,uid=10001,gid=10001 \
             cufotri:runtime-${{ github.sha }}
 
+      - name: Record runtime provenance and locked package inventory
+        run: |
+          set -euo pipefail
+          mkdir -p image-provenance
+          printf '%s\n' "${{ github.sha }}" > image-provenance/source-revision.txt
+          printf '%s\n' 'python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf' > image-provenance/base-image.txt
+          docker image inspect --format '{{.Id}}' cufotri:runtime-${{ github.sha }} > image-provenance/runtime-image-id.txt
+          docker image inspect --format '{{.Os}}/{{.Architecture}}' cufotri:runtime-${{ github.sha }} > image-provenance/platform.txt
+          docker run --rm --entrypoint python cufotri:runtime-${{ github.sha }} \
+            -c 'import importlib.metadata as m; print("\n".join(sorted("{}=={}".format(d.metadata["Name"], d.version) for d in m.distributions())))' \
+            > image-provenance/runtime-packages.txt
+
+      - name: Upload build provenance (not a raw scientific-data artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-runtime-provenance-${{ github.run_id }}
+          path: image-provenance/
+          retention-days: 30
+          if-no-files-found: error
+
       - name: Report container boundaries
         run: |
           echo "DOCKER_VERIFICATION_STAGE=BUILT"
+          echo "DOCKER_CACHE=VERIFICATION_DEPENDENCIES_ONLY"
           echo "DOCKER_RUNTIME=NON_ROOT_NO_UV_NO_PYTEST_NO_GIT"
           echo "PYTHON=3.11"
           echo "SCIENTIFIC_EXTERNAL_EVIDENCE=NOT_RUN"
