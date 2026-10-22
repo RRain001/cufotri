@@ -1,0 +1,459 @@
+# KfK 5194 is the 1993 target. 1990/1991 evidence is historical comparison only.
+{
+  "schema_version": 1,
+  "document_kind": "UFOTRI_1993_V4_PRIMARY_INPUT_AUDIT_R6",
+  "target_version": "UFOTRI_4_0_1993",
+  "report": "KfK 5194",
+  "source_pdf": "https://publikationen.bibliothek.kit.edu/270034158/3813483",
+  "comparison_1991": {
+    "report": "KfK 4853",
+    "source_pdf": "https://publikationen.bibliothek.kit.edu/270030531/3813429",
+    "stationary_section": "§3.4.7 printed p.34"
+  },
+  "status": "SELECTED_PRINTED_INPUT_PAGES_CHECKED_FULL_P0_OPEN",
+  "runtime_1993_profile_activated": false,
+  "numerical_equivalence_to_original": "NOT_ESTABLISHED",
+  "independent_scientific_review": "NOT_COMPLETED",
+  "source_sections": [
+    {
+      "id": "S1",
+      "section": "§7.4.1",
+      "print_pages": [
+        51,
+        52,
+        53
+      ],
+      "pdf_indices": [
+        60,
+        61,
+        62
+      ],
+      "scope": "general source, time, atmospheric-to-area coupling controls"
+    },
+    {
+      "id": "S2",
+      "section": "§7.4.9",
+      "print_pages": [
+        66
+      ],
+      "pdf_indices": [
+        75
+      ],
+      "scope": "stationary-test and meteorological override flags"
+    },
+    {
+      "id": "S3",
+      "section": "§7.4.10",
+      "print_pages": [
+        67,
+        68
+      ],
+      "pdf_indices": [
+        76,
+        77
+      ],
+      "scope": "output, reporting and debug-control flags"
+    },
+    {
+      "id": "S4",
+      "section": "§8.2",
+      "print_pages": [
+        69
+      ],
+      "pdf_indices": [
+        78
+      ],
+      "scope": "daily direct-access, 24-hour met-file fields"
+    }
+  ],
+  "control_parameters": [
+    {
+      "name": "BODFAK",
+      "section": "§7.4.1",
+      "print_page": 51,
+      "default": 100,
+      "meaning": "secondary-area minimum-source factor; p51 prose calls reference maximum soil concentration, but same-page parameter definition calls it maximum air concentration",
+      "impact": "CHANGES_AREA_SOURCE_CUTOFF_AND_COMPUTATIONAL_COST",
+      "units": "historical factor; reference concentration and source-strength dimensional conversion unverified",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "NSTOP",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 70,
+      "meaning": "minimum duration of detailed re-emission computation",
+      "impact": "CHANGES_REEMISSION_TIME_HORIZON_AND_RESIDUAL_SOIL_HANDLING",
+      "units": "h",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IZFREI",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 3600,
+      "meaning": "duration of primary release for line-printer air concentrations only",
+      "impact": "OUTPUT_PRESENTATION_ONLY_AS_DESCRIBED",
+      "units": "s",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IFLENG",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 0,
+      "meaning": "0 normal area source 14 grid points; 1 narrow area source 6 points requiring special radial grid",
+      "impact": "CHANGES_SECONDARY_AREA_SOURCE_GEOMETRY",
+      "units": "integer flag",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "Q(NN,J)",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default_raw": "17*0.,17*1.",
+      "meaning": "relative source fractions of HT and HTO by phase, 0<=Q<=1",
+      "impact": "CHANGES_CHEMICAL_FORM_MIX",
+      "units": "relative",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "Q1(J)",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default_raw": "17*1.",
+      "meaning": "absolute source strength per phase",
+      "impact": "CHANGES_SOURCE_TERM",
+      "units": "Bq per time step and phase as described on printed p51",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "ARAU",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 0.3,
+      "meaning": "roughness length",
+      "impact": "BOUNDARY_LAYER_INPUT",
+      "units": "m",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "ZEIT",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 3600,
+      "meaning": "interval between meteorological recordings, printed instruction must be 3600",
+      "impact": "HOURLY_TIME_GRID",
+      "units": "s",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "CHIMAX",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 1e-15,
+      "meaning": "time-integrated air-concentration minimum (cut-off); also used for ingestion module",
+      "impact": "TRUNCATES_LOW_CONCENTRATION_PATHS",
+      "units": "Bq s/m^3",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "NUKL(NN)",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default_raw": "1=HT;2=HTO",
+      "meaning": "names of tritium chemical forms",
+      "impact": "SPECIES_IDENTITY",
+      "units": "label",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "NJAHRE",
+      "section": "§7.4.1",
+      "print_page": 52,
+      "default": 1,
+      "meaning": "number of years with meteorological data; >=1",
+      "impact": "METEOROLOGY_YEAR_COUNT",
+      "units": "year",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "LT1",
+      "section": "§7.4.1",
+      "print_page": 53,
+      "default": 90,
+      "meaning": "first day of vegetation period year 1",
+      "impact": "PLANT_GROWTH_CALENDAR",
+      "units": "model day index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "LT2",
+      "section": "§7.4.1",
+      "print_page": 53,
+      "default": 303,
+      "meaning": "last day of vegetation period year 1",
+      "impact": "PLANT_GROWTH_CALENDAR",
+      "units": "model day index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "LT3",
+      "section": "§7.4.1",
+      "print_page": 53,
+      "default": 455,
+      "meaning": "first day vegetation period year 2",
+      "impact": "PLANT_GROWTH_CALENDAR",
+      "units": "model day index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "LT4",
+      "section": "§7.4.1",
+      "print_page": 53,
+      "default": 670,
+      "meaning": "last day vegetation period year 2",
+      "impact": "PLANT_GROWTH_CALENDAR",
+      "units": "model day index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IRFIX",
+      "section": "§7.4.9",
+      "print_page": 66,
+      "default": 0,
+      "meaning": "0 normal calculated re-emission; 1 fixed rate, explicitly described as relic and only recommended for testing",
+      "impact": "LEGACY_TEST_ONLY_ALTERNATIVE_PHYSICS",
+      "units": "integer flag",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "REFEST",
+      "section": "§7.4.9",
+      "print_page": 66,
+      "default": 5,
+      "meaning": "fixed re-emission rate when legacy mode selected",
+      "impact": "LEGACY_TEST_ONLY_INPUT",
+      "units": "percent per hour",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "ITEMPE",
+      "section": "§7.4.9",
+      "print_page": 66,
+      "default": 1000,
+      "meaning": "air temperature constant in stationary METIN=1 branch",
+      "impact": "METIN_DEPENDENT_MET_OVERRIDE",
+      "units": "Celsius x 100 as printed",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "ISTRBE",
+      "section": "§7.4.9",
+      "print_page": 66,
+      "default": 100,
+      "meaning": "fixed radiation balance in METIN=1 branch",
+      "impact": "METIN_DEPENDENT_MET_OVERRIDE",
+      "units": "Watt as printed; area normalization not established",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "RELFA",
+      "section": "§7.4.9",
+      "print_page": 66,
+      "default": 0.5,
+      "meaning": "fixed relative humidity in METIN=1 branch, printed 'in percent' but default 0.5",
+      "impact": "METIN_DEPENDENT_MET_OVERRIDE",
+      "units": "percent as printed, fraction/percent convention unresolved",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IFACHS",
+      "section": "§7.4.10",
+      "print_page": 67,
+      "default": 28,
+      "meaning": "sector index for printer control output",
+      "impact": "OUTPUT_ONLY",
+      "units": "index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IEINR(1:4)",
+      "section": "§7.4.10",
+      "print_page": 67,
+      "default_values": [
+        6,
+        8,
+        12,
+        16
+      ],
+      "meaning": "four radial print position indices",
+      "impact": "OUTPUT_ONLY",
+      "units": "index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IZUAUS",
+      "section": "§7.4.10",
+      "print_page": 67,
+      "default": 0,
+      "meaning": "additional control printer output on each time step",
+      "impact": "DIAGNOSTIC_OUTPUT_ONLY",
+      "units": "flag",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "KAUSDR(1:12)",
+      "section": "§7.4.10",
+      "print_page": 67,
+      "default_raw": "12*0",
+      "meaning": "12 flags controlling output for transport, dose, restriction, soil/plant and COMA",
+      "impact": "DIAGNOSTIC_OUTPUT_ONLY",
+      "units": "flag array",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IPRPLT",
+      "section": "§7.4.10",
+      "print_page": 68,
+      "default": 0,
+      "meaning": "printer plot generation selector 0/1/2",
+      "impact": "OUTPUT_ONLY",
+      "units": "flag",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "INUKL",
+      "section": "§7.4.10",
+      "print_page": 68,
+      "default": 2,
+      "meaning": "chemical-form index to plot",
+      "impact": "OUTPUT_ONLY",
+      "units": "nuclide index",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "IWRITE",
+      "section": "§7.4.10",
+      "print_page": 68,
+      "default": 0,
+      "meaning": "0 no dose storage, 1 writes doses to logical unit 9 for every weather sequence and phase",
+      "impact": "OUTPUT_STORAGE_ONLY",
+      "units": "flag",
+      "provenance": "GUIDE_DEFAULT"
+    },
+    {
+      "name": "LWETE",
+      "section": "§7.4.10",
+      "print_page": 68,
+      "default": 1000,
+      "meaning": "control output for weather sequences with MOD(LW,LWETE)=0; only for testing",
+      "impact": "DIAGNOSTIC_OUTPUT_ONLY",
+      "units": "step interval",
+      "provenance": "GUIDE_DEFAULT"
+    }
+  ],
+  "recommended_not_default": [
+    {
+      "parameter": "BODFAK",
+      "print_page": 51,
+      "conditions": [
+        {
+          "case": "HT release",
+          "value": 1
+        },
+        {
+          "case": "HTO release",
+          "value": 100
+        },
+        {
+          "case": "HTO with building wake",
+          "value": 10
+        },
+        {
+          "case": "HT with building wake",
+          "value": 0.1
+        }
+      ],
+      "note": "Case-specific examples of useful settings; only §7.4.1 named DEFAULT=100 is a printed default"
+    }
+  ],
+  "meteorology_direct_access": {
+    "section": "§8.2",
+    "print_page": 69,
+    "pdf_index": 78,
+    "interval_s": 3600,
+    "records_per_file_record": "one day",
+    "subrecord_index": "J=1..24",
+    "fields": [
+      "WR",
+      "IDIFF",
+      "IRAIN",
+      "WG",
+      "ITEMP",
+      "ISTRB",
+      "RELF",
+      "ISOIL1",
+      "ISOIL2",
+      "ISOIL3"
+    ],
+    "location": "one representative observation station",
+    "requirement": "first daily entry contains first-hour average; missing soil moisture uses placeholder variables in met-file and separate IBODFX/BODEIN NAMELIST handling",
+    "software_format": "FORTRAN direct-access weather file; original record binary layout, endianness and complete units still unverified",
+    "evidence_status": "SELECTED_PAGE_VERIFIED_NOT_BINARY_FORMAT_VERIFIED"
+  },
+  "source_conflicts": [
+    {
+      "id": "SRC-R6-01",
+      "parameter": "IZFREI",
+      "print_page": 52,
+      "printed_condition": "0 < IZFREI < 3600",
+      "printed_default": "3600",
+      "resolution": "UNRESOLVED_BOUNDARY_IN_TEXT; preserve both and do not enforce guessed exclusive constraint"
+    },
+    {
+      "id": "SRC-R6-02",
+      "parameter": "RELFA",
+      "print_page": 66,
+      "printed_label": "relative humidity in air in percent",
+      "printed_default": "0.5",
+      "resolution": "UNRESOLVED_PERCENT_OR_FRACTION_CONVENTION"
+    },
+    {
+      "id": "SRC-R6-03",
+      "parameter": "NSTOP",
+      "print_page": 52,
+      "printed_label": "minimum re-emission duration 70h and residual-soil activity handling after end of period",
+      "printed_default": "70",
+      "resolution": "SOIL_RESIDUAL_ACTIVITY_ALGORITHM_UNVERIFIED"
+    },
+    {
+      "id": "SRC-R6-04",
+      "parameter": "METEO_FILE",
+      "print_page": 69,
+      "printed_label": "one day direct-access file; hourly 10-field records",
+      "resolution": "ORIGINAL_FORTRAN_RECORD_LAYOUT_AND_MET_FIELD_UNITS_NOT_FULLY_RECOVERED"
+    },
+    {
+      "id": "SRC-R6-05",
+      "parameter": "BODFAK",
+      "print_page": 51,
+      "printed_prose_label": "maximum soil concentration",
+      "printed_parameter_label": "maximum air concentration",
+      "resolution": "UNRESOLVED_REFERENCE_CONCENTRATION_WORDING_AND_DIMENSIONAL_SOURCE_STRENGTH_MAPPING; do not assume that pore-air and ambient-air maxima or Bq volume and area source strength are interchangeable"
+    }
+  ],
+  "historical_1991_comparison": {
+    "section": "§3.4.7 printed page 34",
+    "pdf_index": 41,
+    "fields": [
+      "IRFIX",
+      "REFEST",
+      "ITEMPE",
+      "ISTRBE",
+      "RELFA"
+    ],
+    "finding": "All five variable names and displayed defaults match 1993 p66: 0,5.0,1000,100,0.5; 1991 already describes fixed-rate branch as early program relic",
+    "verdict": "UNCHANGED_PRINTED_DEFAULTS_FOR_THESE_FIVE_ONLY"
+  }
+}
