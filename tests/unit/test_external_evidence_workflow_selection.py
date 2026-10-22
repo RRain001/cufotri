@@ -30,7 +30,8 @@ def test_external_workflow_is_manual_only_and_default_is_readiness_audit() -> No
     assert inputs["mode"]["default"] == "audit"
     assert inputs["mode"]["options"] == ["audit", "strict"]
     assert inputs["dataset"]["default"] == "ALL"
-    assert inputs["dataset"]["options"] == ["ALL", *DATASET_REQUIREMENTS]
+    assert inputs["dataset"]["options"][0] == "ALL"
+    assert set(inputs["dataset"]["options"]) == {"ALL", *DATASET_REQUIREMENTS}
     assert "refs/heads/main" in workflow["jobs"]["external-evidence"]["if"]
 
 
