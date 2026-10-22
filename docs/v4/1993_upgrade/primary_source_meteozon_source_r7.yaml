@@ -1,0 +1,249 @@
+# Source-only selected KfK 5194 printed-card audit. Valid YAML/JSON; not executable defaults.
+{
+  "schema_version": 1,
+  "document_kind": "UFOTRI_1993_V4_P0_R7_HISTORICAL_METEOZON_SOURCE_CARD_AUDIT",
+  "target_version": "UFOTRI_4_0_1993",
+  "target_report": "KfK 5194",
+  "source_url": "https://publikationen.bibliothek.kit.edu/270034158/3813483",
+  "source_checked_printed_pages": [
+    36,
+    37,
+    38,
+    39,
+    40,
+    41
+  ],
+  "pdf_zero_based_page_offset": 9,
+  "status": "SELECTED_HISTORICAL_CARDS_VERIFIED_FULL_P0_OPEN",
+  "evidence_kind": "PRINTED_GUIDE_CARD_SPECIFICATION_NOT_ORIGINAL_PARSER",
+  "base_version": "KFK4605_1990",
+  "historical_1991_comparison": "NOT_COMPLETED",
+  "independent_scientific_review": "NOT_COMPLETED",
+  "original_executable_equivalence": "NOT_ESTABLISHED",
+  "runtime_1993_profile_activated": false,
+  "array_caps": {
+    "printed_page": 36,
+    "pdf_index": 45,
+    "meaning": "compiled historical PARAMETER maxima, NOT actual defaults or modern allocation limits",
+    "values": {
+      "NSITMX": 5,
+      "LWMAX": 144,
+      "NPHSMX": 17,
+      "NTYPMX": 2,
+      "NUCMAX": 2,
+      "NRMAX": 20,
+      "NPHIMX": 72
+    }
+  },
+  "meteozon": {
+    "section": "7.2.1",
+    "printed_pages": [
+      37,
+      38,
+      39
+    ],
+    "pdf_indices": [
+      46,
+      47,
+      48
+    ],
+    "role": "historic zone, weather-sequence sampling, optional COSYMA population branch",
+    "cards": [
+      {
+        "id": "K1.1",
+        "fields": [
+          "METEOZON"
+        ],
+        "encoding": "A8 title"
+      },
+      {
+        "id": "K1.2",
+        "fields": [
+          "ZONNAM",
+          "LMAX",
+          "NSTMAX",
+          "LPOPT",
+          "LWOPT",
+          "IRAU",
+          "IHOM",
+          "IBEWE"
+        ],
+        "encoding": "fixed columns; printed FORMAT 1X,A8,1X,2I10,5I5"
+      },
+      {
+        "id": "K1.3",
+        "fields": [
+          "LWET(L)"
+        ],
+        "when": "LWOPT_EQ_1",
+        "units": "hour",
+        "encoding": "8I10 repeated"
+      },
+      {
+        "id": "K1.4",
+        "fields": [
+          "PWET(L)"
+        ],
+        "when": "LPOPT_EQ_1",
+        "units": "dimensionless",
+        "encoding": "8E10.2 repeated"
+      },
+      {
+        "id": "K1.5-K1.7",
+        "fields": [
+          "NRST",
+          "STONAM",
+          "NSTOPT",
+          "PSTO",
+          "POPDIC",
+          "IEIN",
+          "IPOP"
+        ],
+        "when": "SITE_POPULATION_BRANCH",
+        "scope": "HISTORICAL_COSYMA_RELEVANT_NOT_CONSIDERED_IN_UFOTRI"
+      }
+    ],
+    "selectors": {
+      "LPOPT": {
+        "0": "UNIFORM_PWET_EQUALS_ONE_OVER_LMAX",
+        "1": "PWET_IN_K1_4",
+        "2": "PWET_FROM_NUNITS_13"
+      },
+      "LWOPT": {
+        "0": "CYCLIC_SAMPLING",
+        "1": "LWET_IN_K1_3",
+        "2": "LWET_FROM_NUNITS_13"
+      }
+    },
+    "invariants": [
+      "1 <= LMAX <= LWMAX(144) HISTORICAL_CAP",
+      "PWET(L) sum over L = 1 when probabilities supplied",
+      "LWOPT=1 requires K1.3 hours for L=1..LMAX",
+      "LPOPT=1 requires K1.4 probabilities for L=1..LMAX",
+      "POLGRID precedes METEOZON if non-default grid used"
+    ],
+    "roughness_class_IRAU": {
+      "2": "historical mean roughness category rural or low vegetation",
+      "3": "historical high roughness category forest or urban"
+    },
+    "anemometer_height_IHOM_units": "m",
+    "weather_sequence_spacing_IBEWE_units": "h",
+    "weather_sequence_spacing_printed_behavior": "if LWOPT != 0 then IBEWE is set to zero",
+    "data_files": {
+      "weather_sequence": "NUNITS(13)",
+      "site_population": "NUNITS(31)"
+    },
+    "population_scope": "K1.5–K1.7 labeled not considered in UFOTRI, COSYMA relevant; do not silently require site population cards for CUFOTRI source compatibility"
+  },
+  "source_group": {
+    "section": "7.2.2",
+    "printed_page": 40,
+    "pdf_index": 49,
+    "cards": [
+      {
+        "id": "K2.1",
+        "fields": [
+          "SOURCE"
+        ],
+        "encoding": "A8 title"
+      },
+      {
+        "id": "K2.2",
+        "fields": [
+          "UNFNAM",
+          "NPHMAX",
+          "IPZ"
+        ],
+        "encoding": "A8,2X,2I10"
+      },
+      {
+        "id": "K2.3",
+        "fields": [
+          "IPHASE(NP)",
+          "IHO(NP)",
+          "QH(NP)",
+          "BR(NP)",
+          "HOE(NP)"
+        ],
+        "encoding": "2I10,3E10.3",
+        "repeat": "for each NP=1..NPHMAX"
+      }
+    ],
+    "phase_count_variable": "NPHMAX",
+    "phase_count_cap_parameter": "NPHSMX",
+    "max_phase_count": 17,
+    "source_fields": [
+      {
+        "name": "UNFNAM",
+        "meaning": "source term name",
+        "units": "name"
+      },
+      {
+        "name": "NPHMAX",
+        "meaning": "count of release phases",
+        "units": "integer",
+        "default": "NOT_STATED_ON_SELECTED_PAGE"
+      },
+      {
+        "name": "IPZ",
+        "meaning": "shift of all weather sequence beginnings relative to selected starting times",
+        "units": "time unit NOT_EXPLICIT_ON_PRINTED_P40"
+      },
+      {
+        "name": "IPHASE(NP)",
+        "meaning": "elapsed whole hours between end of chain reactions and each phase start",
+        "units": "whole hour"
+      },
+      {
+        "name": "IHO(NP)",
+        "meaning": "height of release",
+        "units": "m"
+      },
+      {
+        "name": "QH(NP)",
+        "meaning": "thermal energy release rate",
+        "units": "cal/s",
+        "not_equivalent_to": "Q(NN,J)/Q1(J) historical radiological source fractions/strengths from §7.4.1 p52"
+      },
+      {
+        "name": "BR(NP)",
+        "meaning": "reactor building width",
+        "units": "m"
+      },
+      {
+        "name": "HOE(NP)",
+        "meaning": "reactor building height",
+        "units": "m"
+      }
+    ],
+    "additional_phase_card_K2_4": "REFERENCED_BUT_NOT_SHOWN_ON_PRINTED_P40_DO_NOT_INVENT_CONTENTS",
+    "separate_radiological_source": "1993 §7.4.1 p52 Q(NN,J) relative HT/HTO fractions and Q1(J) absolute source strengths are distinct from the SOURCE K2.3 QH thermal cal/s",
+    "full_parser_equivalence": "NOT_ESTABLISHED"
+  },
+  "end_group": {
+    "section": "7.2.3",
+    "printed_page": 41,
+    "pdf_index": 50,
+    "card_id": "K3.1",
+    "fields": [
+      "END"
+    ],
+    "encoding": "A8 title only",
+    "role": "terminates historical UFOTRI input groups; TRIDAT may follow separately as recorded in R6b",
+    "original_parser_success_message": "END OF INPUT WITHOUT ERRORS",
+    "not_a_scientific_validation_marker": true
+  },
+  "safety_boundaries": [
+    "Do not convert QH cal/s to Bq/s or treat it as Q1(J)",
+    "Do not turn historic PARAMETER maxima into suggested contemporary physics defaults",
+    "Do not force COSYMA population cards K1.5–K1.7 for UFOTRI",
+    "Do not infer original direct-access binary structure, exact historical numerical behavior or parser parity",
+    "No runtime 1993 profile or numeric solver activated"
+  ],
+  "remaining": [
+    "Reconcile K2.4 mentioned but not presented on source p40 with other public cards and historical code",
+    "Reconcile meteorological/phase time interpretation and IPZ basis before numeric translation",
+    "1990/1991/1993 full legacy input branch and parameter comparison",
+    "Independent source/scientific review and original executable benchmark unavailable"
+  ]
+}
