@@ -3,7 +3,7 @@ name: V3 Protected Integration Gate
 on:
   push:
     branches:
-      - codex/v3-protected-integration-review
+      - main
   pull_request:
     branches:
       - main
@@ -37,11 +37,24 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e '.[test]'
 
-      - name: Verify linear ancestry and diff hygiene
+      - name: Verify immutable PR base ancestry and diff hygiene
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
         run: |
-          git fetch origin main --no-tags
-          git merge-base --is-ancestor origin/main HEAD
-          git diff --check origin/main...HEAD
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            # The event's base SHA is immutable. Never fetch moving origin/main
+            # here: merging another PR during this run caused a false failure.
+            test -n "$PR_BASE_SHA"
+            git cat-file -e "${PR_BASE_SHA}^{commit}"
+            git merge-base --is-ancestor "$PR_BASE_SHA" HEAD
+            git diff --check "$PR_BASE_SHA" HEAD
+          else
+            # push(main)/manual runs inspect the checked-out commit itself.
+            git diff --check HEAD^ HEAD
+          fi
 
       - name: Compile and import smoke
         run: |
