@@ -31,6 +31,9 @@ source_audit_r4_status: "TABLE2_TO8_ROLES_AND_16_1991_TO1993_DEFAULTS_CHECKED_P0
 triedition_physics_audit_r5: "docs/v4/1993_upgrade/primary_source_triedition_physics_r5.yaml"
 triedition_physics_report_r5: "docs/v4/1993_upgrade/PRIMARY_SOURCE_TRIEDITION_PHYSICS_R5.md"
 source_audit_r5_status: "SELECTED_PRINTED_1990_1991_1993_FORMULAS_REVIEWED_FULL_P0_OPEN"
+run_io_source_contract_r6: "docs/v4/1993_upgrade/primary_source_run_io_contract_r6.yaml"
+run_io_report_r6: "docs/v4/1993_upgrade/PRIMARY_SOURCE_RUN_IO_AUDIT_R6.md"
+source_audit_r6_status: "SELECTED_KFK5194_INPUTS_AND_MET_FORCING_PRINTED_PAGES_CHECKED_FULL_P0_OPEN"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
