@@ -39,14 +39,14 @@ The main workflows are:
 
 - **V3 Protected Integration Gate** — comprehensive portable tests, current/frozen invariants and V4 machine gates;
 - **V3 Remediation CI** — historical-boundary and evergreen regression checks;
-- **Python compatibility** — selected Python 3.12 and 3.13 smoke/regression tests;
+- **Python 3.11 regression** — one pinned interpreter for installation, imports and representative scientific tests;
 - **External evidence audit** — manual-only review of unavailable restricted/large input requirements; strict mode fails rather than silently substituting fake data.
 
 Check the latest run status for the particular PR; historical green badges alone do not establish that the current commit passed.
 
 ## Optional local reproduction
 
-Requires Python 3.12+:
+Requires Python 3.11 (single supported interpreter minor; see `.python-version` and `pyproject.toml`):
 
 ```bash
 python -m venv .venv
