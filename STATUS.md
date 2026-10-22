@@ -30,7 +30,7 @@ Do not mark a stage or physical claim complete solely because its code compiles 
 For every scientific source PR:
 - **V3 Protected Integration Gate:** all portable tests excluding *declared* external-input and frozen-context markers; frozen/current invariants; existing machine conservation/integration gates.
 - **V3 Remediation CI:** historical boundary contracts and evergreen regression checks.
-- **Python compatibility:** representative smoke and integration tests on Python 3.12 and 3.13.
+- **Python 3.11 regression:** representative smoke and integration tests using the single pinned supported Python minor version, matching CTEAS-next's configured environment.
 
 The check result must correspond to the PR's exact head and compatible base. After merge, `main` CI must pass on the merged commit as an independent signal. CI failure is a blocker to merging unless its cause and waiver are explicitly documented; missing external evidence must not be represented as a successful external validation.
 
