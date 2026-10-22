@@ -24,20 +24,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install locked test environment
+      - name: Build locked Python 3.11 verification image
         run: |
-          python -m pip install uv==0.13.5
-          uv sync --locked --extra test --python "$(command -v python)"
-          echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
+          docker build --progress=plain --target verification --tag "cufotri:verification-${{ github.sha }}" .
 
-      - name: Compile and import interfaces
+      - name: Compile and import interfaces in verification container
         run: |
+          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_DOCKER_SMOKE'
+          set -euo pipefail
           python -m compileall -q src
           python - <<'PY'
           import cteas_ufotri
@@ -46,20 +42,22 @@ jobs:
           import cteas_ufotri.v4_integration
           print('PYTHON_COMPATIBILITY_IMPORTS=PASS')
           PY
+          CUFOTRI_DOCKER_SMOKE
 
-      - name: Run representative portable scientific regression
+      - name: Run representative portable scientific regression inside Docker
         run: |
-          python -m pytest -q \
+          docker run --rm "cufotri:verification-${{ github.sha }}" python -m pytest -q \
             tests/unit \
             tests/integration/test_short_case.py \
             tests/integration/test_v3_pipeline_composite_conservation.py
 
-      - name: Record resolved dependencies for reproducibility audit
+      - name: Record container interpreter and resolved dependencies
         if: always()
         run: |
           mkdir -p ci-env
-          python --version > ci-env/python-version.txt
-          uv pip freeze --python "$(command -v python)" > ci-env/installed-packages.txt
+          docker run --rm "cufotri:verification-${{ github.sha }}" python --version > ci-env/python-version.txt
+          docker run --rm "cufotri:verification-${{ github.sha }}" uv pip freeze --python /opt/cufotri/.venv/bin/python > ci-env/installed-packages.txt
+          docker image inspect --format '{{.Id}}' "cufotri:verification-${{ github.sha }}" > ci-env/verification-image-id.txt
 
       - name: Upload exact interpreter and package versions
         if: always()
