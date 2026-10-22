@@ -1,0 +1,36 @@
+# Python dependency lock policy
+
+The authoritative source of direct runtime/test requirements remains `pyproject.toml`.
+The repository-level `uv.lock` is the **committed universal resolution** for supported Python versions and platforms. It was initially generated on a GitHub-hosted Ubuntu runner using uv **0.13.5**.
+
+## Supported cloud environments
+
+- GitHub-hosted Ubuntu x64, Python 3.12 for Protected Integration Gate, Remediation and external evidence.
+- GitHub-hosted Ubuntu x64, Python 3.12 and Python 3.13 for compatibility CI.
+- A compatible non-Linux local environment may use the universal lock, but untested platform/runtime combinations are not implied to pass.
+
+## Reproduce exact CI dependency resolution
+
+```bash
+python -m pip install uv==0.13.5
+uv sync --locked --extra test --python "$(command -v python)"
+.venv/bin/python -m pytest -q -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret and not historical_review_context"
+```
+
+CI uses precisely `uv sync --locked --extra test`, refusing to silently rewrite the resolved dependency graph. `uv.lock` contains package/version/source and package distribution hashes. This does not itself guarantee permanent external index availability, and it is not a scientific evidence dataset lock.
+
+## Explicit dependency updates
+
+Do not run `uv lock` silently as part of normal PR validation. Instead:
+
+1. Open a dedicated dependency-maintenance PR.
+2. Edit `pyproject.toml` only when direct requirements/compatibility change.
+3. Using uv 0.13.5, run `uv lock --upgrade` (or targeted `uv lock --upgrade-package PACKAGE`), inspect the diff and commit updated `uv.lock`.
+4. Run both Python-version compatibility checks, Protected Integration Gate, Remediation CI and, if public model behavior could change, any relevant fixed numerical/regression fixtures.
+5. Record old/new resolved versions, build provenance, security/licensing implications and any changed numerical results in the PR. Do not force acceptance by relaxing physics tolerances or marking external evidence available.
+
+PyPI versions can be updated only with review. The installed-package manifest uploaded by the Python compatibility CI is an independent **environment audit**, not an alternative authority that overrides `uv.lock`.
+
+## Future improvements
+
+Pin third-party GitHub Action dependencies to full commit SHAs in a separate security audit, and investigate self-hosted storage for publicly redistributable scientific input datasets after validating licenses and hashes. Avoid automatic security-upgrade PRs that bypass numerical equivalence testing.
