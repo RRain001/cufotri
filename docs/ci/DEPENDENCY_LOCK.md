@@ -1,12 +1,13 @@
 # Python dependency lock policy
 
 The authoritative source of direct runtime/test requirements remains `pyproject.toml`.
-The repository-level `uv.lock` is the **committed universal resolution** for supported Python versions and platforms. It was initially generated on a GitHub-hosted Ubuntu runner using uv **0.13.5**.
+The repository-level `uv.lock` is the **committed resolution** for the sole supported Python minor version (3.11) across applicable platforms. It was initially generated on a GitHub-hosted Ubuntu runner using uv **0.13.5**.
 
 ## Supported cloud environments
 
-- GitHub-hosted Ubuntu x64, Python 3.12 for Protected Integration Gate, Remediation and external evidence.
-- GitHub-hosted Ubuntu x64, Python 3.12 and Python 3.13 for compatibility CI.
+- GitHub-hosted Ubuntu x64, **Python 3.11 only** for Protected Integration Gate, Remediation and external evidence.
+- GitHub-hosted Ubuntu x64, **Python 3.11 only** for the portable smoke/regression CI.
+- `.python-version` is `3.11` and `pyproject.toml` restricts runtime to the Python 3.11 minor series (`>=3.11,<3.12`). This aligns with CTEAS-next's Python 3.11 Ubuntu-bootstrap and Docker runtime.
 - A compatible non-Linux local environment may use the universal lock, but untested platform/runtime combinations are not implied to pass.
 
 ## Reproduce exact CI dependency resolution
@@ -26,10 +27,10 @@ Do not run `uv lock` silently as part of normal PR validation. Instead:
 1. Open a dedicated dependency-maintenance PR.
 2. Edit `pyproject.toml` only when direct requirements/compatibility change.
 3. Using uv 0.13.5, run `uv lock --upgrade` (or targeted `uv lock --upgrade-package PACKAGE`), inspect the diff and commit updated `uv.lock`.
-4. Run both Python-version compatibility checks, Protected Integration Gate, Remediation CI and, if public model behavior could change, any relevant fixed numerical/regression fixtures.
+4. Run the Python 3.11 regression, Protected Integration Gate, Remediation CI and, if public model behavior could change, any relevant fixed numerical/regression fixtures.
 5. Record old/new resolved versions, build provenance, security/licensing implications and any changed numerical results in the PR. Do not force acceptance by relaxing physics tolerances or marking external evidence available.
 
-PyPI versions can be updated only with review. The installed-package manifest uploaded by the Python compatibility CI is an independent **environment audit**, not an alternative authority that overrides `uv.lock`.
+PyPI versions can be updated only with review. The installed-package manifest uploaded by the Python 3.11 CI is an independent **environment audit**, not an alternative authority that overrides `uv.lock`.
 
 ## Future improvements
 

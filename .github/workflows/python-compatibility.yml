@@ -1,4 +1,4 @@
-name: CUFOTRI Python compatibility
+name: CUFOTRI Python 3.11 regression
 
 on:
   pull_request:
@@ -16,23 +16,19 @@ concurrency:
 
 jobs:
   python-compatibility:
-    name: Python ${{ matrix.python-version }} portable smoke
+    name: Python 3.11 portable smoke
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.12', '3.13']
     steps:
       - name: Checkout repository with history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.11'
 
       - name: Install locked test environment
         run: |
@@ -69,7 +65,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: python-compatibility-${{ matrix.python-version }}-${{ github.run_id }}
+          name: python-3.11-${{ github.run_id }}
           path: ci-env/
           retention-days: 30
           if-no-files-found: warn
