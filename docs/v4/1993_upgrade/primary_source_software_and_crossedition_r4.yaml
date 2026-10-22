@@ -1,0 +1,427 @@
+# UFOTRI 4.0 KfK 5194 (1993) primary-source guide audit; NO runtime defaults.
+schema_version: 1
+edition: "UFOTRI_4_0_1993"
+source_1993:
+  report: "KfK 5194"
+  year: 1993
+  pdf: "https://publikationen.bibliothek.kit.edu/270034158/3813483"
+comparison_1991:
+  report: "KfK 4853"
+  year: 1991
+  pdf: "https://publikationen.bibliothek.kit.edu/270030531/3813429"
+comparison_1990:
+  report: "KfK 4605"
+  year: 1990
+  pdf: "https://publikationen.bibliothek.kit.edu/270029395/3813413"
+  per_parameter_reconciliation: "PENDING"
+audit_scope: "1993_TABLE_2_TO_8_SOFTWARE_AND_SELECTED_1991_VS_1993_MANUAL_DEFAULTS"
+state: "SOURCE_REVIEW_PARTIAL_NO_SOLVER_IMPLEMENTATION"
+table_2_to_8:
+  - number: 2
+    title: "Old IMSL routines for COMA"
+    printed_page: 80
+    pdf_index: 89
+    kind: "NUMERICAL_LIBRARY"
+    entries:
+      - "EBALAF"
+      - "EHESSF"
+      - "EHBCKF"
+      - "EQRH3F"
+      - "EBBCKF"
+      - "VSRTRD"
+      - "LINV2F"
+      - "VMULFF"
+      - "LEQT1C"
+    note: "1993 screenshot confirms old IMSL eigenvalue/eigenvector and linear algebra implementation; name LEQT1C may be confused with letter l due to scan; retained as a candidate, not executable binding."
+  - number: 3
+    title: "New IMSL routines for COMA"
+    printed_page: 80
+    pdf_index: 89
+    kind: "NUMERICAL_LIBRARY"
+    entries:
+      - "DEVCRG"
+      - "DWRCRN"
+      - "DLFCRG"
+      - "DLFIRG"
+      - "DWRRRN"
+      - "DWRRRN"
+      - "DMRRRR"
+      - "DLFTCG"
+      - "DLFSCG"
+    note: "Original screenshot contains a repeated DWRRRN-like printed identifier with different descriptions, and the matrix multiply symbol has difficult glyphs; these entries are transcribed as evidence, NOT unique code signatures. Preserve row count and flag text uncertainty."
+  - number: 4
+    title: "UFOTRI logical input/output units"
+    printed_page: 81
+    pdf_index: 90
+    kind: "IO_CONTRACT"
+    entries:
+      - "5"
+      - "6"
+      - "11"
+      - "13"
+      - "21"
+      - "31"
+      - "91"
+      - "92"
+      - "93"
+      - "95"
+    note: "NEIN=5, NAUS=6, and report unit 95 holds arrays of inhalation/ingestion doses with and without food restrictions. Unit 95 is NOT a transport coefficient."
+  - number: 5
+    title: "Example UFOTRI job control file"
+    printed_page_start: 82
+    printed_page_end: 83
+    pdf_index_start: 91
+    pdf_index_end: 92
+    kind: "EXAMPLE_INPUT_NOT_DEFAULTS"
+    entries:
+      - "TEILO"
+      - "TEIL1"
+      - "TEIL4"
+      - "TRIDAT"
+      - "METPAR"
+      - "GRDPAR"
+      - "ISOPAR"
+    note: "Fortran and Job Control examples are not default parameter declarations; do not override §7.4 default profile with case inputs."
+  - number: 6
+    title: "UFOTRI main subroutine list"
+    printed_page: 84
+    pdf_index: 93
+    kind: "SOFTWARE_CALL_GRAPH"
+    entries:
+      - "INPUT"
+      - "PUNKTE"
+      - "DOSREL"
+      - "COVER"
+      - "AUSBPF"
+      - "LIFTOF"
+      - "PLRISE-HOEHE"
+      - "PQYZFO"
+      - "PQYZF2"
+      - "DRYDEP-INTEG"
+      - "DRYPF"
+      - "HTDEP"
+      - "RISEFX"
+      - "OUTPA"
+      - "METOUT"
+      - "ZEITNE"
+      - "TRANSF"
+      - "COMA"
+      - "INGES"
+      - "DOSIS"
+      - "OUTDAT"
+      - "CNZOUT"
+      - "PRIPLO"
+      - "FOOBAN"
+      - "FLAEB"
+    note: "Call graph identifies COVER crop stage, ZEITNE harvest boundaries, COMA ingestion, FOOBAN food restriction, DOSREL dose factors; only module names, not source or numeric equivalence."
+  - number: 7
+    title: "AUSBPF secondary-area subroutines"
+    printed_page: 85
+    pdf_index: 94
+    kind: "SOFTWARE_CALL_GRAPH"
+    entries:
+      - "BODENR"
+      - "BODENR-RESIST"
+      - "BODENR-MASSCH"
+      - "BODENR-WATER"
+      - "DRYPF"
+      - "RESUS"
+      - "FLAE"
+      - "FLAE3"
+      - "PQYZFO"
+      - "DRYDE2-INTEG"
+      - "TRANSF"
+    note: "Separate resistance, water transport, plant mass-check, reemission and area-source roles. Existence in table does not prove deployed physics switch."
+  - number: 8
+    title: "COMA long-term ingestion subroutines"
+    printed_page: 85
+    pdf_index: 94
+    kind: "NUMERICAL_SOLVER_CALL_GRAPH"
+    entries:
+      - "COMA"
+      - "COMAS"
+      - "COMA1"
+      - "COMA1-EIGENS"
+      - "COMA2"
+      - "COMA2-CMACMP"
+    note: "COMA1 assembles transfer matrix; EIGENS processes vectors; COMA2 computes actual/integrated box concentrations; CMACMP checks imaginary solutions. Purely documentary boundary, not verified spectral implementation."
+documented_1991_to_1993_defaults:
+  - name: "ISTRGR"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 1000
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 200
+    meaning: "radiation-stress parameter as printed; historical W/m² ×0.357×0.8 convention"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "RCMIN"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 4
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 2
+    meaning: "minimum stomatal resistance for area 1 (report's own normalization)"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "BEWG"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 400
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 1440
+    meaning: "vegetation water mass area 1, g/m²"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "BEWGZ"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 100
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 160
+    meaning: "vegetation organic dry mass area 1, g/m²"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "LEAF"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 3
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 3
+    meaning: "area 1 LAI m²/m²"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "IMODEL"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 1
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 54
+      pdf_page_zero_based: 63
+      documented_default: 1
+    meaning: "extended stomatal resistance path"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "RCPARA"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 20
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 20
+    meaning: "area 1 radiation constant for resistance"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "VPDA"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 27
+      pdf_page_zero_based: 34
+      documented_default: 0.2
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 56
+      pdf_page_zero_based: 65
+      documented_default: 0.2
+    meaning: "area 1 vapor pressure deficit parameter"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "IMEAT"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 300
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 206
+    meaning: "meat intake g/day"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "IVEGE"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 500
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 165
+    meaning: "vegetable intake g/day"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "IMILK"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 300
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 315
+    meaning: "milk-product intake g/day"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "DOSF"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 1.7e-11
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 1.7e-11
+    meaning: "HTO Sv/Bq historical"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "DOSHT"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 1.7e-15
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 1.7e-15
+    meaning: "HT Sv/Bq historical"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "DOSFOB"
+    status: "CHANGED"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 4.5e-11
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 4.0e-11
+    meaning: "OBT Sv/Bq historical; do not reinterpret as current ICRP"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "BRRATE"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 0.00033
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 0.00033
+    meaning: "breathing m³/s"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+  - name: "SKRATE"
+    status: "UNCHANGED_DOCUMENTED_DEFAULT"
+    source_1991:
+      report: "KfK 4853"
+      printed_page: 33
+      pdf_page_zero_based: 40
+      documented_default: 0.00014
+    target_1993:
+      report: "KfK 5194"
+      printed_page: 65
+      pdf_page_zero_based: 74
+      documented_default: 0.00014
+    meaning: "skin uptake m³/s"
+    source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
+long_term_ingestion_control:
+  - parameter: "NBOX/NINI/NINT/NOUT"
+    source_1991_printed_page: 32
+    target_1993_printed_page: 64
+    old_rule: "6 for agricultural-only or 10 for both areas accepted in 1991 user guide"
+    new_rule: "1993 manual states set all to 10; former 6 option untested and may cause errors"
+    decision: "1993_V4_REQUIRE_10_WHEN_VERSION_MODE_IMPLEMENTED"
+  - parameter: "NTIM/TIMC"
+    source_1991_printed_page: 32
+    target_1993_printed_page: 64
+    old_rule: "NTIM=3; TIMC=(0,30,365,7*0), dose integration days"
+    new_rule: "NTIM and TIMC dropped; roles moved to TIMEDO and ITIMD"
+    decision: "VERSIONED_INPUT_MIGRATION_REQUIRED"
+  - parameter: "NTFX"
+    source_1991_printed_page: 32
+    target_1993_printed_page: 64
+    old_rule: "27 default for combined areas, 15 for agricultural-only"
+    new_rule: "27 default; not to be changed; seasonal rearrangement in code"
+    decision: "NO_INFERENCE_FROM_NUMBER_27_TO_GRAPH_EDGE_COUNT"
+example_not_default:
+  - name: "FAKC1"
+    guide_1993_default: 0.4
+    table_5_example_value: 0.2
+    printed_page_guide: 62
+    printed_page_example: 83
+  - name: "FAKC2"
+    guide_1993_default: 0.2
+    table_5_example_value: 0.4
+    printed_page_guide: 62
+    printed_page_example: 83
+  - name: "BRRATE"
+    guide_1993_default: 0.00033
+    table_5_example_value: 0.000267
+    printed_page_guide: 65
+    printed_page_example: 83
+  - name: "DOSHT"
+    guide_1993_default: 1.7e-15
+    table_5_example_value: 6.8e-16
+    printed_page_guide: 65
+    printed_page_example: 83
+  - name: "BEWGP"
+    guide_1993_default: 2400
+    table_5_example_value: 2700
+    printed_page_guide: 58
+    printed_page_example: 83
+notes:
+  - "Table 1 prints masses as g in its cells; §7.4.3 BEWG/BEWGZ/BEWGP etc. input cards explicitly use g/m². Separate printed table unit from runtime area-normalized parameter unit."
+  - "Table 2/3 IMSL library names are historical evidence; original package requires IMSL variants or NAG library, not proof of bitwise identical alternative implementation."
+  - "Table 5 test job cards are examples, and differ from the guide's written default values. Physical defaults must be sourced from the guide's named input entries."
+  - "Table 6-8 are software and computational topology, not new physical parameter tables."
+  - "1991 v4-style model options already include extended stomatal IMODEL=1; do not attribute every present-in-1993 feature to a 1993 invention."
+  - "Scope not exhaustive: full NAMELIST §7.2–7.4.10 cards, numerical methods and independent science audit remain open."
+original_executable_numeric_equivalence: "NOT_ESTABLISHED"
+independent_scientific_review: "NOT_COMPLETED"
+runtime_physics_changed: false

@@ -40,7 +40,7 @@
 | `UF93-19` Winter-wheat edible seed compartment | 1990 has general vegetable and forage chain without explicit 1993 seed transfer submodel. (§3.3.3) | Separate seed HTO/OBT pools (Fig.13), plant-seed water transfer half-time 2 hours and rate Eq.(46)–(48). | §6.2.5 p.31–33 (PDF0 p.40–42) | CONFIRMED_1993_NEW_CROP_PATH / [issue #131](https://github.com/RRain001/cufotri/issues/131) |
 | `UF93-20` Cow grazing and milking subdaily behavior | Similar subdaily grazing/milking roles already described in 1990. (§2.2.7;3.5) | Cow eats grass during daytime; two discrete milkings per day; daily transfer rates adapted hourly. | §5.6 p.23–24 (PDF0 p.32–33) | 1993_FORMULATION_CHECK_REQUIRED / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
 | `UF93-21` Inhalation and skin dose equation | 1990 includes inhalation and skin exposure (Eq.106), but numeric coefficient/version remains separate. (§4.2) | Eq.(34): breathing plus skin equivalent intake × dose factor × integrated concentration. | §5.7 p.24–25 (PDF0 p.33–34) | UNCHANGED_AT_DOCUMENTED_ROLE_LEVEL / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
-| `UF93-22` Distinct HTO/OBT ingestion dose and five foods | 1990 tracked plant/cow HTO and OBT separately but treated ingested OBT with HTO dose coefficient. (§4.1;4.3) | Eq.(35) distinguishes chemical form for milk, meat, vegetables, potatoes and grain, with separate dose conversion factors. | §5.7;6.1 p.25–26 (PDF0 p.34–35) | CONFIRMED_1993_CHANGED_DOSE_POLICY / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
+| `UF93-22` Distinct HTO/OBT ingestion dose and five foods | 1990 KfK4605 formula comparison remains open (§4.1;4.3); **1991 KfK4853 §3.4.6 already has separate OBT DOSFOB=4.5e-11 Sv/Bq**. | 1993 Eq.(35) treats five foods; **DOSFOB=4.0e-11 Sv/Bq** in §7.4.8. This is a confirmed 1991→1993 *default change*, not proof that distinct OBT coefficients first appeared in 1993. | §5.7;6.1 p.25–26 (PDF0 p.34–35), §7.4.8 p.65 | 1993_DOSFOB_DEFAULT_CHANGED_VS_1991_1990_PHYSICS_REVIEW_PENDING / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
 | `UF93-23` Per-food fresh-weight restriction option | 1990 manual dose path lacks an equally evidenced 1993 per-food restriction interface. (§4.3) | Optional food restriction submodel; user-selectable per-food threshold, historical default 1250 Bq/kg fresh mass. | §5.7 p.25 (PDF0 p.34) | CONFIRMED_1993_DOCUMENTED_OPTION / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
 | `UF93-24` 1993 FORTRAN input and default loader | Existing recovery audit documents 1991/1993 loader lineage; original FORTRAN members unavailable. (§1991 user guide KfK4853) | KfK5194 §7.4.2, pp.54-55: IMODEL, ICOVER, IPHOTO, IMONT, IFLAGS, IFLAGR, IDEPHT and IBODEX have printed default=1; §7.4.4 p.61 gives soil parameters/REMRE/REMNI/REDREM defaults. This is documented input contract, NOT evidence of original loader binary behavior. | §7.1–7.3;appendices p.34–91 (PDF0 p.43–100) | CONFIRMED_1993_INTERFACE_DOCUMENTED / [issue #127](https://github.com/RRain001/cufotri/issues/127) |
 
@@ -69,6 +69,18 @@
 - **食物限制历史语义**：§7.4.5–7.4.6 的 `FAKC1/2/FAKCP/FAKCW` 合计为 1，`COGRF(5)` 历史默认 5×1250 Bq/kg 鲜重，`TIMEDO(12)` 使用含重复记号的印刷默认输入；有效剂量主记录**不会由限制模块覆盖**，仅在 `IBANWR=1` 时另存限制后结果。该值不是现代监管限值。
 
 **范围限制**：R3 仍未完成 Table 2–8、剩余参数组、1990/1991 原手册的完整逐项比对及独立源校对，不关闭 P0，不改任何现有数值参数和物理求解器。
+
+## 1.3 R4：软件结构、三版默认值和 1993 Table 1 单位校订
+
+新增 [**KfK5194 Table 2–8 与 1991→1993 用户手册差异审计 R4**](PRIMARY_SOURCE_SOFTWARE_AND_CROSSEDITION_R4.md) 和 [机器可读来源](primary_source_software_and_crossedition_r4.yaml)。
+
+- **Table 2–8 不应按物理转移率表处理**：它们分别是 IMSL 旧/新数值例程、I/O 文件单元、JCL 示例、UFOTRI/AUSBPF/COMA 子程序调用清单；以原始印刷页 p.80–85 为锚点。其中 COMA1-EIGENS 与 COMA2-CMACMP 仅确认原软件职责，尚未获得真实数值结果。
+- **1991 KfK4853 与 1993 KfK5194 的具体参数变更**：`ISTRGR 1000→200`，`RCMIN 4→2`，`BEWG 400→1440 g/m²`，`BEWGZ 100→160 g/m²`，`IMEAT 300→206 g/day`，`IVEGE 500→165 g/day`，`IMILK 300→315 g/day`，`DOSFOB 4.5e-11→4.0e-11 Sv/Bq`。1991 已有独立 `DOSFOB` 与扩展气孔 `IMODEL=1`，不能笼统当作 1993 才发明。
+- **食物链维数及输入迁移**：1991 允许 `NBOX=6` 或 10；1993 指出 6 **未经测试**，推荐 `NBOX=NINI=NINT=NOUT=10`。原 `NTIM/TIMC` 改为 `TIMEDO/ITIMD`。
+- **手册默认与历史运行实例不等价**：Table 5 样例的 `FAKC1=0.2`、`FAKC2=0.4`、`BRRATE=2.67e-4`、`DOSHT=6.8e-16` 等不能覆盖 §7.4 的印刷 DEFAULT。
+- **R3 Table 1 的严格单位区别**：Table 1 表格格内只印 **g**，但同版 §7.4.3 对 BEWG/BEWGZ 等 TRIDAT 质量输入明确要求 **g/m²**。更正“per plant/crop unit”的模糊措辞，不对裸 g 作每株数解释。
+
+**仍未完成 P0 全部文献比较及独立科学审计**；R4 仅纠正已取得的印刷证据，不启动新版物理计算。
 
 ## 2. 1993 模型具有决定意义的已核实变化
 
@@ -100,7 +112,7 @@
 
 ### 2.5 食入与剂量
 
-- **1993 §5.7，p.24–25，Eq.(34)–(35)**：吸入/皮肤剂量与食入剂量分开处理；五类食品包括奶、肉、叶菜、马铃薯、谷物。对 HTO 和 OBT 各自配置剂量系数。
+- **1993 §5.7，p.24–25，Eq.(34)–(35)**：吸入/皮肤剂量与食入剂量分开处理；五类食品包括奶、肉、叶菜、马铃薯、谷物。HTO/OBT 有独立剂量系数，但**1991 用户指南已经明确包含独立的 OBT `DOSFOB`**；1993 改动的是值和完整食物链范围，不能将其说成 1993 才开始区分 HTO/OBT。
 - **1990 KfK 4605 §4.1–4.3**：已独立记录 HTO/OBT 摄入，但按 HTO 剂量系数合并处理。本项是两版剂量策略的重要区别。
 - **1993 §5.7 p.25**：按每种食品设置新鲜质量浓度的**历史软件食物限制阈值**，报告载有 `1250 Bq/kg` 默认值；它绝不是现代法规限值。当前 `dose/public.py` 有现代分开的 HTO/OBT 计算，不构成历史 UFOTRI 4.0 参数体系的独立证据。
 
