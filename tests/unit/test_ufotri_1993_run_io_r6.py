@@ -77,7 +77,14 @@ def test_1991_to_1993_fixed_mode_defaults_remained_equal() -> None:
     names = doc["historical_1991_comparison"]["fields"]
     assert names == ["IRFIX", "REFEST", "ITEMPE", "ISTRBE", "RELFA"]
     assert "UNCHANGED" in doc["historical_1991_comparison"]["verdict"]
-    vals = {x["name"]: x["default"] for x in doc["control_parameters"]}
+    # Some historical controls are Fortran repeat initializers, recorded as
+    # default_raw rather than a scalar default. Restrict this comparison to
+    # the five source-matched stationary controls with numeric defaults.
+    vals = {
+        x["name"]: x["default"]
+        for x in doc["control_parameters"]
+        if x["name"] in names
+    }
     assert [vals[x] for x in names] == [0,5.0,1000,100,0.5]
 
 
