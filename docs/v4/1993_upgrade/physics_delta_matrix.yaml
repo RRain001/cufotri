@@ -21,6 +21,10 @@ baseline_source:
 audit_status: "PARTIAL_SOURCE_ANCHORED_AUDIT_IN_PROGRESS"
 primary_equation_audit_r2: "docs/v4/1993_upgrade/primary_source_formula_audit_r2.yaml"
 primary_source_audit_r2_status: "SELECTED_1993_EQUATIONS_AND_DEFAULTS_VERIFIED_FULL_P0_OPEN"
+primary_source_tables_r3: "docs/v4/1993_upgrade/primary_source_transfer_tables_r3.yaml"
+primary_source_inputs_r3: "docs/v4/1993_upgrade/primary_source_input_defaults_r3.yaml"
+primary_source_table_audit_r3: "docs/v4/1993_upgrade/PRIMARY_SOURCE_TABLE_AUDIT_R3.md"
+source_tables_r3_scope: "TABLE_1_AND_TABLES_9_TO_12_ONLY_FULL_P0_OPEN"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"

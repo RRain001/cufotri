@@ -1,0 +1,190 @@
+# PRIMARY-SOURCE KfK5194 / 1993 UFOTRI 4.0 — printed user-guide defaults.
+# Evidence not an executable configuration. No code defaults may be changed from this file.
+schema_version: 1
+target: "UFOTRI_4_0_1993"
+source_report: "KfK 5194"
+source_pdf: "https://publikationen.bibliothek.kit.edu/270034158/3813483"
+status: "SELECTED_PRINTED_NAMELIST_DEFAULTS_VISUALLY_CHECKED_P0_STILL_OPEN"
+scope: "HISTORICAL_INPUT_DOCUMENTATION_ONLY"
+scalar_defaults:
+  - name: "IBODFX"
+    value: 0
+    printed_page: 60
+    pdf_zero_based_page: 69
+    group: "soil_hydrology"
+    as_printed_semantics: "0=use scalar BODEIN, 1=read hourly soil water from met input"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "BODEIN"
+    value: 0.2
+    printed_page: 60
+    pdf_zero_based_page: 69
+    group: "soil_hydrology"
+    as_printed_semantics: "initial fractional soil water"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "SOILMX"
+    value: 0.5
+    printed_page: 60
+    pdf_zero_based_page: 69
+    group: "soil_hydrology"
+    as_printed_semantics: "maximum pore-space fraction"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "WILTP"
+    value: 0.1
+    printed_page: 60
+    pdf_zero_based_page: 69
+    group: "soil_hydrology"
+    as_printed_semantics: "wilting point soil water fraction"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "IARTBO"
+    value: 1
+    printed_page: 60
+    pdf_zero_based_page: 69
+    group: "soil_hydrology"
+    as_printed_semantics: "soil type selection 1=humus sandy loam,2=loamy sand,3=sand,4=custom; only IBODEX=1"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "FAKC1"
+    value: 0.4
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "agriculture/vegetables fraction"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "FAKC2"
+    value: 0.2
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "pasture fraction"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "FAKCP"
+    value: 0.2
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "potato fraction"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "FAKCW"
+    value: 0.2
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "wheat fraction"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "NCOW"
+    value: 250
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "cows per square km"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "WWCOW"
+    value: 350
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "cow water mass, kg per cow"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "WOCOW"
+    value: 150
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "cow organic mass, kg per cow"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "WATM"
+    value: 8000000
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "atmospheric water mass, kg/km^3 as printed"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "NASS"
+    value: 1930000
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "daily rain mass, kg/(km^3 day) as printed; dimensional conventions need review"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "IRELIN"
+    value: 181
+    printed_page: 62
+    pdf_zero_based_page: 71
+    group: "short_term_ingestion"
+    as_printed_semantics: "release day of year"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "IHARP"
+    value: 258
+    printed_page: 63
+    pdf_zero_based_page: 72
+    group: "short_term_ingestion"
+    as_printed_semantics: "potato harvest day of year"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "IHARW"
+    value: 225
+    printed_page: 63
+    pdf_zero_based_page: 72
+    group: "short_term_ingestion"
+    as_printed_semantics: "winter wheat harvest day of year"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "ITIMD"
+    value: 20
+    printed_page: 63
+    pdf_zero_based_page: 72
+    group: "food_restriction"
+    as_printed_semantics: "print-time index; default 20 no printout"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+  - name: "IBANWR"
+    value: 0
+    printed_page: 63
+    pdf_zero_based_page: 72
+    group: "food_restriction"
+    as_printed_semantics: "store restriction-specific dose on logical unit 95 only if 1"
+    evidence: "PRINTED_PAGE_VISUALLY_CHECKED"
+array_defaults:
+  - name: "FOODST"
+    count: 5
+    raw_default: "meat,milk,vegetables,potatoes,wheat"
+    printed_page: 63
+    pdf_zero_based_page: 72
+    as_printed_semantics: "food names, each character*10"
+  - name: "COGRF"
+    count: 5
+    raw_default: "5 * 1250"
+    numerical_repeated_value: 1250
+    numerical_unit: "Bq/kg fresh mass"
+    printed_page: 63
+    pdf_zero_based_page: 72
+    as_printed_semantics: "historical model food restriction intervention threshold, not a present-day regulatory limit"
+  - name: "TIMEDO"
+    count: 12
+    raw_default: "1,3,7,14,21,30,90,180,200,360,2*3600"
+    raw_default_count_interpretation: "2*3600 is Fortran-like repeat notation for two 3600 entries; interpretation requires original-loader review"
+    printed_page: 63
+    pdf_zero_based_page: 72
+    as_printed_semantics: "dose/food intervention evaluation times in days"
+    source_caveat: "Text says first two values 1 and 3 are internally replaced by 24 and 72 hours; do not reinterpret values before verifying exact software behavior."
+model_semantics:
+  - name: "IARTBO"
+    dependency: "IBODEX=1"
+    cases:
+      "1": "humus sandy loam, special parameters"
+      "2": "loamy sand, special parameters"
+      "3": "sand, special parameters"
+      "4": "custom user-defined 7 parameter hydraulic closure"
+    warning: "Soil AP/BP/CP/... numerical defaults on printed page 61 are not necessarily active for all IARTBO soil types. Must not conflate preset soil-type branch and custom parameters."
+  - name: "IBODFX"
+    dependency: "external meteorological soil moisture file"
+    warning: "IBODFX=1 relies on hourly soil water input, not just scalar BODEIN."
+  - name: "FOOD_RESTRICTION"
+    dependency: "TIMEDO, COGRF, IBANWR"
+    warning: "Manual says effective dose equivalent stored for further evaluation is NOT modified by food restriction; alternative restricted doses are stored separately on logical unit 95 only if IBANWR=1."
+source_conflicts:
+  - kind: "UNIT_BASIS_REVIEW"
+    scope: "NASS, WATM"
+    description: "Historical printed mass and area/time units are retained verbatim; not projected into modern forcing units."
+  - kind: "ARRAY_DEFAULT_AND_RUNTIME_BRANCH_REVIEW"
+    scope: "TIMEDO"
+    description: "Print uses 2*3600 repetition and text states internal overwrites for first two times; original FORTRAN execution not recovered."
+not_covered:
+  - "Complete METEOZON, SOURCE, END, PRINTOUT, POLGRID, ISOTOPE and METEOROL NAMELIST cards remain to audit."
+  - "Remaining plant and model/food/dose NAMELIST parameter chapters §7.4.3, §7.4.7–§7.4.10 remain to audit."
