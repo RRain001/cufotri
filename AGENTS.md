@@ -2,7 +2,7 @@
 
 ## Scientific correctness
 
-1. `ufotri_manual.md` is the primary *available* physical source. Curated equations under `docs/equations/` are the working implementation contract. Do not claim original-executable numerical equivalence without original UFOTRI source/executable comparison.
+1. Source editions are version-scoped: repository-root `ufotri_manual.md` is **KfK 4605 (1990)** for the frozen baseline, while official **KfK 5194 (1993)** is the normative manual for opt-in UFOTRI 4.0 reconstruction ([ADR-085](docs/v4/adr/ADR-085-ufotri-1993-manual-first-reconstruction-authority.md)). Do not require unavailable original code to start reviewed manual-first physics; do not claim original-executable numerical equivalence without original UFOTRI source/executable comparison.
 2. Every equation change must cite its source equation, use SI units, pass dimensional checks, and include conservation or appropriate numerical regression checks.
 3. Keep case-specific values in YAML or versioned data contracts, never hidden in numerical code.
 4. The frozen V4 RC1 baseline and opt-in manual-fidelity paths must remain distinguishable. Do not silently change established defaults, claim empirical validation based on synthetic tests, or interpret an old stage gate as a current full-model approval.
