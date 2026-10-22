@@ -1,0 +1,141 @@
+# KfK 5194 (1993) target. KfK 4853 (1991) and KfK 4605 (1990) historical comparators only.
+schema_version: 1
+title: "UFOTRI 4.0 1993 — cross-edition physics evidence R5"
+target_version: "UFOTRI_4_0_1993"
+target_report: "KfK 5194"
+comparison_reports:
+  - "KfK 4853 (1991)"
+  - "KfK 4605 (1990)"
+audit_status: "SELECTED_PRINTED_PDF_PAGES_CHECKED_FULL_P0_OPEN"
+original_executable_equivalence: "NOT_ESTABLISHED"
+independent_scientific_review: "NOT_COMPLETED"
+runtime_1993_profile_activated: false
+source_documents:
+  - report: "KfK 4605"
+    year: 1990
+    url: "https://publikationen.bibliothek.kit.edu/270029395/3813413"
+  - report: "KfK 4853"
+    year: 1991
+    url: "https://publikationen.bibliothek.kit.edu/270030531/3813429"
+  - report: "KfK 5194"
+    year: 1993
+    url: "https://publikationen.bibliothek.kit.edu/270034158/3813483"
+rows:
+  - id: "R5-01"
+    topic: "Extended stomatal resistance and canopy LAI"
+    link_to_delta: "UF93-03"
+    printed_evidence:
+      - report: "KfK 4853"
+        printed_page: 4
+        pdf_index: 11
+        anchor: "§2.1"
+        finding: "Already explains simple vs extended stomatal mode, PAR, temperature, humidity, soil water and stomatal_r/LAI canopy resistance."
+      - report: "KfK 5194"
+        printed_page: 5
+        pdf_index: 14
+        anchor: "§5.2 Eq.(9)–(10)"
+        finding: "Defines temperature and canopy resistance relation, with explicit parameters."
+    conclusion: "PRESENT_BY_1991_1993_FORMULA_AND_PARAMETER_FIDELITY_UNDER_REVIEW"
+    cannot_claim: "Extended canopy/stomatal physics first originated in 1993."
+    remaining: "Compare KfK4605 equations and exact 1991→1993 stomatal factors/printed defaults before classifying changes."
+  - id: "R5-02"
+    topic: "Soil suction and conductivity constitutive form"
+    link_to_delta: "UF93-09"
+    printed_evidence:
+      - report: "KfK 4853"
+        printed_page: 29
+        pdf_index: 36
+        anchor: "§3.4.3 IBODEX/IARTBO soil parameters"
+        finding: "Already prints SS=1.5E5*PSI1**(AP+BP*PSI1+CP*PSI1**NP) and COND=AKP/(SS**MKP+BKP), with IBODEX=1 and IARTBO=1..4."
+      - report: "KfK 5194"
+        printed_page: 14
+        pdf_index: 23
+        anchor: "§5.3.4 Eq.(21)–(22)"
+        finding: "Prints S=1.5e5*Psi**(a+b*Psi+c*Psi**n), normalized soil moisture Psi=(theta_s-theta)/(theta_s-theta_w)."
+      - report: "KfK 5194"
+        printed_page: 15
+        pdf_index: 24
+        anchor: "§5.3.4 Eq.(23)–(24)"
+        finding: "Prints K=alpha_q/(S**m+beta) and Darcy-like interlayer V_ab."
+    conclusion: "SOIL_HYDRAULIC_CLOSURE_FORM_PRESENT_BY_1991"
+    cannot_claim: "The KfK5194 suction/conductivity constitutive relation is a newly invented 1993 mechanism."
+    remaining: "1990 mathematical basis vs 1991 input-card equations still needs formula-by-formula matching. K units mm/day versus V_ab mm/hour in 1993 remain unresolved."
+  - id: "R5-03"
+    topic: "OBT daytime/nighttime model versus quantitative photosynthesis"
+    link_to_delta: "UF93-14"
+    printed_evidence:
+      - report: "KfK 4605"
+        printed_page: 30
+        pdf_index: 41
+        anchor: "§2.2.6"
+        finding: "Daily-average 0.06%/h uptake, with increased daytime and reduced nighttime value, organic loss 0.3%/h assumption."
+      - report: "KfK 4853"
+        printed_page: 6
+        pdf_index: 13
+        anchor: "§2.4"
+        finding: "Already describes photosynthesis qualitatively and increased daytime/reduced nighttime OBT formation."
+      - report: "KfK 5194"
+        printed_page: 22
+        pdf_index: 31
+        anchor: "§5.5.2 Eq.(32)"
+        finding: "Simple time- and stage-weighted route: T_act=T_m*fact1*fact2; light/dark fact2=1.75/0.25."
+      - report: "KfK 5194"
+        printed_page: 23
+        pdf_index: 32
+        anchor: "§5.5.2 Eq.(33)"
+        finding: "Advanced hourly photosynthesis route T_act=(P_act/P_m)*T_m*fact2*dis; P_m is mean hourly dry-matter production, dis default=0.5."
+    conclusion: "DAY_NIGHT_OBT_PREEXISTS_1993_ADVANCED_QUANTITATIVE_OPTION_DOCUMENTED"
+    cannot_claim: "OBT photosynthetic/diurnal distinction was wholly absent before 1993."
+    remaining: "Validate dynamic PAR/assimilation Eq.(26)–(31), dimensional conversion and empirical night model; no original-executable equivalence."
+  - id: "R5-04"
+    topic: "Soil HTO reemission printed-form difference"
+    link_to_delta: "UF93-11"
+    printed_evidence:
+      - report: "KfK 4605"
+        printed_page: 28
+        pdf_index: 39
+        anchor: "§2.2.4 Eq.(44)"
+        finding: "REEM=(E_as/BODWA)*(1-ABFLR)*C1*C2*ZT, E_as labelled kg m^-2 s^-1; subsequent text adds DIFF*ZT in daytime."
+      - report: "KfK 5194"
+        printed_page: 15
+        pdf_index: 24
+        anchor: "§5.3.4 Eq.(25)"
+        finding: "REEM=(E_as/BODWA)*C1*C2*ZT + REB*ZT, E_as described on following printed p16 as kg m^-2 h^-1; printed evaporation branch lacks (1-ABFLR)."
+    conclusion: "CONFIRMED_PRINTED_FORMULA_DIFFERENCE_NOT_BINARY_PROOF"
+    cannot_claim: "Identical time bases, identical scaling constants or identical executable behavior between editions."
+    remaining: "Resolve ABFLR omission and s^-1 vs h^-1 evaporation basis with original executable/validated tests; do not silently divide/multiply by 3600 or assume common C1."
+  - id: "R5-05"
+    topic: "Dose factor is 1991-known and 1993-updated"
+    link_to_delta: "UF93-22"
+    printed_evidence:
+      - report: "KfK 4853"
+        printed_page: 33
+        pdf_index: 40
+        anchor: "§3.4.6"
+        finding: "Separate DOSF=1.7e-11 HTO, DOSHT=1.7e-15 HT and DOSFOB=4.5e-11 OBT Sv/Bq are already defined."
+      - report: "KfK 5194"
+        printed_page: 65
+        pdf_index: 74
+        anchor: "§7.4.8"
+        finding: "Separate factors retained; DOSFOB default changed to 4.0e-11 Sv/Bq; 1993 diet includes potatoes and wheat."
+    conclusion: "SEPARATE_OBT_FACTOR_PREEXISTS_1993_1991_TO_1993_PARAMETER_CHANGED"
+    cannot_claim: "A distinct ingestion OBT dose coefficient first appeared in 1993."
+    remaining: "1990 KfK4605 detailed ingest conversion context to be reconciled, particularly legacy combined HTO/OBT handling."
+  - id: "R5-06"
+    topic: "Soil time-unit conflict"
+    link_to_delta: "UF93-09"
+    printed_evidence:
+      - report: "KfK 5194"
+        printed_page: 15
+        pdf_index: 24
+        anchor: "§5.3.4 Eq.(23)–(24)"
+        finding: "Printed hydraulic conductivity K stated in mm/d; V_ab reported in mm/h for transfer between layers."
+      - report: "KfK 4853"
+        printed_page: 29
+        pdf_index: 36
+        anchor: "§3.4.3 IBODEX/IARTBO"
+        finding: "Earlier code-input guide lists constitutive formulas but does not resolve the 1993 V_ab time convention."
+    conclusion: "SOURCE_LIMITED_UNIT_AMBIGUITY_OPEN"
+    cannot_claim: "The exact conversion is known or the 1993 runtime must divide by 24."
+    remaining: "Verify original V_ab and K_ab accumulation time step, index semantics, compiled model or independent reference data."
+evidence_policy: "Source's printed wording is recorded, the comparison conclusion is bounded to checked pages, and the absence of original binary evidence is NOT_ESTABLISHED."
