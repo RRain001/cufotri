@@ -1,0 +1,75 @@
+name: CUFOTRI Python compatibility
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: python-compatibility-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-compatibility:
+    name: Python ${{ matrix.python-version }} portable smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.12', '3.13']
+    steps:
+      - name: Checkout repository with history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install test environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[test]'
+
+      - name: Compile and import interfaces
+        run: |
+          python -m compileall -q src
+          python - <<'PY'
+          import cteas_ufotri
+          import cteas_ufotri.atmosphere.ufotri_native_v4
+          import cteas_ufotri.v3_pipeline
+          import cteas_ufotri.v4_integration
+          print('PYTHON_COMPATIBILITY_IMPORTS=PASS')
+          PY
+
+      - name: Run representative portable scientific regression
+        run: |
+          python -m pytest -q \
+            tests/unit \
+            tests/integration/test_short_case.py \
+            tests/integration/test_v3_pipeline_composite_conservation.py
+
+      - name: Record resolved dependencies for reproducibility audit
+        if: always()
+        run: |
+          mkdir -p ci-env
+          python --version > ci-env/python-version.txt
+          python -m pip freeze > ci-env/installed-packages.txt
+
+      - name: Upload exact interpreter and package versions
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-compatibility-${{ matrix.python-version }}-${{ github.run_id }}
+          path: ci-env/
+          retention-days: 30
+          if-no-files-found: warn
