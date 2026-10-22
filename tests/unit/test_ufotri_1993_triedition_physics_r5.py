@@ -81,7 +81,7 @@ def test_original_1990_and_1991_dose_distinctions_not_overstated() -> None:
     assert main["target_version"] == "UFOTRI_4_0_1993"
     assert main["audit_status"] == "PARTIAL_SOURCE_ANCHORED_AUDIT_IN_PROGRESS"
     assert main["runtime_1993_profile_activated"] is False
-    assert "TRIEDITION" in main["source_audit_r5_status"]
+    assert "1990_1991_1993" in main["source_audit_r5_status"]
     items = {x["id"]: x for x in main["rows"]}
     assert len(items) == 24
     assert items["UF93-03"]["comparison_1991_status"] == "EXTENDED_STOMATAL_AND_LAI_PRESENT_BY_1991"
