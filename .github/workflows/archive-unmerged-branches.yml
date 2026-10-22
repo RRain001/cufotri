@@ -1,0 +1,113 @@
+name: CUFOTRI archive and retire historical unmerged branches
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/archive-unmerged-branches.yml
+      - scripts/maintenance/archive_unmerged_branches.py
+      - scripts/maintenance/unmerged-branches-20261022.json
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/archive-unmerged-branches.yml
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Preview the 37 reviewed branches or archive and delete them
+        required: true
+        type: choice
+        options:
+          - preview
+          - archive_delete
+        default: preview
+      confirmation:
+        description: For archive_delete enter ARCHIVE_AND_DELETE_37_CUFOTRI
+        required: false
+        type: string
+
+concurrency:
+  group: cufotri-merged-branch-cleanup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Python and frozen manifest structure
+        run: |
+          python3 -m py_compile scripts/maintenance/archive_unmerged_branches.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path("scripts/maintenance/unmerged-branches-20261022.json").read_text())
+          branches = manifest["branches"]
+          assert len(branches) == 37
+          assert len({b["name"] for b in branches}) == 37
+          assert len({b["sha"] for b in branches}) == 34
+          assert all(b["name"].startswith("codex/") and len(b["sha"]) == 40 for b in branches)
+          print("FROZEN_BRANCH_MANIFEST=PASS")
+          PY
+
+  archive-and-clean:
+    if: >-
+      github.repository == 'RRain001/cufotri'
+      && github.ref == 'refs/heads/main'
+      && (
+        (github.event_name == 'push' && contains(github.event.head_commit.message, '[run-unmerged-archive-20261022]'))
+        || github.event_name == 'workflow_dispatch'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Fetch all branch refs and bundle entire Git history before mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          mkdir -p "${RUNNER_TEMP}/unmerged-archive-backup"
+          git for-each-ref --format='%(objectname) %(refname)' refs/remotes/origin \
+            > "${RUNNER_TEMP}/unmerged-archive-backup/remote-ref-manifest.txt"
+          git bundle create "${RUNNER_TEMP}/unmerged-archive-backup/all-refs.bundle" --all
+          git bundle verify "${RUNNER_TEMP}/unmerged-archive-backup/all-refs.bundle"
+
+      - name: Upload recovery bundle before archiving or deleting branches
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-unmerged-history-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/unmerged-archive-backup/
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Preserve history in verified archive ref before deleting old names
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARCHIVE_MODE: ${{ github.event_name == 'push' && 'archive_delete' || inputs.mode }}
+          ARCHIVE_CONFIRMATION: ${{ inputs.confirmation }}
+          TRIGGER_COMMIT_TITLE: ${{ github.event.head_commit.message }}
+          REPORT_PATH: ${{ runner.temp }}/unmerged-history-report.json
+        run: |
+          python3 -m py_compile scripts/maintenance/archive_unmerged_branches.py
+          python3 scripts/maintenance/archive_unmerged_branches.py
+
+      - name: Upload archival verification and deletion report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-unmerged-history-report-${{ github.run_id }}
+          path: ${{ runner.temp }}/unmerged-history-report.json
+          retention-days: 90
+          if-no-files-found: warn
