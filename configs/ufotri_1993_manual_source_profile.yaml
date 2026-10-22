@@ -1,0 +1,51 @@
+# P1 R1: printed 1993 input defaults, NO executable 1993 solver profile.
+schema_version: 1
+profile_id: KFK5194_1993_V4
+authority: KfK 5194
+source_url: https://publikationen.bibliothek.kit.edu/270034158/3813483
+record_kind: PRINTED_HISTORICAL_DEFAULTS_METADATA_ONLY
+runtime_activation: false
+original_executable_equivalence: NOT_ESTABLISHED
+feature_flags:
+  IMODEL: {value: 1, printed_page: 54, pdf0: 63}
+  ICOVER: {value: 1, printed_page: 54, pdf0: 63}
+  IPHOTO: {value: 1, printed_page: 54, pdf0: 63}
+  IMONT: {value: 1, printed_page: 54, pdf0: 63}
+  IFLAGS: {value: 1, printed_page: 54, pdf0: 63}
+  IFLAGR: {value: 1, printed_page: 54, pdf0: 63}
+  IDEPHT: {value: 1, printed_page: 55, pdf0: 64}
+  IBODEX: {value: 1, printed_page: 55, pdf0: 64}
+nuclides:
+  printed_pages: [46, 47]
+  order: [HT, HTO]
+  deposition_velocity_m_s: [0.0005, 0.005]
+wet_scavenging:
+  printed_pages: [46, 47]
+  IWASH: 0
+  mode_zero: THREE_PRECIPITATION_CLASSES
+  class_boundaries_raw: [100, 300]
+  boundary_raw_unit: 0.01_mm_h
+  class_boundaries_mm_h: [1.0, 3.0]
+  rate_unit: per_s
+  HT_rates_per_s: [0.0, 0.0, 0.0]
+  HTO_rates_per_s: [0.00006, 0.0001, 0.0004]
+  HT_rain_duration_fraction: [0.0, 0.0, 0.0]
+  HTO_rain_duration_fraction: [0.5, 0.75, 0.72]
+  optional_IWASH_1_power_law: NOT_ACTIVATED
+meteorology:
+  printed_page: 48
+  METIN: 0
+  NOSHFT: 2
+  IWNDG_raw: 500
+  IWNDG_raw_unit: 0.01_m_s
+  IWNDG_m_s: 5.0
+  IREGN_raw: 0
+  IREGN_raw_unit: 0.01_mm_h
+source_limited:
+  RELFA:
+    printed_page: 66
+    printed_default: 0.5
+    printed_unit_label: percent
+    normalized_value: null
+    status: SOURCE_LIMITED
+    reason: Original percent-vs-fraction convention not resolved; do not assign 0.5% or 50%.
