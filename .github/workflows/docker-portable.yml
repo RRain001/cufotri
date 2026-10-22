@@ -1,0 +1,74 @@
+name: CUFOTRI Docker dual-stage verification
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cufotri-docker-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-portable:
+    name: Docker Python 3.11 verification and runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout full history without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build locked Python 3.11 verification stage
+        run: |
+          docker build --progress=plain --target verification \
+            --tag cufotri:verify-${{ github.sha }} .
+
+      - name: Check Python, git and locked test dependencies inside Docker
+        run: |
+          docker run --rm --entrypoint /bin/sh cufotri:verify-${{ github.sha }} -ec '
+            python -c "import sys; assert sys.version_info[:2] == (3, 11)"
+            git rev-parse --verify HEAD
+            python -m pytest -q tests/unit/test_single_python_runtime_policy.py
+          '
+
+      - name: Build production-only runtime image
+        run: |
+          docker build --progress=plain --target runtime \
+            --build-arg SOURCE_REVISION="${{ github.sha }}" \
+            --tag cufotri:runtime-${{ github.sha }} .
+
+      - name: Check no uv, pytest, git, source tree or test data in runtime
+        run: |
+          docker run --rm --entrypoint /bin/sh cufotri:runtime-${{ github.sha }} -ec '
+            test "$(id -u)" = "10001"
+            python -c "import sys; assert sys.version_info[:2] == (3,11)"
+            python -c "import cteas_ufotri, numpy, scipy, matplotlib"
+            test -f /opt/cufotri/configs/test_case.yaml
+            test ! -d /opt/cufotri/.git
+            test ! -d /opt/cufotri/tests
+            test ! -d /opt/cufotri/src
+            test ! -e /opt/cufotri/uv.lock
+            ! command -v uv
+            ! command -v git
+            ! python -m pytest --version >/dev/null 2>&1
+          '
+
+      - name: Run production CLI from non-root image
+        run: |
+          docker run --rm --tmpfs /results:rw,uid=10001,gid=10001 \
+            cufotri:runtime-${{ github.sha }}
+
+      - name: Report container boundaries
+        run: |
+          echo "DOCKER_VERIFICATION_STAGE=BUILT"
+          echo "DOCKER_RUNTIME=NON_ROOT_NO_UV_NO_PYTEST_NO_GIT"
+          echo "PYTHON=3.11"
+          echo "SCIENTIFIC_EXTERNAL_EVIDENCE=NOT_RUN"

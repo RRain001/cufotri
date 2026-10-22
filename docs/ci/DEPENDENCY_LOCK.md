@@ -5,8 +5,8 @@ The repository-level `uv.lock` is the **committed resolution** for the sole supp
 
 ## Supported cloud environments
 
-- GitHub-hosted Ubuntu x64, **Python 3.11 only** for Protected Integration Gate, Remediation and external evidence.
-- GitHub-hosted Ubuntu x64, **Python 3.11 only** for the portable smoke/regression CI.
+- GitHub-hosted Ubuntu x64 runs Docker **Python 3.11** verification images for Protected Integration Gate, Remediation and external evidence.
+- GitHub-hosted Ubuntu x64 runs the same Docker **Python 3.11** verification stage for portable smoke/regression CI; no separate host Python testing environment is installed.
 - `.python-version` is `3.11` and `pyproject.toml` restricts runtime to the Python 3.11 minor series (`>=3.11,<3.12`). This aligns with CTEAS-next's Python 3.11 Ubuntu-bootstrap and Docker runtime.
 - A compatible non-Linux local environment may use the universal lock, but untested platform/runtime combinations are not implied to pass.
 
@@ -18,7 +18,7 @@ uv sync --locked --extra test --python "$(command -v python)"
 .venv/bin/python -m pytest -q -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret and not historical_review_context"
 ```
 
-CI uses precisely `uv sync --locked --extra test`, refusing to silently rewrite the resolved dependency graph. `uv.lock` contains package/version/source and package distribution hashes. This does not itself guarantee permanent external index availability, and it is not a scientific evidence dataset lock.
+The verification Docker build uses precisely `uv sync --locked --extra test`, while the runtime dependencies stage uses `uv sync --locked --no-dev --no-editable`, refusing to silently rewrite the resolved dependency graph. CI test commands execute in Docker, not in a second host-managed Python virtual environment. `uv.lock` contains package/version/source and package distribution hashes. This does not itself guarantee permanent external index availability, and it is not a scientific evidence dataset lock.
 
 ## Explicit dependency updates
 
@@ -31,6 +31,8 @@ Do not run `uv lock` silently as part of normal PR validation. Instead:
 5. Record old/new resolved versions, build provenance, security/licensing implications and any changed numerical results in the PR. Do not force acceptance by relaxing physics tolerances or marking external evidence available.
 
 PyPI versions can be updated only with review. The installed-package manifest uploaded by the Python 3.11 CI is an independent **environment audit**, not an alternative authority that overrides `uv.lock`.
+
+The container build instructions, non-root runtime contract and images' scientific boundaries are documented in [DOCKER_WORKFLOW.md](DOCKER_WORKFLOW.md).
 
 ## Future improvements
 

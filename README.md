@@ -27,26 +27,38 @@ The model includes the UFOTRI-native HTO/HT atmospheric route, deposition and so
 | `validation/` | Independent benchmark protocols, data provenance, adapters and external evidence contracts |
 | `scripts/v4/` | Auditable V4 stage runners and machine validation gates |
 | `docs/v4/` | ADRs, status, source-fidelity decisions and stage evidence |
-| `.github/workflows/` | PR/main CI, runtime compatibility and manually invoked external evidence audit |
+| `.github/workflows/` | Docker-based PR/main scientific CI, runtime image verification and manual external-evidence audit |
 
 The large historical `docs/implementation_status.md` remains a legacy stage ledger, **not** the current top-level release authority. Its dated stage entries should not override the two V4 roadmaps or [STATUS.md](STATUS.md).
 
 ## GitHub-first development
 
-Development takes place through a short-lived GitHub branch and pull request; a permanent local clone is not required. Run validation on GitHub-hosted Actions. Review the exact PR head, both existing scientific CI workflows and compatibility checks before merging to `main`.
+Development takes place through a short-lived GitHub branch and pull request; a permanent local clone is not required. The GitHub-hosted Actions runner builds a **Python 3.11 Docker verification image** and executes the scientific tests inside that image. Review the exact PR head, both existing scientific CI workflows and compatibility checks before merging to `main`.
 
 The main workflows are:
 
 - **V3 Protected Integration Gate** — comprehensive portable tests, current/frozen invariants and V4 machine gates;
 - **V3 Remediation CI** — historical-boundary and evergreen regression checks;
-- **Python 3.11 regression** — one pinned interpreter for installation, imports and representative scientific tests;
+- **Python 3.11 regression** — one Docker-contained interpreter for installation, imports and representative scientific tests;
+- **Docker dual-stage verification** — build and test the isolated verification image and non-root runtime image;
 - **External evidence audit** — manual-only review of unavailable restricted/large input requirements; strict mode fails rather than silently substituting fake data.
 
 Check the latest run status for the particular PR; historical green badges alone do not establish that the current commit passed.
 
-## Optional local reproduction
+## Docker verification and runtime
 
-Requires Python 3.11 (single supported interpreter minor; see `.python-version` and `pyproject.toml`):
+GitHub Actions uses the Docker verification image (Python 3.11 + `uv.lock`) for all scientific Python tests. It also checks a separate non-root runtime image with no pytest, uv, or Git history. See [Docker workflow](docs/ci/DOCKER_WORKFLOW.md) for security boundaries, commands and configuration.
+
+```bash
+docker build --target verification -t cufotri:verify .
+docker run --rm cufotri:verify python -m pytest -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret and not historical_review_context"
+docker build --target runtime -t cufotri:runtime .
+docker run --rm --tmpfs /results:rw,uid=10001,gid=10001 cufotri:runtime
+```
+
+## Optional non-Docker local reproduction
+
+Requires Python 3.11 (single supported interpreter minor; see `.python-version` and `pyproject.toml`). This is a developer convenience, **not** a second CI environment:
 
 ```bash
 python -m venv .venv
