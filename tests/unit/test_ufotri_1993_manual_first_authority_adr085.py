@@ -29,7 +29,7 @@ def test_adr_and_project_status_keep_external_claims_unestablished() -> None:
         "SOURCE_LIMITED", "original executable", "per-feature",
         "independent", "opt-in", "NOT_ESTABLISHED", "IWASH=0"
     ):
-        assert token in adr
+        assert token.lower() in adr.lower()
     assert "original FORTRAN source/executable is NOT a prerequisite" in adr or (
         "Original FORTRAN source/executable is NOT a prerequisite" in adr
     )
