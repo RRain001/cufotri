@@ -33,12 +33,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
 
-      - name: Install test environment
+      - name: Install locked test environment
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e '.[test]'
+          python -m pip install uv==0.13.5
+          uv sync --locked --extra test --python "$(command -v python)"
+          echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Compile and import interfaces
         run: |
@@ -63,7 +63,7 @@ jobs:
         run: |
           mkdir -p ci-env
           python --version > ci-env/python-version.txt
-          python -m pip freeze > ci-env/installed-packages.txt
+          uv pip freeze --python "$(command -v python)" > ci-env/installed-packages.txt
 
       - name: Upload exact interpreter and package versions
         if: always()
