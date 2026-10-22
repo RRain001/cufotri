@@ -100,7 +100,12 @@ rows:
         printed_page: 15
         pdf_index: 24
         anchor: "§5.3.4 Eq.(25)"
-        finding: "REEM=(E_as/BODWA)*C1*C2*ZT + REB*ZT, E_as described on following printed p16 as kg m^-2 h^-1; printed evaporation branch lacks (1-ABFLR)."
+        finding: "REEM=(E_as/BODWA)*C1*C2*ZT + REB*ZT; printed evaporation branch lacks (1-ABFLR)."
+      - report: "KfK 5194"
+        printed_page: 16
+        pdf_index: 25
+        anchor: "§5.3.4 Eq.(25) variable definitions"
+        finding: "E_as labelled kg m^-2 h^-1 and reemission stated in percent per hour."
     conclusion: "CONFIRMED_PRINTED_FORMULA_DIFFERENCE_NOT_BINARY_PROOF"
     cannot_claim: "Identical time bases, identical scaling constants or identical executable behavior between editions."
     remaining: "Resolve ABFLR omission and s^-1 vs h^-1 evaporation basis with original executable/validated tests; do not silently divide/multiply by 3600 or assume common C1."
@@ -137,5 +142,5 @@ rows:
         finding: "Earlier code-input guide lists constitutive formulas but does not resolve the 1993 V_ab time convention."
     conclusion: "SOURCE_LIMITED_UNIT_AMBIGUITY_OPEN"
     cannot_claim: "The exact conversion is known or the 1993 runtime must divide by 24."
-    remaining: "Verify original V_ab and K_ab accumulation time step, index semantics, compiled model or independent reference data."
+    remaining: "Printed K mm/day and V_ab mm/hour cannot be reconciled from these pages alone; verify original V_ab and K_ab accumulation time step, index semantics, compiled model or independent reference data."
 evidence_policy: "Source's printed wording is recorded, the comparison conclusion is bounded to checked pages, and the absence of original binary evidence is NOT_ESTABLISHED."
