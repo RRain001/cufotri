@@ -59,11 +59,16 @@ def test_1993_source_truncation_reemission_and_hourly_input_controls() -> None:
 def test_1993_primary_source_contradictions_not_automatically_corrected() -> None:
     doc = _read("primary_source_run_io_contract_r6.yaml")
     conflicts = {x["parameter"]: x for x in doc["source_conflicts"]}
-    assert set(conflicts) == {"IZFREI", "RELFA", "NSTOP", "METEO_FILE"}
+    assert set(conflicts) == {"IZFREI", "RELFA", "NSTOP", "METEO_FILE", "BODFAK"}
     assert conflicts["IZFREI"]["printed_condition"] == "0 < IZFREI < 3600"
     assert conflicts["IZFREI"]["printed_default"] == "3600"
     assert "UNRESOLVED" in conflicts["IZFREI"]["resolution"]
     assert conflicts["RELFA"]["printed_default"] == "0.5"
+    # KfK5194 printed p51 uses two descriptions for the reference
+    # concentration; a matching numerical source-threshold rule is unproven.
+    assert "soil concentration" in conflicts["BODFAK"]["printed_prose_label"]
+    assert "air concentration" in conflicts["BODFAK"]["printed_parameter_label"]
+    assert "UNRESOLVED" in conflicts["BODFAK"]["resolution"]
     inputs = {x["name"]: x for x in doc["control_parameters"]}
     assert inputs["IRFIX"]["default"] == 0
     assert "testing" in inputs["IRFIX"]["meaning"]
