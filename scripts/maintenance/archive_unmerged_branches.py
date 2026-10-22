@@ -195,8 +195,6 @@ def main():
             if tip not in parents:
                 parents.extend(["-p", tip])
         message = archive_message(manifest)
-        if commit.returncode != 0:
-            raise RuntimeError("Cannot build archival commit: " + commit.stderr)
         commit = git(
             "commit-tree", git("rev-parse", f"{main_sha}^{{tree}}").stdout.strip(),
             *parents, "-m", message,
