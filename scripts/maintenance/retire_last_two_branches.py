@@ -90,7 +90,9 @@ def ensure_tag(name, sha, description):
     if git("show-ref", "--verify", "--quiet", "refs/tags/" + name,
            check=False).returncode == 0:
         raise RuntimeError("Conflicting local tag: " + name)
-    git("tag", "-a", name, sha, "-m", description)
+    git("-c", "user.name=github-actions[bot]", "-c",
+        "user.email=41898282+github-actions[bot]@users.noreply.github.com",
+        "tag", "-a", name, sha, "-m", description)
     push = git("push", "--porcelain", "origin",
                "refs/tags/" + name + ":refs/tags/" + name, check=False)
     if push.returncode:
