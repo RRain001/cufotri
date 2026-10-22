@@ -26,7 +26,7 @@ def test_adr_and_project_status_keep_external_claims_unestablished() -> None:
     adr = ADR.read_text(encoding="utf-8")
     for token in (
         "KfK 5194", "KfK 4853", "KfK 4605", "manual-first",
-        "SOURCE_LIMITED", "original executable", "per-feature",
+        "SOURCE_LIMITED", "original-executable", "per-feature",
         "independent", "opt-in", "NOT_ESTABLISHED", "IWASH=0"
     ):
         assert token.lower() in adr.lower()
