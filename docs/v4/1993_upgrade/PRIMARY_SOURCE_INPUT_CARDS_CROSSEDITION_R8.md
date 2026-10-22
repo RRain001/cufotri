@@ -36,3 +36,7 @@
 R8 建立版本范围内的 **R8-01–R8-07** 比较证据与五条风险登记，但不替代 [R7 的 1993 专项原文审计](PRIMARY_SOURCE_METEOZON_SOURCE_R7.md)；R7 `historical_1991_comparison=NOT_COMPLETED` 指其本身未完成全面对照，而 R8 **仅完成所列页面的部分双版对照**。优先解决 `K1.2` 实际 FORTRAN 变量输入顺序、1991 `K2.2` 超额描述符、`K2.4` 原始卡及 `IPZ` 时标，再决定是否开发真正的版本化读卡接口。
 
 本 PR 不变更 `src/`、`configs/`、冻结的 KfK4605 求解器、科研容差、Docker 或锁文件。**P0=OPEN；1993_RUNTIME_MODE=NOT_ACTIVATED；ORIGINAL_EXECUTABLE_EQUIVALENCE=NOT_ESTABLISHED；EMPIRICAL_VALIDATION=NOT_ESTABLISHED**。所有结论仅是所列原始文献页面的印刷事实，待独立科学复核。
+
+## R9 附加证据：印刷示例不能替代读取器实测
+
+R8 仅比较两版正文印刷字段和 `FORMAT`。后续 [R9 原始作业输入示例交叉审计](PRIMARY_SOURCE_JOB_CARD_SAMPLES_R9.md) 使用 1991 Table 3 p.43 与 1993 Table 5 p.82 的可见示例，发现 `SOURCE` 的第三个额外数字及 `METEOZON` 数字 token 与固定列说明尚不能一一对应。保留 R8 的纸面差异，**不宣称任何一版已恢复原 FORTRAN 读取逻辑**。

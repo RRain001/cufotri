@@ -43,6 +43,9 @@ historical_source_cards_status_r7: "SELECTED_KFK5194_METEOZON_SOURCE_END_CARDS_V
 source_cards_crossedition_audit_r8: "docs/v4/1993_upgrade/primary_source_input_cards_crossedition_r8.yaml"
 source_cards_crossedition_report_r8: "docs/v4/1993_upgrade/PRIMARY_SOURCE_INPUT_CARDS_CROSSEDITION_R8.md"
 source_cards_crossedition_status_r8: "SELECTED_KFK4853_KFK5194_CARDS_COMPARED_FULL_P0_OPEN"
+printed_job_card_sample_audit_r9: "docs/v4/1993_upgrade/primary_source_job_card_samples_r9.yaml"
+printed_job_card_sample_report_r9: "docs/v4/1993_upgrade/PRIMARY_SOURCE_JOB_CARD_SAMPLES_R9.md"
+source_audit_r9_status: "PRINTED_1991_1993_EXAMPLES_CHECKED_ORIGINAL_READER_NOT_ESTABLISHED_P0_OPEN"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
