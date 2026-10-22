@@ -16,6 +16,8 @@ For current claims, read these in conjunction with `STATUS.md`. Historical docum
 
 ## UFOTRI 4.0 (1993) future target — source audit in progress
 
+- [First opt-in KfK5194 IWASH=0 physical source-depletion budget](v4/1993_upgrade/IWASH0_PHYSICS_R1.md): P1-profiled historical class washout and explicitly interpreted REGTIM, dry/wet source conservation, bounded sensitivity; not default-runtime 1993 activation or original executable parity.
+
 - [ADR-085: 1993 KfK5194 manual-first reconstruction authority](v4/adr/ADR-085-ufotri-1993-manual-first-reconstruction-authority.md): official 1993 report defines opt-in physical equations/defaults even without recovered original source/executable; mandatory per-feature PDF evidence and scientific gates; original-executable, empirical and regulatory equivalence are separately unestablished.
 
 - [1993 KfK 5194 physics delta matrix](v4/1993_upgrade/PHYSICS_DELTA_MATRIX.md): **1993 UFOTRI 4.0 is the TARGET version**; KfK 4605 (1990) is comparison-only. This source-anchored P0 audit is partial and does not enable the 1993 physics implementation.

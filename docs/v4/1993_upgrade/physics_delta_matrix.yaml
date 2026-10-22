@@ -55,6 +55,9 @@ source_audit_r9_status: "PRINTED_1991_1993_EXAMPLES_CHECKED_ORIGINAL_READER_NOT_
 p1_historical_input_metadata_contract: "configs/ufotri_1993_manual_source_profile.yaml"
 p1_historical_input_metadata_report: "docs/v4/1993_upgrade/P1_R1_MANUAL_SOURCE_PROFILE.md"
 p1_historical_input_status: "DOC_DEFAULTS_TYPED_METADATA_ONLY_NO_SOLVER_ACTIVATION"
+iwash0_optin_physics_r1: "src/cteas_ufotri/atmosphere/kfk5194_1993_washout.py"
+iwash0_optin_physics_report_r1: "docs/v4/1993_upgrade/IWASH0_PHYSICS_R1.md"
+iwash0_optin_physics_status: "SOURCE_ANCHORED_OPT_IN_SOURCE_DEPLETION_REGTIM_ASSUMPTION_SOURCE_LIMITED_NOT_FULL_1993_RUNTIME"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
