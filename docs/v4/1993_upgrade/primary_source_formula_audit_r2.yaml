@@ -223,13 +223,13 @@ documented_defaults:
     meaning: "HT deposition resistance approach (1) vs fixed (0)"
     print_page: 55
     pdf_page_index: 64
-    source_review: "PDF_TEXT_INDEXED_VISUAL_RECHECK_PENDING"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
   - name: "IBODEX"
     value: 1
     meaning: "matric-force soil transport (1) vs simple (0)"
     print_page: 55
     pdf_page_index: 64
-    source_review: "PDF_TEXT_INDEXED_VISUAL_RECHECK_PENDING"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
   - name: "SOILAP"
     value: 1.65
     meaning: "suction relation exponent parameter AP"
