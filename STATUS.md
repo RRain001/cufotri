@@ -16,6 +16,14 @@ Snapshot: 2026-10-22. This page is a concise entrypoint, not a replacement for t
 
 The qualified manual-based reconstruction intentionally preserves boundaries concerning source-limited MUSEMET numerics, certain building-wake/plume-rise branches, washout details, and the original executable's parameter selection. Synthetic and conservation PASS results must not be described as original-executable equivalence or empirical validity.
 
+## Original UFOTRI manual edition versus planned 1993 target
+
+The repository-root `ufotri_manual.md` is a transcription of **W. Raskob, KfK 4605 (1990)**. The already-qualified manual-based H1–H6 reconstruction primarily tracks that edition (with explicitly documented later public evidence); it is **not** a verified reproduction of UFOTRI version 4.0.
+
+The separately planned target is **W. Raskob, KfK 5194 (August 1993), *Description of the New Version 4.0 of the Tritium Model UFOTRI Including User Guide*.** Its preliminary primary-source physics audit is `docs/v4/1993_upgrade/PHYSICS_DELTA_MATRIX.md`, and the source-version evidence registry is `docs/v4/1993_upgrade/physics_delta_matrix.yaml`. These files describe **1993 UFOTRI 4.0**, using 1990 as a comparison baseline; they are not a 1993 solver, finished P0 audit or numerical equivalence proof.
+
+`KFK5194_1993_V4_DOCUMENTED_PHYSICS_RECONSTRUCTION=NOT_ESTABLISHED`; `UFOTRI_1993_ORIGINAL_EXECUTABLE_NUMERIC_EQUIVALENCE=NOT_ESTABLISHED`; `UFOTRI_1993_EMPIRICAL_VALIDATION=NOT_ESTABLISHED`. Existing V4 project stage names refer to CUFOTRI internal development and do not imply correspondence to the 1993 UFOTRI model version.
+
 ## Source of truth
 
 1. The **native-atmosphere correction** roadmap overrides older descriptions that placed all atmospheric physics outside this project.
