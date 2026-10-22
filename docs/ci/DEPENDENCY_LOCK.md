@@ -34,6 +34,11 @@ PyPI versions can be updated only with review. The installed-package manifest up
 
 The container build instructions, non-root runtime contract and images' scientific boundaries are documented in [DOCKER_WORKFLOW.md](DOCKER_WORKFLOW.md).
 
+CI uses a read-through Buildx/GitHub Actions dependency cache to avoid reinstalling
+identical packages in every job. The cache does not replace `uv.lock` and is
+populated only from the Docker `verification-deps` stage, before the complete
+Git history and test evidence are copied into the verification image.
+
 ## Future improvements
 
 Pin third-party GitHub Action dependencies to full commit SHAs in a separate security audit, and investigate self-hosted storage for publicly redistributable scientific input datasets after validating licenses and hashes. Avoid automatic security-upgrade PRs that bypass numerical equivalence testing.

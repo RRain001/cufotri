@@ -26,9 +26,18 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Build locked Python 3.11 verification image
-        run: |
-          docker build --progress=plain --target verification --tag "cufotri:verification-${{ github.sha }}" .
+      - name: Initialize Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build locked Python 3.11 verification image using shared dependency cache
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: verification
+          load: true
+          tags: cufotri:verification-${{ github.sha }}
+          cache-from: type=gha,scope=cufotri-py311-deps-v1
 
       - name: Compile and import interfaces in verification container
         run: |
