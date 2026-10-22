@@ -102,7 +102,7 @@ def test_output_switches_remain_diagnostics_not_physics_switches() -> None:
     assert d["izuaus_default"] == 0
     assert d["kausdr_default"] == [0] * 12
     assert set(d["known_diagnostic_routes"]).issuperset(
-        {"4", "5", "7", "8", "9", "10", "11", "12"}
+        {4, 5, 7, 8, 9, 10, 11, 12}
     )
     assert "not physical" in d["note"]
 
