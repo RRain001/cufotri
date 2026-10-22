@@ -1,0 +1,27 @@
+name: Temporary CUFOTRI Docker base digest verification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/_temporary-python-base-digest.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-base:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: docker/setup-buildx-action@v3
+      - name: Obtain and check official Python 3.11 Bookworm multi-platform index digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker buildx imagetools inspect docker.io/library/python:3.11-slim-bookworm | tee /tmp/python-base-digest.txt
+          DIGEST="$(awk '/^Digest:/{print $2; exit}' /tmp/python-base-digest.txt)"
+          [[ "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]
+          grep -q 'linux/amd64' /tmp/python-base-digest.txt
+          grep -q 'linux/arm64' /tmp/python-base-digest.txt
+          echo "CUFOTRI_VERIFIED_PY311_INDEX=$DIGEST"
