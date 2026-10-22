@@ -1,0 +1,89 @@
+name: CUFOTRI retire final historical branches
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/retire-last-two-branches.yml
+      - scripts/maintenance/retire_last_two_branches.py
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/retire-last-two-branches.yml
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: For manual execution enter RETAIN_TAGS_DELETE_TWO_BRANCHES
+        required: true
+        type: string
+
+concurrency:
+  group: cufotri-final-branch-retirement
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Python archive/retirement script
+        run: python3 -m py_compile scripts/maintenance/retire_last_two_branches.py
+
+  retire:
+    if: >-
+      github.repository == 'RRain001/cufotri'
+      && github.ref == 'refs/heads/main'
+      && (
+        (github.event_name == 'push' && contains(github.event.head_commit.message, '[retire-cufotri-branches-20261022]'))
+        || github.event_name == 'workflow_dispatch'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Fetch all Git refs and build recovery bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          mkdir -p "${RUNNER_TEMP}/cufotri-last-refs"
+          git for-each-ref --format='%(objectname) %(refname)' refs/remotes/origin refs/tags \
+            > "${RUNNER_TEMP}/cufotri-last-refs/all-refs-before.txt"
+          git bundle create "${RUNNER_TEMP}/cufotri-last-refs/final-branch-history.bundle" --all
+          git bundle verify "${RUNNER_TEMP}/cufotri-last-refs/final-branch-history.bundle"
+
+      - name: Save recovery artifacts before any branch mutation
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-last-refs-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/cufotri-last-refs/
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Publish and verify annotated tags, then retire two historical branches
+        env:
+          RETIRE_CONFIRMATION: ${{ inputs.confirmation }}
+          TRIGGER_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          REPORT_PATH: ${{ runner.temp }}/last-branch-retirement-report.json
+        run: |
+          python3 -m py_compile scripts/maintenance/retire_last_two_branches.py
+          python3 scripts/maintenance/retire_last_two_branches.py
+
+      - name: Save exact tag/branch verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-last-branch-report-${{ github.run_id }}
+          path: ${{ runner.temp }}/last-branch-retirement-report.json
+          retention-days: 90
+          if-no-files-found: warn
