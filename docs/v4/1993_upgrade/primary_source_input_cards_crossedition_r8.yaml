@@ -1,0 +1,272 @@
+# Selected printed 1991/1993 guide source contrast only; not active model inputs.
+{
+  "schema_version": 1,
+  "document_kind": "UFOTRI_P0_R8_1991_1993_PRINTED_INPUT_CARD_COMPARISON",
+  "scope": "SELECTED_KFK4853_AND_KFK5194_GUIDE_CARDS_ONLY_NOT_A_PARSER",
+  "status": "SELECTED_PRIMARY_PAGES_VERIFIED_FULL_P0_OPEN",
+  "base_version": "KFK4605_1990_FROZEN_NOT_SOURCE_MAPPED_IN_THIS_R8",
+  "sources": {
+    "legacy_1991": {
+      "report": "KfK 4853",
+      "model": "UFOTRI_1991",
+      "url": "https://publikationen.bibliothek.kit.edu/270030531/3813429",
+      "printed_pages": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "pdf_zero_based_page_offset": 7,
+      "section_prefix": "3.2"
+    },
+    "target_1993": {
+      "report": "KfK 5194",
+      "model": "UFOTRI_4_0_1993",
+      "url": "https://publikationen.bibliothek.kit.edu/270034158/3813483",
+      "printed_pages": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "pdf_zero_based_page_offset": 9,
+      "section_prefix": "7.2"
+    }
+  },
+  "comparison_rows": [
+    {
+      "id": "R8-01",
+      "topic": "compiler_array_caps",
+      "status": "MATCHING_PRINTED_PARAMETERS_NOT_CASE_DEFAULTS",
+      "legacy_page": 10,
+      "target_page": 36,
+      "shared_values": {
+        "NSITMX": 5,
+        "LWMAX": 144,
+        "NPHSMX": 17,
+        "NTYPMX": 2,
+        "NUCMAX": 2,
+        "NRMAX": 20,
+        "NPHIMX": 72
+      },
+      "interpretation": "compiler PARAMETER maxima unchanged on reviewed pages; no original binary checked"
+    },
+    {
+      "id": "R8-02",
+      "topic": "METEOZON_K1_2_fixed_column_mapping",
+      "status": "PRINTED_FIELD_ORDER_DIFFERS_SOURCE_LIMITED_PARSER",
+      "legacy_page": 11,
+      "target_page": 37,
+      "legacy_continuation_page": 12,
+      "target_continuation_page": 38,
+      "printed_format_both": "1X,A8,1X,2I10,5I5",
+      "legacy_field_order": [
+        "ZONNAM",
+        "LMAX",
+        "NSTMAX",
+        "LPOPT",
+        "LWOPT",
+        "IBEWE",
+        "IRAU",
+        "IHOM"
+      ],
+      "target_field_order": [
+        "ZONNAM",
+        "LMAX",
+        "NSTMAX",
+        "LPOPT",
+        "LWOPT",
+        "IRAU",
+        "IHOM",
+        "IBEWE"
+      ],
+      "differing_last_three_legacy": [
+        "IBEWE",
+        "IRAU",
+        "IHOM"
+      ],
+      "differing_last_three_target": [
+        "IRAU",
+        "IHOM",
+        "IBEWE"
+      ],
+      "interpretation": "same FORMAT but descriptions swap three I5 positions; unsafe to reuse a version-free positional parser; actual FORTRAN executable read order NOT VERIFIED",
+      "source_check": "1991 printed p11 shows first five names, p12 lists IBEWE then IRAU then IHOM; 1993 pp37-38 lists IRAU then IHOM then IBEWE"
+    },
+    {
+      "id": "R8-03",
+      "topic": "METEOZON_K1_3_K1_4_sampling",
+      "status": "MATCHING_PRINTED_BRANCHES_NOT_NUMERICAL_PARITY",
+      "legacy_pages": [
+        11,
+        12
+      ],
+      "target_pages": [
+        37,
+        38
+      ],
+      "shared_switches": {
+        "LPOPT": {
+          "0": "equal_probabilities",
+          "1": "K1.4_PWET",
+          "2": "NUNITS_13"
+        },
+        "LWOPT": {
+          "0": "cyclic",
+          "1": "K1.3_LWET_hours",
+          "2": "NUNITS_13"
+        }
+      },
+      "shared_conditional_cards": {
+        "K1.3": "LWOPT=1",
+        "K1.4": "LPOPT=1"
+      },
+      "pwet_normalization": "sum_L_PWET(L)=1",
+      "shared_ibewe_rule": "IBEWE set to zero if LWOPT != 0",
+      "interpretation": "matching printed choices are not proof of original numerical weather-sequence sampling"
+    },
+    {
+      "id": "R8-04",
+      "topic": "METEOZON_K1_5_TO_K1_7_population_scope",
+      "status": "DIFFERENT_PRINTED_SCOPE_CLARIFICATION_NOT_PROVEN_CODE_CHANGE",
+      "legacy_pages": [
+        12,
+        13
+      ],
+      "target_pages": [
+        38,
+        39
+      ],
+      "legacy_text_fact": "KfK4853 p12 S2: for each site NS=1..NSTMAX cards K1.5 to K1.7 are required",
+      "target_text_fact": "KfK5194 p38 S2 repeats site requirement then explicitly says (not considered in UFOTRI, COSYMA relevant)",
+      "interpretation": "do not turn historical site/population cards into required modern UFOTRI population pathway without original program proof"
+    },
+    {
+      "id": "R8-05",
+      "topic": "SOURCE_K2_2_FORMAT_VS_NAMED_FIELDS",
+      "status": "PRINTED_FORMAT_DISCREPANCY_SOURCE_LIMITED_PARSER",
+      "legacy_page": 14,
+      "target_page": 40,
+      "legacy_printed_format": "A8,2X,3I10,F10.2",
+      "target_printed_format": "A8,2X,2I10",
+      "shared_named_fields": [
+        "UNFNAM",
+        "NPHMAX",
+        "IPZ"
+      ],
+      "legacy_printed_descriptor_count": "A8 plus 3I10 and F10.2 while only NPHMAX,IPZ numeric named",
+      "target_printed_descriptor_count": "A8 plus 2I10 consistent with the two named integers",
+      "interpretation": "extra 1991 descriptors may reflect a printing error or unused descriptors; do not infer file layout, missing hidden fields or executable behavior without code and examples"
+    },
+    {
+      "id": "R8-06",
+      "topic": "SOURCE_K2_3_RELEASE_PHASE",
+      "status": "MATCHING_PRINTED_FIELDS_NOT_EXECUTABLE_PARITY",
+      "legacy_page": 14,
+      "target_page": 40,
+      "shared_printed_format": "2I10,3E10.3",
+      "shared_phase_fields": [
+        "IPHASE(NP)",
+        "IHO(NP)",
+        "QH(NP)",
+        "BR(NP)",
+        "HOE(NP)"
+      ],
+      "shared_qh_units": "cal/s",
+      "qh_semantics": "thermal release not radiological activity; distinct from 1993 §7.4.1 Q(NN,J),Q1(J)",
+      "shared_k2_4_reference": "K2.4 referenced in both editions but details not shown on the cited page",
+      "interpretation": "printed K2.3 is inherited, not first introduced in 1993; K2.4 unknown; do not invent active radiological source parsing"
+    },
+    {
+      "id": "R8-07",
+      "topic": "END_K3_1",
+      "status": "MATCHING_PRINTED_TERMINATOR_ONLY",
+      "legacy_page": 15,
+      "target_page": 41,
+      "shared_format": "A8",
+      "shared_field": "END",
+      "shared_success_message": "END OF INPUT WITHOUT ERRORS",
+      "interpretation": "input completion text does not assert physics acceptance or executable equivalence"
+    }
+  ],
+  "crossedition_findings": {
+    "confirmed_same": [
+      "R8-01",
+      "R8-03",
+      "R8-06",
+      "R8-07"
+    ],
+    "printed_differences_or_clarification": [
+      "R8-02",
+      "R8-04",
+      "R8-05"
+    ],
+    "dangerous_direct_translation": [
+      "R8-02",
+      "R8-05"
+    ],
+    "parser_equivalence": "NOT_ESTABLISHED",
+    "source_1990_full_input_comparison": "NOT_COMPLETED",
+    "full_1991_to_1993_card_comparison": "NOT_COMPLETED",
+    "independent_scientific_review": "NOT_COMPLETED",
+    "runtime_1993_profile_activated": false,
+    "original_executable_numeric_equivalence": "NOT_ESTABLISHED",
+    "empirical_validation": "NOT_ESTABLISHED"
+  },
+  "risk_ledger": [
+    {
+      "id": "SRC-R8-01",
+      "hazard": "versionless METEOZON K1.2 five-I5 positional decode",
+      "severity": "HIGH",
+      "disposition": "DO_NOT_IMPLEMENT_UNTIL_ORIGINAL_SOURCE_OR_SAMPLE_CARDS_REVIEWED",
+      "evidence_ids": [
+        "R8-02"
+      ]
+    },
+    {
+      "id": "SRC-R8-02",
+      "hazard": "unmatched SOURCE K2.2 1991 FORMAT descriptors and named variable count",
+      "severity": "HIGH",
+      "disposition": "SOURCE_LIMITED_NO_INFERRED_HIDDEN_FIELDS",
+      "evidence_ids": [
+        "R8-05"
+      ]
+    },
+    {
+      "id": "SRC-R8-03",
+      "hazard": "1991 population card requirement misread as active UFOTRI physics",
+      "severity": "MEDIUM",
+      "disposition": "SCOPE_QUALIFICATION_ONLY_NO_CODE_CHANGE",
+      "evidence_ids": [
+        "R8-04"
+      ]
+    },
+    {
+      "id": "SRC-R8-04",
+      "hazard": "K2.3 QH cal/s conflated with radiological Q1",
+      "severity": "HIGH",
+      "disposition": "KEEP_DISTINCT_HISTORIC_INPUT_NAMES_AND_UNITS",
+      "evidence_ids": [
+        "R8-06"
+      ]
+    },
+    {
+      "id": "SRC-R8-05",
+      "hazard": "K2.4 referenced but not shown",
+      "severity": "MEDIUM",
+      "disposition": "UNKNOWN_REQUIRES_PRIMARY_EVIDENCE",
+      "evidence_ids": [
+        "R8-06"
+      ]
+    }
+  ],
+  "safe_next_actions": [
+    "Obtain original KfK4853/KfK5194 formatted input card examples, distinguish manual typo from program READ list",
+    "Review original FORTRAN input-reader source or binary reproducibility before proposing version-specific parser",
+    "Finish other optional 1991/1993 cards and 1990 baseline mapping with independent scientific review"
+  ]
+}

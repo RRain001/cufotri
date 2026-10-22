@@ -40,6 +40,9 @@ input_washout_source_audit_r6b_status: "SELECTED_KFK5194_INPUT_GROUPS_WASHOUT_AN
 historical_source_cards_audit_r7: "docs/v4/1993_upgrade/primary_source_meteozon_source_r7.yaml"
 historical_source_cards_report_r7: "docs/v4/1993_upgrade/PRIMARY_SOURCE_METEOZON_SOURCE_R7.md"
 historical_source_cards_status_r7: "SELECTED_KFK5194_METEOZON_SOURCE_END_CARDS_VERIFIED_FULL_P0_OPEN"
+source_cards_crossedition_audit_r8: "docs/v4/1993_upgrade/primary_source_input_cards_crossedition_r8.yaml"
+source_cards_crossedition_report_r8: "docs/v4/1993_upgrade/PRIMARY_SOURCE_INPUT_CARDS_CROSSEDITION_R8.md"
+source_cards_crossedition_status_r8: "SELECTED_KFK4853_KFK5194_CARDS_COMPARED_FULL_P0_OPEN"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
