@@ -1,0 +1,90 @@
+name: CUFOTRI merged branch cleanup
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/prune-merged-branches.yml
+      - scripts/maintenance/prune_merged_branches.py
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Preview without deleting, or delete safely merged branches
+        required: true
+        type: choice
+        options:
+          - preview
+          - delete
+        default: preview
+      confirmation:
+        description: For delete, enter DELETE_MERGED_CUFOTRI_BRANCHES
+        required: false
+        type: string
+
+concurrency:
+  group: cufotri-merged-branch-cleanup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile cleanup script
+        run: python3 -m py_compile scripts/maintenance/prune_merged_branches.py
+
+  cleanup:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && github.repository == 'RRain001/cufotri'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+      pull-requests: read
+      actions: write
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Fetch every remote branch and create a full ref backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          mkdir -p "${RUNNER_TEMP}/cufotri-ref-backup"
+          git for-each-ref --format='%(refname) %(objectname)' refs/remotes/origin \
+            > "${RUNNER_TEMP}/cufotri-ref-backup/remote-ref-manifest.txt"
+          git bundle create "${RUNNER_TEMP}/cufotri-ref-backup/all-refs.bundle" --all
+          git bundle verify "${RUNNER_TEMP}/cufotri-ref-backup/all-refs.bundle"
+
+      - name: Upload recovery bundle BEFORE any deletion
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-ref-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/cufotri-ref-backup/
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Preview or delete only provably merged branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLEANUP_MODE: ${{ inputs.mode }}
+          CLEANUP_CONFIRMATION: ${{ inputs.confirmation }}
+          REPORT_PATH: ${{ runner.temp }}/cufotri-branch-report.json
+        run: |
+          python3 -m py_compile scripts/maintenance/prune_merged_branches.py
+          python3 scripts/maintenance/prune_merged_branches.py
+
+      - name: Upload exact-SHA audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cufotri-branch-cleanup-report-${{ github.run_id }}
+          path: ${{ runner.temp }}/cufotri-branch-report.json
+          if-no-files-found: warn
+          retention-days: 90
