@@ -13,7 +13,11 @@ table_1:
   pdf_page_index_zero_based: 26
   title: "Key values for the developing stage of the plants considered in UFOTRI"
   country_scope: "Historical German model development, not universal crop values"
-  mass_basis: "Printed g per plant/crop unit; original area/yield interpretation needs independent confirmation"
+  mass_basis: "Table 1 cells themselves print g, without an area denominator. KfK5194 §7.4.3 related BEWG/BEWGZ plant water/dry mass NAMELIST inputs use g/m²; do not interpret Table 1 as per-individual plant mass."
+  table_units_as_printed: "g"
+  associated_1993_namelist_plant_mass_units: "g/m^2"
+  normalization_audit: "TABLE1_BARE_G_VS_TRIDAT_G_PER_M2_SOURCE_MAPPING_REQUIRES_VALIDATION"
+  reference_1993_input_parameters_printed_pages: "56–59"
   values:
     plant_total_mass_g:
       leafy_vegetables: 1600
