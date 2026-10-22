@@ -3,7 +3,7 @@ name: V3 Remediation CI
 on:
   push:
     branches:
-      - codex/v3-repository-audit-remediation
+      - main
   pull_request:
     branches:
       - main
@@ -33,9 +33,21 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e '.[test]'
 
-      - name: Check remediation diff and report
+      - name: Verify immutable event diff and existing remediation report
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
         run: |
-          git diff --check 5ba891ec5e2d24cffdfe197afcf9006d2e4c5280..HEAD
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            test -n "$PR_BASE_SHA"
+            git cat-file -e "${PR_BASE_SHA}^{commit}"
+            git merge-base --is-ancestor "$PR_BASE_SHA" HEAD
+            git diff --check "$PR_BASE_SHA" HEAD
+          else
+            git diff --check HEAD^ HEAD
+          fi
           test -f docs/v3/reports/v3_repository_audit_remediation.md
 
       - name: Run historical boundary governance tests
