@@ -1,0 +1,38 @@
+# Never include host-installed packages, output files or private datasets.
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+data/
+outputs/
+.env
+.env.*
+**/.env
+**/.env.*
+.cdsapirc
+**/.cdsapirc
+era5_key.txt
+**/era5_key.txt
+**/*credentials*.yaml
+**/*credential*.json
+**/*token*.json
+**/*.nc
+**/*.netcdf
+*.log
+*.tmp
+.DS_Store
+# The project keeps local-only, access-controlled research evidence here.
+validation/external_local/**
+!validation/external_local/.gitignore
+!validation/external_local/README.md
+# Intentional: .git is included ONLY in the unpublishable verification target
+# so old-SHA/frozen-boundary tests can read the full Git object history.
+# Neither the python-deps nor the runtime target copies .git.
