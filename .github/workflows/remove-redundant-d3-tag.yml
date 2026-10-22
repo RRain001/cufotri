@@ -1,0 +1,91 @@
+name: CUFOTRI remove redundant D3 history tag
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/remove-redundant-d3-tag.yml
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/remove-redundant-d3-tag.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify expected commit and tag policies
+        run: |
+          test 'history/local-v3-d3-acquisition-20260826' != 'history/unmerged-branch-tips-20261022'
+          echo "Only the redundant D3 history tag is eligible."
+
+  delete-redundant-tag:
+    if: >-
+      github.event_name == 'push'
+      && github.repository == 'RRain001/cufotri'
+      && github.ref == 'refs/heads/main'
+      && contains(github.event.head_commit.message, '[remove-redundant-d3-tag-20261022]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify exact target and delete only redundant tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET='history/local-v3-d3-acquisition-20260826'
+          KEEP='history/unmerged-branch-tips-20261022'
+          EXPECTED_TAG_OBJECT='8955028ac8a4db9fbf71825f412686f7032d09b6'
+          EXPECTED_COMMIT='e0d6f89a34e75b939ec9fe64411d18f23866d76e'
+          EXPECTED_KEEP_OBJECT='a19def77ad55f833ec5f8b81b7b7b3fb6fc15a84'
+          EXPECTED_KEEP_COMMIT='d604e9f426dc084ec94eed63f6a28b658b833c51'
+
+          remote_sha() {
+            git ls-remote origin "$1" | awk -v ref="$1" '$2 == ref {print $1}'
+          }
+
+          git fetch --no-tags origin main
+          git fetch --tags origin
+          MAIN_SHA="$(remote_sha refs/heads/main)"
+          test "$MAIN_SHA" = "$GITHUB_SHA"
+
+          TARGET_OBJECT="$(remote_sha "refs/tags/$TARGET")"
+          TARGET_PEELED="$(remote_sha "refs/tags/$TARGET^{}")"
+          KEEP_OBJECT="$(remote_sha "refs/tags/$KEEP")"
+          KEEP_PEELED="$(remote_sha "refs/tags/$KEEP^{}")"
+
+          test "$TARGET_OBJECT" = "$EXPECTED_TAG_OBJECT"
+          test "$TARGET_PEELED" = "$EXPECTED_COMMIT"
+          test "$KEEP_OBJECT" = "$EXPECTED_KEEP_OBJECT"
+          test "$KEEP_PEELED" = "$EXPECTED_KEEP_COMMIT"
+          git merge-base --is-ancestor "$EXPECTED_COMMIT" "$MAIN_SHA"
+
+          echo "Verified redundant annotated tag object and ancestry in main."
+          echo "Verified retained archival tag and its peeled commit."
+
+          git push --porcelain \
+            --force-with-lease="refs/tags/$TARGET:$EXPECTED_TAG_OBJECT" \
+            origin ":refs/tags/$TARGET"
+
+          test -z "$(git ls-remote origin "refs/tags/$TARGET" "refs/tags/$TARGET^{}")"
+          test "$(remote_sha "refs/tags/$KEEP")" = "$EXPECTED_KEEP_OBJECT"
+          test "$(remote_sha "refs/tags/$KEEP^{}")" = "$EXPECTED_KEEP_COMMIT"
+          test "$(remote_sha refs/heads/main)" = "$MAIN_SHA"
+
+          {
+            echo '## Redundant CUFOTRI history tag deleted'
+            echo "- Removed: \`$TARGET\`"
+            echo "- Retained: \`$KEEP\`"
+            echo "- Removed tag commit is an ancestor of main: $EXPECTED_COMMIT"
+            echo "- Unchanged main: $MAIN_SHA"
+          } >> "$GITHUB_STEP_SUMMARY"
