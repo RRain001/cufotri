@@ -4,24 +4,36 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Audit declared data readiness, or strict scientific verification
+        description: Audit data presence, or strict scientific verification
         required: true
         type: choice
         options:
           - audit
           - strict
         default: audit
+      dataset:
+        description: Select independently qualified dataset; ALL checks all four
+        required: true
+        type: choice
+        options:
+          - ALL
+          - SB1
+          - SB4
+          - ERA5_ACCEPTANCE
+          - D3_PRIVATE_REBLIND_SECRET
+        default: ALL
 
 permissions:
   contents: read
 
 concurrency:
-  group: cufotri-external-evidence-${{ github.ref }}
+  group: cufotri-external-evidence-${{ github.ref }}-${{ inputs.dataset }}
   cancel-in-progress: false
 
 jobs:
   external-evidence:
-    name: External evidence ${{ inputs.mode }}
+    name: External evidence ${{ inputs.mode }} ${{ inputs.dataset }}
+    if: github.repository == 'RRain001/cufotri' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -39,9 +51,10 @@ jobs:
           uv sync --locked --extra test --python "$(command -v python)"
           echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
 
-      - name: Audit declared external scientific datasets without exposing secrets
+      - name: Audit declared datasets and target readiness without revealing secrets
         env:
           EVIDENCE_MODE: ${{ inputs.mode }}
+          EVIDENCE_TARGET: ${{ inputs.dataset }}
         shell: bash
         run: |
           set -euo pipefail
@@ -52,48 +65,76 @@ jobs:
           from pathlib import Path
           from validation.external_input_requirements import check_dataset, InputStatus
 
-          datasets = ("SB1", "SB4", "ERA5_ACCEPTANCE", "D3_PRIVATE_REBLIND_SECRET")
+          names = ("SB1", "SB4", "ERA5_ACCEPTANCE", "D3_PRIVATE_REBLIND_SECRET")
+          target = os.environ["EVIDENCE_TARGET"]
+          mode = os.environ["EVIDENCE_MODE"]
+          if target not in (*names, "ALL") or mode not in ("audit", "strict"):
+              raise SystemExit("Unknown external evidence mode or dataset")
+          selected = names if target == "ALL" else (target,)
           results = []
-          for name in datasets:
-              status = check_dataset(Path.cwd(), name)
+          for name in names:
+              check = check_dataset(Path.cwd(), name)
               entry = {
                   "dataset": name,
-                  "status": status.status.value,
-                  "missing_count": len(status.missing_paths),
-                  "invalid_count": len(status.invalid_paths),
+                  "selected": name in selected,
+                  "status": check.status.value,
+                  "missing_count": len(check.missing_paths),
+                  "invalid_count": len(check.invalid_paths),
               }
               results.append(entry)
-              print(f"{name}: {entry['status']} (missing={entry['missing_count']}, invalid={entry['invalid_count']})")
-
-          ready = all(x["status"] == InputStatus.AVAILABLE.value for x in results)
+              print(
+                  f"{name}: {entry['status']} "
+                  f"selected={entry['selected']} "
+                  f"missing={entry['missing_count']} invalid={entry['invalid_count']}"
+              )
+          ready = all(
+              entry["status"] == InputStatus.AVAILABLE.value
+              for entry in results if entry["selected"]
+          )
           report = {
-              "mode": os.environ["EVIDENCE_MODE"],
-              "all_external_inputs_available": ready,
+              "mode": mode,
+              "dataset_target": target,
+              "selected_datasets": selected,
+              "selected_inputs_available": ready,
               "datasets": results,
-              "claim": (
-                  "INPUT_READINESS_ONLY_NOT_SCIENTIFIC_VALIDATION"
-                  if os.environ["EVIDENCE_MODE"] == "audit"
-                  else "STRICT_INPUT_READINESS_PRECHECK"
-              ),
+              "claim": "INPUT_READINESS_ONLY_NOT_EMPIRICAL_VALIDATION",
           }
           Path("external-evidence-audit/input-readiness.json").write_text(
               json.dumps(report, indent=2) + "\n", encoding="utf-8"
           )
-          if os.environ["EVIDENCE_MODE"] == "strict" and not ready:
-              raise SystemExit("Strict external evidence blocked: inputs absent or invalid")
+          if mode == "strict" and not ready:
+              raise SystemExit("Strict verification BLOCKED: selected inputs absent or invalid")
           PY
 
-      - name: Execute marked external evidence tests (strict only)
+      - name: Run strictly selected external test markers
         if: inputs.mode == 'strict'
-        run: >-
-          python -m pytest -q --require-external-inputs
-          -m "external_sb1_data or external_sb4_data or external_era5_data or private_reblinding_secret"
+        env:
+          EVIDENCE_TARGET: ${{ inputs.dataset }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "$EVIDENCE_TARGET" in
+            ALL)
+              selection='external_sb1_data or external_sb4_data or external_era5_data or private_reblinding_secret' ;;
+            SB1)
+              selection='external_sb1_data' ;;
+            SB4)
+              selection='external_sb4_data' ;;
+            ERA5_ACCEPTANCE)
+              selection='external_era5_data' ;;
+            D3_PRIVATE_REBLIND_SECRET)
+              selection='private_reblinding_secret' ;;
+            *)
+              echo "Unsupported evidence dataset" >&2
+              exit 2 ;;
+          esac
+          python -m pytest -q --require-external-inputs -m "$selection"
 
-      - name: Upload machine-readable evidence readiness (not raw inputs)
+      - name: Upload metadata-only evidence readiness, never raw inputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: external-evidence-readiness-${{ github.run_id }}
+          name: external-evidence-readiness-${{ inputs.dataset }}-${{ github.run_id }}
           path: external-evidence-audit/
           retention-days: 90
           if-no-files-found: warn
