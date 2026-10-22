@@ -21,17 +21,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install locked project and test dependencies
+      - name: Build locked Python 3.11 verification image
         run: |
-          python -m pip install uv==0.13.5
-          uv sync --locked --extra test --python "$(command -v python)"
-          echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
+          docker build --progress=plain --target verification --tag "cufotri:verification-${{ github.sha }}" .
 
       - name: Verify immutable event diff and existing remediation report
         env:
@@ -52,6 +46,8 @@ jobs:
 
       - name: Run historical boundary governance tests
         run: |
+          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
+          set -euo pipefail
           python -m pytest \
             tests/architecture/test_atmos_v3_boundary.py \
             tests/architecture/test_dose_v3_boundary.py \
@@ -74,11 +70,14 @@ jobs:
             tests/v3/test_p7_8a_physics_redesign_governance.py \
             tests/v3/test_p7_8b1_redesign_specification.py \
             tests/v3/test_p7_8b2_physics_selection.py
-
+          CUFOTRI_CI_CONTAINER_SCRIPT
       - name: Run current evergreen and synthetic verification tests
         run: |
+          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
+          set -euo pipefail
           python -m pytest \
             tests/architecture/test_codex_branch_disposition.py \
             tests/architecture/test_v3_current_remediation_invariants.py \
             tests/integration/test_v3_pipeline_composite_conservation.py \
             tests/v3/test_p7_7b_synthetic_benchmarks.py
+          CUFOTRI_CI_CONTAINER_SCRIPT
