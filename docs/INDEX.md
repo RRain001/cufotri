@@ -14,6 +14,14 @@ This is a navigation map, not a new scientific acceptance statement. Start with 
 
 For current claims, read these in conjunction with `STATUS.md`. Historical documents may contain older time-bounded statuses; they should not be rewritten retroactively.
 
+## UFOTRI 4.0 (1993) future target — source audit in progress
+
+- [1993 KfK 5194 physics delta matrix](v4/1993_upgrade/PHYSICS_DELTA_MATRIX.md): **1993 UFOTRI 4.0 is the TARGET version**; KfK 4605 (1990) is comparison-only. This source-anchored P0 audit is partial and does not enable the 1993 physics implementation.
+- [1993 machine-readable evidence registry](v4/1993_upgrade/physics_delta_matrix.yaml): item IDs, primary printed source references, existing code entrypoints, uncertainty and follow-up P1–P7.
+- [Issue #126](https://github.com/RRain001/cufotri/issues/126): finish full source/parameter/equation audit and independent verification before starting version-specific physics rewrites.
+
+The current software baseline and its acceptance status are still governed by `STATUS.md`, not by this proposed compatibility target.
+
 ## Physical equations and implementation boundaries
 
 - [Variables and SI units](equations/variables_and_units.md)
