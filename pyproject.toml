@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "cteas-ufotri"
 version = "0.1.0"
 description = "Minimal coupled HTO atmosphere-soil-plant model"
-requires-python = ">=3.12"
+requires-python = ">=3.11,<3.12"
 dependencies = [
   "numpy>=1.26",
   "pandas>=2.2",
