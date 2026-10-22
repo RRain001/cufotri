@@ -1,171 +1,72 @@
-# CTEAS_UFOTRI
+# CUFOTRI
 
-Runnable Python 3.12+ minimal HTO model coupling rural Gaussian dispersion,
-topsoil water/HTO, plant TFWT/OBT, re-emission feedback, and mass balance.
-It is a tested engineering baseline, not a full reproduction of every UFOTRI
-equation.
+Open-source, research-oriented reconstruction of tritium transport and environmental pathways from the available UFOTRI/KfK 4605 manual. The Python package and CLI retain the historical name `cteas_ufotri`; this is deliberate API compatibility, not a second repository.
 
-## Install and verify
+**The codebase is a manual-based functional reconstruction, not a numerically verified clone of the original UFOTRI executable.** The original executable/source and full original regression fixtures are not available. Reproducible software tests do not constitute site, regulatory, empirical, or physical-accuracy validation.
 
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[test]'
-.venv/bin/python -m pytest -vv
-.venv/bin/python scripts/verify_acceptance.py --recompute
-```
+## Current status
 
-Run the 48 h case:
+See [STATUS.md](STATUS.md) for the current claim boundary and CI requirements. Detailed traceability and stage evidence remain in:
 
-```bash
-.venv/bin/python -m cteas_ufotri.cli
-```
+- [UFOTRI replication master plan](docs/v4/roadmap/UFOTRI_REPLICATION_MASTER_PLAN.md)
+- [Native atmosphere recovery correction](docs/v4/roadmap/UFOTRI_NATIVE_ATMOSPHERE_RECOVERY_PLAN.md), which supersedes older atmospheric status descriptions
+- [V4 development baseline RC1](docs/v4/adr/ADR-057-v4-development-baseline-rc1.md)
+- [H6 final manual-reconstruction gate R2](docs/v4/adr/ADR-084-ufotri-manual-based-functional-reconstruction-final-gate-r2.md)
+- [Historic V1/V2 README](docs/reference/legacy-readme-v2-20261022.md)
 
-Run the 24 h optional-mode acceptance case:
+The model includes the UFOTRI-native HTO/HT atmospheric route, deposition and soil HT conversion, water/HTO transport, plant TFWT/OBT, re-emission, food-chain and public-exposure interfaces. The frozen V4 RC1 baseline is retained alongside opt-in manual-fidelity paths. CTEAS-Atmos remains an optional future external backend.
 
-```bash
-.venv/bin/python -m cteas_ufotri.cli \
-  --case configs/advanced_test_case.yaml
-```
+## Repository map
 
-Run the V2 physics-remediation acceptance:
-
-```bash
-.venv/bin/python scripts/verify_v2_acceptance.py --recompute
-```
-
-Current formal disposition is:
-
-```text
-V2_STATUS = FORMAL_UFOTRI_ENVIRONMENTAL_PATHWAYS_V2_CANDIDATE
-CURRENT_RELEASE_BASIS = RC2_INDEPENDENT_REAUDIT_ACCEPTED_WITH_MINOR_CORRECTIONS
-FORMAL_SCOPE = HTO_ONLY_RESEARCH_CANDIDATE
-SITE_CALIBRATED = NO
-REGULATORY_VALIDATED = NO
-COMPLETE_UFOTRI_EQUIVALENCE = NO
-```
-
-This is a formal research-candidate release claim, not a site, regulatory, or
-complete-UFOTRI validation claim. The evidence chain is indexed in
-`docs/v2/v2_audit_history.md`; machine-readable remaining limitations are in
-`docs/v2/v2_candidate_limitations.yaml`.
-
-The post-release validation infrastructure is documented in
-`docs/v2/validation/v2_validation_master_plan.md`. Run its executable
-zero-source example and infrastructure gate with:
-
-```bash
-.venv/bin/python scripts/run_v2_validation_case.py \
-  --case validation/cases/example_zero_source.yaml \
-  --output /tmp/ufotri-zero-source-validation
-.venv/bin/python scripts/verify_v2_validation_readiness.py
-```
-
-The readiness result means that independent datasets can be connected
-reproducibly. It does not mean that experimental, field, reference-model, site,
-or regulatory validation has been completed.
-
-Outputs are written to `outputs/rural_stack_short_case/`: `results.csv`, an
-atmospheric grid CSV, six PNG diagnostics, and `validation_report.md`. Configuration is split between
-`configs/default_parameters.yaml` and `configs/test_case.yaml`; no case
-parameter is hard-coded in the calculation modules.
-
-## Inputs
-
-- `configs/default_parameters.yaml`: atmospheric, water/HTO, plant/OBT,
-  re-emission, physical, numerical, synthetic-forcing, and output defaults.
-- `configs/test_case.yaml`: source/site coordinates, stack conditions, release,
-  duration, time step, receptor, and output directory.
-- `configs/advanced_test_case.yaml`: optional-mode acceptance case.
-- `configs/era5_mapping.yaml`: variable aliases, units/sign contract, and
-  accumulation semantics for CSV/NetCDF.
-- `ufotri_manual.md`: primary reviewed physical source.
-
-ERA5 CSV/NetCDF fields are mapped by `configs/era5_mapping.yaml`; without
-`--era5`, the example uses deterministic synthetic forcing. Example:
-
-```bash
-.venv/bin/python -m cteas_ufotri.cli \
-  --era5 data/era5/era5_surface_2025-06-01_2025-06-02.csv \
-  --output-directory outputs/rural_stack_short_case_era5
-```
-
-Raw data and credentials are ignored and treated as read-only.
-CDS credentials may be supplied as the paired environment variables
-`CDSAPI_URL`/`CDSAPI_KEY` or through an ignored `era5_key.txt`; see
-`era5_key.example.txt`. Credential values are never logged by project code.
-
-## Result variables
-
-`results.csv` contains:
-
-| Variable | Meaning / unit |
+| Path | Responsibility |
 |---|---|
-| `air_hto_concentration` | receptor air HTO, Bq m-3 |
-| `soil_water_storage` | topsoil water depth, m |
-| `soil_hto_inventory` | topsoil HTO inventory, Bq m-2 |
-| `soil_hto_concentration` | soil-water HTO, Bq m-3 |
-| `soil_evaporation` | soil water evaporation, m s-1 |
-| `plant_transpiration` | plant transpiration, m s-1 |
-| `root_water_uptake` | HTO-carrying root water uptake, m s-1 |
-| `deep_drainage` | downward water flux, m s-1 |
-| `plant_tfwt_inventory` | plant TFWT inventory, Bq m-2 |
-| `plant_tfwt_concentration` | plant-water HTO, Bq m-3 |
-| `plant_obt_inventory` | plant OBT inventory, Bq m-2 |
-| `soil_reemission_flux` | soil-to-air HTO, Bq m-2 s-1 |
-| `plant_reemission_flux` | plant-to-air HTO, Bq m-2 s-1 |
-| `total_reemission_flux` | total secondary area flux, Bq m-2 s-1 |
-| `mass_balance_error` | signed step residual, Bq m-2 |
-| `mass_balance_relative_error` | absolute relative step residual |
-| `external_stack_input_bq` | integrated stack release, Bq |
-| `dry_plume_loss_bq`, `wet_plume_loss_bq` | integrated steady-plume removals, Bq |
-| `dry_surface_input_bq`, `wet_surface_input_bq` | allocated surface inputs, Bq |
-| `environmental_inventory_bq` | current soil/plant/animal/product activity over the accounting area, Bq |
-| `activity_residual_bq` | combined surface/ecological activity-ledger residual, Bq |
+| `src/cteas_ufotri/` | Versioned research solvers, physical interfaces, and coupling |
+| `configs/` | Case inputs and configuration defaults |
+| `schemas/` | Machine-readable scientific input/output contracts |
+| `tests/` | Unit, integration, numerical-conservation and governance checks |
+| `validation/` | Independent benchmark protocols, data provenance, adapters and external evidence contracts |
+| `scripts/v4/` | Auditable V4 stage runners and machine validation gates |
+| `docs/v4/` | ADRs, status, source-fidelity decisions and stage evidence |
+| `.github/workflows/` | PR/main CI, runtime compatibility and manually invoked external evidence audit |
 
-Formal fields are `surface_box_absolute_residual_bq_m2` and
-`surface_box_relative_residual`; the two `mass_balance_*` fields are deprecated
-compatibility aliases. This ledger covers soil HTO + TFWT + OBT only. The
-steady Gaussian atmosphere has a separate source/sink budget, not a dynamic
-air inventory.
-The complete RC2 activity-field semantics are in
-`docs/v2/activity_propagation_protocol.md`.
+The large historical `docs/implementation_status.md` remains a legacy stage ledger, **not** the current top-level release authority. Its dated stage entries should not override the two V4 roadmaps or [STATUS.md](STATUS.md).
 
-## Implemented scope
+## GitHub-first development
 
-- ERA5 CSV/NetCDF mapping, UTC/time validation, interval/cumulative-reset
-  conversion, RH/VPD, radiation and wind derivations.
-- UFOTRI Eq. (38)-(43) PET/LAI/moisture route and replaceable water fallback.
-- Rural Gaussian point plume, rectangular area source, PG dispersion,
-  wind rotation/profile, fixed or simplified Briggs rise, and mixing-layer
-  reflection.
-- Conservative 5 cm soil water/HTO, plant TFWT/OBT, rain HTO, optional root
-  delay, basic or empirical re-emission, and lagged atmospheric feedback.
-- Bounded explicit integration, continuous SciPy references, time-step
-  regression, per-step mass balance, CSV/grid/plot/report outputs.
+Development takes place through a short-lived GitHub branch and pull request; a permanent local clone is not required. Run validation on GitHub-hosted Actions. Review the exact PR head, both existing scientific CI workflows and compatibility checks before merging to `main`.
 
-## V2 extensions and deliberate UFOTRI differences
+The main workflows are:
 
-V2 adds wet deposition, meteorology-responsive bidirectional leaf exchange,
-crop/edible inventories, minimal pasture-cow-milk-beef pathways,
-research-screening dose, perennial pasture, and mode-aware uncertainty. These
-are bounded project extensions, not complete UFOTRI or field validation. The
-model still excludes multi-layer Richards coupling, HT oxidation/chemistry,
-regulatory dosimetry, and dynamic three-dimensional atmospheric conservation.
-Simplified Briggs, Penman aerodynamic, uniform footprint, ERA5
-net-radiation/extension fallbacks, empirical REEM/DIFF/ZT detail, crop yields,
-habits, and hydrology remain replaceable assumptions.
+- **V3 Protected Integration Gate** — comprehensive portable tests, current/frozen invariants and V4 machine gates;
+- **V3 Remediation CI** — historical-boundary and evergreen regression checks;
+- **Python compatibility** — selected Python 3.12 and 3.13 smoke/regression tests;
+- **External evidence audit** — manual-only review of unavailable restricted/large input requirements; strict mode fails rather than silently substituting fake data.
 
-See `docs/implementation_status.md` for exact status and remaining differences
-from the manual, `docs/assumptions.md` for defaults, and
-`docs/equations/variables_and_units.md` for the unit contract.
+Check the latest run status for the particular PR; historical green badges alone do not establish that the current commit passed.
 
-Implemented replaceable modes include rectangular re-emission area sources,
-fixed or simplified Briggs plume rise, fixed or Turner stability, optional
-mixing-layer reflection, immediate or delayed root HTO uptake, basic or
-REEM/DIFF/ZT soil re-emission, and constant-average or day/night OBT formation.
+## Optional local reproduction
 
-The formal minimal v1 baseline adds explicit precipitation/infiltration/runoff
-HTO routing, recorded calm-wind handling, project-level dry source depletion,
-3600 s re-emission feedback, radiation-term-only Eq. (40) shading, and strict
-feedback-area validation. Wet scavenging is explicitly not implemented and
-advanced REEM/DIFF/ZT remains provisional.
+Requires Python 3.12+:
+
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install -e '.[test]'
+.venv/bin/python -m pytest -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret and not historical_review_context"
+.venv/bin/python -m cteas_ufotri.cli --case configs/test_case.yaml
+```
+
+For the full internal V4 RC1 software composition gate:
+
+```bash
+.venv/bin/python scripts/v4/run_development_baseline_rc1.py --output /tmp/cufotri-v4-development-baseline.json
+```
+
+Software, deterministic synthetic/replay and conservation tests are **not** experimental-field validation. Run external strict verification only after acquiring and verifying the separately declared input datasets.
+
+## External evidence
+
+ERA5, experimental SB1/SB4 reference packets and private D3 reblinding secrets are not bundled with a fresh public clone. The inputs are declared in `validation/external_input_requirements.py`. Local environments historically use `CTEAS_EXTERNAL_EVIDENCE_ROOT` and `CTEAS_ERA5_INPUT_ROOT`; setting these variable names alone does not supply the files in an ephemeral GitHub runner.
+
+Do not commit credentials, private datasets, unlicensed literature, or blind/unblinding secrets. If external data is missing, explicitly report missing/skipped or strict-failed status. The historic worktree/review-context tests must not be reclassified as contemporary scientific acceptance.
+
+See [validation/README.md](validation/README.md) for data provenance, checksums, licensing and independent validation requirements.
