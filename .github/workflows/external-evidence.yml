@@ -1,0 +1,99 @@
+name: CUFOTRI external evidence audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Audit declared data readiness, or strict scientific verification
+        required: true
+        type: choice
+        options:
+          - audit
+          - strict
+        default: audit
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cufotri-external-evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  external-evidence:
+    name: External evidence ${{ inputs.mode }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[test]'
+
+      - name: Audit declared external scientific datasets without exposing secrets
+        env:
+          EVIDENCE_MODE: ${{ inputs.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external-evidence-audit
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from validation.external_input_requirements import check_dataset, InputStatus
+
+          datasets = ("SB1", "SB4", "ERA5_ACCEPTANCE", "D3_PRIVATE_REBLIND_SECRET")
+          results = []
+          for name in datasets:
+              status = check_dataset(Path.cwd(), name)
+              entry = {
+                  "dataset": name,
+                  "status": status.status.value,
+                  "missing_count": len(status.missing_paths),
+                  "invalid_count": len(status.invalid_paths),
+              }
+              results.append(entry)
+              print(f"{name}: {entry['status']} (missing={entry['missing_count']}, invalid={entry['invalid_count']})")
+
+          ready = all(x["status"] == InputStatus.AVAILABLE.value for x in results)
+          report = {
+              "mode": os.environ["EVIDENCE_MODE"],
+              "all_external_inputs_available": ready,
+              "datasets": results,
+              "claim": (
+                  "INPUT_READINESS_ONLY_NOT_SCIENTIFIC_VALIDATION"
+                  if os.environ["EVIDENCE_MODE"] == "audit"
+                  else "STRICT_INPUT_READINESS_PRECHECK"
+              ),
+          }
+          Path("external-evidence-audit/input-readiness.json").write_text(
+              json.dumps(report, indent=2) + "\n", encoding="utf-8"
+          )
+          if os.environ["EVIDENCE_MODE"] == "strict" and not ready:
+              raise SystemExit("Strict external evidence blocked: inputs absent or invalid")
+          PY
+
+      - name: Execute marked external evidence tests (strict only)
+        if: inputs.mode == 'strict'
+        run: >-
+          python -m pytest -q --require-external-inputs
+          -m "external_sb1_data or external_sb4_data or external_era5_data or private_reblinding_secret"
+
+      - name: Upload machine-readable evidence readiness (not raw inputs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-evidence-readiness-${{ github.run_id }}
+          path: external-evidence-audit/
+          retention-days: 90
+          if-no-files-found: warn
