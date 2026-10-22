@@ -72,9 +72,9 @@
       "section": "§7.4.1",
       "print_page": 51,
       "default": 100,
-      "meaning": "minimum-secondary-source factor multiplied by maximum soil air concentration",
+      "meaning": "secondary-area minimum-source factor; p51 prose calls reference maximum soil concentration, but same-page parameter definition calls it maximum air concentration",
       "impact": "CHANGES_AREA_SOURCE_CUTOFF_AND_COMPUTATIONAL_COST",
-      "units": "historical factor, check dimensional use",
+      "units": "historical factor; reference concentration and source-strength dimensional conversion unverified",
       "provenance": "GUIDE_DEFAULT"
     },
     {
@@ -433,6 +433,14 @@
       "print_page": 69,
       "printed_label": "one day direct-access file; hourly 10-field records",
       "resolution": "ORIGINAL_FORTRAN_RECORD_LAYOUT_AND_MET_FIELD_UNITS_NOT_FULLY_RECOVERED"
+    },
+    {
+      "id": "SRC-R6-05",
+      "parameter": "BODFAK",
+      "print_page": 51,
+      "printed_prose_label": "maximum soil concentration",
+      "printed_parameter_label": "maximum air concentration",
+      "resolution": "UNRESOLVED_REFERENCE_CONCENTRATION_WORDING_AND_DIMENSIONAL_SOURCE_STRENGTH_MAPPING; do not assume that pore-air and ambient-air maxima or Bq volume and area source strength are interchangeable"
     }
   ],
   "historical_1991_comparison": {
