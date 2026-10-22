@@ -339,7 +339,7 @@ documented_1991_to_1993_defaults:
       report: "KfK 5194"
       printed_page: 65
       pdf_page_zero_based: 74
-      documented_default: 4e-11
+      documented_default: 4.0e-11
     meaning: "OBT Sv/Bq historical; do not reinterpret as current ICRP"
     source_1990_exact_parameter_comparison: "NOT_YET_COMPLETED"
   - name: "BRRATE"
