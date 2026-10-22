@@ -19,6 +19,12 @@ baseline_source:
   year: 1990
   pdf_url: "https://publikationen.bibliothek.kit.edu/270029395/3813413"
 audit_status: "PARTIAL_SOURCE_ANCHORED_AUDIT_IN_PROGRESS"
+manual_first_authority_decision: "docs/v4/adr/ADR-085-ufotri-1993-manual-first-reconstruction-authority.md"
+manual_based_1993_reconstruction_source: "KFK5194_1993_PRIMARY_NORMATIVE"
+original_fortran_source_available: false
+original_executable_required_for_manual_based_implementation: false
+independent_feature_scientific_review_required: true
+legacy_exact_reader_parity_requires_external_evidence: true
 primary_equation_audit_r2: "docs/v4/1993_upgrade/primary_source_formula_audit_r2.yaml"
 primary_source_audit_r2_status: "SELECTED_1993_EQUATIONS_AND_DEFAULTS_VERIFIED_FULL_P0_OPEN"
 primary_source_tables_r3: "docs/v4/1993_upgrade/primary_source_transfer_tables_r3.yaml"

@@ -16,6 +16,8 @@ For current claims, read these in conjunction with `STATUS.md`. Historical docum
 
 ## UFOTRI 4.0 (1993) future target — source audit in progress
 
+- [ADR-085: 1993 KfK5194 manual-first reconstruction authority](v4/adr/ADR-085-ufotri-1993-manual-first-reconstruction-authority.md): official 1993 report defines opt-in physical equations/defaults even without recovered original source/executable; mandatory per-feature PDF evidence and scientific gates; original-executable, empirical and regulatory equivalence are separately unestablished.
+
 - [1993 KfK 5194 physics delta matrix](v4/1993_upgrade/PHYSICS_DELTA_MATRIX.md): **1993 UFOTRI 4.0 is the TARGET version**; KfK 4605 (1990) is comparison-only. This source-anchored P0 audit is partial and does not enable the 1993 physics implementation.
 - [1993 machine-readable evidence registry](v4/1993_upgrade/physics_delta_matrix.yaml): item IDs, primary printed source references, existing code entrypoints, uncertainty and follow-up P1–P7.
 - [1993 original-equation and NAMELIST audit R2](v4/1993_upgrade/PRIMARY_SOURCE_AUDIT_R2.md): printed source equations, 21 historical defaults, source unit conflicts and 1990→1993 re-emission formula comparison. Machine-readable [R2 primary-source registry](v4/1993_upgrade/primary_source_formula_audit_r2.yaml). This is source review, **not** a 1993 solver validation.
