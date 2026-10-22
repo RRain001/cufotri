@@ -101,7 +101,7 @@ jobs:
           docker image inspect --format '{{.Id}}' cufotri:runtime-${{ github.sha }} > image-provenance/runtime-image-id.txt
           docker image inspect --format '{{.Os}}/{{.Architecture}}' cufotri:runtime-${{ github.sha }} > image-provenance/platform.txt
           docker run --rm --entrypoint python cufotri:runtime-${{ github.sha }} \
-            -c 'import importlib.metadata as m; print("\\n".join(sorted("{}=={}".format(d.metadata["Name"], d.version) for d in m.distributions())))' \
+            -c 'import importlib.metadata as m; print("\n".join(sorted("{}=={}".format(d.metadata["Name"], d.version) for d in m.distributions())))' \
             > image-provenance/runtime-packages.txt
 
       - name: Upload build provenance (not a raw scientific-data artifact)
