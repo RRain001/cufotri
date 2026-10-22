@@ -26,7 +26,7 @@
 | `UF93-05` HT dry deposition and microbial soil conversion | 1990 includes HT→HTO soil oxidation and HTO/HT deposition. (§2.2.3) | HT diffusivity and time-dependent deposition Eq.(12)–(13); microbial conversion and winter reduction; HTO constant or resistance-driven dry-deposition Eq.(14). | §5.3.2 p.8–9 (PDF0 p.17–18) | 1993_FORMULATION_CHECK_REQUIRED / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
 | `UF93-06` Monteith vs Penman evapotranspiration | 1990 ET treatment uses Penman-style Eq.(38)–(43) and water/HTO balances. (§2.2.3) | KfK5194 §5.3.1 Eq.(11) Monteith bulk-resistance ET, with Penman alternative; canopy/soil radiation split uses exp(-0.398*LAI). IMONT 1=Monteith, 0=Penman, documented default 1. | §5.3.1 p.7–8 (PDF0 p.16–17) | CONFIRMED_1993_EXTENSION / [issue #129](https://github.com/RRain001/cufotri/issues/129) |
 | `UF93-07` Thin top-soil help layer and soil surface resistance | 1990 hydraulic discussion lacks confirmed same dedicated 1-cm soil-resistance help-layer contract. (§2.2.3) | KfK5194 §5.3.2 Eq.(15)-(19): extra approx 1 cm help layer is used for soil resistance only; z=z0/phi_h with z0=0.004 m while phi_h stated as mm water and limited to numerical 0.5-5; dimensional convention needs explicit review; RSOIL=150, RSSMIN=50 s/m. | §5.3.2 p.9–10 (PDF0 p.18–19) | CONFIRMED_1993_EXTENSION / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
-| `UF93-08` HTO whole-plume wet washout | 1990 already modeled HTO whole-plume washout; historical classification/options may differ. (§2.2.3) | KfK5194 §5.3.3 Eq.(20) lambda_HTO=AW*I^BW; I in mm/h; documented AW=9e-5, BW=0.6; second mode precipitation classes <1, 1-3, >3 mm/h. 1993 IWASH mode/default per NAMELIST must be reviewed before implementation. | §5.3.3 p.14 (PDF0 p.23) | 1993_FORMULATION_CHECK_REQUIRED / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
+| `UF93-08` HTO whole-plume wet washout | KfK4605 1990 already handles wet washout, but old program mode/default parity remains pending (§2.2.3). | KfK5194 **§7.3.3 pp.46–47**: **IWASH=0 is DEFAULT**, using rainfall classes split at 1/3 mm/h, HTO washout 6e-5/1e-4/4e-4 s^-1 and precipitation-duration fractions 0.50/0.75/0.72. **IWASH=1 OPTIONAL** uses §5.3.3 Eq.(20) power law (AWASH_HTO=9e-5, BWASH_HTO=0.6). HT default washout 0. | §§5.3.3, 7.3.3, printed pp.14,46–47 (PDF0 23,55–56) | 1993_DOCUMENTED_WASHOUT_MODES_DEFAULT_BRANCH_VERIFIED / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
 | `UF93-09` Soil suction, conductivity and layered water transport | 1990 Eq.(33)–(37) develops Darcy/Richards transport but original executable constitutive coefficients are not in repo. (§2.2.3) | KfK5194 §5.3.4 Eq.(21)-(24), with suction–conductivity forms already documented in KfK4853 (1991) §3.4.3: S=1.5e5*Psi^(a+b*Psi+c*Psi^n), Psi=(theta_s-theta)/(theta_s-theta_w), K=alpha_q/(S^m+beta), V_ab=K_ab*((S_a-S_b)/avg_layer_thickness-1). ORIGINAL PRINT declares K as mm/day yet V_ab as mm/hour; do not silently choose conversion. | §5.3.4 p.14–15 (PDF0 p.23–24) | 1993_FORMULA_VERIFIED_1990_DELTA_PENDING / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
 | `UF93-10` Root uptake depth and layer weights | 1990 also provides nutrient/pasture-specific root profile concept. (§2.2.5;3.3;3.4) | Agricultural crop roots use 20/40/40% and grass 40/60/0% over 0–5,5–15,15–30 cm. | §5.3.4 p.15–16 (PDF0 p.24–25) | UNCHANGED_AT_DOCUMENTED_ROLE_LEVEL / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
 | `UF93-11` Soil HTO re-emission daytime and night branches | 1990 KfK4605 Eq.(44) REEM=(E_as/BODWA)*(1-ABFLR)*C1*C2*ZT; followed by REEMG=REEM+DIFF*ZT. Source formula difference is not just renumbering. (§2.2.4) | 1993 KfK5194 Eq.(25) (E_as kg m^-2 h^-1, versus 1990 kg m^-2 s^-1) REEM=(E_as/BODWA)*C1*C2*ZT+REB*ZT; printed equation omits (1-ABFLR) factor explicitly present in 1990 KfK4605 Eq.(44). Both versions have a basic diffusion/night contribution; not simply a new term in 1993. | §5.3.4 p.15–16 (PDF0 p.24–25) | CONFIRMED_1993_MODIFIED_FORMULATION / [issue #130](https://github.com/RRain001/cufotri/issues/130) |
@@ -106,6 +106,18 @@
 - **输出开关不等于物理机理**：`IWRITE=1` 存入逻辑单元 9；此前食物限制的 95 是另一路产物。 `KAUSDR(12)`、`IPRPLT` 等旧式打印/控制参数不能被混入迁移方程与剂量系数。
 
 **进展与边界**：本 R6 只做原文证据及测试契约，补足 §7.4.1/7.4.9/7.4.10/8.2 的选定字段；尚未核查完整原 FORTRAN 二进制记录布局和 1993 全部 NAMELIST。保留现有 1990 物理基线，P0 继续 Open。
+
+## 1.6 R6b：1993 原始输入顺序、核素配置和湿清除默认模式
+
+[**KfK5194 ISOPAR / METPAR / 固定气象和输出卡 R6 原文审计**](PRIMARY_SOURCE_INPUT_WASHOUT_R6.md) · [机器可读来源及分支约束](primary_source_input_washout_r6.yaml)。
+
+- 1993 §7.3.3 **明确规定 HT 在前、HTO 在后**，`NABL=2`；其默认 `IWASH=0` 采用三档雨强和 `AMDA/REGTIM` 数组；**`IWASH=1` 的幂律是备选模式而非默认**。因此 UF93-08 的旧版“可能采用幂律默认”的不确定推断已由官方印刷页 pp.46–47 纠正。
+- 三档分界 `IREGGR=[100,300]` 的**原始单位是 0.01 mm/h**，实际相当于 **1、3 mm/h**；HTO 三档清除率 `6e-5,1e-4,4e-4 s^-1`，分档相对降雨持续时间 `0.50,0.75,0.72`。
+- 1993 `METPAR` 输入 **`IWNDG` 以 0.01 m/s 为单位**，`IREGN` 以 0.01 mm/h 为单位；`NOSHFT=2` 对应逐小时风向更新。无显式转换不得把现代 m/s 或 mm/h 数组作为原始缩放整数注入。
+- 1993 印刷 p.35 的 `ISOTOPE→SOURCE`、`POLGRID→METEOZON`、`PRINTOUT→POLGRID` 和 `END→TRIDAT` 是**条件性输入顺序约束**。
+- 1993 固定气象/固定再释放路径被报告明确标为**仅建议测试使用**；`RELFA=0.5` 原文按百分比命名，但可能涉及隐含单位约定，保留 `SOURCE_LIMITED`，不自动解读为 0.5% 或 50%。`KAUSDR` 是输出诊断开关而非物理计算开关。
+
+R6 仍只是**所列页面的版本源证据审计**：没有实际编写或启用 1993 输入解析器，没有完成 KfK4605/KfK4853 全部对应配置比较，更没有原版 UFOTRI 4.0 数值等价的证据。
 
 ## 2. 1993 模型具有决定意义的已核实变化
 
