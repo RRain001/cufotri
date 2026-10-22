@@ -105,4 +105,3 @@
 - `UFOTRI_1993_EMPIRICAL_VALIDATION=NOT_ESTABLISHED`；外部验证输入仍属于独立 [Issue #119](https://github.com/RRain001/cufotri/issues/119)。
 
 遵循 [STATUS.md](../../../STATUS.md) 与 [原版源资料恢复记录](../reports/ufotri_public_source_recovery_reassessment_r1.md) 的保守声明。任何后续实现需先通过 P0 原文条目的独立复核。
-
