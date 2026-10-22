@@ -1,0 +1,310 @@
+# KfK5194 official printed PDF, 1993 version-specific audit. No original executable semantics.
+schema_version: 1
+identity: "UFOTRI_4_0_KFK5194_1993_PRIMARY_EQUATION_AND_INPUT_AUDIT_R2"
+target_version: "UFOTRI_4_0_1993"
+original_report: "KfK 5194"
+pdf_url: "https://publikationen.bibliothek.kit.edu/270034158/3813483"
+baseline_version: "KFK4605_1990"
+baseline_pdf_url: "https://publikationen.bibliothek.kit.edu/270029395/3813413"
+scope: "SOURCE_VERIFICATION_ONLY_NOT_IMPLEMENTATION"
+status: "PARTIAL_PRIMARY_SOURCE_AUDIT"
+reference_page_index: "PDF zero-based; printed_page = pdf_page_index - 9 for targeted main text"
+unresolved_source_conflicts:
+  - kind: "UNIT_MISMATCH"
+    records: ["E23","E24"]
+    summary: "K described in mm/day, interlayer V_ab printed in mm/hour; avoid asserting numeric time conversion until algorithm and source terms clarified."
+    disposition: "SOURCE_LIMITED_NO_SOLVER_CHANGE"
+  - kind: "SYMBOL_REUSE"
+    records: ["E26","E33"]
+    summary: "P_m is maximum CO2 assimilation in Eq.(26) but mean hourly dry matter production in Eq.(33)."
+    disposition: "SOURCE_VERIFIED_DISTINCT_SYMBOL_SEMANTICS"
+  - kind: "DIMENSION_CONVENTION"
+    records: ["E18"]
+    summary: "z0 in metres but phi_h described in mm water and divided directly; historical numeric convention must be clarified."
+    disposition: "SOURCE_LIMITED_NO_SOLVER_CHANGE"
+  - kind: "EDITION_DIFFERENCE"
+    records: ["E25"]
+    summary: "1990 Eq.(44) displayed (1-ABFLR) multiplier in evaporation term, absent from printed 1993 Eq.(25)."
+    disposition: "FORMULA_TEXT_DIFFERENCE_CONFIRMED_BINARY_UNVERIFIED"
+verified_equations:
+  - id: "E04"
+    print_page: 4
+    pdf_page_index: 13
+    expression: "r_g=r_st+r_av+r_bv"
+    units: "s/m"
+    notes: "Plant/atmosphere total-transfer resistance, Eq.(4)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E05"
+    print_page: 4
+    pdf_page_index: 13
+    expression: "r_av=u(z)/u_*^2"
+    units: "s/m"
+    notes: "Aerodynamic resistance, Eq.(5)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E06"
+    print_page: 4
+    pdf_page_index: 13
+    expression: "r_bv=1/(u_* B)"
+    units: "s/m"
+    notes: "Boundary-layer resistance with Stanton number B, Eq.(6)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E07"
+    print_page: 4
+    pdf_page_index: 13
+    expression: "r_st=r_st,m [1+(c/I_p)]/(f_l f_w f_t)"
+    units: "s/m"
+    notes: "Stomatal resistance; the soil-water response f_w is described qualitatively but requires parameter-source review"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E10"
+    print_page: 5
+    pdf_page_index: 14
+    expression: "r_c=r_st/LAI"
+    units: "s/m"
+    notes: "Canopy resistance, Eq.(10)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E11"
+    print_page: 7
+    pdf_page_index: 16
+    expression: "lambda*E_a=(delta*R_n0+rho*c_p*(e_s-e_a)/r_AV)/(delta+gamma*(1+r_x/r_AV))"
+    units: "W/m^2"
+    notes: "Monteith resistance evapotranspiration, Eq.(11), applied separately to soil and plant with LAI-based radiation partition"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E15"
+    print_page: 9
+    pdf_page_index: 18
+    expression: "r_soil=z/D_eff"
+    units: "s/m"
+    notes: "Soil surface resistance, Eq.(15)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E17"
+    print_page: 9
+    pdf_page_index: 18
+    expression: "D_eff=D_0*(T_a/273)^1.75*[phi_w/(phi_m-phi_w)]*tort"
+    units: "m^2/s"
+    notes: "Check printed factor ordering and tortuosity; no code interpretation authorized"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E18"
+    print_page: 10
+    pdf_page_index: 19
+    expression: "z=z_0/phi_h"
+    units: "m as printed"
+    notes: "Auxiliary one-centimetre top layer; phi_h stated in mm water, limited 0.5–5 numerical values: source unit convention requires review"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E19"
+    print_page: 10
+    pdf_page_index: 19
+    expression: "r_soil=z/D_eff+r_sm"
+    units: "s/m"
+    notes: "Minimum wet-soil surface resistance, Eq.(19)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E20"
+    print_page: 14
+    pdf_page_index: 23
+    expression: "lambda_HTO=AW*I^BW"
+    units: "source coefficient unit not separately explicit"
+    notes: "Precipitation I in mm/h, AW=9.0e-5 and BW=0.6; preserve dimensional review"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E21"
+    print_page: 14
+    pdf_page_index: 23
+    expression: "S=1.5e5*Psi^(a+b*Psi+c*Psi^n)"
+    units: "mm water"
+    notes: "Suction tension, Eq.(21)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E22"
+    print_page: 14
+    pdf_page_index: 23
+    expression: "Psi=(theta_s-theta)/(theta_s-theta_w)"
+    units: "dimensionless"
+    notes: "Normalized soil-water quantity, Eq.(22)"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E23"
+    print_page: 15
+    pdf_page_index: 24
+    expression: "K=alpha_q/(S^m+beta)"
+    units: "mm/day"
+    notes: "Hydraulic conductivity, Eq.(23); NOT the same quoted time unit as Eq.(24) V_ab"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E24"
+    print_page: 15
+    pdf_page_index: 24
+    expression: "V_ab=K_ab*[(S_a-S_b)/((Delta_z_a+Delta_z_b)/2)-1]"
+    units: "mm/hour (printed)"
+    notes: "Layer flux, Eq.(24); K is described in mm/day in same report: conversion/notation unresolved"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E25"
+    print_page: 15
+    pdf_page_index: 24
+    expression: "REEM=(E_as/BODWA)*C1*C2*ZT+REB*ZT"
+    units: "emission rate (historical %/time convention)"
+    notes: "1993 printed form lacks explicit 1990 (1-ABFLR) factor; REB basic diffusion contribution"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E26"
+    print_page: 19
+    pdf_page_index: 28
+    expression: "P_pot=(P_m*epsilon*I_abs)/(P_m+epsilon*I_abs)-Rd"
+    units: "gCO2/(m^2*h)"
+    notes: "Eq.(26): P_m means MAXIMUM CO2 ASSIMILATION RATE"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E27"
+    print_page: 19
+    pdf_page_index: 28
+    expression: "I_abs=I_n0*k*exp(-k*L)"
+    units: "W/m^2"
+    notes: "Canopy PAR attenuation, extinction k=0.6"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E30"
+    print_page: 20
+    pdf_page_index: 29
+    expression: "Rd=C1_Rd*P_c+C2_Rd*W"
+    units: "gCO2/(m^2*h) (plant equivalent)"
+    notes: "Eq.(30): C1_Rd=0.36; C2_Rd=1.67e-4 g/h per g CO2 equivalent as printed"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E31"
+    print_page: 21
+    pdf_page_index: 30
+    expression: "P_act=P_c*COA*f(r)"
+    units: "g dry matter/(m^2*h) expected; verify Pc/COA mass basis"
+    notes: "Eq.(31), COA=1.5 dry matter conversion; f(r) environmental stress"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E32"
+    print_page: 22
+    pdf_page_index: 31
+    expression: "T_act=T_m*fact1*fact2"
+    units: "1/h"
+    notes: "Eq.(32) simple model, fact2=1.75 day /0.25 night"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - id: "E33"
+    print_page: 23
+    pdf_page_index: 32
+    expression: "T_act=(P_act/P_m)*T_m*fact2*dis"
+    units: "1/h"
+    notes: "Eq.(33) P_m means MEAN HOURLY DRY MATTER PRODUCTION RATE, NOT Eq.(26) P_m; dis=0.5 default"
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+documented_defaults:
+  - name: "IMODEL"
+    value: 1
+    meaning: "plant resistance extended (1), simple (0)"
+    print_page: 54
+    pdf_page_index: 63
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "ICOVER"
+    value: 1
+    meaning: "dynamic plant growth stage (1), fixed initial (0)"
+    print_page: 54
+    pdf_page_index: 63
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "IPHOTO"
+    value: 1
+    meaning: "photosynthesis-linked OBT (1), simple diurnal (0)"
+    print_page: 54
+    pdf_page_index: 63
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "IMONT"
+    value: 1
+    meaning: "Monteith ET (1), Penman (0)"
+    print_page: 54
+    pdf_page_index: 63
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "IFLAGS"
+    value: 1
+    meaning: "resistance-based soil HTO deposition (1), fixed velocity (0)"
+    print_page: 54
+    pdf_page_index: 63
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "IFLAGR"
+    value: 1
+    meaning: "soil resistance model (1) vs fixed RSOIL (0); relevant only when IFLAGS=1"
+    print_page: 54
+    pdf_page_index: 63
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "IDEPHT"
+    value: 1
+    meaning: "HT deposition resistance approach (1) vs fixed (0)"
+    print_page: 55
+    pdf_page_index: 64
+    source_review: "PDF_TEXT_INDEXED_VISUAL_RECHECK_PENDING"
+  - name: "IBODEX"
+    value: 1
+    meaning: "matric-force soil transport (1) vs simple (0)"
+    print_page: 55
+    pdf_page_index: 64
+    source_review: "PDF_TEXT_INDEXED_VISUAL_RECHECK_PENDING"
+  - name: "SOILAP"
+    value: 1.65
+    meaning: "suction relation exponent parameter AP"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "SOILBP"
+    value: 7.3
+    meaning: "suction relation exponent parameter BP"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "SOILCP"
+    value: -3.1
+    meaning: "suction relation exponent parameter CP"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "SOILNP"
+    value: 7.5
+    meaning: "suction relation exponent parameter NP"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "SOIAKP"
+    value: 1000
+    meaning: "conductivity alpha parameter AKP; verify units"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "SOIBKP"
+    value: 60
+    meaning: "conductivity beta parameter BKP; verify units"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "SOIMKP"
+    value: 1.41
+    meaning: "conductivity exponent MKP"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "RSOIL"
+    value: 150
+    meaning: "fixed soil resistance, s/m"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "RSSMIN"
+    value: 50
+    meaning: "minimum soil resistance, s/m"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "ZSOILA"
+    value: 0.004
+    meaning: "initial soil resistance depth, m"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "REMRE"
+    value: 0.3
+    meaning: "soil HTO re-emission during rain, percent per hour"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "REMNI"
+    value: 1
+    meaning: "soil HTO re-emission at night, percent per hour"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
+  - name: "REDREM"
+    value: 1
+    meaning: "dimensionless rate scaling"
+    print_page: 61
+    pdf_page_index: 70
+    source_review: "PRINTED_PDF_VISUALLY_CHECKED"
