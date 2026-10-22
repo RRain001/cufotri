@@ -127,6 +127,10 @@ R6 仍只是**所列页面的版本源证据审计**：没有实际编写或启�
 
 [**R8 源版输入卡对照**](PRIMARY_SOURCE_INPUT_CARDS_CROSSEDITION_R8.md) · [结构化原文证据与风险](primary_source_input_cards_crossedition_r8.yaml)。1991 KfK4853 印刷 pp.11–12 与 1993 KfK5194 pp.37–38 的 `METEOZON K1.2` 虽然都写 `1X,A8,1X,2I10,5I5`，最后三个整数位置的印刷顺序分别是 **IBEWE/IRAU/IHOM** 和 **IRAU/IHOM/IBEWE**；按相同布局复用旧版气象站读卡可能混淆时间间隔、粗糙度类型和风速测量高度。1991 `SOURCE K2.2` 印刷 `A8,2X,3I10,F10.2`，1993 为 `A8,2X,2I10`，但两版都只列出 `UNFNAM/NPHMAX/IPZ`；不能以纸面超额描述符推出隐藏字段或原 FORTRAN 解析行为。对应的旧版编译维数、气象概率分支、`K2.3` 热释放 `QH` (cal/s)、`END` 字段一致；1993 单独注明人口卡为 COSYMA 相关，不是已证明的 UFOTRI 物理变更。R8 **只对照所列源页**，P0 和原程序数值等价仍未验收。
 
+## 1.9 R9：1991 / 1993 印刷作业输入样例与字段说明交叉检查
+
+[**R9 手册原始作业输入示例审计**](PRIMARY_SOURCE_JOB_CARD_SAMPLES_R9.md) · [R9 可机读源证据与风险表](primary_source_job_card_samples_r9.yaml)。1991 Table 3 印刷 p.43（PDF0 50）及 1993 Table 5 印刷 p.82（PDF0 91）都出现 `FKxy 1 0 0` 的 SOURCE 可见数字序列：虽然两版文字只列 `UNFNAM/NPHMAX/IPZ`，手册 FORMAT 却又各不相同。两版 `KARLSRHE 1 1 0 1 2 10` 示例也保留相似数字，但不能从扫描排版自动恢复 7 个数值固定列以及两版 `IBEWE/IRAU/IHOM` 与 `IRAU/IHOM/IBEWE` 的不同次序。原始卡片字节、读取列表、`K2.4` 内容和可执行程序数值等价仍然未知，不据此开发跨版读卡器或推测新物理。
+
 ## 2. 1993 模型具有决定意义的已核实变化
 
 ### 2.1 OBT：光合作用控制是新标准，而不是仅按昼夜加权

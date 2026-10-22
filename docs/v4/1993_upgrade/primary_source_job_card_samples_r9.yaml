@@ -1,0 +1,215 @@
+# R9 manual example evidence only, NOT recovered byte-preserving cards or original FORTRAN parser.
+{
+  "schema_version": 1,
+  "document_kind": "UFOTRI_P0_R9_1991_1993_PRINTED_JOB_CARD_SAMPLE_CONSISTENCY",
+  "source_only": true,
+  "source_status": "PRINTED_SAMPLE_EVIDENCE_VERIFIED_FULL_P0_OPEN",
+  "authority": "KFK5194_1993_TARGET_KFK4853_1991_INTERMEDIATE_KFK4605_1990_FROZEN",
+  "source_documents": {
+    "1991": {
+      "report": "KfK 4853",
+      "url": "https://publikationen.bibliothek.kit.edu/270030531/3813429",
+      "guide_section": "3.2.1 / 3.2.2",
+      "guide_printed_pages": [
+        11,
+        12,
+        14
+      ],
+      "guide_pdf0_indices": [
+        18,
+        19,
+        21
+      ],
+      "job_example": "Table 3",
+      "job_example_printed_page": 43,
+      "job_example_pdf0_index": 50
+    },
+    "1993": {
+      "report": "KfK 5194",
+      "url": "https://publikationen.bibliothek.kit.edu/270034158/3813483",
+      "guide_section": "7.2.1 / 7.2.2",
+      "guide_printed_pages": [
+        37,
+        38,
+        40
+      ],
+      "guide_pdf0_indices": [
+        46,
+        47,
+        49
+      ],
+      "job_example": "Table 5",
+      "job_example_printed_page": 82,
+      "job_example_pdf0_index": 91
+    }
+  },
+  "examples_kind": "SCANNED_PRINTED_JCL_USER_INPUT_NOT_ORIGINAL_FORTRAN_READ_OR_SUCCESSFUL_EXECUTION",
+  "compared_cards": [
+    {
+      "id": "R9-SAMPLE-01",
+      "group": "SOURCE",
+      "card": "K2.2",
+      "sample_observation": "Both Table 3 (1991) and Table 5 (1993) show source-name token FKxy followed by three visible integer-like tokens 1, 0, 0 on the apparent source card line.",
+      "observed_source_name": "FKxy",
+      "following_numeric_tokens": [
+        "1",
+        "0",
+        "0"
+      ],
+      "printed_manual_named_fields": [
+        "UNFNAM",
+        "NPHMAX",
+        "IPZ"
+      ],
+      "printed_manual_formats": {
+        "1991": "A8,2X,3I10,F10.2",
+        "1993": "A8,2X,2I10"
+      },
+      "mismatch": "Both examples display THREE visible integer-like tokens after FKxy, while both prose lists name only TWO integer fields after UNFNAM; the 1993 printed FORMAT has two I10 integer descriptors.",
+      "epistemic_status": "PRINTED_SAMPLE_FIELD_FORMAT_COUNT_CONFLICT_NO_PARSER_CLAIM",
+      "required_evidence": "Obtain original card bytes, complete FORTRAN READ list/FORMAT (possibly labels) and run outcomes before assigning any third value."
+    },
+    {
+      "id": "R9-SAMPLE-02",
+      "group": "SOURCE",
+      "card": "K2.3",
+      "sample_observation": "Both example tables show one row of five release-phase values: whole-hour token 1, height token 20, then three zero-valued scientific-notation tokens.",
+      "visible_phase_tokens": [
+        "1",
+        "20",
+        "0.000E0",
+        "0.000E0",
+        "0.000E0"
+      ],
+      "named_fields": [
+        "IPHASE(NP)",
+        "IHO(NP)",
+        "QH(NP)",
+        "BR(NP)",
+        "HOE(NP)"
+      ],
+      "both_printed_format": "2I10,3E10.3",
+      "qh_meaning": "Thermal energy release (cal/s), not radiological Q1(Bq or historical activity unit)",
+      "epistemic_status": "EXAMPLE_MATCHES_FIVE_NAMED_FIELD_TYPES_NOT_EXECUTABLE_PARITY"
+    },
+    {
+      "id": "R9-SAMPLE-03",
+      "group": "METEOZON",
+      "card": "K1.2",
+      "sample_observation": "Both printed example tables show zone token KARLSRHE with visible numeric tokens 1,1,0,1,2,10.",
+      "observed_zone_name": "KARLSRHE",
+      "visible_numeric_tokens": [
+        "1",
+        "1",
+        "0",
+        "1",
+        "2",
+        "10"
+      ],
+      "both_printed_format": "1X,A8,1X,2I10,5I5",
+      "named_field_order": {
+        "1991": [
+          "ZONNAM",
+          "LMAX",
+          "NSTMAX",
+          "LPOPT",
+          "LWOPT",
+          "IBEWE",
+          "IRAU",
+          "IHOM"
+        ],
+        "1993": [
+          "ZONNAM",
+          "LMAX",
+          "NSTMAX",
+          "LPOPT",
+          "LWOPT",
+          "IRAU",
+          "IHOM",
+          "IBEWE"
+        ]
+      },
+      "count_risk": "Two I10 fields plus five I5 fields = seven numeric positions, but printed sample shows six nonblank numeric tokens after the zone label; blank padding/zero conventions cannot be reconstructed from tokenization alone.",
+      "epistemic_status": "PRINTED_EXAMPLE_VISUAL_TOKENS_NOT_COLUMN_EXACT_BYTES",
+      "required_evidence": "Original unwrapped fixed-column input cards or byte-preserving data plus FORTRAN READ list, and an independently checked field mapping for each edition."
+    },
+    {
+      "id": "R9-SAMPLE-04",
+      "group": "METEOZON",
+      "card": "K1.3_K1.4",
+      "sample_observation": "Both example tables show standalone numeric line 4020 immediately after the zone card and preceding the population/site-looking OOHOMOGEN card.",
+      "visible_tokens": [
+        "4020"
+      ],
+      "branch_dependency": "LWOPT=1 entails K1.3 as documented in both manuals",
+      "epistemic_status": "SAMPLE_CONTEXT_ONLY_DO_NOT_TREAT_4020_AS_VALIDATED_METEOROLOGY_DATA"
+    },
+    {
+      "id": "R9-SAMPLE-05",
+      "group": "overall_input",
+      "card": "example_provenance",
+      "sample_observation": "KfK4853 Table 3 printed p43 and KfK5194 Table 5 printed p82 preserve conspicuously similar POLGRID/ISOTOPE/SOURCE/METEOZON illustrative card sequences.",
+      "epistemic_status": "SAME_VISIBLE_EXAMPLE_CONTENT_NOT_EVIDENCE_OF_IDENTICAL_BINARY_ORIGINAL_RESULTS",
+      "not_proved": [
+        "K2.4 parser/content",
+        "1991 legacy numeric runtime equivalence",
+        "1993 V4 executable parity",
+        "fixed-width decoded variables",
+        "successful execution of examples on modern machines"
+      ]
+    }
+  ],
+  "discrepancy_registry": [
+    {
+      "id": "SRC-R9-01",
+      "related": "R9-SAMPLE-01",
+      "priority": "P0_HIGH",
+      "status": "SOURCE_LIMITED",
+      "action": "Do not silently drop/consume/assign third printed SOURCE integer; retain manual-description and printed-sample mismatch."
+    },
+    {
+      "id": "SRC-R9-02",
+      "related": "R9-SAMPLE-03",
+      "priority": "P0_HIGH",
+      "status": "SOURCE_LIMITED",
+      "action": "No cross-version METEOZON fixed-column parser without byte-accurate cards and reader evidence."
+    },
+    {
+      "id": "SRC-R9-03",
+      "related": "R9-SAMPLE-04",
+      "priority": "P0_MEDIUM",
+      "status": "SOURCE_LIMITED",
+      "action": "Do not interpret meteorological sequence start, date, or clock from isolated printed 4020."
+    },
+    {
+      "id": "SRC-R9-04",
+      "related": "R9-SAMPLE-05",
+      "priority": "P0_MEDIUM",
+      "status": "SOURCE_LIMITED",
+      "action": "Illustrative JCL cards do not establish executable, compiler, platform, or validation status."
+    },
+    {
+      "id": "SRC-R9-05",
+      "related": "R9-SAMPLE-02",
+      "priority": "P0_HIGH",
+      "status": "SOURCE_LIMITED",
+      "action": "Do not map thermal QH cal/s to radiological Q/Q1 activity source inputs."
+    }
+  ],
+  "no_activation": {
+    "P0": "OPEN",
+    "original_1993_executable_equivalence": "NOT_ESTABLISHED",
+    "1993_runtime_mode": "NOT_ACTIVATED",
+    "empirical_validation": "NOT_ESTABLISHED",
+    "independent_scientific_review": "NOT_COMPLETED",
+    "historic_reader_recovery": "NOT_ESTABLISHED",
+    "1990_frozen_baseline": "UNCHANGED"
+  },
+  "follow_up": [
+    "Seek actual byte-preserving 1991/1993 input members referenced in the sample JCL, especially TEILO/TEIL1/TEIL4. Printed tables are not distributed source.",
+    "Cross-check K2.2 third printed token with original FORTRAN READ list and branch-specific semantics; do not infer hidden parameters.",
+    "Disambiguate K1.2 width/padding positions and source-era IBEWE, IRAU, IHOM with real input file.",
+    "Find K2.4 definition in authentic input program or fully archived source; status remains UNKNOWN.",
+    "Continue remaining 1990/1991/1993 source audit and independent scientific review."
+  ]
+}
