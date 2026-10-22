@@ -1,0 +1,434 @@
+# KfK 5194 August 1993: PRIMARY-SOURCE DOCUMENTATION ONLY.
+# Printed Table 1 / Tables 9-12 visually checked; never import as production defaults.
+# Numeric rate units d^-1; both source subscript and source labels copied as printed.
+schema_version: 1
+target_version: "UFOTRI_4_0_1993"
+report: "KfK 5194"
+source_pdf: "https://publikationen.bibliothek.kit.edu/270034158/3813483"
+scope: "LITERATURE_TABLE_TRANSCRIPTION_NOT_SOLVER_COEFFICIENTS"
+status: "PRINTED_TABLES_TRANSCRIBED_WITH_SOURCE_ERRATA_PENDING"
+validation: "NOT_EQUIVALENT_TO_ORIGINAL_EXECUTABLE"
+table_1:
+  printed_page: 17
+  pdf_page_index_zero_based: 26
+  title: "Key values for the developing stage of the plants considered in UFOTRI"
+  country_scope: "Historical German model development, not universal crop values"
+  mass_basis: "Printed g per plant/crop unit; original area/yield interpretation needs independent confirmation"
+  values:
+    plant_total_mass_g:
+      leafy_vegetables: 1600
+      grass: 850
+      potatoes: 3000
+      winter_wheat: 2500
+    plant_dry_mass_g:
+      leafy_vegetables: 160
+      grass: 170
+      potatoes: 600
+      winter_wheat: 500
+    plant_water_mass_g:
+      leafy_vegetables: 1440
+      grass: 680
+      potatoes: 2400
+      winter_wheat: 2000
+    edible_total_mass_g:
+      potatoes: 3000
+      winter_wheat: 600
+    edible_dry_mass_g:
+      potatoes: 660
+      winter_wheat: 519
+    edible_water_mass_g:
+      potatoes: 2340
+      winter_wheat: 81
+tables:
+  9:
+    printed_page: 86
+    pdf_page_index_zero_based: 95
+    model: "leafy_vegetables"
+    units: "d^-1"
+    context: "COMA long-term ingestion; transfer rates calculated with standard input values"
+    rows:
+      - source_symbol_as_printed: "t1,1"
+        from_as_printed: "atmosphere"
+        to_as_printed: "outside"
+        rate_per_day: 16.6
+      - source_symbol_as_printed: "t1,11"
+        from_as_printed: "atmosphere"
+        to_as_printed: "soil11"
+        rate_per_day: 0.68
+      - source_symbol_as_printed: "t1,14"
+        from_as_printed: "atmosphere"
+        to_as_printed: "plant HTO"
+        rate_per_day: 0.325
+      - source_symbol_as_printed: "t11,1"
+        from_as_printed: "soil11"
+        to_as_printed: "atmosphere"
+        rate_per_day: 0.2
+      - source_symbol_as_printed: "t11,12"
+        from_as_printed: "soil11"
+        to_as_printed: "soil12"
+        rate_per_day: 0.21
+      - source_symbol_as_printed: "t11,14"
+        from_as_printed: "soil11"
+        to_as_printed: "plant HTO"
+        rate_per_day: 0.042
+      - source_symbol_as_printed: "t12,11"
+        from_as_printed: "soil12"
+        to_as_printed: "soil11"
+        rate_per_day: 0.012
+      - source_symbol_as_printed: "t12,13"
+        from_as_printed: "soil12"
+        to_as_printed: "soil13"
+        rate_per_day: 0.066
+      - source_symbol_as_printed: "t12,14"
+        from_as_printed: "soil12"
+        to_as_printed: "plant HTO"
+        rate_per_day: 0.041
+      - source_symbol_as_printed: "t13,12"
+        from_as_printed: "soil13"
+        to_as_printed: "soil12"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "t13,13"
+        from_as_printed: "soil13"
+        to_as_printed: "ground water"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "t13,14"
+        from_as_printed: "soil13"
+        to_as_printed: "plant HTO"
+        rate_per_day: 0.028
+      - source_symbol_as_printed: "t14,1"
+        from_as_printed: "plant HTO"
+        to_as_printed: "atmosphere"
+        rate_per_day: 3.6
+      - source_symbol_as_printed: "t14,15"
+        from_as_printed: "plant HTO"
+        to_as_printed: "plant OBT"
+        rate_per_day: 0.0025
+      - source_symbol_as_printed: "t15,14"
+        from_as_printed: "plant OBT"
+        to_as_printed: "plant HTO"
+        rate_per_day: 0.032
+  10:
+    printed_page: 87
+    pdf_page_index_zero_based: 96
+    model: "grass_cow_milk_meat"
+    units: "d^-1"
+    context: "COMA long-term ingestion; transfer rates calculated with standard input values"
+    rows:
+      - source_symbol_as_printed: "t1,1"
+        from_as_printed: "atmosphere"
+        to_as_printed: "outside"
+        rate_per_day: 16.6
+      - source_symbol_as_printed: "t1,2"
+        from_as_printed: "atmosphere"
+        to_as_printed: "soil1"
+        rate_per_day: 0.68
+      - source_symbol_as_printed: "t1,5"
+        from_as_printed: "atmosphere"
+        to_as_printed: "grass HTO"
+        rate_per_day: 0.32
+      - source_symbol_as_printed: "t1,7"
+        from_as_printed: "atmosphere"
+        to_as_printed: "cow HTO"
+        rate_per_day: 0.000049
+      - source_symbol_as_printed: "t2,1"
+        from_as_printed: "soil1"
+        to_as_printed: "atmosphere"
+        rate_per_day: 0.2
+      - source_symbol_as_printed: "t2,3"
+        from_as_printed: "soil1"
+        to_as_printed: "soil2"
+        rate_per_day: 0.17
+      - source_symbol_as_printed: "t2,5"
+        from_as_printed: "soil1"
+        to_as_printed: "grass HTO"
+        rate_per_day: 0.083
+      - source_symbol_as_printed: "t3,2"
+        from_as_printed: "soil2"
+        to_as_printed: "soil1"
+        rate_per_day: 0.012
+      - source_symbol_as_printed: "t3,4"
+        from_as_printed: "soil2"
+        to_as_printed: "soil3"
+        rate_per_day: 0.0245
+      - source_symbol_as_printed: "t3,5"
+        from_as_printed: "soil2"
+        to_as_printed: "grass HTO"
+        rate_per_day: 0.062
+      - source_symbol_as_printed: "t4,3"
+        from_as_printed: "soil3"
+        to_as_printed: "soil2"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "t4,4"
+        from_as_printed: "soil3"
+        to_as_printed: "outside"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "t5,1"
+        from_as_printed: "grass HTO"
+        to_as_printed: "atmosphere"
+        rate_per_day: 7.6
+      - source_symbol_as_printed: "t5,6"
+        from_as_printed: "grass HTO"
+        to_as_printed: "grass OBT"
+        rate_per_day: 0.0081
+      - source_symbol_as_printed: "t5,7"
+        from_as_printed: "grass HTO"
+        to_as_printed: "cow HTO"
+        rate_per_day: 0.022
+      - source_symbol_as_printed: "t6,5"
+        from_as_printed: "grass OBT"
+        to_as_printed: "grass HTO"
+        rate_per_day: 0.024
+      - source_symbol_as_printed: "t6,7"
+        from_as_printed: "grass OBT"
+        to_as_printed: "cow HTO"
+        rate_per_day: 0.018
+      - source_symbol_as_printed: "t6,8"
+        from_as_printed: "grass OBT"
+        to_as_printed: "cow OBT"
+        rate_per_day: 0.0029
+      - source_symbol_as_printed: "t6,10"
+        from_as_printed: "grass OBT"
+        to_as_printed: "milk OBT"
+        rate_per_day: 0.0015
+      - source_symbol_as_printed: "t7,1"
+        from_as_printed: "cow HTO"
+        to_as_printed: "atmosphere"
+        rate_per_day: 0.03
+      - source_symbol_as_printed: "t7,2"
+        from_as_printed: "cow HTO"
+        to_as_printed: "soil1"
+        rate_per_day: 0.13
+      - source_symbol_as_printed: "t7,8"
+        from_as_printed: "cow HTO"
+        to_as_printed: "cow OBT"
+        rate_per_day: 0.0011
+      - source_symbol_as_printed: "t7,9"
+        from_as_printed: "cow HTO"
+        to_as_printed: "milk HTO"
+        rate_per_day: 0.039
+      - source_symbol_as_printed: "t7,10"
+        from_as_printed: "cow HTO"
+        to_as_printed: "milk OBT"
+        rate_per_day: 0.0013
+      - source_symbol_as_printed: "t8,7"
+        from_as_printed: "cow OBT"
+        to_as_printed: "cow HTO"
+        rate_per_day: 0.015
+      - source_symbol_as_printed: "t8,10"
+        from_as_printed: "cow OBT"
+        to_as_printed: "milk HTO"
+        rate_per_day: 0.0021
+  11:
+    printed_page: 88
+    pdf_page_index_zero_based: 97
+    model: "potato_tubers"
+    units: "d^-1"
+    context: "COMA long-term ingestion; transfer rates calculated with standard input values"
+    rows:
+      - source_symbol_as_printed: "tp1,p1"
+        from_as_printed: "atmosphere"
+        to_as_printed: "outside"
+        rate_per_day: 16.6
+      - source_symbol_as_printed: "tp1,p2"
+        from_as_printed: "atmosphere"
+        to_as_printed: "soil1"
+        rate_per_day: 0.68
+      - source_symbol_as_printed: "tp1,p5"
+        from_as_printed: "atmosphere"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.41
+      - source_symbol_as_printed: "tp2,p1"
+        from_as_printed: "soil1"
+        to_as_printed: "atmosphere"
+        rate_per_day: 0.14
+      - source_symbol_as_printed: "tp2,p3"
+        from_as_printed: "soil1"
+        to_as_printed: "soil2"
+        rate_per_day: 0.26
+      - source_symbol_as_printed: "tp2,p5"
+        from_as_printed: "soil1"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.042
+      - source_symbol_as_printed: "tp2,p7"
+        from_as_printed: "soil1"
+        to_as_printed: "tuber HTO"
+        rate_per_day: 0.0087
+      - source_symbol_as_printed: "tp3,p2"
+        from_as_printed: "soil2"
+        to_as_printed: "soil1"
+        rate_per_day: 0.012
+      - source_symbol_as_printed: "tp3,p4"
+        from_as_printed: "soil2"
+        to_as_printed: "soil3"
+        rate_per_day: 0.077
+      - source_symbol_as_printed: "tp3,p5"
+        from_as_printed: "soil2"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.044
+      - source_symbol_as_printed: "tp3,p7"
+        from_as_printed: "soil2"
+        to_as_printed: "tuber HTO"
+        rate_per_day: 0.0088
+      - source_symbol_as_printed: "tp4,p3"
+        from_as_printed: "soil3"
+        to_as_printed: "soil2"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "tp4,p4"
+        from_as_printed: "soil3"
+        to_as_printed: "outside"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "Tp45"
+        from_as_printed: "soil3"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.029
+      - source_symbol_as_printed: "tp4,p7"
+        from_as_printed: "soil3"
+        to_as_printed: "tuber HTO"
+        rate_per_day: 0.0058
+      - source_symbol_as_printed: "tp5,p1"
+        from_as_printed: "potato HTO"
+        to_as_printed: "atmosphere"
+        rate_per_day: 2.4
+      - source_symbol_as_printed: "tp5,p6"
+        from_as_printed: "potato HTO"
+        to_as_printed: "potato OBT"
+        rate_per_day: 0.0053
+      - source_symbol_as_printed: "tp5,p7"
+        from_as_printed: "potato HTO"
+        to_as_printed: "tuber HTO"
+        rate_per_day: 0.2
+      - source_symbol_as_printed: "tp5,p8"
+        from_as_printed: "potato hto"
+        to_as_printed: "tuber OBT"
+        rate_per_day: 0.0026
+      - source_symbol_as_printed: "tp6,p5"
+        from_as_printed: "potato OBT"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.069
+      - source_symbol_as_printed: "tp7,p5"
+        from_as_printed: "tuber HTO"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.47
+  12:
+    printed_page: 89
+    pdf_page_index_zero_based: 98
+    model: "winter_wheat_seeds"
+    units: "d^-1"
+    context: "COMA long-term ingestion; transfer rates calculated with standard input values"
+    rows:
+      - source_symbol_as_printed: "tp1,p1"
+        from_as_printed: "atmosphere"
+        to_as_printed: "outside"
+        rate_per_day: 16.6
+      - source_symbol_as_printed: "tp1,p2"
+        from_as_printed: "atmosphere"
+        to_as_printed: "soil1"
+        rate_per_day: 0.68
+      - source_symbol_as_printed: "tp1,p5"
+        from_as_printed: "atmosphere"
+        to_as_printed: "potato HTO"
+        rate_per_day: 0.304
+      - source_symbol_as_printed: "tp2,p1"
+        from_as_printed: "soil1"
+        to_as_printed: "atmosphere"
+        rate_per_day: 0.21
+      - source_symbol_as_printed: "tp2,p3"
+        from_as_printed: "soil1"
+        to_as_printed: "soil2"
+        rate_per_day: 0.2
+      - source_symbol_as_printed: "tp2,p5"
+        from_as_printed: "soil1"
+        to_as_printed: "wheat HTO"
+        rate_per_day: 0.039
+      - source_symbol_as_printed: "tp3,p2"
+        from_as_printed: "soil2"
+        to_as_printed: "soil1"
+        rate_per_day: 0.012
+      - source_symbol_as_printed: "tp3,p4"
+        from_as_printed: "soil2"
+        to_as_printed: "soil3"
+        rate_per_day: 0.063
+      - source_symbol_as_printed: "tp3,p5"
+        from_as_printed: "soil2"
+        to_as_printed: "wheat HTO"
+        rate_per_day: 0.039
+      - source_symbol_as_printed: "tp4,p3"
+        from_as_printed: "soil3"
+        to_as_printed: "soil2"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "tp4,p4"
+        from_as_printed: "soil3"
+        to_as_printed: "outside"
+        rate_per_day: 0.0082
+      - source_symbol_as_printed: "Tp45"
+        from_as_printed: "soil3"
+        to_as_printed: "wheat HTO"
+        rate_per_day: 0.026
+      - source_symbol_as_printed: "tp5,p1"
+        from_as_printed: "wheat HTO"
+        to_as_printed: "atmosphere"
+        rate_per_day: 2.4
+      - source_symbol_as_printed: "tp5,p6"
+        from_as_printed: "wheat HTO"
+        to_as_printed: "wheat OBT"
+        rate_per_day: 0.012
+      - source_symbol_as_printed: "tp5,p7"
+        from_as_printed: "wheat HTO"
+        to_as_printed: "seedling HTO"
+        rate_per_day: 0.32
+      - source_symbol_as_printed: "tp5,p8"
+        from_as_printed: "wheat HTO"
+        to_as_printed: "seedling OBT"
+        rate_per_day: 0.0041
+      - source_symbol_as_printed: "tp6,p5"
+        from_as_printed: "wheat OBT"
+        to_as_printed: "wheat HTO"
+        rate_per_day: 0.069
+      - source_symbol_as_printed: "tp7,p5"
+        from_as_printed: "seedling HTO"
+        to_as_printed: "wheat HTO"
+        rate_per_day: 8.3
+source_ambiguities:
+  - table: 9
+    symbol: "t13,13"
+    issue: "Printed source and destination subscript both 13, but destination is ground water rather than source soil13."
+    disposition: "PRESERVE_PRINTED_IDENTIFIER_DO_NOT_SILENTLY_RENUMBER"
+  - table: 10
+    symbol: "t4,4"
+    issue: "Printed self-index yet from soil3 to outside."
+    disposition: "PRESERVE_PRINTED_IDENTIFIER_DO_NOT_SILENTLY_RENUMBER"
+  - table: 11
+    symbol: "Tp45"
+    issue: "Nonstandard printed transfer-rate label for soil3 to potato HTO; do not infer identifier spelling automatically."
+    disposition: "PRESERVE_PRINTED_IDENTIFIER_DO_NOT_SILENTLY_RENUMBER"
+  - table: 11
+    symbol: "tp4,p4"
+    issue: "Printed self-index yet from soil3 to outside."
+    disposition: "PRESERVE_PRINTED_IDENTIFIER_DO_NOT_SILENTLY_RENUMBER"
+  - table: 12
+    symbol: "tp1,p5"
+    issue: "Wheat COMA table prints destination 'potato HTO' in atmosphere-to-plant row; do not silently replace source label with 'wheat HTO'."
+    disposition: "AS_PRINTED_LABEL_CONFLICT_REQUIRES_SOURCE_REVIEW"
+  - table: 12
+    symbol: "Tp45"
+    issue: "Nonstandard potato-series printed identifier reused in wheat COMA table."
+    disposition: "AS_PRINTED_SYMBOL_CONFLICT_REQUIRES_SOURCE_REVIEW"
+  - table: 12
+    symbol: "tp4,p4"
+    issue: "Printed self-index despite soil3 to outside path."
+    disposition: "PRESERVE_PRINTED_IDENTIFIER_DO_NOT_SILENTLY_RENUMBER"
+  - table: "TOC"
+    symbol: "TABLE9_TO_12"
+    issue: "List of Tables has printed page labels 88-91 but visually inspected tables are printed on pages 86-89 (PDF zero-based pages 95-98). Use inspected page images for traceability."
+    disposition: "SOURCE_TABLE_OF_CONTENTS_PAGE_DRIFT_NO_CORRECTION_IN_ORIGINAL"
+derived_non_source_diagnostics:
+  grass_obt_total_outflow_per_day:
+    expression: "0.024 + 0.018 + 0.0029 + 0.0015"
+    value: 0.0464
+    half_life_days: 14.938516822412614
+    interpretation: "Derived from four outgoing Table 10 edges; distinct from single grass OBT -> grass HTO edge"
+  leafy_obt_total_outflow_per_day:
+    expression: "0.032"
+    value: 0.032
+    half_life_days: 21.66084939249829
+    interpretation: "Table 9 only lists one plant OBT outgoing edge"
