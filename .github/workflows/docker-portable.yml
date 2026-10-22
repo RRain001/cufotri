@@ -100,7 +100,9 @@ jobs:
           printf '%s\n' 'python:3.11-slim-bookworm@sha256:f06d01d4ba3f8ad5af45a3ec87df19c1d317d8e8961edc0fabda61811af6f7cf' > image-provenance/base-image.txt
           docker image inspect --format '{{.Id}}' cufotri:runtime-${{ github.sha }} > image-provenance/runtime-image-id.txt
           docker image inspect --format '{{.Os}}/{{.Architecture}}' cufotri:runtime-${{ github.sha }} > image-provenance/platform.txt
-          docker run --rm --entrypoint python cufotri:runtime-${{ github.sha }} -m pip freeze > image-provenance/runtime-packages.txt
+          docker run --rm --entrypoint python cufotri:runtime-${{ github.sha }} \
+            -c 'import importlib.metadata as m; print("\\n".join(sorted("{}=={}".format(d.metadata["Name"], d.version) for d in m.distributions())))' \
+            > image-provenance/runtime-packages.txt
 
       - name: Upload build provenance (not a raw scientific-data artifact)
         uses: actions/upload-artifact@v4

@@ -34,7 +34,7 @@ def test_docker_has_separate_locked_verify_and_minimal_runtime() -> None:
     assert "uv==0.13.5" in df
     assert "uv sync --locked --no-dev --no-editable" in df
     assert "uv sync --locked --extra test" in df
-    assert "uv sync --locked --no-install-project" in df
+    assert "uv sync --locked --no-dev --no-install-project" in df
     assert "AS verification-deps" in df
     assert "AS verification" in df
     assert "AS runtime" in df
