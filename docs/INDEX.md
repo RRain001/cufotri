@@ -16,6 +16,8 @@ For current claims, read these in conjunction with `STATUS.md`. Historical docum
 
 ## UFOTRI 4.0 (1993) future target — source audit in progress
 
+- [P3 R1: KfK 5194 daytime canopy and two-surface Monteith physics](v4/1993_upgrade/P3_R1_CANOPY_MONTEITH.md): independently computed Eq.(4)–(11) plant/soil resistance, temperature/humidity effects, radiative shielding, and evapotranspiration using explicit crop/meteorology inputs; opt-in only, not full runtime activation.
+
 - [First opt-in KfK5194 IWASH=0 physical source-depletion budget](v4/1993_upgrade/IWASH0_PHYSICS_R1.md): P1-profiled historical class washout and explicitly interpreted REGTIM, dry/wet source conservation, bounded sensitivity; not default-runtime 1993 activation or original executable parity.
 
 - [ADR-085: 1993 KfK5194 manual-first reconstruction authority](v4/adr/ADR-085-ufotri-1993-manual-first-reconstruction-authority.md): official 1993 report defines opt-in physical equations/defaults even without recovered original source/executable; mandatory per-feature PDF evidence and scientific gates; original-executable, empirical and regulatory equivalence are separately unestablished.

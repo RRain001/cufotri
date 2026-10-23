@@ -58,6 +58,9 @@ p1_historical_input_status: "DOC_DEFAULTS_TYPED_METADATA_ONLY_NO_SOLVER_ACTIVATI
 iwash0_optin_physics_r1: "src/cteas_ufotri/atmosphere/kfk5194_1993_washout.py"
 iwash0_optin_physics_report_r1: "docs/v4/1993_upgrade/IWASH0_PHYSICS_R1.md"
 iwash0_optin_physics_status: "SOURCE_ANCHORED_OPT_IN_SOURCE_DEPLETION_REGTIM_ASSUMPTION_SOURCE_LIMITED_NOT_FULL_1993_RUNTIME"
+p3_r1_canopy_monteith_source_module: "src/cteas_ufotri/plant/kfk5194_1993_canopy_et.py"
+p3_r1_canopy_monteith_document: "docs/v4/1993_upgrade/P3_R1_CANOPY_MONTEITH.md"
+p3_r1_status: "OPT_IN_DAYLIGHT_DRY_EQUATIONS4_TO11_ONLY_NOT_FULL_1993_RUNTIME"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
