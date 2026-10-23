@@ -73,3 +73,44 @@ No leakage of an atmospheric vapor term into soil/root water accounting is
 allowed. Leaf-water instantaneous homogenization remains an explicit,
 unverified *research hypothesis*, not a recovered original FORTRAN
 transport mechanism. PR #152 stays Draft until scientific sign-off.
+
+
+## R6 R5 — static soil capacity preflight (not original soil dynamics)
+
+The 1993 p.15 source-weighted soil-to-root withdrawal ledger now has a **separate,
+opt-in available-stock validation**, `kfk5194_1993_root_soil_capacity.py`.
+It requires *externally supplied*, time-consistent **liquid-water** stores
+`W_soil,i` [kg/m² ground] and **HTO** stores `I_soil,i` [Bq/m² ground] for
+each of the source-defined 0–5 / 5–15 / 15–30 cm horizons, in addition to the
+existing source-measured concentration `C_soil,i` [Bq/kg water].
+
+The strict well-mixed, **static bucket preflight** checks, for each horizon:
+
+```text
+I_soil,i ≈ W_soil,i * C_soil,i  (user-provided soil stock consistency)
+W_taken,i = f_i * R * dt <= W_soil,i
+I_taken,i = W_taken,i * C_soil,i <= I_soil,i
+W_rem,i = W_soil,i - W_taken,i
+I_rem,i = I_soil,i - I_taken,i
+sum(W_taken,i) == R*dt
+sum(I_taken,i) == R*dt*C_root
+```
+
+It returns projected post-withdrawal stocks and separately audited total water
+and isotope budget residuals. Both agricultural and grass source fractions
+are checked; grass has exactly zero third-layer uptake and may legitimately
+have zero available water/HTO in that layer. The capacity checker rejects
+insufficient stock, bad units/nonphysical input, forged fraction or forged
+withdrawal values, and inconsistent source concentration versus inventory.
+Synthetic tests use independently hand-calculated water and activity values.
+
+**Crucial science limits:** This is **not** a 1993-source-derived soil
+water-content or HTO transport law. It does **not mutate soil state** and it
+does not supply capillary rise, rainfall, infiltration, sorption, profile
+re-equilibration, organic uptake or a future soil reservoir at the next time
+step. The assumption of uniform concentration within each externally
+provided depth bucket and the input inventory values are research choices,
+not original FORTRAN defaults. Actual state advance belongs to P4 #130 and
+requires independently reviewed mass-flux control-volume coupling; this
+isolated preflight is only an early rejection gate. The root-to-leaf
+instantaneous mixing limitation remains unchanged. PR #152 remains Draft.
