@@ -92,10 +92,14 @@ def _exposure(canopy=None, air=20.0, dt=3600.0):
 
 
 def _step(state=None, exposure=None, **kwargs):
-    return advance_kfk5194_tfwt_compatibility(
-        profile=_profile(), state=state or _state(),
-        exposure=exposure or _exposure(), kernel=KERNEL, **kwargs,
+    args = dict(
+        profile=_profile(),
+        state=_state() if state is None else state,
+        exposure=_exposure() if exposure is None else exposure,
+        kernel=KERNEL,
     )
+    args.update(kwargs)
+    return advance_kfk5194_tfwt_compatibility(**args)
 
 
 def test_1993_day_canopy_is_inserted_into_existing_tfwt_analytic_kernel():
