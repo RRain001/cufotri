@@ -398,3 +398,45 @@ terminal inventory to the model's existing numerical-budget scale;
 failure is an error rather than a fallback source or tolerance
 relaxation. **P3 #129 / P0 #126 / P4 #130 remain open; PR #152 remains
 Draft until independent scientific review and latest-commit CI.**
+
+## R6 R11 — time-resolved conditional isotope-source and signed Belot budgets
+
+R11 adds opt-in `plant/kfk5194_1993_series_source_budget.py` without changing
+the scientific 1990 default, the underlying R6 soil/leaf solver, or public CLI.
+It propagates the R10 **conditional model-origin** attribution across every
+explicit R7 interval and independently verifies two quantities at each endpoint:
+(i) retained leaf HTO activity [Bq/m² ground] and (ii) **signed** composite
+Belot exchange accumulated *during that interval* [Bq/m² ground].
+
+For interval j, define `g=exp(-a*dt/W)`, `q=1-g` and the R9 coefficients.
+Each contribution to leaf HTO is advanced by the same homogeneous fixed-W
+exchange operator: `L_new=g*L_old` for initial leaf HTO;
+`S_i,new=g*S_i,old + W*(R*f_i/a)*q*C_soil,i,initial` for initial soil
+source i; and `A_k,new=g*A_k,old` for previous air sources with
+`A_j,new=W*(alpha/rho)*q*C_air,j` for the new air interval.
+All these *retained endpoint activities* are nonnegative only under the
+qualified nonnegative source-input contract; they are **not gross fluxes**.
+
+For the signed Belot budget, each initial-leaf/air-origin contribution is its
+change in retained leaf activity. Each soil-origin contribution is its change
+in retained leaf activity **minus its actual same-interval soil root HTO
+withdrawal**. Summing them must equal the existing one-time composite Belot
+HTO exchange, with no extra `-E*C` isotope loss. These signed terms may be
+negative and must **never** be relabeled as individual atmospheric gross
+deposition/emission processes or empirical source attribution.
+
+Independent tests zero all other isotope inputs and rerun the unchanged
+six-hour solver for each of the 1+3+6 separately prescribed sources. At every
+hour, each source's predicted retained leaf activity **and** signed Belot
+contribution must agree with these independent black-box runs. Tests also
+cover crop/grass profiles, zero isotope inputs, half-hour partition,
+research-only enum gating, untouched default entrypoints and endpoint R10
+identity. This is a mathematical verification only, not evidence that
+root-to-leaf mixing is instantaneous, that extraction-only hydrology is valid,
+or that the original KfK5194 FORTRAN has matching numerical behavior.
+
+**Science status:** `SOURCE_LIMITED_RESEARCH_ONLY`. PR #152 remains Draft;
+P0 #126, P3 #129 and P4 #130 remain OPEN; exact-head CI, independent physical
+review and eventually original executable/empirical qualification are separate
+conditions. 1993 normative anchors remain printed p.3 Eq.(1)-(3), p.7 Belot
+composite statement and p.15 root depth fractions.

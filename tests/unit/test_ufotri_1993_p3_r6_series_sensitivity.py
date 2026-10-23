@@ -388,3 +388,152 @@ def test_r10_legacy_paths_remain_unmodified_and_disconnected():
         assert "kfk5194_1993_series_attribution" not in (
             ROOT / name
         ).read_text(encoding="utf-8")
+
+# R11: independently replay each isotope source through the unmodified
+# six-hour solver, checking BOTH retained HTO and signed Belot per hour.
+from cteas_ufotri.plant.kfk5194_1993_series_source_budget import (
+    audit_kfk5194_1993_series_source_budget,
+)
+
+
+def _source_only_args(args, kind, index=0):
+    zeroed = _isotope_zeroed(args)
+    if kind == "leaf":
+        return {**zeroed, "initial_leaf": args["initial_leaf"]}
+    if kind == "soil":
+        activities = tuple(
+            a if i == index else 0.0
+            for i, a in enumerate(args["initial_soil"].hto_bq_m2_ground)
+        )
+        return {**zeroed, "initial_soil": replace(
+            zeroed["initial_soil"], hto_bq_m2_ground=activities,
+        )}
+    if kind == "air":
+        forcings = list(zeroed["intervals"])
+        forcings[index] = replace(
+            forcings[index],
+            air_hto_concentration_bq_m3=(
+                args["intervals"][index].air_hto_concentration_bq_m3
+            ),
+        )
+        return {**zeroed, "intervals": tuple(forcings)}
+    raise AssertionError("invalid oracle source")
+
+
+@pytest.mark.parametrize("group", [
+    Group.AGRICULTURAL_PLANT, Group.PASTURE_GRASS,
+])
+def test_r11_interval_source_and_signed_belot_budget_black_box(group):
+    args = _case(group)
+    budget = audit_kfk5194_1993_series_source_budget(**args)
+    reference = _run(args)
+    assert len(budget.intervals) == len(args["intervals"]) == 6
+    assert budget.endpoint.actual_final_leaf_hto_bq_m2_ground == pytest.approx(
+        reference.final_leaf.tfwt_inventory_bq_m2, abs=1e-11,
+    )
+    oracles = [("leaf", 0)] + [("soil", i) for i in range(3)] + [
+        ("air", i) for i in range(6)
+    ]
+    isolated = {
+        key: _run(_source_only_args(args, *key))
+        for key in oracles
+    }
+    for j, (snap, step) in enumerate(zip(
+        budget.intervals, reference.steps, strict=True,
+    )):
+        assert snap.end_time == step.next_leaf.time
+        assert snap.observed_leaf_hto == pytest.approx(
+            step.next_leaf.tfwt_inventory_bq_m2, rel=1e-12,
+        )
+        retained = (
+            snap.retained_initial_leaf_hto,
+            *snap.retained_initial_soil_hto_by_layer,
+            *snap.retained_air_hto_by_interval,
+        )
+        exchange = (
+            snap.signed_belot_from_initial_leaf,
+            *snap.signed_belot_from_initial_soil_by_layer,
+            *snap.signed_belot_from_air_by_interval,
+        )
+        keys_here = oracles[:4] + oracles[4:4 + j + 1]
+        for key, expected_leaf, expected_belot in zip(
+            keys_here, retained, exchange, strict=True,
+        ):
+            alt = isolated[key].steps[j]
+            assert expected_leaf == pytest.approx(
+                alt.next_leaf.tfwt_inventory_bq_m2, rel=6e-11, abs=1e-10,
+            )
+            assert expected_belot == pytest.approx(
+                alt.root_leaf.leaf_water_hto_step.belot_composite_hto_exchange_bq_m2_ground,
+                rel=6e-11, abs=1e-10,
+            )
+        assert math.fsum(retained) == pytest.approx(
+            step.next_leaf.tfwt_inventory_bq_m2, rel=3e-11, abs=1e-10,
+        )
+        assert math.fsum(exchange) == pytest.approx(
+            step.root_leaf.leaf_water_hto_step.belot_composite_hto_exchange_bq_m2_ground,
+            rel=3e-11, abs=1e-10,
+        )
+        assert abs(snap.leaf_residual) <= 1e-9
+        assert abs(snap.belot_residual) <= 1e-9
+        if group is Group.PASTURE_GRASS:
+            assert snap.retained_initial_soil_hto_by_layer[2] == 0.
+            assert abs(snap.signed_belot_from_initial_soil_by_layer[2]) <= 1e-12
+    assert budget.provenance()["original_fortran_numeric_equivalence"] == "NOT_ESTABLISHED"
+    assert budget.provenance()["independent_scientific_validation"] == "NOT_ESTABLISHED"
+    assert budget.provenance()["production_runtime_activated"] is False
+
+
+def test_r11_zero_inputs_and_interval_partition_source_budget():
+    args = _isotope_zeroed(_case())
+    zero = audit_kfk5194_1993_series_source_budget(**args)
+    assert all(s.reconstructed_leaf_hto == 0. for s in zero.intervals)
+    assert all(s.reconstructed_signed_belot == 0. for s in zero.intervals)
+    args = _case()
+    original = audit_kfk5194_1993_series_source_budget(**args)
+    first = args["intervals"][0]
+    split = audit_kfk5194_1993_series_source_budget(**{
+        **args, "intervals": (
+            replace(first, interval_seconds=1800.),
+            replace(first, interval_seconds=1800.),
+        ) + args["intervals"][1:],
+    })
+    for old, new in zip(original.intervals, split.intervals[1:], strict=True):
+        assert new.observed_leaf_hto == pytest.approx(old.observed_leaf_hto, rel=1e-11)
+        assert new.retained_initial_leaf_hto == pytest.approx(
+            old.retained_initial_leaf_hto, rel=1e-11,
+        )
+        assert new.retained_initial_soil_hto_by_layer == pytest.approx(
+            old.retained_initial_soil_hto_by_layer, rel=1e-11,
+        )
+        assert (
+            sum(new.retained_air_hto_by_interval[:2]) if len(new.retained_air_hto_by_interval) > 1
+            else 0.
+        ) == pytest.approx(
+            old.retained_air_hto_by_interval[0], rel=1e-11, abs=1e-12,
+        )
+    assert sum(s.observed_signed_belot for s in original.intervals) == pytest.approx(
+        sum(s.observed_signed_belot for s in split.intervals), rel=1e-11,
+    )
+
+
+@pytest.mark.parametrize("key,bad", [
+    ("root_mixing_hypothesis", None),
+    ("leaf_hypothesis", "BELOT_COMPOSITE_FIXED_LEAF_WATER"),
+    ("evolution_hypothesis", "EXTRACTION_ONLY_NO_RECHARGE_RESEARCH"),
+    ("intervals", ()),
+])
+def test_r11_source_budget_research_gate_rejects_invalid_selection(key, bad):
+    with pytest.raises(KFK5194WaterActivityError):
+        audit_kfk5194_1993_series_source_budget(**{**_case(), key: bad})
+
+
+def test_r11_default_entrypoints_do_not_import_research_budget():
+    for name in (
+        "src/cteas_ufotri/config.py",
+        "src/cteas_ufotri/cli.py",
+        "src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py",
+    ):
+        assert "kfk5194_1993_series_source_budget" not in (
+            ROOT / name
+        ).read_text(encoding="utf-8")
