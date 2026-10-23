@@ -61,6 +61,9 @@ iwash0_optin_physics_status: "SOURCE_ANCHORED_OPT_IN_SOURCE_DEPLETION_REGTIM_ASS
 p3_r1_canopy_monteith_source_module: "src/cteas_ufotri/plant/kfk5194_1993_canopy_et.py"
 p3_r1_canopy_monteith_document: "docs/v4/1993_upgrade/P3_R1_CANOPY_MONTEITH.md"
 p3_r1_status: "OPT_IN_DAYLIGHT_DRY_EQUATIONS4_TO11_ONLY_NOT_FULL_1993_RUNTIME"
+p3_r2_night_rain_regime_module: "src/cteas_ufotri/plant/kfk5194_1993_canopy_regimes.py"
+p3_r2_night_rain_report: "docs/v4/1993_upgrade/P3_R2_NIGHT_RAIN_CANOPY.md"
+p3_r2_status: "OPT_IN_NIGHT_RAIN_RESISTANCE_QUALITATIVE_SOURCE_LIMITED_NO_FULL_RUNTIME"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
