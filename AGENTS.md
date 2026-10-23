@@ -1,5 +1,11 @@
 # CUFOTRI agent and research-development rules
 
+## Owner's current CI and merge decision (2026-10-23)
+- Preserve automatic GitHub Actions PR/push triggers for Docker, Python compatibility, Protected Integration Gate and Remediation CI. Do not merge the canceled manual-only policy PR #153.
+- Daily source building and scoped tests run in Ubuntu Docker; GitHub cloud CI launches automatically on eligible PR changes without a manual owner click. An agent can initiate dedicated strict science dispatch when needed.
+- When exact-head required checks and all applicable numerical, independent scientific and protected integration gates genuinely PASS, automatically make the PR ready and squash merge or enable native auto-merge without asking the owner again. The KfK 5194 R6 explicit research hypothesis / Draft PR #152 remains BLOCKED until separate science acceptance; green software tests alone do not authorize it.
+
+
 ## Scientific correctness
 
 1. Source editions are version-scoped: repository-root `ufotri_manual.md` is **KfK 4605 (1990)** for the frozen baseline, while official **KfK 5194 (1993)** is the normative manual for opt-in UFOTRI 4.0 reconstruction ([ADR-085](docs/v4/adr/ADR-085-ufotri-1993-manual-first-reconstruction-authority.md)). Do not require unavailable original code to start reviewed manual-first physics; do not claim original-executable numerical equivalence without original UFOTRI source/executable comparison.
