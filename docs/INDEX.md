@@ -16,7 +16,7 @@ For current claims, read these in conjunction with `STATUS.md`. Historical docum
 
 ## UFOTRI 4.0 (1993) future target — source audit in progress
 
-- [P3 R6: explicit leaf water + HTO joint mass/activity budget](v4/1993_upgrade/P3_R6_WATER_HTO_JOINT_LEDGER.md): opt-in KfK5194 1993 leaf exchange and Monteith plant ET with explicitly supplied root water/HTO flux; exact coupled interval ledger under declared, unverified isotope-mixing assumptions and unresolved double-counting risk.
+- [P3 R6: explicit leaf water + HTO joint mass/activity budget](v4/1993_upgrade/P3_R6_WATER_HTO_JOINT_LEDGER.md): opt-in KfK5194 1993 leaf exchange and Monteith plant ET with explicitly supplied root water/HTO flux; exact coupled interval ledger under declared, unverified isotope-mixing assumptions with fixed-water R=E and no additional transpiration HTO sink; independent scientific review pending.
 
 - [P3 R5: conservative constant-LAI leaf–ground HTO budget](v4/1993_upgrade/P3_R5_LEAF_GROUND_AREA_BUDGET.md): opt-in source-1993 Eq.(1)–(3) leaf HTO exchange mapped to a leaf-water-only ground-area inventory, with strict unchanged-LAI and mass/activity closure.
 
