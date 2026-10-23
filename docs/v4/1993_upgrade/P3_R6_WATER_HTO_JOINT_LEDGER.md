@@ -284,3 +284,71 @@ model and independent data remain prerequisites for comparing this
 assumption with alternate root transport timescales or certifying
 original FORTRAN parity. The PR remains Draft and scientific acceptance
 remains blocked until independent evidence/review.
+
+
+## R6 R9 — conditional six-hour sensitivity of sequential extraction-only research
+
+This **opt-in, research-only** diagnostic extends R8's single-interval
+tangent through R7's immutable, six-hour (or arbitrary positive finite
+number of intervals) soil-root-leaf sequence. New module:
+`plant/kfk5194_1993_series_sensitivity.py`. It calls the same validated
+research transaction and does not connect to the legacy CLI/defaults.
+Source authority is unchanged: KfK5194 (1993) printed p.15 root uptake
+fractions; printed p.3 Eq.(1)–(3) and p.7's *composite* Belot HTO
+release (which already includes transpiration-related HTO loss).
+
+For interval `j`, leaf water `W` [kg/m² ground], exchange coefficient
+`a_j` [kg/m² ground/s], ET/root flux `R_j=E_j`
+[kg/m² ground/s], uptake share `f_i`, air fractionation `alpha_j`,
+vapour density `rho_j` [kg/m³], and duration `dt_j` [s], define
+
+```text
+g_j = exp(-a_j * dt_j / W)
+B_ij = W * (R_j * f_i / a_j) * (1 - g_j)    [kg/m² ground]
+H_j = W * (alpha_j / rho_j) * (1 - g_j)    [m]
+S_ij = g_j * S_i,j-1 + B_ij
+T_kj = g_j * T_k,j-1 (for k < j); T_jj = H_j
+M_j = g_j * M_j-1
+```
+
+Here `S_ij = dI_leaf,j/dC_soil,initial,i` has units
+[kg/m² ground]; `T_kj = dI_leaf,j/dC_air,k` has units [m];
+`M_j = dI_leaf,j/dI_leaf,initial` is dimensionless. Soil input
+perturbations change initial layer HTO activity by
+`W_soil,initial,i * dC_soil,i` while holding the **soil water stocks**
+and all forcings fixed. Under *extraction-only proportional withdrawal*,
+the soil concentration stays constant until exhaustion, so the above
+multi-interval tangent is exact for this conditional arithmetic model.
+The independently available final soil and cumulative Belot responses are
+
+```text
+dA_soil,final,i/dC_soil,initial,i = W_soil,final,i
+dBelot_total/dC_soil,initial,i =
+    S_i,final + W_soil,final,i - W_soil,initial,i
+```
+
+The second identity follows from the **joint soil+leaf HTO budget**;
+there is no extra `-E*C` outside the signed Belot composite term.
+If a contributing soil layer reaches zero water, this diagnostic fails
+closed rather than advertising a differentiable sensitivity at a
+feasibility/exhaustion boundary.
+
+Independent *black-box* tests perturb each of three initial soil
+concentrations (crop and pasture), each of six hourly air-HTO inputs,
+and the initial leaf inventory; they compare solver finite differences
+with the derived tangent and Belot/soil responses. Splitting one hour
+into two half-hours must preserve final soil and initial-leaf
+sensitivities; paired half-hour air responses must sum to the original
+one-hour air response. Pasture's source-defined 15–30 cm root fraction
+remains identically zero. Missing/string research opt-ins fail closed.
+
+**Scientific qualification remains blocked:** sensitivity slopes here
+are *conditional on* the user-authorized `INSTANT_HOMOGENEOUS_LEAF_MIXING_RESEARCH`,
+`EXTRACTION_ONLY_NO_RECHARGE_RESEARCH`, and
+`BELOT_COMPOSITE_FIXED_LEAF_WATER`. They are **not evidence for**
+instantaneous root transit, no-recharge soil behavior, historical
+1993 FORTRAN parity, or experimental realism. No rain, recharge,
+advection/diffusion, isotope fractionation during root transit,
+physical lag compartment, growth or variable leaf-water dynamics was
+introduced. Keep PR #152 Draft, issues #126/#129/#130 Open until
+independent science review and full exact-head CI.
