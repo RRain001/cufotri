@@ -70,6 +70,9 @@ p3_r3_status: "MIXED_EDITION_OPT_IN_DYNAMIC_TFWT_COMPATIBILITY_NOT_ORIGINAL_1993
 p3_r4_1993_printed_leaf_eq1_to3_module: "src/cteas_ufotri/plant/kfk5194_1993_leaf_eq1_3.py"
 p3_r4_1993_printed_leaf_eq1_to3_report: "docs/v4/1993_upgrade/P3_R4_1993_PRINTED_LEAF_EQ1_3.md"
 p3_r4_status: "DIRECT_PRINTED_1993_EQ1_TO3_LEAF_AREA_SOURCE_MATH_NOT_ORIGINAL_FORTRAN_PARITY"
+p3_r5_ground_lai_module: "src/cteas_ufotri/plant/kfk5194_1993_ground_leaf_budget.py"
+p3_r5_ground_lai_report: "docs/v4/1993_upgrade/P3_R5_LEAF_GROUND_AREA_BUDGET.md"
+p3_r5_status: "OPT_IN_FIXED_LAI_LEAF_GROUND_HTO_ACTIVITY_PROJECTION_NOT_FULL_1993_RUNTIME"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
