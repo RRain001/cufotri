@@ -10,29 +10,21 @@ The direct 1993 *leaf-level* gas exchange rate is derived from Eq.(1)–(4) and 
 
 The rate of **plant** transpiration `E [kg/m² ground/s]` is supplied by the previously implemented Eq.(11) Monteith plant component; **soil ET is not charged to the leaf-water store**. The model requires separately explicit external root-delivered water `R [kg/m² ground/s]` and its HTO concentration `C_root [Bq/kg]`.
 
-Assuming (A) externally delivered root water is instantaneously mixed into leaf water, (B) transpired HTO leaves at contemporaneous homogeneous leaf concentration with **no additional transpiration isotope fractionation**, and (C) the leaf gas-exchange source can be distinguished from and added to the transpiration isotope sink, the two inventory equations are:
+## Fixed-water composite Belot and root-water hypothesis
 
-- Water: `dW/dt = R - E` [kg/(m² ground·s)].
-- Leaf HTO: `dI/dt = a*(C_eq-C) + R*C_root - E*C` [Bq/(m² ground·s)], `C=I/W`.
+The original KfK5194 (1993) printed page 7 states that the Belot leaf HTO re-emission loss already includes diffusion and transpiration-related isotope loss. Therefore the previous equation with an additional -E*C isotope sink was scientifically inconsistent and has been removed.
 
-**A–C are explicit research coupling hypotheses, not printed 1993 FORTRAN behavior. In particular, hypothesis C may double count atmosphere–leaf isotope exchange relative to the original complete leaf-vapour representation; requires independent scientific review before any default or production use.** The formula does not implement mechanistic root hydraulics, transit times, isotope fractionation of transpiration, water stress feedback or soil–plant multi-physics.
+The revised source-limited control volume is a homogeneous fixed-LAI leaf-water pool per ground area: W [kg/m2 ground], I [Bq/m2 ground], C=I/W [Bq/kg]. With a=LAI*rho/(alpha*r_g) [kg/(m2 ground s)] and Ceq=alpha*Cair/rho [Bq/kg], the equations are:
 
-## Analytic interval integrator and activity ledger
+- Water: dW/dt=R-E=0, requiring root delivery R exactly equal to Monteith plant transpiration E.
+- Leaf HTO: dI/dt=a*(Ceq-C)+R*Croot. The composite Belot exchange is signed and includes the transpiration-associated isotope loss. No extra -E*C is added.
 
-For interval-constant external fluxes, leaf resistance, LAI and air forcing, `W_1=W_0+(R-E)*dt` must remain **strictly positive**. Let `K=a+R`, `C_star=(a*C_eq+R*C_root)/K`, and `L=integral(dt/W(t))`. With `beta=R-E`, `L=ln(W_1/W_0)/beta` if beta differs from zero and `L=dt/W_0` otherwise. The exact solution is:
+This is an explicit research assumption for instantaneous root isotope delivery and mixing, not original 1993 FORTRAN numerical equivalence. A dynamic-water model is rejected until an independently justified flux partition is available.
 
-`C_1=C_0+(C_star-C_0)*(1-exp(-K*L))`.
+For interval-constant forcing, k=a/W, Cstar=Ceq+R*Croot/a, f=1-exp(-k*dt). The exact solution is C1=C0+(Cstar-C0)*f. The integral J=int(C dt)=Cstar*dt+(C0-Cstar)*f/k. Signed Belot=a*(Ceq*dt-J) and Root=R*Croot*dt, with I1-I0=Belot+Root. Water closes by R*dt-E*dt=0. An additional ET HTO sink is identically zero.
 
-For separate signed air, root and transpired HTO entries, integrate the concentration:
-
-`J=integral_0^dt C(t)dt=C_star*dt+(C_0-C_star)*(W_0/(a+E))*(1-exp(-(a+E)*L))` [Bq·s/kg].
-
-Then `Air=a*(C_eq*dt-J)` (signed), `Root=R*C_root*dt`, `ET_HTO=E*J`; the budget requires `I_1-I_0=Air+Root-ET_HTO`. Both the water and HTO budgets are verified independently with finite tolerances. For **zero root water and zero ET**, the solution reduces exactly to P3 R5 / printed 1993 Eq.(1)–(3) at constant leaf-water mass. `expm1` and `log1p` stabilize close-to-equilibrium, small-step and equal-root/ET cases.
-
-`src/cteas_ufotri/plant/kfk5194_1993_water_hto_joint.py` provides the opt-in `advance_kfk5194_water_hto_joint` API with required typed `KFK5194_1993_V4` profile, R1 daytime/dry canopy and typed Monteith output, explicit forcing and explicit `WELL_MIXED_NO_ET_FRACTIONATION` hypothesis. The pool is `TFWTState.area_basis="ground_area"`, with contents exclusively **leaf water**. Invalid area, isotope provenance, negative root flux, zero water, mixed-LAI Monteith output or potential water exhaustion fail closed. Output includes a frozen state, water/HTO ledger and methodological provenance.
+Source limitation: The printed manual supports the composite Belot loss and root replenishment conceptual role but does not establish this exact combined root isotope transport equation. Original binary parity, root mixing and fractionation remain NOT_ESTABLISHED; soil, OBT, dynamic water and full 1993 runtime are not implemented.
 
 ## Tests, known gaps and exit criteria
 
-Independent tests cover Monteith plant-only ET, exact equal root-water and ET analytical result, P3 R5 equivalence with zero water flux, zero-air reemission plus transpiration HTO removal, infinitesimal ODE slope, two half-step equivalence, water exhaustion, invalid forcings, source/area/hypothesis gates and default 1990 CLI/solver non-activation. Synthetic forcing is not historical default data.
-
-**No full 1993 runtime activation**, no verified 1993 executable numerical parity, no field validation, no mechanistic root transport/soil/OBT, no dynamic LAI/growth. P0 issue #126 stays OPEN. Scientific review must resolve the possible air/ET isotope double-counting and evaluate transpiration fractionation *before* coupling the new source term to the production model. Do not merge a scientific implementation based on CI alone.
+Independent tests cover independent fixed-water analytic oracles, zero-air Eq.(3) decay, changing Monteith E without spurious additional isotope loss, signed Belot exchange, R=E enforcement, two half-steps, invalid forcing/profile/area, and frozen 1990 default non-activation. Scientific review is still required before merging. P0 #126 remains OPEN.
