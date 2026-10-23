@@ -42,3 +42,34 @@ All `Csoil` are concentrations in **soil liquid water** [Bq/kg water] at the sam
 `kfk5194_1993_root_soil_boundary.py` implements a typed source-verified plant-group selector and fail-closed three-layer input boundary. Its optional adapter to the R6 **fixed-water** solver alters **only** `Croot`, preserving the supplied Monteith `E` and required `R=E`. Coupling requires a *second explicit* `INSTANT_HOMOGENEOUS_LEAF_MIXING_RESEARCH` hypothesis, because **the manual supports the root uptake depth fractions but does not establish instantaneous uniform mixing in all leaf water**. Neither this bridge nor synthetic examples establish original FORTRAN parity. Independent tests verify both fractional vectors, weighted-concentration hand oracles, the unused grass third layer, root activity input and zero extra ET isotope sink, and reject incomplete/nonphysical soil data or unacknowledged mixing.
 
 **Scientific exit gate unchanged:** PR remains Draft; actual leaf mixing / transport lag, root/soil state integration and 1993 original executable behavior require independent evidence and review before any production solver activation or merge.
+
+
+## R6 R4 — layer-resolved soil-to-root withdrawal audit
+
+The source-defined uptake fractions are now used not only to calculate `Croot`,
+but to expose a **three-layer extensive mass and HTO flux ledger** for every
+prescribed root-flow interval. For each soil depth `i`, prescribed root
+delivery `R` [kg/(m² ground·s)], step `dt` [s], and layer liquid-water HTO
+`Ci` [Bq/kg water]:
+
+```text
+WaterWithdrawal_i = f_i * R * dt                       [kg/m² ground]
+HTOWithdrawal_i   = WaterWithdrawal_i * Ci              [Bq/m² ground]
+Sum_i WaterWithdrawal_i = R * dt
+Sum_i HTOWithdrawal_i = R * dt * Croot
+```
+
+The opt-in `kfk5194_1993_root_layer_withdrawals` returns a frozen, finite,
+three-layer water/HTO record, with independently checked water and activity
+residuals. The R6 root-boundary adapter also cross-checks the sum against the
+**actual R6 leaf-model root input**. Agricultural (20/40/40) and grass
+(40/60/0) hand-calculated numerical cases, zero uptake, malformed rates,
+forged layer fractions and time-splitting are independently tested.
+
+**This is a boundary withdrawal accounting model, not a soil-state balance
+solver:** no layer inventory is mutated, the local available water/HTO
+inventory is not validated and potential supply exhaustion is not checked.
+No leakage of an atmospheric vapor term into soil/root water accounting is
+allowed. Leaf-water instantaneous homogenization remains an explicit,
+unverified *research hypothesis*, not a recovered original FORTRAN
+transport mechanism. PR #152 stays Draft until scientific sign-off.

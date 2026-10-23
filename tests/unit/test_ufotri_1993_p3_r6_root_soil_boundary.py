@@ -10,6 +10,7 @@ from cteas_ufotri.plant.kfk5194_1993_root_soil_boundary import (
     KFK5194RootPlantGroup as Group,
     KFK5194RootMixingHypothesis as Mix,
     kfk5194_1993_root_soil_boundary,
+    kfk5194_1993_root_layer_withdrawals,
     advance_kfk5194_1993_soil_weighted_root_boundary,
 )
 from cteas_ufotri.plant.kfk5194_1993_water_hto_joint import (
@@ -170,6 +171,22 @@ def test_three_layer_root_boundary_matches_explicit_single_root_forcing(
     assert step.state.tfwt_inventory_bq_m2==pytest.approx(
         direct.state.tfwt_inventory_bq_m2,rel=1e-12
     )
+    w = wrapped.layer_withdrawal
+    assert w.total_water_kg_m2_ground == pytest.approx(
+        forcing.root_water_delivery_kg_m2_ground_s*3600.
+    )
+    assert math.fsum(w.layer_water_kg_m2_ground) == pytest.approx(
+        step.root_water_input_kg_m2_ground
+    )
+    assert math.fsum(w.layer_hto_bq_m2_ground) == pytest.approx(
+        step.root_hto_input_bq_m2_ground
+    )
+    assert abs(w.water_residual_kg_m2_ground) < 1e-12
+    assert abs(w.hto_residual_bq_m2_ground) < 1e-10
+    assert w.provenance()["soil_inventory_updated"] is False
+    if group is Group.PASTURE_GRASS:
+        assert w.layer_water_kg_m2_ground[2] == 0
+        assert w.layer_hto_bq_m2_ground[2] == 0
     assert step.additional_et_hto_sink_bq_m2_ground==0
     assert abs(step.hto_balance_residual_bq_m2_ground)<1e-8
     assert wrapped.provenance()["assumption"]=="SOURCE_LIMITED_INSTANT_MIXING"
@@ -203,3 +220,72 @@ def test_original_1990_default_is_unmodified():
         assert "kfk5194_1993_root_soil_boundary" not in (
             ROOT/path
         ).read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("group,expected_water,expected_hto", [
+    (Group.AGRICULTURAL_PLANT, (0.02,0.04,0.04), (0.2,0.8,1.6)),
+    (Group.PASTURE_GRASS, (0.04,0.06,0.), (0.4,1.2,0.)),
+])
+def test_independent_three_layer_water_and_activity_oracle(
+    group, expected_water, expected_hto
+):
+    w = kfk5194_1993_root_layer_withdrawals(
+        boundary=_boundary(group), root_water_delivery_kg_m2_ground_s=0.001,
+        interval_seconds=100.,
+    )
+    assert w.layer_water_kg_m2_ground == pytest.approx(expected_water)
+    assert w.layer_hto_bq_m2_ground == pytest.approx(expected_hto)
+    assert w.total_water_kg_m2_ground == pytest.approx(0.1)
+    assert w.total_hto_bq_m2_ground == pytest.approx(sum(expected_hto))
+    assert w.water_residual_kg_m2_ground == pytest.approx(0,abs=1e-14)
+    assert w.hto_residual_bq_m2_ground == pytest.approx(0,abs=1e-14)
+
+
+def test_zero_root_flow_is_exact_zero_soil_withdrawal():
+    w = kfk5194_1993_root_layer_withdrawals(
+        boundary=_boundary(), root_water_delivery_kg_m2_ground_s=0.,
+        interval_seconds=3600.,
+    )
+    assert w.layer_water_kg_m2_ground == (0.,0.,0.)
+    assert w.layer_hto_bq_m2_ground == (0.,0.,0.)
+    assert w.total_hto_bq_m2_ground == 0.
+
+
+@pytest.mark.parametrize("rate,dt", [
+    (-1.,3600.),(float("nan"),3600.),(float("inf"),3600.),
+    (1.,0.),(1.,-1.),(1.,float("nan")),(1.,float("inf")),
+    ("1",3600.),
+])
+def test_root_layer_withdrawal_rejects_bad_rate_or_clock(rate,dt):
+    with pytest.raises(KFK5194WaterActivityError):
+        kfk5194_1993_root_layer_withdrawals(
+            boundary=_boundary(),root_water_delivery_kg_m2_ground_s=rate,
+            interval_seconds=dt,
+        )
+
+
+def test_ledger_refuses_forged_source_fraction_without_soil_mutation():
+    from dataclasses import replace
+    boundary=_boundary()
+    forged=replace(boundary,root_water_fractions=(0.3,0.3,0.4))
+    with pytest.raises(KFK5194WaterActivityError):
+        kfk5194_1993_root_layer_withdrawals(
+            boundary=forged,root_water_delivery_kg_m2_ground_s=0.001,
+            interval_seconds=100.,
+        )
+
+
+def test_source_layer_withdrawals_split_in_time_are_additive():
+    source=_boundary()
+    whole=kfk5194_1993_root_layer_withdrawals(
+        boundary=source,root_water_delivery_kg_m2_ground_s=0.001,
+        interval_seconds=3600.,
+    )
+    half=kfk5194_1993_root_layer_withdrawals(
+        boundary=source,root_water_delivery_kg_m2_ground_s=0.001,
+        interval_seconds=1800.,
+    )
+    for total,part in zip(whole.layer_water_kg_m2_ground,half.layer_water_kg_m2_ground):
+        assert total == pytest.approx(2*part)
+    for total,part in zip(whole.layer_hto_bq_m2_ground,half.layer_hto_bq_m2_ground):
+        assert total == pytest.approx(2*part)
