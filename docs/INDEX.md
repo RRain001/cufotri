@@ -16,6 +16,8 @@ For current claims, read these in conjunction with `STATUS.md`. Historical docum
 
 ## UFOTRI 4.0 (1993) future target — source audit in progress
 
+- [P3 R4: Original 1993 printed leaf HTO exchange Eq.(1)–(3)](v4/1993_upgrade/P3_R4_1993_PRINTED_LEAF_EQ1_3.md): independent, opt-in exact source-equation kinetics on explicit leaf-area basis, checked against zero-initial uptake, zero-air loss and activity conservation. This is NOT recovered original FORTRAN executable behavior.
+
 - [P3 R3: 1993 canopy resistance → signed dynamic TFWT compatibility](v4/1993_upgrade/P3_R3_TFWT_COMPAT_COUPLING.md): explicit mixed-edition KfK5194 canopy/KfK4605 analytic leaf-exchange bridge, ground-area activity conservation and hourly state propagation; not original-1993 numerical equivalence.
 
 - [P3 R2: KfK 5194 night and rain canopy resistance](v4/1993_upgrade/P3_R2_NIGHT_RAIN_CANOPY.md): explicit night epidermal and day-rain limiting/finite-resistance branches; no invented historical rain parameters or default solver wiring.
