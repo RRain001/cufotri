@@ -352,3 +352,49 @@ advection/diffusion, isotope fractionation during root transit,
 physical lag compartment, growth or variable leaf-water dynamics was
 introduced. Keep PR #152 Draft, issues #126/#129/#130 Open until
 independent science review and full exact-head CI.
+
+
+## R6 R10 — endpoint isotope-source attribution (conditional, not empirical)
+
+The opt-in `kfk5194_1993_series_attribution.py` derives an exact
+**final-leaf-inventory** source decomposition from R9's conditional
+multi-interval tangent. For user-specified initial leaf activity
+`I_leaf,0` [Bq/m² ground], the initial three-layer soil liquid-water
+HTO concentrations `C_soil,i,0` [Bq/kg], and each interval's prescribed
+air HTO `C_air,j` [Bq/m³],
+
+```text
+I_leaf,final = M_N * I_leaf,0
+    + sum_i(S_i,N * C_soil,i,0)
+    + sum_j(T_j,N * C_air,j)             [Bq/m² ground]
+```
+
+Here `M_N` [dimensionless], `S_i,N` [kg/m² ground] and
+`T_j,N` [m] follow R9's exact fixed-coefficient recursions. Each
+summand is a **nonnegative retained endpoint contribution**, **not**
+a cumulative source flux. In particular, the atmospheric contribution
+is *not* the signed or total integrated Belot exchange and the soil
+contribution is *not* the whole withdrawn root-water HTO. A large
+negative (outward) Belot composite exchange can coexist with positive
+retained atmospheric-origin HTO. No separate `-E*C` HTO loss is
+introduced.
+
+This mathematical superposition is exact only for the opt-in
+`R=E`, homogeneous fixed leaf-water pool, externally specified
+interval coefficients, instantaneous root mixing, and extraction-only
+proportionally depleted soil-water inventories. It can diagnose the
+relative numerical dependence on source inputs **under this model**,
+but cannot determine physical tracer origin or quantify real-world
+uncertainty without external evidence and validated transport physics.
+
+Independent research checks compare each contribution against a fresh
+black-box six-hour solver run with every *other* isotope source zero:
+one initial leaf inventory, three soil HTO inventories, and six distinct
+air input intervals. They additionally require zero inputs -> zero
+endpoint, six-hour vs split-half-hour identity, correct grass lower-layer
+zero, explicit research opt-ins, exact provenance and dormant legacy
+entrypoints. The endpoint sum must reproduce the directly calculated
+terminal inventory to the model's existing numerical-budget scale;
+failure is an error rather than a fallback source or tolerance
+relaxation. **P3 #129 / P0 #126 / P4 #130 remain open; PR #152 remains
+Draft until independent scientific review and latest-commit CI.**

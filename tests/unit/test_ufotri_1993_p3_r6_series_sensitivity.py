@@ -26,6 +26,9 @@ from cteas_ufotri.plant.kfk5194_1993_soil_root_transfer import (
 from cteas_ufotri.plant.kfk5194_1993_series_sensitivity import (
     diagnose_kfk5194_1993_series_sensitivity,
 )
+from cteas_ufotri.plant.kfk5194_1993_series_attribution import (
+    attribute_kfk5194_1993_series_final_hto,
+)
 from cteas_ufotri.plant.kfk5194_1993_water_hto_joint import (
     KFK5194LeafWaterHypothesis as LeafHyp,
     KFK5194WaterActivityError,
@@ -233,5 +236,155 @@ def test_old_default_entrypoints_do_not_activate_diagnostic():
         "src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py",
     ):
         assert "kfk5194_1993_series_sensitivity" not in (
+            ROOT / name
+        ).read_text(encoding="utf-8")
+
+
+def _isotope_zeroed(args):
+    """Hold all hydraulic and canopy inputs fixed; zero isotope sources."""
+    soil = args["initial_soil"]
+    leaf = args["initial_leaf"]
+    return {
+        **args,
+        "initial_soil": replace(soil, hto_bq_m2_ground=(0., 0., 0.)),
+        "initial_leaf": replace(
+            leaf, tfwt_inventory_bq_m2=0., tfwt_concentration_bq_kg_water=0.,
+        ),
+        "intervals": tuple(
+            replace(forcing, air_hto_concentration_bq_m3=0.)
+            for forcing in args["intervals"]
+        ),
+    }
+
+
+@pytest.mark.parametrize("group", [
+    Group.AGRICULTURAL_PLANT, Group.PASTURE_GRASS,
+])
+def test_r10_source_attribution_matches_independent_source_isolation(group):
+    """An independent solver with every other isotope source zero is the oracle."""
+    args = _case(group)
+    attributed = attribute_kfk5194_1993_series_final_hto(**args)
+    original = _run(args).final_leaf.tfwt_inventory_bq_m2
+    zeroed = _isotope_zeroed(args)
+    assert _run(zeroed).final_leaf.tfwt_inventory_bq_m2 == pytest.approx(
+        0., abs=1e-12
+    )
+
+    leaf_only = _run({
+        **zeroed, "initial_leaf": args["initial_leaf"],
+    }).final_leaf.tfwt_inventory_bq_m2
+    assert leaf_only == pytest.approx(
+        attributed.retained_initial_leaf_hto_bq_m2_ground,
+        rel=5e-11, abs=1e-11,
+    )
+    for i in range(3):
+        soil_activity = tuple(
+            source if j == i else 0.
+            for j, source in enumerate(args["initial_soil"].hto_bq_m2_ground)
+        )
+        soil_only = _run({
+            **zeroed,
+            "initial_soil": replace(
+                zeroed["initial_soil"], hto_bq_m2_ground=soil_activity,
+            ),
+        }).final_leaf.tfwt_inventory_bq_m2
+        assert soil_only == pytest.approx(
+            attributed.retained_initial_soil_hto_by_layer_bq_m2_ground[i],
+            rel=5e-11, abs=1e-11,
+        )
+    for i, original_forcing in enumerate(args["intervals"]):
+        changed_forcings = list(zeroed["intervals"])
+        changed_forcings[i] = replace(
+            changed_forcings[i],
+            air_hto_concentration_bq_m3=original_forcing.air_hto_concentration_bq_m3,
+        )
+        air_only = _run({
+            **zeroed, "intervals": tuple(changed_forcings),
+        }).final_leaf.tfwt_inventory_bq_m2
+        assert air_only == pytest.approx(
+            attributed.retained_air_hto_by_interval_bq_m2_ground[i],
+            rel=5e-11, abs=1e-11,
+        )
+    assert attributed.actual_final_leaf_hto_bq_m2_ground == pytest.approx(original)
+    assert attributed.reconstructed_final_leaf_hto_bq_m2_ground == pytest.approx(
+        original, rel=5e-11, abs=1e-11,
+    )
+    assert attributed.attribution_residual_bq_m2_ground == pytest.approx(
+        0., abs=1e-10,
+    )
+    assert len(attributed.retained_air_hto_by_interval_bq_m2_ground) == 6
+    assert all(x >= 0. for x in (
+        attributed.retained_initial_leaf_hto_bq_m2_ground,
+        *attributed.retained_initial_soil_hto_by_layer_bq_m2_ground,
+        *attributed.retained_air_hto_by_interval_bq_m2_ground,
+    ))
+    if group is Group.PASTURE_GRASS:
+        assert attributed.retained_initial_soil_hto_by_layer_bq_m2_ground[2] == 0.
+    assert attributed.provenance()["air_contributions"] == (
+        "RETAINED_AIR_ORIGIN_NOT_SIGNED_NET_BELOT_FLUX"
+    )
+    assert attributed.provenance()["original_fortran_numeric_equivalence"] == (
+        "NOT_ESTABLISHED"
+    )
+    assert attributed.provenance()["production_runtime_activated"] is False
+
+
+def test_r10_first_hour_splitting_keeps_source_attribution():
+    args = _case()
+    result = attribute_kfk5194_1993_series_final_hto(**args)
+    first = args["intervals"][0]
+    split = attribute_kfk5194_1993_series_final_hto(**{
+        **args,
+        "intervals": (replace(first, interval_seconds=1800.),)*2
+        + args["intervals"][1:],
+    })
+    assert split.actual_final_leaf_hto_bq_m2_ground == pytest.approx(
+        result.actual_final_leaf_hto_bq_m2_ground, rel=1e-11
+    )
+    assert split.retained_initial_leaf_hto_bq_m2_ground == pytest.approx(
+        result.retained_initial_leaf_hto_bq_m2_ground, rel=1e-11
+    )
+    assert split.retained_initial_soil_hto_by_layer_bq_m2_ground == pytest.approx(
+        result.retained_initial_soil_hto_by_layer_bq_m2_ground, rel=1e-11
+    )
+    assert sum(split.retained_air_hto_by_interval_bq_m2_ground[:2]) == pytest.approx(
+        result.retained_air_hto_by_interval_bq_m2_ground[0], rel=1e-11,
+        abs=1e-12,
+    )
+    assert split.retained_air_hto_by_interval_bq_m2_ground[2:] == pytest.approx(
+        result.retained_air_hto_by_interval_bq_m2_ground[1:], rel=1e-11
+    )
+
+
+def test_r10_zero_isotope_sources_produce_zero_endpoint_and_contributions():
+    args = _isotope_zeroed(_case(Group.PASTURE_GRASS))
+    attributed = attribute_kfk5194_1993_series_final_hto(**args)
+    assert attributed.actual_final_leaf_hto_bq_m2_ground == pytest.approx(
+        0., abs=1e-12,
+    )
+    assert attributed.reconstructed_final_leaf_hto_bq_m2_ground == 0.
+    assert attributed.retained_initial_leaf_hto_bq_m2_ground == 0.
+    assert attributed.retained_initial_soil_hto_by_layer_bq_m2_ground == (0., 0., 0.)
+    assert attributed.retained_air_hto_by_interval_bq_m2_ground == (0.,)*6
+
+
+@pytest.mark.parametrize("key,bad", [
+    ("root_mixing_hypothesis", None),
+    ("leaf_hypothesis", "BELOT_COMPOSITE_FIXED_LEAF_WATER"),
+    ("evolution_hypothesis", None),
+    ("intervals", ()),
+])
+def test_r10_malformed_research_selection_fails_closed(key, bad):
+    with pytest.raises(KFK5194WaterActivityError):
+        attribute_kfk5194_1993_series_final_hto(**{**_case(), key: bad})
+
+
+def test_r10_legacy_paths_remain_unmodified_and_disconnected():
+    for name in (
+        "src/cteas_ufotri/config.py",
+        "src/cteas_ufotri/cli.py",
+        "src/cteas_ufotri/plant/tfwt_v3/tfwt_solver.py",
+    ):
+        assert "kfk5194_1993_series_attribution" not in (
             ROOT / name
         ).read_text(encoding="utf-8")
