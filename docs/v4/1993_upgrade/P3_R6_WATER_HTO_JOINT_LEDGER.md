@@ -28,3 +28,17 @@ Source limitation: The printed manual supports the composite Belot loss and root
 ## Tests, known gaps and exit criteria
 
 Independent tests cover independent fixed-water analytic oracles, zero-air Eq.(3) decay, changing Monteith E without spurious additional isotope loss, signed Belot exchange, R=E enforcement, two half-steps, invalid forcing/profile/area, and frozen 1990 default non-activation. Scientific review is still required before merging. P0 #126 remains OPEN.
+## R6 R3 source-defined 3-layer root-water HTO boundary (printed p.15)
+
+The official **KfK 5194 (1993) printed p.15 / PDF index 24** explicitly defines the composition of root-delivered water from three soil horizons (0–5, 5–15, 15–30 cm). For agricultural crops, water fractions are **0.20 / 0.40 / 0.40**; for pasture grass, **0.40 / 0.60 / 0.00**. This is a published fraction-of-water-uptake statement, not a dry-soil or total-H-to-HTO concentration transfer factor. The effective root-water-specific HTO concentration can therefore be calculated as a flux-weighted source boundary:
+
+```
+Croot,crop  = 0.20*Csoil_0_5 + 0.40*Csoil_5_15 + 0.40*Csoil_15_30
+Croot,grass = 0.40*Csoil_0_5 + 0.60*Csoil_5_15
+```
+
+All `Csoil` are concentrations in **soil liquid water** [Bq/kg water] at the same source time/ground-area context. No assumption about HTO soil depth transport, pore-water equilibration, time interpolation or root transport delay is made here.
+
+`kfk5194_1993_root_soil_boundary.py` implements a typed source-verified plant-group selector and fail-closed three-layer input boundary. Its optional adapter to the R6 **fixed-water** solver alters **only** `Croot`, preserving the supplied Monteith `E` and required `R=E`. Coupling requires a *second explicit* `INSTANT_HOMOGENEOUS_LEAF_MIXING_RESEARCH` hypothesis, because **the manual supports the root uptake depth fractions but does not establish instantaneous uniform mixing in all leaf water**. Neither this bridge nor synthetic examples establish original FORTRAN parity. Independent tests verify both fractional vectors, weighted-concentration hand oracles, the unused grass third layer, root activity input and zero extra ET isotope sink, and reject incomplete/nonphysical soil data or unacknowledged mixing.
+
+**Scientific exit gate unchanged:** PR remains Draft; actual leaf mixing / transport lag, root/soil state integration and 1993 original executable behavior require independent evidence and review before any production solver activation or merge.
