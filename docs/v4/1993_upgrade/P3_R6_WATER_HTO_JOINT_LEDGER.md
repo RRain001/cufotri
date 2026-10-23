@@ -114,3 +114,50 @@ not original FORTRAN defaults. Actual state advance belongs to P4 #130 and
 requires independently reviewed mass-flux control-volume coupling; this
 isolated preflight is only an early rejection gate. The root-to-leaf
 instantaneous mixing limitation remains unchanged. PR #152 remains Draft.
+
+
+## R6 R6 — explicit immutable soil-to-root-to-leaf time progression
+
+For a **source-specified, finite set of three liquid soil-water buckets**, a
+separate opt-in `kfk5194_1993_soil_root_transfer.py` permits an immutable
+**extraction-only** progression from one stationary root/leaf interval to
+the next. Each previous-step soil inventory is explicitly supplied to the
+next call, after checking the three source-verified depth fractions, the
+per-layer extraction ledger, available soil water and HTO, and the
+*unchanged* P3 R6 `R=E` Belot-composite leaf dynamics.
+
+Its control volumes are:
+
+```text
+soil water_i, after = soil water_i, before - f_i R dt
+soil HTO_i, after   = soil HTO_i, before   - f_i R dt Csoil,i
+leaf water, after   = leaf water, before  (explicit R=E)
+leaf HTO, after     = leaf HTO, before + Belot_composite + root_HTO
+
+Δ(sum soil water + leaf water) + plant_transpired_water = 0
+Δ(sum soil HTO + leaf HTO) - signed_Belot_composite = 0
+```
+
+`Belot_composite` already accounts for diffusion and transpiration-related
+isotope loss (1993 printed p.7), so there is **no duplicate -E*C isotope sink**.
+Every value is normalized to m² ground. Soil and leaf states require an
+**identical UTC timestamp**; the returned immutable states carry the same
+updated time; no root transport delay is silently assumed. **Changing
+atmospheric/plant forcing from one interval to the next is allowed only
+through new explicitly provided forcing, not through implicit interpolation.**
+Independent tests cover agricultural/pasture groups, soil-layer water/HTO
+removal, both cross-control-volume residuals, two 1800-s intervals versus one
+3600-s interval, depleted soil rejection, soil/leaf clock mismatch and
+opt-in / default-path isolation.
+
+**Strict limitations:** This is a conservative *arithmetic extraction-only*
+model, **not** UFOTRI 4.0's original soil transport model. No rainfall,
+recharge, vertical diffusion, capillary movement, evapotranspiration from
+soil, soil sorption, radioactive decay, growing plant biomass, OBT, root
+hydraulics or lag is supplied. If no other physical process updates the
+soil pools, their depletion is artificial over long durations. Therefore
+these results **must not** be used as calibrated soil-plant predictions or
+a production full-1993 solver. The root-to-leaf homogeneous instant mixing
+is a **required research hypothesis, not source-established parity**.
+P3 #129 / P4 #130 and P0 #126 stay open, and PR #152 stays Draft pending
+independent scientific review.
