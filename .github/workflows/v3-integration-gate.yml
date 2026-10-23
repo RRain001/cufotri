@@ -1,14 +1,9 @@
 name: V3 Protected Integration Gate
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
-
 concurrency:
   group: v3-protected-integration-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
