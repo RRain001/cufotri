@@ -308,3 +308,52 @@ def test_second_hour_insufficient_upper_soil_stock_fails_without_input_mutation(
         )
     assert soil.time==START
     assert soil.water_kg_m2_ground[0]==water_first
+
+
+@pytest.mark.parametrize("unapproved_mixing", [
+    None,
+    "INSTANT_HOMOGENEOUS_LEAF_MIXING_RESEARCH",
+    False,
+])
+def test_option_a_mixing_research_must_be_explicit_enum(unapproved_mixing):
+    """Approval of research is NOT default opt-in or historical validation."""
+    with pytest.raises(KFK5194WaterActivityError, match="mixing"):
+        _run(root_mixing_hypothesis=unapproved_mixing)
+
+
+def test_option_a_six_hour_research_is_allowed_but_provenance_not_approved():
+    c = _canopy()
+    forcings = tuple(_forcing(c, 3600., air=20.+10.*i) for i in range(6))
+    approved_research = advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+        profile=_profile(), initial_soil=_soil(), initial_leaf=_leaf(),
+        canopy=c, intervals=forcings,
+        evolution_hypothesis=SOIL_MODEL,
+        root_mixing_hypothesis=MIXING, leaf_hypothesis=LEAF_HYP,
+    )
+    assert len(approved_research.steps) == 6
+    assert approved_research.final_soil.time == START + timedelta(hours=6)
+    assert approved_research.provenance()["root_to_leaf_mixing"] == (
+        "EXPLICIT_UNVALIDATED_HYPOTHESIS"
+    )
+    assert approved_research.provenance()["original_fortran_numeric_equivalence"] == (
+        "NOT_ESTABLISHED"
+    )
+    assert approved_research.provenance()["whole_1993_solver_runtime_activated"] is False
+    for step in approved_research.steps:
+        assert step.root_leaf.provenance()["assumption"] == (
+            "SOURCE_LIMITED_INSTANT_MIXING"
+        )
+        assert step.root_leaf.leaf_water_hto_step.additional_et_hto_sink_bq_m2_ground == 0.
+        assert step.provenance()["original_fortran_soil_root_parity"] == (
+            "NOT_ESTABLISHED"
+        )
+    assert abs(approved_research.cross_hour_water_residual_kg_m2_ground) < 1e-10
+    assert abs(approved_research.cross_hour_hto_residual_bq_m2_ground) < 1e-8
+
+
+def test_option_a_is_not_permission_to_replace_physics_with_untyped_flags():
+    """A string matching a historical/research enum does not enable solvers."""
+    with pytest.raises(KFK5194WaterActivityError, match="extraction-only"):
+        _run(evolution_hypothesis="EXTRACTION_ONLY_NO_RECHARGE_RESEARCH")
+    with pytest.raises(KFK5194WaterActivityError, match="hypothesis"):
+        _run(leaf_hypothesis="BELOT_COMPOSITE_FIXED_LEAF_WATER")

@@ -193,3 +193,50 @@ invalid forcing sequence and failure of a second-hour extraction when a
 first-layer inventory becomes inadequate. **They only establish mathematical
 consistency of this declared extraction-only research operator**, not an
 original 1993 UFOTRI multi-hour hydrological integration algorithm.
+
+
+## P3 R6 research authorization — option A (2026-10-23)
+
+**Project-owner decision:** the root-water-to-leaf instantaneous homogeneous
+mixing approximation **may be used only in explicit, opt-in research and
+numerical tests** as `INSTANT_HOMOGENEOUS_LEAF_MIXING_RESEARCH`. This permits
+continuing controlled model construction and uncertainty tests. It is **not**
+scientific validation of the approximation, an original UFOTRI 4.0
+mechanism, a release-ready switch, or a waiver of independent review.
+
+**Accepted engineering/testing scope (not a scientific pass):**
+- Typed historical `KFK5194_1993_V4` source profile, dry-day
+  fixed-leaf-water `R=E`, root composition per KfK5194 printed p.15,
+  source composite Belot exchange per printed pp.3,7 without extra `-E*C`.
+- **All three research switches remain explicit:** fixed-water Belot
+  hypothesis, instantaneous root→leaf mixing hypothesis, and
+  extraction-only/no-recharge soil inventory hypothesis. Each cannot be
+  supplied implicitly or replaced by a string matching the enum name.
+- Independent root water/HTO ledger, three-layer extraction capacity
+  preflight, signed Belot exchange, consecutive-hour inventory budgets,
+  failure on insufficient soil supply or nonphysical clock, paired
+  zero-air Eq.(3) and energy/water unit checks. Exact-current-HEAD
+  Python, Docker, Protected Integration, Remediation CI must pass.
+- The 1990 default path and real soil/OBT/food-chain/dose calculations
+  **may not** select this mode implicitly or call it a validated 1993
+  historical solver. No automatic merger / Ready transition.
+
+**Open independent scientific questions:** actual root-water transit time,
+possible storage/exchange pools between root and leaf, justified
+mixing timescale versus hourly simulation step, isotope fractionation
+during plant transport, coupling of Belot transpiration composite sink to
+root input without double-counting, and applicability outside fixed
+`R=E`, one-sided fixed LAI, and homogeneous soil buckets. To assess
+these, the next studies should run sensitivity tests against an explicit
+*separate* candidate lag/mixing model, if credible evidence is obtained,
+and retain clear source provenance; no instantaneous-mixing assumption
+can be certified by algebraic conservation alone.
+
+**Hard merge gate for PR #152:** independent scientific approval of the
+chosen root→leaf compartment/flux formulation with primary source
+or experimentally justified evidence, as well as all latest-head CI,
+version-specific numerical regression, and a decision on
+`SOURCE_LIMITED` behavior. Until that sign-off, retain **Draft,
+unmerged**, do not enable the default or claim KfK5194 original
+FORTRAN numerical parity (`NOT_ESTABLISHED`). P0 #126, P3 #129
+and P4 #130 remain Open.
