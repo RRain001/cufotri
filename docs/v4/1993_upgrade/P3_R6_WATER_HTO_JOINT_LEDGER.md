@@ -240,3 +240,47 @@ version-specific numerical regression, and a decision on
 unmerged**, do not enable the default or claim KfK5194 original
 FORTRAN numerical parity (`NOT_ESTABLISHED`). P0 #126, P3 #129
 and P4 #130 remain Open.
+
+
+## R6 R8 — analytic sensitivity audit within user-approved research option A
+
+The separately imported, explicitly opt-in
+`kfk5194_1993_root_mixing_sensitivity.py` is a **diagnostic** for the
+existing, source-limited fixed-W R=E Belot + instantaneous root-mixing
+hypothesis. It does not add an unverified new transport equation or any
+historical 1993 algorithm claim.
+
+For constant `W`, Belot water-equivalent coefficient `a`,
+Monteith plant/root water flux `R=E`, interval length `dt`, and
+source-defined root uptake fraction `f_i`, the exact conditional
+sensitivity to the **soil liquid-water HTO concentration** in layer `i` is:
+
+```
+F = 1-exp(-a*dt/W)
+dI_final / dC_soil,i = W * (R*f_i/a) * F   [kg/m² ground]
+dC_final / dC_soil,i =     (R*f_i/a) * F   [dimensionless]
+dI_final / dC_air    = W * (alpha/rho) * F [m]
+dI_final / dI_start  = exp(-a*dt/W)        [dimensionless]
+```
+
+The three fractions are **not fitted**. They are 1993 printed p.15 crop
+`0.2/0.4/0.4` or grass `0.4/0.6/0`; in grass, changing the deepest
+soil-layer concentration must have **exactly zero** instantaneous effect.
+For sufficiently small `dt`,
+`dI_final/dC_soil,i` approaches `R*f_i*dt`.
+Air HTO concentration alters the baseline but cannot change these
+conditional root tangents when resistance and W are held fixed.
+
+The independent tests change the soil-layer concentrations one at a time
+and compare black-box model differences against the hand-derived tangent;
+also check air and initial-inventory derivatives, 1 ms short intervals,
+up to 4 h, crop/grass grouping, and explicit option-A opt-in rejection.
+
+**What this does and does not demonstrate:** This quantifies how strongly
+the numerical results depend on the user-approved instantaneous-mixing
+assumption *inside that model*. It is **not evidence that mixing is
+instantaneous in reality**. A physically justified transit/compartment
+model and independent data remain prerequisites for comparing this
+assumption with alternate root transport timescales or certifying
+original FORTRAN parity. The PR remains Draft and scientific acceptance
+remains blocked until independent evidence/review.
