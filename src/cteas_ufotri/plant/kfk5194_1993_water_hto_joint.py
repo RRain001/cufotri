@@ -104,7 +104,7 @@ def _validate(
     state: TFWTState,
     forcing: KFK5194WaterActivityForcing,
     hypothesis: KFK5194LeafWaterHypothesis,
-) -> tuple[float, float, float, float, float, float, float, float]:
+) -> tuple[float, float, float, float, float, float, float, float, float]:
     if not isinstance(profile, Historical1993SourceProfile) or (
         profile.profile_id != PROFILE_ID
         or profile.source_url != KFK5194_SOURCE_URL
