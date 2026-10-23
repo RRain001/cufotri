@@ -44,6 +44,12 @@
 | `UF93-23` Per-food fresh-weight restriction option | 1990 manual dose path lacks an equally evidenced 1993 per-food restriction interface. (§4.3) | Optional food restriction submodel; user-selectable per-food threshold, historical default 1250 Bq/kg fresh mass. | §5.7 p.25 (PDF0 p.34) | CONFIRMED_1993_DOCUMENTED_OPTION / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
 | `UF93-24` 1993 FORTRAN input and default loader | Existing recovery audit documents 1991/1993 loader lineage; original FORTRAN members unavailable. (§1991 user guide KfK4853) | KfK5194 §7.4.2, pp.54-55: IMODEL, ICOVER, IPHOTO, IMONT, IFLAGS, IFLAGR, IDEPHT and IBODEX have printed default=1; §7.4.4 p.61 gives soil parameters/REMRE/REMNI/REDREM defaults. This is documented input contract, NOT evidence of original loader binary behavior. | §7.1–7.3;appendices p.34–91 (PDF0 p.43–100) | CONFIRMED_1993_INTERFACE_DOCUMENTED / [issue #127](https://github.com/RRain001/cufotri/issues/127) |
 
+### UF93-13：P2 R9 源文裁决门禁（未解除）
+
+已将 KfK5194 §5.5.1 **印刷 p.20 / PDF0 p.29** 的 Eq.(28)–(30) 未决问题与禁止接入条件同步至 `physics_delta_matrix.yaml` 的 `UF93-13.p2_r9_source_gate`。印刷 Eq.(28) 与直接积分 Eq.(26)–(27) 存在 **分母额外 k、呼吸项缺少 LAI** 两处差异；Eq.(29) 的 `CO` 印刷单位为 mg CO₂ m⁻² h⁻¹，而 Eq.(26) 的 `P_m` 为 g CO₂ m⁻² h⁻¹；Eq.(30) 的 `W` 是 CO₂ 当量而非可直接复用的干物质量。原版求解顺序、面积基准和单位桥接均未获得独立证据。
+
+[**P2 R9 科学裁决材料与逐项证据要求**](P2_R9_SOURCE_ADJUDICATION_GATE.md) 明确哪些是已核对的印刷事实、哪些只是 R8 条件性数学试验。**1990 默认路径不变；1993 正式耦合、原版等价和独立科学签核仍为 NOT_ESTABLISHED/NOT_RUN。**
+
 ## 1.1 原始 PDF 视觉复核 R2 — 逐式核对与风险校正
 
 已新增 [**KfK 5194 1993 原始公式/参数审计 R2**](PRIMARY_SOURCE_AUDIT_R2.md) 和 [机器可读主证据表](primary_source_formula_audit_r2.yaml)。R2 对 **22 项选定公式**进行了原始印刷页复核；21 项历史软件默认值现均已核对官方 PDF 印刷页（包括 `IDEPHT`、`IBODEX`），并记录 4 类关键不确定性，其中：

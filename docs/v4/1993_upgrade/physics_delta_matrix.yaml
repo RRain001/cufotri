@@ -321,7 +321,23 @@ rows:
       - "src/cteas_ufotri/crop/phenology.py"
     repository_assessment: "PHOTOSYNTHESIS_PAR_SOLVER_NOT_1993_QUALIFIED"
     implementation_phase: "P2"
-    next_source_audit: "Source-derive canopy integration and time-weighting, especially PAR, CO2 units and stomatal stress vs OBT mass basis."
+    next_source_audit: "Adjudicate Eq.(28) against Eq.(26)-(27), Eq.(29) CO mg-to-Pm g bridge, Eq.(30) respiration/biomass area basis, and original solve order before any P2 production coupling."
+    p2_r9_source_gate:
+      source_pdf_sha256: "9a75292bc7289969db7175e17003c3dd777de72a30b52993264662dbc5c62ff5"
+      printed_page: 20
+      pdf_page_index_zero_based: 29
+      eq28_printed_vs_eq26_27_integral: "INCONSISTENT_TWO_TERMS"
+      eq29_co_unit_printed: "MG_CO2_M2_H"
+      eq26_pm_unit_printed: "G_CO2_M2_H"
+      eq29_co_to_pm_bridge: "NOT_ESTABLISHED"
+      eq30_w_unit_printed: "G_CO2_EQUIVALENT_PER_M2"
+      eq30_dry_matter_to_w_bridge: "NOT_ESTABLISHED"
+      eq30_respiration_area_basis: "NOT_ESTABLISHED"
+      eq28_eq30_original_solve_order: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+      audit_packet: "docs/v4/1993_upgrade/P2_R9_SOURCE_ADJUDICATION_GATE.md"
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
