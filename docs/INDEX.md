@@ -16,6 +16,8 @@ For current claims, read these in conjunction with `STATUS.md`. Historical docum
 
 ## UFOTRI 4.0 (1993) future target — source audit in progress
 
+- [P3 R5: conservative constant-LAI leaf–ground HTO budget](v4/1993_upgrade/P3_R5_LEAF_GROUND_AREA_BUDGET.md): opt-in source-1993 Eq.(1)–(3) leaf HTO exchange mapped to a leaf-water-only ground-area inventory, with strict unchanged-LAI and mass/activity closure.
+
 - [P3 R4: Original 1993 printed leaf HTO exchange Eq.(1)–(3)](v4/1993_upgrade/P3_R4_1993_PRINTED_LEAF_EQ1_3.md): independent, opt-in exact source-equation kinetics on explicit leaf-area basis, checked against zero-initial uptake, zero-air loss and activity conservation. This is NOT recovered original FORTRAN executable behavior.
 
 - [P3 R3: 1993 canopy resistance → signed dynamic TFWT compatibility](v4/1993_upgrade/P3_R3_TFWT_COMPAT_COUPLING.md): explicit mixed-edition KfK5194 canopy/KfK4605 analytic leaf-exchange bridge, ground-area activity conservation and hourly state propagation; not original-1993 numerical equivalence.
