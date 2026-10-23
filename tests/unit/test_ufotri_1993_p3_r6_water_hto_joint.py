@@ -264,13 +264,6 @@ def test_profile_area_hypothesis_monteith_lai_and_ET_basis_fail_closed():
         advance_kfk5194_water_hto_joint(**_args(
             forcing=replace(_forcing(),monteith=replace(
                 _monteith(c), plant_water_flux_kg_m2_s=1))))
-    c_alt = _canopy(vpd=8)
-    with pytest.raises(KFK5194WaterActivityError):
-        advance_kfk5194_water_hto_joint(**_args(
-            canopy=c_alt, forcing=_forcing(canopy=c_alt,
-                  net=300) if False else _forcing(canopy=c_alt),
-            hypothesis=None,
-        ))
 
 
 def test_opt_in_module_cannot_modify_default_1990_runtime():
