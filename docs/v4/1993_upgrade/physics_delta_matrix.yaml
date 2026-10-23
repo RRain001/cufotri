@@ -357,6 +357,27 @@ rows:
         eq30_respiration_area_basis: "NOT_ESTABLISHED"
       independent_scientific_review: "NOT_RUN"
       production_coupling_allowed: false
+    p2_r11_weir_primary_equation_evidence:
+      audit_packet: "docs/v4/1993_upgrade/P2_R11_WEIR_1984_PRIMARY_EQUATION_AUDIT.md"
+      evidence_level: "WEIR_1984_PRIMARY_PDF_EQUATIONS_VISUALLY_CHECKED"
+      source_doi: "10.1017/S0021859600042702"
+      source_pdf_sha256: "0558e6c38f9efb2d7fe9f3af1b862c096cfcd6c1e35619b233a09d39609d17e4"
+      weir_original_printed_pages: [374, 375]
+      weir_pdf_pages_zero_based: [4, 5]
+      weir_eq20_pmax_unit: "MG_CO2_PER_M2_PER_SECOND"
+      weir_eq20_ca_unit: "MG_CO2_PER_M3"
+      weir_eq20_rp_unit: "SECOND_PER_M"
+      weir_eq25_respiration_unit: "G_PER_M2_PER_DAY"
+      weir_eq25_biomass_unit: "G_PER_M2"
+      weir_eq25_ch2o_co2_factor: 0.65
+      unit_identity_mg_per_second_to_g_per_hour: 3.6
+      eq29_empirical_coefficient_calibration: "NOT_ESTABLISHED"
+      eq29_co_to_pm_bridge: "NOT_ESTABLISHED"
+      weir_to_1993_area_aggregation: "NOT_ESTABLISHED"
+      mitchell_1991_primary_equation_review: "NOT_RUN"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"

@@ -54,6 +54,10 @@
 
 [**Weir (1984) 与 Mitchell (1991) 出版社证据审计**](P2_R10_WEIR_MITCHELL_BIBLIOGRAPHY_AUDIT.md) 已核对 /39/ 和 /21/ 的 DOI、作者、期刊卷页与出版社公开摘要，并在 `UF93-13.p2_r10_bibliography_evidence` 固定证据级别为 `PUBLISHER_METADATA_AND_ABSTRACT_ONLY`。Weir 的作物模拟及 Mitchell 的干质量归一化呼吸研究并不能单独确定 Eq.(29) 经验常数的 mg→g 桥接，也不能确定 Eq.(30) 的面积/CO₂ 当量基准。两篇全文的原始公式审阅仍 `NOT_RUN`，所有 R9 科学门禁维持原状。
 
+### UF93-13：P2 R11 Weir (1984) 原文公式与量纲审计（仍未解除）
+
+[**Weir (1984) 原文 Eq.(19)–(26) 审计**](P2_R11_WEIR_1984_PRIMARY_EQUATION_AUDIT.md) 现已核查 Rothamsted Research 全文印刷 pp.374–375、对应 PDF 页 5–6，并固定 PDF SHA256。Weir Eq.(20) `P_max` 的原始单位为 mg CO₂ m⁻² s⁻¹，CO₂ 浓度为 mg m⁻³，总阻力为 s m⁻¹；Eq.(25) 的每日呼吸采用 g m⁻² day⁻¹。来源事实记录在 `UF93-13.p2_r11_weir_primary_equation_evidence`，而 **KfK5194 Eq.(29) 的 0.158 × 10⁹ 经验因子、每小时单位桥接及冠层面积基准仍 NOT_ESTABLISHED**。Mitchell (1991) 原始方程审阅和独立科学审查仍 NOT_RUN；未修改正式物理求解器及 1990 默认路径。
+
 ## 1.1 原始 PDF 视觉复核 R2 — 逐式核对与风险校正
 
 已新增 [**KfK 5194 1993 原始公式/参数审计 R2**](PRIMARY_SOURCE_AUDIT_R2.md) 和 [机器可读主证据表](primary_source_formula_audit_r2.yaml)。R2 对 **22 项选定公式**进行了原始印刷页复核；21 项历史软件默认值现均已核对官方 PDF 印刷页（包括 `IDEPHT`、`IBODEX`），并记录 4 类关键不确定性，其中：
