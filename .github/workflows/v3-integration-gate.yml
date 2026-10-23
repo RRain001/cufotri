@@ -1,12 +1,6 @@
 name: V3 Protected Integration Gate
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 concurrency:

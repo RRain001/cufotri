@@ -44,8 +44,8 @@ The remediation and Python 3.11 smoke CI jobs similarly build/run the same
 verification image (job-local; no Docker image registry is required). Buildx
 reads from the shared GitHub cache scope `cufotri-py311-deps-v1` in all four
 scientific workflows. Only the Docker dual-stage workflow **writes** that scope,
-from target `verification-deps`. Parallel first-time PR runs may have a cold
-cache; subsequent runs reuse the pinned Python dependency layers. A cache hit
+from target `verification-deps`. Concurrent manually dispatched workflows may have a cold cache;
+subsequent runs reuse pinned Python dependency layers. A cache hit
 is a performance improvement, **not** a scientific acceptance criterion.
 
 Build the data-free runtime:
@@ -70,12 +70,23 @@ Its default case uses deterministic **synthetic** forcing, not real ERA5.
 
 ## Cloud policy
 
+**Owner execution policy (2026-10-23):** All five workflows declare only
+`workflow_dispatch`. Push, PR and merge events do not start cloud runners.
+The Ubuntu `local-ci` Docker verification is the everyday developer test
+path; cloud workflows run only after explicit authenticated dispatch, for
+example `gh workflow run v3-integration-gate.yml --ref <reviewed-branch>`.
+Selecting an arbitrary ref is not itself an accepted science result: check
+the actual tested SHA and all required local and cloud gate outputs. A
+missing protected integration result is `NOT_RUN`, never inferred PASS.
+The existing Python 3.11 verification image, external-data conditions and
+original scientific tolerances are unchanged.
+
 All four active workflows build the `verification` stage and run Python
 scientific commands inside it. The new `docker-portable.yml` checks that
 both images build, tests the runtime package/absence of test tooling, and runs
 the default synthetic 48 h CLI with a writable tmpfs. Only this small,
 standalone, data-free runtime stage may be considered for publication after
-separate release authorization; the PR CI does not push any image.
+separate release authorization; manual cloud CI does not push any image.
 
 `external-evidence.yml` remains manual-only. It builds the verification
 image, generates metadata-only readiness audit, and `strict` runs marked
