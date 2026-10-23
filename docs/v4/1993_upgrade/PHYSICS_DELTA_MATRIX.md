@@ -50,6 +50,10 @@
 
 [**P2 R9 科学裁决材料与逐项证据要求**](P2_R9_SOURCE_ADJUDICATION_GATE.md) 明确哪些是已核对的印刷事实、哪些只是 R8 条件性数学试验。**1990 默认路径不变；1993 正式耦合、原版等价和独立科学签核仍为 NOT_ESTABLISHED/NOT_RUN。**
 
+### UF93-13：P2 R10 引用文献元数据与摘要审计（仍未解除）
+
+[**Weir (1984) 与 Mitchell (1991) 出版社证据审计**](P2_R10_WEIR_MITCHELL_BIBLIOGRAPHY_AUDIT.md) 已核对 /39/ 和 /21/ 的 DOI、作者、期刊卷页与出版社公开摘要，并在 `UF93-13.p2_r10_bibliography_evidence` 固定证据级别为 `PUBLISHER_METADATA_AND_ABSTRACT_ONLY`。Weir 的作物模拟及 Mitchell 的干质量归一化呼吸研究并不能单独确定 Eq.(29) 经验常数的 mg→g 桥接，也不能确定 Eq.(30) 的面积/CO₂ 当量基准。两篇全文的原始公式审阅仍 `NOT_RUN`，所有 R9 科学门禁维持原状。
+
 ## 1.1 原始 PDF 视觉复核 R2 — 逐式核对与风险校正
 
 已新增 [**KfK 5194 1993 原始公式/参数审计 R2**](PRIMARY_SOURCE_AUDIT_R2.md) 和 [机器可读主证据表](primary_source_formula_audit_r2.yaml)。R2 对 **22 项选定公式**进行了原始印刷页复核；21 项历史软件默认值现均已核对官方 PDF 印刷页（包括 `IDEPHT`、`IBODEX`），并记录 4 类关键不确定性，其中：

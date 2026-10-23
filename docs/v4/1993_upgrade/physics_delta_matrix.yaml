@@ -338,6 +338,25 @@ rows:
       independent_scientific_review: "NOT_RUN"
       production_coupling_allowed: false
       audit_packet: "docs/v4/1993_upgrade/P2_R9_SOURCE_ADJUDICATION_GATE.md"
+    p2_r10_bibliography_evidence:
+      audit_packet: "docs/v4/1993_upgrade/P2_R10_WEIR_MITCHELL_BIBLIOGRAPHY_AUDIT.md"
+      evidence_level: "PUBLISHER_METADATA_AND_ABSTRACT_ONLY"
+      weir_1984:
+        kfk5194_reference: "39"
+        doi: "10.1017/S0021859600042702"
+        journal_volume_pages: "Journal of Agricultural Science 102(2):371-382"
+        full_text_equation_review: "NOT_RUN"
+        eq29_co_to_pm_bridge: "NOT_ESTABLISHED"
+      mitchell_1991:
+        kfk5194_reference: "21"
+        doi: "10.1093/oxfordjournals.aob.a088102"
+        journal_volume_pages: "Annals of Botany 67(1):7-16"
+        abstract_respiration_normalization: "PER_UNIT_DRY_MASS"
+        full_text_equation_review: "NOT_RUN"
+        eq30_dry_matter_to_w_bridge: "NOT_ESTABLISHED"
+        eq30_respiration_area_basis: "NOT_ESTABLISHED"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
