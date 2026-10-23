@@ -27,27 +27,43 @@ The model includes the UFOTRI-native HTO/HT atmospheric route, deposition and so
 | `validation/` | Independent benchmark protocols, data provenance, adapters and external evidence contracts |
 | `scripts/v4/` | Auditable V4 stage runners and machine validation gates |
 | `docs/v4/` | ADRs, status, source-fidelity decisions and stage evidence |
-| `.github/workflows/` | Docker-based PR/main scientific CI, runtime image verification and manual external-evidence audit |
+| `.github/workflows/` | Required PR admission and scoped integration/Python checks; dispatchable Docker, remediation and external scientific reproducibility jobs |
 
 The large historical `docs/implementation_status.md` remains a legacy stage ledger, **not** the current top-level release authority. Its dated stage entries should not override the two V4 roadmaps or [STATUS.md](STATUS.md).
 
-## GitHub-first development
+## Ubuntu-first development and GitHub PR delivery
 
-Development takes place through a short-lived GitHub branch and pull request; a permanent local clone is not required. The GitHub-hosted Actions runner builds a **Python 3.11 Docker verification image** and executes the scientific tests inside that image. Review the exact PR head, both existing scientific CI workflows and compatibility checks before merging to `main`.
+Develop in a dedicated, clean Ubuntu task worktree and a short-lived GitHub PR branch. The managed Ubuntu Docker environment runs build, smoke, full software suite and permitted science evidence at the **exact PR HEAD**. GitHub automatically runs mandatory admission, V3 Protected Integration Gate and Python 3.11 compatibility checks on applicable PR changes. Docker dual-stage and Remediation jobs remain available via agent-driven `workflow_dispatch`; independent science acceptance is separate.
 
 The main workflows are:
 
 - **V3 Protected Integration Gate** — comprehensive portable tests, current/frozen invariants and V4 machine gates;
-- **V3 Remediation CI** — historical-boundary and evergreen regression checks;
+- **V3 Remediation CI** — dispatchable historical-boundary and evergreen regression checks when applicable;
 - **Python 3.11 regression** — one Docker-contained interpreter for installation, imports and representative scientific tests;
-- **Docker dual-stage verification** — build and test the isolated verification image and non-root runtime image;
+- **Docker dual-stage verification** — agent-dispatchable verification/runtime image contract, not an automatic rebuild on every PR;
 - **External evidence audit** — manual-only review of unavailable restricted/large input requirements; strict mode fails rather than silently substituting fake data.
 
 Check the latest run status for the particular PR; historical green badges alone do not establish that the current commit passed.
 
+
+## Managed Ubuntu development and merge gates (2026-10-23)
+
+For the shared development host, first read `/home/lhy/dev/AGENTS.md`, `/home/lhy/dev/README.md` and this repository's `AGENTS.md`. Work from the actual GitHub PR HEAD in a clean isolated branch/worktree. Ubuntu Docker runs the primary software tests and exact-SHA numerical checks; GitHub provides the mandatory lightweight `repository-admission` / `scientific-admission` PR checks and selected additional CI. This host operates **Mihomo at `127.0.0.1:7897`**, with no MacBook proxy forwarding. These `/home/lhy/dev` commands are host-specific rather than prerequisites for independent clones.
+
+```bash
+/home/lhy/dev/bin/local-ci-build cufotri
+/home/lhy/dev/bin/local-ci smoke cufotri --wait
+/home/lhy/dev/bin/local-ci full cufotri --wait
+/home/lhy/dev/bin/local-ci scientific cufotri --wait
+```
+
+The `local-ci` entry points currently require the repository's fixed `/home/lhy/dev/cufotri/worktrees/local-docker-dev` checkout to contain the intended clean HEAD, and image/inputs/results must refer to that SHA. `full` is only the selected **software** suite; `scientific` can legitimately report `PARTIAL`/`NOT_RUN`. A source/test PR needs a verified `ubuntu-docker-full` commit status for its live SHA; the project also retains any applicable original-model, analytical, scientific or independent-review gates.
+
+The `main` Ruleset requires PR review through `repository-admission` and `scientific-admission`. When every applicable check passes and any required independent scientific acceptance is documented, the agent adds `merge-verified` and GitHub's event-driven native auto-merge processes the PR. Draft, failed, pending, missing-data, stale-SHA or scientifically unaccepted changes remain blocked. Heavy scientific workflows can be agent-dispatched without manual GitHub UI interaction; they are **not** automatically PASS when skipped.
+
 ## Docker verification and runtime
 
-GitHub Actions uses the Docker verification image (Python 3.11 + `uv.lock`) for all scientific Python tests. It also checks a separate non-root runtime image with no pytest, uv, or Git history. See [Docker workflow](docs/ci/DOCKER_WORKFLOW.md) for security boundaries, commands and configuration.
+Ubuntu Docker builds and executes the primary Python 3.11 + `uv.lock` verification image at the reviewed SHA. Scoped GitHub integration/Python Actions and optional dispatched reproducibility tests use the same locked verification contract; optional dual-stage verification also checks the separate non-root runtime image without pytest, uv or Git history. See [Docker workflow](docs/ci/DOCKER_WORKFLOW.md) for image and security contracts.
 
 ```bash
 docker build --target verification -t cufotri:verify .

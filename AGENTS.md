@@ -1,10 +1,20 @@
 # CUFOTRI agent and research-development rules
 
 ## Owner's current CI and merge decision (2026-10-23)
-- Preserve automatic GitHub Actions PR/push triggers for Docker, Python compatibility, Protected Integration Gate and Remediation CI. Do not merge the canceled manual-only policy PR #153.
+- Automatically run PR admission, Python 3.11 compatibility and V3 Protected Integration Gate on applicable PR updates. Docker dual-stage verification and V3 Remediation CI are retained as explicitly dispatched jobs, not recurring PR/push rebuilds; post-merge main push no longer repeats these. Never restore the canceled manual-only policy PR #153.
 - Daily source building and scoped tests run in Ubuntu Docker; GitHub cloud CI launches automatically on eligible PR changes without a manual owner click. An agent can initiate dedicated strict science dispatch when needed.
 - When exact-head required checks and all applicable numerical, independent scientific and protected integration gates genuinely PASS, automatically make the PR ready and squash merge or enable native auto-merge without asking the owner again. The KfK 5194 R6 explicit research hypothesis / Draft PR #152 remains BLOCKED until separate science acceptance; green software tests alone do not authorize it.
 
+
+
+## Ubuntu Docker / GitHub admission (current deployment, 2026-10-23)
+- On the managed Ubuntu host, read `/home/lhy/dev/AGENTS.md` and `/home/lhy/dev/README.md` **before** this repository guide; in other environments those absolute paths may not exist, so use the equivalent documented container and gate contracts. A new ChatGPT session must explicitly read the files, not assume they are automatically injected.
+- Refresh remote Git refs and fetch the exact PR HEAD SHA; inspect clean worktrees and all existing tests. Use an isolated short-lived task branch/worktree, never commit directly to `main`, and never force-clean an accepted worktree. The Ubuntu working copy is under `/home/lhy/dev/cufotri/worktrees/local-docker-dev`; the `local-ci` tool currently binds that path, so check the selected SHA before each run.
+- Run real builds, focused smoke, scoped `full`, and admissible scientific checks on Ubuntu in Docker. Host entry points: `/home/lhy/dev/bin/local-ci-build`, `/home/lhy/dev/bin/local-ci`, `/home/lhy/dev/bin/local-ci-report`; follow `/home/lhy/dev/infra/local-ci/README.md` for flags and resource limits. A scoped software pass is not all-option or independent scientific acceptance.
+- Ubuntu runs its **own Mihomo** HTTP(S) proxy at `127.0.0.1:7897`. Do not require a MacBook/Clash reverse tunnel. Docker daemon, BuildKit and the host-side buildx CLI need compatible proxy settings. Never commit proxy subscriptions, credentials or restricted data.
+- The GitHub `main` Ruleset requires the always-running `repository-admission` and `scientific-admission` PR checks. For applicable source/test PRs, publish `ubuntu-docker-full` success **only** after verified `full` software evidence at the exact live PR SHA via `python3 /home/lhy/dev/bin/local-ci-publish-status cufotri <pr> <full-run-id>`; retrigger admission when necessary. This status does not assert science PASS.
+- Agents can dispatch longer workflows at a reviewed candidate SHA without asking the owner to click GitHub Actions. Record the run's actual SHA, inputs, checks and scientific conclusion. For science changes, obtain the project-specific external evidence and a genuinely independent, same-SHA human/non-bot APPROVED review as required; never manufacture a `science-validated` claim.
+- Only after **all applicable** checks and any required source-specific scientific evidence and independent review succeed, and the current PR is non-Draft and conflict-free, may the agent add `merge-verified`. The trusted `pull_request_target` workflow enables GitHub native squash auto-merge; changing the SHA invalidates the old authorization. NOT_RUN, FAIL, pending, Draft and scientific-review blockers must stay unmerged. No hourly polling or manual-owner click is required.
 
 ## Scientific correctness
 
@@ -14,13 +24,13 @@
 4. The frozen V4 RC1 baseline and opt-in manual-fidelity paths must remain distinguishable. Do not silently change established defaults, claim empirical validation based on synthetic tests, or interpret an old stage gate as a current full-model approval.
 5. Read [STATUS.md](STATUS.md) and both `docs/v4/roadmap/` authority documents before scheduling new H-stage development. The native-atmosphere recovery correction supersedes the older assumption that CTEAS-Atmos is mandatory for UFOTRI-native standalone reproduction.
 
-## GitHub-first execution
+## Ubuntu-first execution and GitHub delivery
 
-6. Use a short-lived GitHub branch and PR for code, workflow and documentation changes. No persistent local worktree is required. Never push directly to `main`; do not rewrite main/tags or resurrect historical cleanup branches.
-7. Check the exact PR head and GitHub Actions run statuses before merging. The Protected Integration Gate and Remediation CI remain required scientific checks. Record any skipped/deselected test groups and explicitly distinguish software qualification from external evidence.
+6. Develop in an isolated Ubuntu worktree based on the latest verified main or current PR HEAD; keep the existing managed worktree and create a short-lived GitHub branch/PR for code and documentation. Never push directly to `main`; never reset/clean accepted trees or rewrite main/tags.
+7. Check exact PR HEAD, always-on admission, Python compatibility and Protected Integration Gate checks, plus applicable explicitly dispatched Remediation/Docker/external scientific evidence before merge. A dispatched-only check does not run on every PR. Record skipped/deselected groups and distinguish software qualification from independent external evidence.
 8. GitHub-hosted runners are ephemeral. Raw data, credentials, private D3 keys, unlicensed literature and generated simulation outputs must not be committed or logged. Sources are read-only. Follow input checksum and licensing contracts under `validation/`.
 9. Missing external inputs: synthetic deterministic defaults may be used **only for documented synthetic development/examples**, not as substitutes for experiments in formal scientific acceptance. Strict external gates must fail closed; never weaken marks or tests just to obtain a green run.
 10. Keep Python package/module entrypoint name `cteas_ufotri` until an explicit API migration is approved. Run the Python 3.11 locked-dependency regression **inside the Docker verification image** when changing public interfaces; do not introduce another Python minor version or host-only scientific CI without a dedicated compatibility decision.
 11. Prefer small reviewable PRs. Update `STATUS.md` only when top-level claims or acceptance boundaries actually change; add stage-specific evidence/ADRs for physics changes rather than endlessly appending status snapshots to the root README.
 12. For interrupted work, report exact commit, PR, successful and failed commands, remaining blockers and next reproducible step. Do not claim completion before the appropriate exact-head CI and merge/no-drift checks.
-13. See `docs/ci/DOCKER_WORKFLOW.md`: GitHub Actions must build/run scientific tests in the Python 3.11 `verification` stage; the separate non-root `runtime` stage contains no Git history, raw data, or pytest/uv tooling. Never publish the verification image; never weaken externally marked strict tests.
+13. See `docs/ci/DOCKER_WORKFLOW.md`: Ubuntu Docker is the primary exact-SHA software-test executor; applicable GitHub PR checks and dispatched reproducibility jobs use the same locked Python 3.11 `verification` contract. The separate non-root `runtime` stage contains no Git history, raw data or pytest/uv tooling. Never publish verification images or weaken strict external-data tests.
