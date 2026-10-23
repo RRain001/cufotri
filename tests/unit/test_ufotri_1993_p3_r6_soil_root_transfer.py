@@ -17,6 +17,7 @@ from cteas_ufotri.plant.kfk5194_1993_soil_root_transfer import (
     KFK5194SoilEvolutionHypothesis as Evolution,
     KFK5194SoilLayerInventoryState,
     advance_kfk5194_1993_extraction_only_soil_root_leaf,
+    advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals,
 )
 from cteas_ufotri.plant.kfk5194_1993_water_hto_joint import (
     KFK5194LeafWaterHypothesis as LeafHyp,
@@ -205,3 +206,105 @@ def test_non_activation_of_old_1990_solver():
         assert "kfk5194_1993_soil_root_transfer" not in (
             ROOT/path
         ).read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("group", [
+    Group.AGRICULTURAL_PLANT, Group.PASTURE_GRASS,
+])
+def test_six_consecutive_hours_telescope_exact_water_and_signed_HTO_budgets(group):
+    c=_canopy()
+    initial_soil=_soil(group)
+    initial_leaf=_leaf()
+    airs=(0.,100.,35.,0.,125.,0.)
+    forcings=tuple(_forcing(c,3600.,air=x) for x in airs)
+    series=advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+        profile=_profile(), initial_soil=initial_soil,
+        initial_leaf=initial_leaf, canopy=c, intervals=forcings,
+        evolution_hypothesis=SOIL_MODEL,
+        root_mixing_hypothesis=MIXING, leaf_hypothesis=LEAF_HYP,
+    )
+    assert len(series.steps)==6
+    assert series.final_soil.time==series.final_leaf.time==START+timedelta(hours=6)
+    assert series.initial_soil==initial_soil
+    assert initial_soil.time==START
+    assert series.initial_leaf.time==START
+    assert series.final_soil.water_kg_m2_ground!=initial_soil.water_kg_m2_ground
+    assert all(step.original_soil.time==START+timedelta(hours=i)
+               for i,step in enumerate(series.steps))
+    assert all(step.next_soil==series.steps[i+1].original_soil
+               for i,step in enumerate(series.steps[:-1]))
+    assert all(step.next_leaf.time==series.steps[i+1].original_soil.time
+               for i,step in enumerate(series.steps[:-1]))
+    assert series.steps[0].root_leaf.leaf_water_hto_step.belot_composite_hto_exchange_bq_m2_ground < 0
+    assert series.steps[1].root_leaf.leaf_water_hto_step.belot_composite_hto_exchange_bq_m2_ground > 0
+    assert series.cumulative_root_water_transfer_kg_m2_ground==pytest.approx(
+        series.cumulative_plant_transpired_water_kg_m2_ground,rel=1e-12
+    )
+    assert series.cumulative_root_hto_transfer_bq_m2_ground==pytest.approx(
+        math.fsum(x.root_leaf.leaf_water_hto_step.root_hto_input_bq_m2_ground
+                  for x in series.steps)
+    )
+    assert series.final_leaf.tfwt_inventory_bq_m2 == pytest.approx(
+        initial_leaf.tfwt_inventory_bq_m2
+        + series.cumulative_belot_hto_exchange_bq_m2_ground
+        + series.cumulative_root_hto_transfer_bq_m2_ground,abs=1e-8
+    )
+    assert series.cross_hour_water_residual_kg_m2_ground == pytest.approx(0,abs=1e-10)
+    assert series.cross_hour_hto_residual_bq_m2_ground == pytest.approx(0,abs=1e-8)
+    assert series.provenance()["original_fortran_numeric_equivalence"]=="NOT_ESTABLISHED"
+
+
+def test_cumulative_six_hour_result_matches_manual_one_step_replay():
+    c=_canopy()
+    f=tuple(_forcing(c,3600.,air=v) for v in (0.,20.,40.,60.,80.,100.))
+    series=advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+        profile=_profile(),initial_soil=_soil(),initial_leaf=_leaf(),
+        canopy=c,intervals=f,evolution_hypothesis=SOIL_MODEL,
+        root_mixing_hypothesis=MIXING,leaf_hypothesis=LEAF_HYP,
+    )
+    s,l=_soil(),_leaf()
+    for forcing in f:
+        result=_run(soil=s,leaf=l,canopy=c,forcing=forcing)
+        s,l=result.next_soil,result.next_leaf
+    assert series.final_soil.water_kg_m2_ground==pytest.approx(s.water_kg_m2_ground)
+    assert series.final_soil.hto_bq_m2_ground==pytest.approx(s.hto_bq_m2_ground)
+    assert series.final_leaf.tfwt_inventory_bq_m2==pytest.approx(
+        l.tfwt_inventory_bq_m2,rel=1e-12
+    )
+
+
+def test_multi_hour_rejects_invalid_typed_or_unsynchronized_initial_conditions():
+    c=_canopy()
+    args=dict(
+        profile=_profile(),initial_soil=_soil(),initial_leaf=_leaf(),
+        canopy=c, evolution_hypothesis=SOIL_MODEL,
+        root_mixing_hypothesis=MIXING, leaf_hypothesis=LEAF_HYP,
+    )
+    for bad in ((), [_forcing(c)], (_forcing(c), None), (_forcing(c), "3600")):
+        with pytest.raises(KFK5194WaterActivityError):
+            advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+                **args,intervals=bad,
+            )
+    with pytest.raises(KFK5194WaterActivityError,match="clocks must match"):
+        advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+            **{**args,"initial_leaf":replace(_leaf(),time=START+timedelta(hours=1))},
+            intervals=(_forcing(c),),
+        )
+
+
+def test_second_hour_insufficient_upper_soil_stock_fails_without_input_mutation():
+    c=_canopy()
+    et=_forcing(c).root_water_delivery_kg_m2_ground_s
+    water_first=0.2*et*3600.*1.5
+    soil=replace(_soil(),
+                 water_kg_m2_ground=(water_first,4.,5.),
+                 hto_bq_m2_ground=(10.*water_first,80.,200.))
+    with pytest.raises(KFK5194WaterActivityError,match="insufficient soil-layer"):
+        advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+            profile=_profile(), initial_soil=soil, initial_leaf=_leaf(),
+            canopy=c, intervals=(_forcing(c),_forcing(c)),
+            evolution_hypothesis=SOIL_MODEL,
+            root_mixing_hypothesis=MIXING, leaf_hypothesis=LEAF_HYP,
+        )
+    assert soil.time==START
+    assert soil.water_kg_m2_ground[0]==water_first

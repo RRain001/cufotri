@@ -161,3 +161,35 @@ a production full-1993 solver. The root-to-leaf homogeneous instant mixing
 is a **required research hypothesis, not source-established parity**.
 P3 #129 / P4 #130 and P0 #126 stay open, and PR #152 stays Draft pending
 independent scientific review.
+
+
+## R6 R7 — six-hour explicit forcing transaction (no soil physics added)
+
+`advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals` takes
+a nonempty **ordered tuple** of explicitly typed, piecewise constant
+atmospheric/Monteith/root forcing intervals and one initial soil/leaf
+state at the same UTC clock. It executes only the existing source-limited
+R6 R6 single-interval operator. **Each result's immutable, depleted soil
+and leaf inventories become the next interval's starting inventories**.
+There is no hidden meteorological interpolation, root delay, recharge,
+soil vertical motion or implicit correction of depleted source buckets.
+
+The returned `KFK5194SoilRootLeafSeries` includes all interval records,
+initial/final states, cumulative transpired water and signed composite
+Belot and root HTO, and explicitly checks the six-hour telescoping
+conservation relations:
+
+```
+sum_i Δt_i = t_final - t_initial
+Δ(sum soil water + leaf water) + Σ_i plant_transpired_water_i = 0
+Δ(sum soil HTO + leaf HTO) - Σ_i Belot_composite_HTO_i = 0
+Σ_i root_water_input_i = Σ_i plant_transpired_water_i  (fixed R=E)
+```
+
+Independent numerical tests cover six consecutive 3600-second steps for
+both source-defined crop classes with changing air HTO forcing, signed
+release/uptake, agreement with separately replayed one-step operators,
+invalid forcing sequence and failure of a second-hour extraction when a
+first-layer inventory becomes inadequate. **They only establish mathematical
+consistency of this declared extraction-only research operator**, not an
+original 1993 UFOTRI multi-hour hydrological integration algorithm.

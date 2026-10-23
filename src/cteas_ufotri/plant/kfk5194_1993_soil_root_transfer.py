@@ -223,3 +223,134 @@ def advance_kfk5194_1993_extraction_only_soil_root_leaf(
         cross_water_residual_kg_m2_ground=water_delta,
         cross_hto_residual_bq_m2_ground=hto_delta,
     )
+
+
+@dataclass(frozen=True, slots=True)
+class KFK5194SoilRootLeafSeries:
+    """Auditable, strictly sequential extraction-only intervals."""
+
+    initial_soil: KFK5194SoilLayerInventoryState
+    final_soil: KFK5194SoilLayerInventoryState
+    initial_leaf: TFWTState
+    final_leaf: TFWTState
+    steps: tuple[KFK5194SoilRootLeafTransfer, ...]
+    cumulative_plant_transpired_water_kg_m2_ground: float
+    cumulative_belot_hto_exchange_bq_m2_ground: float
+    cumulative_root_hto_transfer_bq_m2_ground: float
+    cumulative_root_water_transfer_kg_m2_ground: float
+    cross_hour_water_residual_kg_m2_ground: float
+    cross_hour_hto_residual_bq_m2_ground: float
+
+    def provenance(self) -> dict[str, object]:
+        return {
+            "soil_time_propagation": "PREVIOUS_STEP_EXPLICIT_IMMUTABLE_INVENTORY",
+            "hourly_forcing": "EXPLICIT_TYPED_SEQUENCE_NOT_INTERPOLATED",
+            "source_root_depth_fractions": "KFK5194_1993_PRINTED_P15",
+            "soil_physics": "EXTRACTION_ONLY_NO_RECHARGE_RESEARCH",
+            "root_to_leaf_mixing": "EXPLICIT_UNVALIDATED_HYPOTHESIS",
+            "soil_evaporation_infiltration_vertical_flow": "NOT_IMPLEMENTED",
+            "original_fortran_numeric_equivalence": "NOT_ESTABLISHED",
+            "whole_1993_solver_runtime_activated": False,
+        }
+
+
+def advance_kfk5194_1993_extraction_only_soil_root_leaf_intervals(
+    *,
+    profile: Historical1993SourceProfile,
+    initial_soil: KFK5194SoilLayerInventoryState,
+    initial_leaf: TFWTState,
+    canopy: KFK5194P3Canopy,
+    intervals: tuple[KFK5194WaterActivityForcing, ...],
+    evolution_hypothesis: KFK5194SoilEvolutionHypothesis,
+    root_mixing_hypothesis: KFK5194RootMixingHypothesis,
+    leaf_hypothesis: KFK5194LeafWaterHypothesis,
+) -> KFK5194SoilRootLeafSeries:
+    """Sequential source-limited ledger; stop on first unphysical interval.
+
+    The tuple of interval forcings must be supplied by the caller; each
+    contains explicit duration and meteorology-derived Monteith ET. No
+    automatic inter-hour forcing, replenishment, lag or soil physics.
+    """
+    if not isinstance(intervals, tuple) or not intervals or any(
+        not isinstance(item, KFK5194WaterActivityForcing) for item in intervals
+    ):
+        raise KFK5194WaterActivityError(
+            "nonempty ordered tuple of explicit typed forcing intervals required"
+        )
+    if not isinstance(initial_soil, KFK5194SoilLayerInventoryState) or (
+        not isinstance(initial_leaf, TFWTState)
+    ) or initial_soil.time != initial_leaf.time:
+        raise KFK5194WaterActivityError(
+            "initial soil and leaf inventory clocks must match"
+        )
+    steps: list[KFK5194SoilRootLeafTransfer] = []
+    soil, leaf = initial_soil, initial_leaf
+    for forcing in intervals:
+        step = advance_kfk5194_1993_extraction_only_soil_root_leaf(
+            profile=profile, soil=soil, leaf=leaf, canopy=canopy,
+            forcing=forcing, evolution_hypothesis=evolution_hypothesis,
+            root_mixing_hypothesis=root_mixing_hypothesis,
+            leaf_hypothesis=leaf_hypothesis,
+        )
+        if step.next_soil.time <= soil.time or step.next_leaf.time != step.next_soil.time:
+            raise KFK5194WaterActivityError(
+                "soil-to-leaf interval failed monotone exact-clock progression"
+            )
+        steps.append(step)
+        soil, leaf = step.next_soil, step.next_leaf
+    plant_loss = math.fsum(
+        s.root_leaf.leaf_water_hto_step.monteith_plant_water_loss_kg_m2_ground
+        for s in steps
+    )
+    belot = math.fsum(
+        s.root_leaf.leaf_water_hto_step.belot_composite_hto_exchange_bq_m2_ground
+        for s in steps
+    )
+    root_hto = math.fsum(
+        s.root_leaf.leaf_water_hto_step.root_hto_input_bq_m2_ground
+        for s in steps
+    )
+    root_water = math.fsum(
+        s.root_leaf.leaf_water_hto_step.root_water_input_kg_m2_ground
+        for s in steps
+    )
+    water_residual = (
+        math.fsum(soil.water_kg_m2_ground)
+        - math.fsum(initial_soil.water_kg_m2_ground)
+        + leaf.water_content_kg_m2
+        - initial_leaf.water_content_kg_m2
+        + plant_loss
+    )
+    hto_residual = (
+        math.fsum(soil.hto_bq_m2_ground)
+        - math.fsum(initial_soil.hto_bq_m2_ground)
+        + leaf.tfwt_inventory_bq_m2
+        - initial_leaf.tfwt_inventory_bq_m2
+        - belot
+    )
+    w_scale = max(1.0, math.fsum(initial_soil.water_kg_m2_ground),
+                  initial_leaf.water_content_kg_m2, plant_loss, root_water)
+    i_scale = max(1.0, math.fsum(initial_soil.hto_bq_m2_ground),
+                  initial_leaf.tfwt_inventory_bq_m2, abs(belot), root_hto)
+    if not all(math.isfinite(v) for v in
+               (plant_loss, belot, root_hto, root_water, water_residual, hto_residual)):
+        raise KFK5194WaterActivityError("nonfinite cumulative source budgets")
+    if abs(water_residual) > 3e-11*w_scale or abs(hto_residual) > 3e-11*i_scale:
+        raise KFK5194WaterActivityError(
+            "cross-hour soil + leaf + atmospheric inventory totals do not close"
+        )
+    if not math.isclose(root_water, plant_loss, rel_tol=1e-12, abs_tol=1e-12):
+        raise KFK5194WaterActivityError(
+            "cross-hour fixed-water root replacement does not equal plant ET"
+        )
+    return KFK5194SoilRootLeafSeries(
+        initial_soil=initial_soil, final_soil=soil,
+        initial_leaf=initial_leaf, final_leaf=leaf,
+        steps=tuple(steps),
+        cumulative_plant_transpired_water_kg_m2_ground=plant_loss,
+        cumulative_belot_hto_exchange_bq_m2_ground=belot,
+        cumulative_root_hto_transfer_bq_m2_ground=root_hto,
+        cumulative_root_water_transfer_kg_m2_ground=root_water,
+        cross_hour_water_residual_kg_m2_ground=water_residual,
+        cross_hour_hto_residual_bq_m2_ground=hto_residual,
+    )
