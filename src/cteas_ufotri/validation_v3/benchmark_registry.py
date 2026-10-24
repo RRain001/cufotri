@@ -14,6 +14,7 @@ from .validation_case import (
     ParameterStatus,
     Provenance,
     ValidationCaseError,
+    _thaw_value as _thaw,
 )
 
 
@@ -73,14 +74,6 @@ def _freeze(value: Any, *, field: str) -> Any:
     raise BenchmarkResultError(
         f"{field} must contain only JSON-compatible values"
     )
-
-
-def _thaw(value: Any) -> Any:
-    if isinstance(value, Mapping):
-        return {key: _thaw(item) for key, item in value.items()}
-    if isinstance(value, tuple):
-        return [_thaw(item) for item in value]
-    return value
 
 
 def _passes(value: float, threshold: float, comparison: str) -> bool:
