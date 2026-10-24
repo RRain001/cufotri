@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
-import hashlib
 import importlib.metadata
 import json
 from pathlib import Path
@@ -31,6 +30,7 @@ _REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPOSITORY_ROOT))
 
+from validation.adapters.csv_adapter import sha256
 from validation.external_input_requirements import (
     InputStatus,
     check_dataset,
@@ -69,14 +69,6 @@ LEGACY_CASES = {
     "rural_stack_short_case_era5": 288,
     "rural_stack_advanced_modes": 144,
 }
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def git_value(root: Path, *args: str) -> str:

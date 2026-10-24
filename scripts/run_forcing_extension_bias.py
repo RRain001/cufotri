@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -24,6 +23,7 @@ from cteas_ufotri.meteorology.era5_reader import (
 )
 from cteas_ufotri.provenance import merged_config_sha256, v2_named_provenance
 from scripts.check_validation_forcing_completeness import check_forcing
+from validation.adapters.csv_adapter import sha256 as _sha256
 from scripts.run_v2_end_to_end import hybrid_era5_forcing
 
 
@@ -38,14 +38,6 @@ def _repo_path(value: str, manifest_path: Path) -> Path:
     if repository_candidate.exists():
         return repository_candidate
     return manifest_path.parent / candidate
-
-
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def _git(*arguments: str) -> str:

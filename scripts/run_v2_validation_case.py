@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 from copy import deepcopy
 from datetime import datetime, timezone
-import hashlib
 import json
 import math
 import os
@@ -37,6 +36,7 @@ from cteas_ufotri.provenance import (
     v2_named_provenance,
 )
 from validation.adapters.csv_adapter import read_reference_csv, sha256
+_file_sha256 = sha256
 from validation import metrics as validation_metrics
 
 REFERENCE_TYPES = {
@@ -103,14 +103,6 @@ def _git(*args: str) -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
-
-
-def _file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def _validate_manifest(case: dict[str, Any]) -> None:
