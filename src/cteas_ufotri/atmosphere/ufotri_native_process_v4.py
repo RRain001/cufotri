@@ -31,6 +31,9 @@ from .ufotri_native_v4 import (
     NativeSpeciesPolicy,
     TritiumAtmosphericForm,
     UFOTRINativeAtmosphereError,
+    _finite,
+    _nonnegative,
+    _positive,
     gaussian_concentration_bq_m3,
 )
 
@@ -60,27 +63,6 @@ class KFK4332LiftOffEvidence:
     status: str = "SOURCE_LIMITED_EQ322_OCR_AMBIGUOUS"
 
 
-def _finite(value: float, *, field: str) -> float:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise UFOTRINativeAtmosphereError(f"{field} must be numeric")
-    result = float(value)
-    if not math.isfinite(result):
-        raise UFOTRINativeAtmosphereError(f"{field} must be finite")
-    return result
-
-
-def _nonnegative(value: float, *, field: str) -> float:
-    result = _finite(value, field=field)
-    if result < 0.0:
-        raise UFOTRINativeAtmosphereError(f"{field} must be non-negative")
-    return result
-
-
-def _positive(value: float, *, field: str) -> float:
-    result = _finite(value, field=field)
-    if result <= 0.0:
-        raise UFOTRINativeAtmosphereError(f"{field} must be positive")
-    return result
 
 
 def kfk5194_washout(

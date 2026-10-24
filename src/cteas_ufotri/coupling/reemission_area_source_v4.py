@@ -16,7 +16,12 @@ import math
 from typing import Iterable
 
 from ..atmosphere.dispersion_parameters import rural_pg_sigma
-from ..plant.leaf_ufotri_v4.model import ufotri_manual_leaf_geometry
+from ..plant.leaf_ufotri_v4.model import (
+    _finite,
+    _nonnegative,
+    _positive,
+    ufotri_manual_leaf_geometry,
+)
 
 
 STAGE = "UFOTRI_REEMISSION_AREA_SOURCE_RECONCILIATION_R1"
@@ -42,27 +47,6 @@ _ALLOWED_LOSS_ORIGINS = {
 _ALLOWED_SOURCE_ORIGINS = _ALLOWED_LOSS_ORIGINS | {NO_ACTIVITY}
 
 
-def _finite(value: float, *, field: str) -> float:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise TypeError(f"{field} must be numeric")
-    result = float(value)
-    if not math.isfinite(result):
-        raise ValueError(f"{field} must be finite")
-    return result
-
-
-def _positive(value: float, *, field: str) -> float:
-    result = _finite(value, field=field)
-    if result <= 0.0:
-        raise ValueError(f"{field} must be positive")
-    return result
-
-
-def _nonnegative(value: float, *, field: str) -> float:
-    result = _finite(value, field=field)
-    if result < 0.0:
-        raise ValueError(f"{field} must be non-negative")
-    return result
 
 
 def _fraction(value: float, *, field: str) -> float:
