@@ -48,6 +48,7 @@ from ..plant.tfwt_v3 import TFWTState, TFWTStorageSolver
 from ..v3_pipeline import V3PipelineRunner, V3PipelineParameters, V3SimulationState
 from .benchmarks import load_baseline_benchmark_cases
 from .benchmark_registry import (
+    _thaw,
     BenchmarkMetricResult,
     BenchmarkRegistry,
     BenchmarkResult,
@@ -68,12 +69,6 @@ class BenchmarkRunnerError(ValueError):
     """A synthetic benchmark is malformed or cannot execute fail-closed."""
 
 
-def _thaw(value: Any) -> Any:
-    if isinstance(value, Mapping):
-        return {key: _thaw(item) for key, item in value.items()}
-    if isinstance(value, tuple):
-        return [_thaw(item) for item in value]
-    return value
 
 
 def _canonical(value: Any) -> str:

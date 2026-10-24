@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
 import math
 import re
 from typing import Any
+
+from ..intake_v3.validation import validate_identifier, validate_utc_timestamp
 
 
 ANNUAL_TIME_PERIOD = "annual"
@@ -54,16 +55,6 @@ def require_unit(actual: str, expected: str, *, field: str) -> None:
         )
 
 
-def validate_identifier(
-    value: Any,
-    *,
-    field: str,
-    error_type: type[Exception],
-) -> None:
-    """Require a non-empty stable identifier."""
-
-    if not isinstance(value, str) or not value.strip():
-        raise error_type(f"{field} is required")
 
 
 def validate_provenance(provenance: Any) -> None:
@@ -90,17 +81,6 @@ def validate_provenance(provenance: Any) -> None:
         )
 
 
-def validate_utc_timestamp(
-    timestamp: Any,
-    *,
-    error_type: type[Exception],
-) -> None:
-    """Require a timezone-aware UTC timestamp."""
-
-    if not isinstance(timestamp, datetime) or timestamp.tzinfo is None:
-        raise error_type("timestamp must be timezone-aware UTC")
-    if timestamp.utcoffset() != timedelta(0):
-        raise error_type("timestamp must use UTC")
 
 
 def validate_dose_state(state: Any) -> None:

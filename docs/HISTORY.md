@@ -79,3 +79,11 @@ git show 0ed6fde157d0b3fedc4354da32533133f1fa4f0b:tests/v4/test_v4_production_ca
 ```
 
 All old stage approval assertions remain recoverable through Git history, but they must not be mistaken for current scientific validation or original executable equivalence.
+
+## P7A — archive old stage-only contracts and reuse identical validators (2026-10-24)
+
+The complete pre-P7 main revision `e5761c3cba883a71bcbb9eb4ad90eb77a8286680` is preserved by the published annotated tag `archive/cufotri-p7-base-20261024`. This batch archives **six historical architecture test modules** that compared fixed V3/P7.6 Git commits or protected old solver blob hashes, plus **nine superseded governance and V1 historical acceptance reports/ADRs**. The archived V1 read-only assessment contains early prototype limitations; its July 2026 findings are historical and must not be confused with the current V4 software status. Original text and test logic remain recoverable with `git show e5761c3cba883a71bcbb9eb4ad90eb77a8286680:<original path>`. The privately retained absolute-path/SHA-256 inventory and zero-inbound-reference audit are under `/home/lhy/dev/cufotri/reports/repo-slim-p7-20261024/`.
+
+Current `tests/architecture/test_v3_current_remediation_invariants.py` now checks the still-important runtime boundary in place of obsolete staged SHAs: no production parameters or values leak from the V3 candidate/feasibility registry, fresh registry/gate imports do not load model solvers, and the previously protected V3 runtime modules do not import V3.1 mass-basis annotation. The current source-specific historical and scientific provenance YAMLs remain. The dose validator reuses AST-identical intake identifier/UTC helpers; the benchmark runner reuses the AST-identical benchmark registry thaw function, preserving their original error types and output structures. No physical rates, model formulas, timestamp conventions, calibrated values, or empirical benchmarks have changed.
+
+Scientific acceptance, original UFOTRI executable parity and external SB1/SB4/ERA5/private D3 remain separate NOT_ESTABLISHED/NOT_RUN concerns. This archive is not a release or scientific requalification.
