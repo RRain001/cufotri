@@ -59,3 +59,7 @@ The food, intake and dose modules share current interface checks in `tests/archi
 ## P7D: evergreen V3 soil and plant inventory boundaries
 
 The current `tests/architecture/test_v3_current_plant_inventory_boundaries.py` replaces five original fixed-stage source-diff architecture test modules covering the V3 public plant pathway, OBT, soil HTO, root uptake and TFWT. Its 12 continuing API/import/layer-isolation tests are retained in substance without new physics or loosened numerical tolerances. The previous historical stage source diffs remain available in pre-P7D `main` (and the archival tag after publication). The separate leaf resistance/pipeline/validation framework P7C stream is intentionally untouched.
+
+## P9A: group tests by physical behavior, retain all test assertions
+
+For daily testing, four small V4 test modules were folded into adjacent, actively maintained same-physics suites: Eq.(33)-(37) soil hydrology machine gate, numerical sensitivity screening execution, opt-in OBT baseline parameter tests, and rain-zero manual leaf-exchange checks. The eight relocated test function AST bodies and every existing recipient test AST body were compared exactly before archival. The full underlying machine runners, data, source and conservation cases are unchanged. See the tagged pre-P9 baseline and local SHA256 manifest recorded in `docs/HISTORY.md`. Further test cleanup should consolidate duplicated fixture setups and genuinely identical cases, **not** discard distinct model hypotheses merely to hit a file-count target.
