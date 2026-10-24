@@ -30,6 +30,8 @@ On a developer machine with `make`, equivalent commands are `make test-quick`, `
 | `docs/INDEX.md` | Current method/source-fidelity navigation |
 | `docs/HISTORY.md` | Pre-slim historical evidence, archive and restoration |
 
+Optional parameter studies now share one entrypoint: `python scripts/studies.py wet-sensitivity --output results/wet.json` or `python scripts/studies.py v2-uncertainty --output results/lhs.json`. These are software studies, not historical UFOTRI equivalence or empirical validation. The two prior standalone wrapper paths are preserved in the archived Git snapshot.
+
 For active research status see [STATUS.md](STATUS.md). Selected source-edition decisions and scientific limitations remain under `docs/v4/adr/` and `docs/v4/1993_upgrade/`.
 
 ## GitHub / Ubuntu policy

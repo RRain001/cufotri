@@ -28,3 +28,14 @@ GitHub's main Ruleset continues to require `repository-admission` and `scientifi
 ## Existing shared validators
 
 Avoid reimplementing the same numeric boundary checks for each source-compatible adapter. The opt-in UFOTRI-native primary atmosphere in `atmosphere/ufotri_native_v4.py` owns `_finite`, `_nonnegative`, `_positive` and `_utc`; the trajectory and process modules reuse them with the original exception and unit semantics. Likewise, `plant/leaf_ufotri_v4/model.py` owns the existing TypeError/ValueError numeric checks already imported by the re-emission area-source adapter. These two validator families intentionally retain their different exception contracts and should **not** be combined without a separate compatibility reason. None of these helpers represents a new 1993 physical formula or original executable parity claim.
+
+## Optional parameter studies (P5 streamlined entrypoint)
+
+Use one `scripts/studies.py` CLI instead of separate historical standalone wrappers:
+
+```bash
+python scripts/studies.py wet-sensitivity --output /tmp/wet-grid.json
+python scripts/studies.py v2-uncertainty --output /tmp/lhs-convergence.json
+```
+
+`wet-sensitivity` still invokes the original 4×3 wet-scavenging study and writes exactly the same sorted JSON bytes as the previous `scripts/run_wet_parameter_sensitivity.py`. `v2-uncertainty` still invokes the existing full-model LHS convergence function with unchanged fixed configuration and seeds, and preserves its JSON/status contract. The original two file-path entrypoints were archived, not their scientific computations. Other V2 benchmark and V3 synthetic runners remain unchanged because their original evidence registries or regeneration protocols reference those paths. No external validation is implied by either study.

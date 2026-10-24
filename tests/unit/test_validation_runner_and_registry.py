@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 import pandas as pd
 import yaml
 
+from scripts import studies
 from scripts.check_validation_forcing_completeness import check_forcing
 from scripts.prepare_observed_forcing import prepare_observed_forcing
 from scripts.run_v2_validation_case import run_case
@@ -174,3 +176,67 @@ def test_external_dataset_inventory_and_blocked_manifests_are_explicit():
         assert payload["case_status"] == "BLOCKED_EXTERNAL_DATA"
         assert payload["execution"]["permitted"] is False
         assert payload["blocking_reasons"]
+
+
+def test_consolidated_studies_preserves_v2_lhs_inputs_and_json(tmp_path, monkeypatch, capsys):
+    """Avoid executing 1,500+ LHS scenarios while testing CLI adapter fidelity."""
+    from cteas_ufotri.analysis import full_model_uncertainty
+
+    parameters = [{"name": "declared-test-parameter"}]
+    config = {"name": "synthetic-cli-mock", "uncertainty": {"parameters": parameters}}
+    recorded = []
+
+    def fake_config(*paths):
+        recorded.append(("config", paths))
+        return config
+
+    def fake_convergence(actual, selected):
+        recorded.append(("convergence", actual, selected))
+        return {"status": "PASS", "seed": 20260724, "sample_count": 256}
+
+    monkeypatch.setattr(studies, "load_configuration", fake_config)
+    monkeypatch.setattr(
+        full_model_uncertainty, "run_full_model_lhs_convergence", fake_convergence
+    )
+    output = tmp_path / "nested" / "result.json"
+    assert studies.main(["v2-uncertainty", "--output", str(output)]) == 0
+    expected = json.dumps(
+        {"status": "PASS", "seed": 20260724, "sample_count": 256},
+        indent=2, sort_keys=True,
+    )
+    assert output.read_text(encoding="utf-8") == expected + "\n"
+    assert capsys.readouterr().out == expected + "\n"
+    assert recorded == [
+        ("config", ("configs/default_parameters.yaml", "configs/v2/v2_full_adult_dose.yaml")),
+        ("convergence", config, parameters),
+    ]
+
+
+def test_consolidated_studies_preserves_wet_grid_output_contract(tmp_path, monkeypatch, capsys):
+    from cteas_ufotri.analysis import wet_sensitivity
+
+    recorded = []
+    config = {"name": "wet-grid-cli-mock"}
+    result = [{"a": 1.0e-5, "b": 0.8, "soil_hto_bq_m2": 2.0}]
+
+    def fake_config(*paths):
+        recorded.append(("config", tuple(map(str, paths))))
+        return config
+
+    def fake_sensitivity(actual):
+        recorded.append(("sensitivity", actual))
+        return result
+
+    monkeypatch.setattr(studies, "load_configuration", fake_config)
+    monkeypatch.setattr(wet_sensitivity, "wet_parameter_sensitivity", fake_sensitivity)
+    output = tmp_path / "wet" / "result.json"
+    assert studies.main(["wet-sensitivity", "--output", str(output)]) == 0
+    assert output.read_text(encoding="utf-8") == json.dumps(result, indent=2, sort_keys=True) + "\n"
+    assert capsys.readouterr().out == "PASS: wrote 1 wet-parameter sensitivity records\n"
+    assert recorded == [
+        ("config", (
+            str(ROOT / "configs/default_parameters.yaml"),
+            str(ROOT / "configs/test_case.yaml"),
+        )),
+        ("sensitivity", config),
+    ]
