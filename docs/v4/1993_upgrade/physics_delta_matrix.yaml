@@ -73,6 +73,9 @@ p3_r4_status: "DIRECT_PRINTED_1993_EQ1_TO3_LEAF_AREA_SOURCE_MATH_NOT_ORIGINAL_FO
 p3_r5_ground_lai_module: "src/cteas_ufotri/plant/kfk5194_1993_ground_leaf_budget.py"
 p3_r5_ground_lai_report: "docs/v4/1993_upgrade/P3_R5_LEAF_GROUND_AREA_BUDGET.md"
 p3_r5_status: "OPT_IN_FIXED_LAI_LEAF_GROUND_HTO_ACTIVITY_PROJECTION_NOT_FULL_1993_RUNTIME"
+p3_r6_joint_water_hto_module: "src/cteas_ufotri/plant/kfk5194_1993_water_hto_joint.py"
+p3_r6_joint_water_hto_report: "docs/v4/1993_upgrade/P3_R6_WATER_HTO_JOINT_LEDGER.md"
+p3_r6_status: "OPT_IN_FIXED_WATER_BELOT_COMPOSITE_NO_EXTRA_ET_HTO_SOURCE_LIMITED_ROOT_MIXING_SCIENTIFIC_SIGNOFF_REQUIRED"
 runtime_1993_profile_activated: false
 comparison_policy: "1990 is comparison; 1993 formula numbering is authoritative for all target entries"
 numerical_equivalence_to_1993_executable: "NOT_ESTABLISHED"
