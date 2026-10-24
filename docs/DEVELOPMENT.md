@@ -55,3 +55,7 @@ The six retired fixed-commit historical P7.6 and V3.1 architecture tests are not
 ## P7B active typed-path checks
 
 The food, intake and dose modules share current interface checks in `tests/architecture/test_v3_current_food_intake_dose_boundaries.py`. The older three fixed-commit stage checks were archived. All executable numerical tests and input evidence contracts remain. Restore the historical tests or stage documents from `archive/cufotri-p7b-base-20261024` when needed.
+
+## P7D: evergreen V3 soil and plant inventory boundaries
+
+The current `tests/architecture/test_v3_current_plant_inventory_boundaries.py` replaces five original fixed-stage source-diff architecture test modules covering the V3 public plant pathway, OBT, soil HTO, root uptake and TFWT. Its 12 continuing API/import/layer-isolation tests are retained in substance without new physics or loosened numerical tolerances. The previous historical stage source diffs remain available in pre-P7D `main` (and the archival tag after publication). The separate leaf resistance/pipeline/validation framework P7C stream is intentionally untouched.
