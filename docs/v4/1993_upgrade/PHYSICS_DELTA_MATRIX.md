@@ -62,6 +62,10 @@
 
 [**R12 存档及 Eq.(30) 量纲举证审计**](P2_R12_MITCHELL_ARCHIVE_AND_EQ30_PROOF_OBLIGATIONS.md) 核验了机构存档与 OpenAlex 文献记录。原始 PDF 返回 HTTP 401，未取得正文，不存在 PDF SHA256 或公式验证。R12 记录了 CO2 当量与干物质、叶面积与地表面积的必要换算证据，所有实际换算因子和原版等价性仍为 NOT_ESTABLISHED。1990 默认路径不变，正式科学审查 NOT_RUN。
 
+### UF93-13：P2 R13 Eq.(28) 正负偏差、渐近界与呼吸面积判别
+
+[**R13 Eq.(28) 独立数学判别**](P2_R13_EQ28_BIAS_SIGN_AND_LIMIT_AUDIT.md) 已按 KfK5194 原始印刷 pp.19–20 再次视觉核验，在 `0<k<1`、PAR>0 的共同量纲假设下独立证明印刷 Eq.(28) 的**光合部分**比 Eq.(26)–(27) 直接积分严格偏高，偏差 `D=(Pm/k)ln[(Pm+eps*Iabs)/(Pm+eps*k*Iabs)]`，上界 `(Pm/k)ln(1/k)`。但**净同化差**为 `D+(LAI-1)Rd`：当 LAI<1 时可因呼吸基准与大小翻转，不得概括为净同化一律偏高。上述判别是条件性数学结论，**不是原版 FORTRAN 算法等价、Eq.(28) 自动修正或科学审查通过**。机器审计见 `UF93-13.p2_r13_eq28_bias_sign_limit_audit`；1990 默认路径保持冻结。
+
 ## 1.1 原始 PDF 视觉复核 R2 — 逐式核对与风险校正
 
 已新增 [**KfK 5194 1993 原始公式/参数审计 R2**](PRIMARY_SOURCE_AUDIT_R2.md) 和 [机器可读主证据表](primary_source_formula_audit_r2.yaml)。R2 对 **22 项选定公式**进行了原始印刷页复核；21 项历史软件默认值现均已核对官方 PDF 印刷页（包括 `IDEPHT`、`IBODEX`），并记录 4 类关键不确定性，其中：

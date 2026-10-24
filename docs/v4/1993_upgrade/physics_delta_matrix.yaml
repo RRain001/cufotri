@@ -402,6 +402,28 @@ rows:
       original_executable_parity: "NOT_RUN"
       independent_scientific_review: "NOT_RUN"
       production_coupling_allowed: false
+    p2_r13_eq28_bias_sign_limit_audit:
+      audit_packet: "docs/v4/1993_upgrade/P2_R13_EQ28_BIAS_SIGN_AND_LIMIT_AUDIT.md"
+      evidence_level: "PRINTED_FORMULA_AND_INDEPENDENT_MATH_ONLY"
+      source_pdf_sha256: "9a75292bc7289969db7175e17003c3dd777de72a30b52993264662dbc5c62ff5"
+      source_printed_pages: [19, 20]
+      source_pdf_page_indices_zero_based: [28, 29]
+      sign_light_difference_if_0_lt_k_lt_1: "STRICTLY_POSITIVE_FOR_POSITIVE_PAR"
+      difference_exact_formula: "(Pm/k)*log((Pm+eps*Iabs)/(Pm+eps*k*Iabs))"
+      bound_light_difference_if_0_lt_k_lt_1: "ZERO_LT_D_LT_(Pm/k)*LOG(1/k)"
+      low_light_integral_slope: "eps*(1-exp(-k*LAI))"
+      low_light_print_slope: "eps*(1-k*exp(-k*LAI))"
+      high_light_positive_offset: "(Pm/k)*LOG(1/k)"
+      net_difference_conditional: "D+(LAI-1)*Rd"
+      conditional_net_sign_for_lai_ge_1_rd_nonnegative: "POSITIVE"
+      conditional_net_sign_for_lai_lt_1: "UNDETERMINED_CAN_REVERSE"
+      eq28_printed_vs_eq26_27_integral: "INCONSISTENT_TWO_TERMS"
+      respiration_area_basis: "NOT_ESTABLISHED"
+      eq29_mass_unit_bridge: "NOT_ESTABLISHED"
+      eq30_biomass_area_bridge: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
