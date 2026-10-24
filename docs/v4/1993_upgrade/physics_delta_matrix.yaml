@@ -378,6 +378,30 @@ rows:
       original_executable_parity: "NOT_RUN"
       independent_scientific_review: "NOT_RUN"
       production_coupling_allowed: false
+    p2_r12_mitchell_archive_access_gate:
+      audit_packet: "docs/v4/1993_upgrade/P2_R12_MITCHELL_ARCHIVE_AND_EQ30_PROOF_OBLIGATIONS.md"
+      evidence_level: "PRIMARY_ASSET_LOCATED_BUT_UNAUTHORIZED"
+      doi: "10.1093/oxfordjournals.aob.a088102"
+      openalex_work_id: "W2401308966"
+      openalex_oa_status: "closed"
+      archive_item_url: "https://repository.rothamsted.ac.uk/item/86731/dark-respiration-of-winter-wheat-crops-in-relation-to-temperature-and-simulated-photosynthesis"
+      archive_pdf_url: "https://repository.rothamsted.ac.uk/id/eprint/5335/1/42758396.pdf"
+      archive_item_http_status_observed: 200
+      archive_pdf_http_status_observed: 401
+      asset_pdf_sha256: "NOT_AVAILABLE"
+      mitchell_full_text_equation_review: "NOT_RUN"
+      abstract_rate_normalization: "PER_UNIT_DRY_MASS_ABSTRACT_ONLY"
+      abstract_shoot_ear_partition: "STAGE_DEPENDENT_ABSTRACT_ONLY"
+      abstract_photosynthesis_lag: "PRECEDING_TWO_DAYS_CORRELATION_ONLY"
+      kfk_eq30_growth_coefficient_source: "NOT_ESTABLISHED"
+      kfk_eq30_maintenance_coefficient_source: "NOT_ESTABLISHED"
+      eq30_co2_equivalent_per_dry_mass_conversion: "NOT_ESTABLISHED"
+      eq30_dry_matter_to_w_bridge: "NOT_ESTABLISHED"
+      eq30_respiration_area_basis: "NOT_ESTABLISHED"
+      eq28_eq30_original_solve_order: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
