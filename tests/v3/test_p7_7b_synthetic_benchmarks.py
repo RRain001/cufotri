@@ -98,3 +98,16 @@ def test_result_round_trip_preserves_provenance_and_hashes() -> None:
     assert len(result.input_hash) == 64
     assert result.execution_id.startswith("exec-")
     assert result.provenance.artifact_sha256
+
+
+def test_consolidated_synthetic_benchmark_cli_preserves_registry(tmp_path, monkeypatch, capsys):
+    from scripts import studies
+
+    monkeypatch.setattr(studies, "ROOT", tmp_path)
+    assert studies.main(["synthetic-benchmarks"]) == 0
+    output = tmp_path / "validation/results/v3/p7_7b_synthetic_benchmark_results.yaml"
+    assert output.read_bytes() == CANONICAL_RESULTS.read_bytes()
+    assert capsys.readouterr().out == (
+        "status=PASS_SYNTHETIC_BENCHMARK_VALIDATION\n"
+        f"results={output}\n"
+    )
