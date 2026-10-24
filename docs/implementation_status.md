@@ -140,8 +140,10 @@ The execution policy and independent review are recorded in
 The historical full pytest collection is not used as the P7.7B gate because
 its stage-specific architecture baselines intentionally reject follow-on
 validation additions. With `--maxfail=1`, the first failure was
-`tests/architecture/test_atmos_v3_boundary.py::test_p7_source_scope_is_atmospheric_interface_only`,
-which only permits earlier atmospheric/pipeline source paths. The focused
+the historical P7 atmospheric-interface source-scope test
+([frozen test at the pre-P7D commit](https://github.com/RRain001/cufotri/blob/aa907be7d321b5209c73feb4539b734a658dbb04/tests/architecture/test_atmos_v3_boundary.py)),
+which only permits earlier atmospheric/pipeline source paths. The current
+interface invariants are now checked without historical commit-diff gates. The focused
 P7.7B/P7.7A and parameter compatibility suites are the recorded stage checks.
 
 ## V3 P7.7A Baseline validation framework
