@@ -64,7 +64,7 @@ def test_validated_physical_constant_provenance_resolves_to_real_git_objects() -
         _git("cat-file", "-e", f"{revision}:{path}")
 
 
-def test_runtime_owners_do_not_import_parameter_validation_control_plane() -> None:
+def test_runtime_owners_do_not_import_parameter_or_adoption_control_plane() -> None:
     runtime_roots = (
         ROOT / "src/cteas_ufotri/plant",
         ROOT / "src/cteas_ufotri/exposure",
@@ -75,7 +75,13 @@ def test_runtime_owners_do_not_import_parameter_validation_control_plane() -> No
     for runtime_root in runtime_roots:
         for path in runtime_root.rglob("*.py"):
             text = path.read_text(encoding="utf-8")
-            if re.search(r"(?:from|import)\s+.*parameters_v3", text):
+            # Preserve P7.6D's real runtime-import invariant without its
+            # frozen historical Git-SHA stage checks.
+            if (
+                re.search(r"(?:from|import)\s+.*parameters_v3", text)
+                or "physics_adoption" in text
+                or "p7_6d_physics_adoption" in text
+            ):
                 offenders.append(str(path.relative_to(ROOT)))
     assert offenders == []
 
