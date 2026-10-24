@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.sync_v2_validation_registry import FIELDS, render_csv
 from cteas_ufotri.config import load_configuration
 from cteas_ufotri.provenance import (
     merged_config_sha256,
@@ -54,26 +55,6 @@ EXTERNAL_TYPES = {
     "REFERENCE_MODEL",
     "SITE_CASE",
 }
-FIELDS = [
-    "validation_id",
-    "module",
-    "process",
-    "reference_type",
-    "reference_name",
-    "reference_version",
-    "citation",
-    "data_location",
-    "input_config",
-    "runner",
-    "expected_output",
-    "unit",
-    "metric",
-    "threshold",
-    "status",
-    "last_run_commit",
-    "result_artifact",
-    "notes",
-]
 LIMITATION_CLOSURES = {
     "M_REEM_MANUAL_FIDELITY": {
         "VAL_REEM_RAIN_START_3_PERCENT",
@@ -115,7 +96,7 @@ def _git(*args: str) -> str:
     ).stdout.strip()
 
 
-def _load_registry() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+def _load_registry() -> list[dict[str, str]]:
     yaml_payload = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
     if not isinstance(yaml_payload, dict) or not isinstance(
         yaml_payload.get("records"), list
@@ -125,25 +106,12 @@ def _load_registry() -> tuple[list[dict[str, str]], list[dict[str, str]]]:
         {key: str(value) for key, value in record.items()}
         for record in yaml_payload["records"]
     ]
-    with REGISTRY_CSV.open(newline="", encoding="utf-8") as stream:
-        csv_records = list(csv.DictReader(stream))
-    return yaml_records, csv_records
+    return yaml_records
 
 
 def _verify_registry() -> list[dict[str, str]]:
-    subprocess.run(
-        [
-            sys.executable,
-            str(ROOT / "scripts/sync_v2_validation_registry.py"),
-            "--check",
-        ],
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    yaml_records, csv_records = _load_registry()
-    if yaml_records != csv_records:
+    yaml_records = _load_registry()
+    if REGISTRY_CSV.read_text(encoding="utf-8") != render_csv(yaml_records):
         raise ValueError("Registry YAML and CSV records differ")
     if not yaml_records:
         raise ValueError("Validation registry is empty")

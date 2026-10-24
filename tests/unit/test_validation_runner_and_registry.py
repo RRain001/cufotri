@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import pytest
 import yaml
 
 from scripts import studies
@@ -240,3 +241,20 @@ def test_consolidated_studies_preserves_wet_grid_output_contract(tmp_path, monke
         )),
         ("sensitivity", config),
     ]
+
+
+def test_v2_readiness_registry_check_uses_same_exact_csv_contract(tmp_path, monkeypatch):
+    from scripts import verify_v2_validation_readiness as readiness
+
+    original = (ROOT / "docs/v2/validation/v2_validation_registry.csv").read_text(
+        encoding="utf-8"
+    )
+    candidate = tmp_path / "validation_registry.csv"
+    candidate.write_text(original, encoding="utf-8")
+    monkeypatch.setattr(readiness, "REGISTRY_CSV", candidate)
+    assert readiness._verify_registry()
+
+    # Same parsed records but different bytes still violate the stable CSV contract.
+    candidate.write_text(original + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="Registry YAML and CSV records differ"):
+        readiness._verify_registry()
