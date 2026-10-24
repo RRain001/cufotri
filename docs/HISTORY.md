@@ -59,3 +59,11 @@ git show ea87f2524917238dd279a24b95f61d24fe73ed2c:scripts/v4/check_ufotri_manual
 ```
 
 **Not retired:** `scripts/v4/check_ufotri_cross_module_fidelity_qualification_r1.py` (G3), which performs real root-delay simulations, gap checks and module-level numerical probes; all associated conservation/integration tests; `STATUS.md` scientific claims; KfK 4605/5194 source definitions; or independent external scientific validation requirements. Archiving obsolete CI-era lifecycle checks **does not certify historical executable equivalence, physical accuracy or empirical field validation**.
+
+## P5 runner consolidation and historic stage archival — 2026-10-24
+
+The full starting `main` is commit `70af1d8a7b301da3a396a67f9947d8a7e1a8117d`, preserved as the published annotated `archive/cufotri-p5-base-20261024` tag. This P5 batch removes 17 superseded V3 governance/independent-review stage documents, G4/H6 historical lifecycle YAML and one post-endpoint historical state record from the *working tree*. Unique equation-gap, physical coupling and validation-dependency documents, active 1990/1993 manuals, the ADR-021 machine-referenced policy, and all scientific benchmark inputs remain available as current files.
+
+Two small historical runner wrappers, `scripts/run_v2_uncertainty_convergence.py` and `scripts/run_wet_parameter_sensitivity.py`, were superseded by `scripts/studies.py` subcommands `v2-uncertainty` and `wet-sensitivity`. The numerical functions/parameters are unchanged. The 12-row wet study JSON was checked byte-for-byte before/after with SHA256 `5a5480fa3b37a93ab14165fb2576cfee2a777603d2b1c2a7bbdff7ec9dcf8c04`; the expensive full LHS study was checked at its dispatch/CLI contract but not rerun for this administrative migration. Historic scripts and stages can be read with `git show 70af1d8a7b301da3a396a67f9947d8a7e1a8117d:<path>`.
+
+Path lists, machine-reference decisions and SHA-256 checksums for all archived documents and wrappers are held privately on Ubuntu under `/home/lhy/dev/cufotri/reports/repo-slim-p5-20261024/`. Existing science status and historical UFOTRI executable equivalence/field evidence remain `NOT_ESTABLISHED`/`NOT_RUN`.
