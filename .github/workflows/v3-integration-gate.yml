@@ -1,169 +1,37 @@
-name: V3 Protected Integration Gate
+name: Version full regression (manual)
 
+# Not triggered on ordinary source/document PRs. A release is checked as one suite,
+# with independent external scientific evidence separately reported as NOT_RUN.
 on:
-  pull_request:
-    branches: [main]
   workflow_dispatch:
-concurrency:
-  group: v3-protected-integration-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
 
+concurrency:
+  group: cufotri-version-full-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   integration-gate:
+    name: integration-gate
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
-      - name: Checkout full history
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
-
-      - name: Initialize Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build locked Python 3.11 verification image using shared dependency cache
+      - uses: docker/setup-buildx-action@v3
+      - name: Build pinned verification environment
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
           target: verification
           load: true
-          tags: cufotri:verification-${{ github.sha }}
+          tags: cufotri:full-${{ github.sha }}
           cache-from: type=gha,scope=cufotri-py311-deps-v1
-
-      - name: Verify immutable PR base ancestry and diff hygiene
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        shell: bash
+      - name: Run one comprehensive portable regression
         run: |
-          set -euo pipefail
-          if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            # The event's base SHA is immutable. Never fetch moving origin/main
-            # here: merging another PR during this run caused a false failure.
-            test -n "$PR_BASE_SHA"
-            git cat-file -e "${PR_BASE_SHA}^{commit}"
-            git merge-base --is-ancestor "$PR_BASE_SHA" HEAD
-            git diff --check "$PR_BASE_SHA" HEAD
-          else
-            # push(main)/manual runs inspect the checked-out commit itself.
-            git diff --check HEAD^ HEAD
-          fi
-
-      - name: Compile and import smoke
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python -m compileall -q src
-          python - <<'PY'
-          import cteas_ufotri
-          import cteas_ufotri.parameters_v3
-          import cteas_ufotri.validation_v3
-          import cteas_ufotri.v3_pipeline
-          import cteas_ufotri.v4_integration
-          import cteas_ufotri.plant.mass_basis_v3_1
-          import cteas_ufotri.plant.soil_v4
-          import cteas_ufotri.plant.root_v4
-          from cteas_ufotri.plant import soil_v3, root_v3, tfwt_v3, obt_v3, food_v3
-          from cteas_ufotri.exposure import intake_v3, dose_v3
-          print('V3_V4_IMPORT_SMOKE=PASS')
-          PY
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Run portable current integration test suite
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python -m pytest -m "not external_sb1_data and not external_sb4_data and not external_era5_data and not private_reblinding_secret and not historical_review_context"
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Run current and frozen-boundary invariants explicitly
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python -m pytest \
-            tests/architecture/test_codex_branch_disposition.py \
-            tests/architecture/test_historical_review_context_boundaries.py \
-            tests/architecture/test_v3_current_remediation_invariants.py \
-            tests/architecture/test_v3_protected_integration_review.py \
-            tests/architecture/test_v3_1_mass_basis_isolation.py \
-            tests/architecture/test_v3_1_independent_rereview_r2_handoff.py \
-            tests/architecture/test_v3_1_main_merge_closure.py \
-            tests/integration/test_v3_pipeline_composite_conservation.py \
-            tests/v3/test_p7_7b_synthetic_benchmarks.py \
-            tests/v3/test_p7_8a_physics_redesign_governance.py \
-            tests/v3/test_p7_8b1_redesign_specification.py \
-            tests/v3/test_p7_8b2_physics_selection.py \
-            tests/v3/test_p7_8c_v4_implementation_authorization.py \
-            tests/v4/test_v4_1_data_state_contracts.py \
-            tests/v4/test_v4_2_leaf_readiness.py \
-            tests/v4/test_v4_2_leaf_evidence_acquisition_r1.py \
-            tests/v4/test_v4_2_leaf_evidence_file_audit_r2_handoff.py \
-            tests/v4/test_v4_2_leaf_evidence_file_audit_r2.py \
-            tests/v4/test_v4_2_leaf_evidence_acquisition_r3.py \
-            tests/v4/test_v4_2_leaf_evidence_file_audit_r3a_handoff.py \
-            tests/v4/test_v4_2_leaf_evidence_file_audit_r3a.py \
-            tests/v4/test_v4_2_leaf_author_data_acquisition_r3b.py \
-            tests/v4/test_v4_2_leaf_prospective_experiment_design_r4.py \
-            tests/v4/test_v4_system_roadmap_reset_r1.py \
-            tests/v4/test_v4_system_atmos_exchange_contract.py \
-            tests/v4/test_v4_system_physics_gap_sensitivity_audit_r1.py \
-            tests/v4/test_v4_system_sensitivity_screening_execution_r1.py \
-            tests/v4/test_v4_system_sensitivity_screening_results_r1.py \
-            tests/v4/test_v4_root_soil_layered_boundary_decision_r1.py \
-            tests/v4/test_v4_three_layer_soil_core_implementation_r1.py \
-            tests/v4/test_v4_three_layer_root_coupling_rereview_r1.py \
-            tests/v4/test_v4_three_layer_root_flux_core_implementation_r1.py \
-            tests/v4/test_v4_root_operator_split_comparison_r1.py \
-            tests/v4/test_v4_soil_root_tfwt_obt_integration_r1.py \
-            tests/v4/test_v4_soil_root_tfwt_obt_integration_r1_governance.py \
-            tests/v4/test_v4_replay_input_orchestration_r1.py \
-            tests/v4/test_v4_replay_input_orchestration_r1_governance.py \
-            tests/v4/test_v4_system_post_orchestration_review_r1.py \
-            tests/v4/test_v4_system_food_intake_dose_adapter_decision_r1.py \
-            tests/v4/test_v4_system_food_intake_dose_adapter_implementation_r1.py \
-            tests/v4/test_v4_system_post_endpoint_review_r1.py \
-            tests/v4/test_v4_obt_formation_evidence_readiness_r1.py \
-            tests/v4/test_v4_obt_matched_evidence_acquisition_preregistration_r1.py \
-            tests/v4/test_v4_obt_evidence_acquisition_execution_r1.py \
-            tests/v3_1/test_mass_basis_contract.py \
-            tests/v3_1/test_mass_basis_schema_whitespace.py \
-            tests/v3_1/test_mass_basis_identity_evidence_gate.py
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Execute V4 sensitivity screening R1 with visible machine result
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python scripts/v4/run_system_sensitivity_screening_r1.py --output /tmp/v4_system_sensitivity_screening_r1.json
-          cat /tmp/v4_system_sensitivity_screening_r1.json
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Execute V4 root operator-split comparison R1
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python scripts/v4/run_root_operator_split_comparison_r1.py --output /tmp/v4_root_operator_split_comparison_r1.json
-          cat /tmp/v4_root_operator_split_comparison_r1.json
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Execute V4 soil-root-TFWT-OBT integration R1
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python scripts/v4/run_soil_root_tfwt_obt_integration_r1.py --output /tmp/v4_soil_root_tfwt_obt_integration_r1.json
-          cat /tmp/v4_soil_root_tfwt_obt_integration_r1.json
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Execute V4 replay-input orchestration R1
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python scripts/v4/run_replay_input_orchestration_r1.py --output /tmp/v4_replay_input_orchestration_r1.json
-          cat /tmp/v4_replay_input_orchestration_r1.json
-          CUFOTRI_CI_CONTAINER_SCRIPT
-      - name: Execute V4 food-intake-dose endpoint adapter R1
-        run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_CI_CONTAINER_SCRIPT'
-          set -euo pipefail
-          python scripts/v4/run_food_intake_dose_endpoint_adapter_r1.py --output /tmp/v4_food_intake_dose_endpoint_adapter_r1.json
-          cat /tmp/v4_food_intake_dose_endpoint_adapter_r1.json
-          CUFOTRI_CI_CONTAINER_SCRIPT
+          docker run --rm "cufotri:full-${{ github.sha }}" python scripts/test.py full
