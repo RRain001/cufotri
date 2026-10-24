@@ -98,3 +98,7 @@ ERA5, experimental SB1/SB4 reference packets and private D3 reblinding secrets a
 Do not commit credentials, private datasets, unlicensed literature, or blind/unblinding secrets. If external data is missing, explicitly report missing/skipped or strict-failed status. The historic worktree/review-context tests must not be reclassified as contemporary scientific acceptance.
 
 See [validation/README.md](validation/README.md) for data provenance, checksums, licensing and independent validation requirements.
+
+## P2 R15/R16 连续开发与三级软件测试（2026-10-24）
+
+自 R15 起，将 Mitchell（1991）Table 3/7 的统计来源疑点与 KfK5194 Eq.(28)–(30) 的面积、时间和生物量闭合整理成一个开发批次。日常仅在既有 R14 验证镜像中只读运行 L1 相关定向单测和 L2 受影响物理/守恒集成测试，统一标记 DEV_ONLY；只有批次候选 SHA 冻结后执行一次 exact-SHA Docker Build/Smoke/Full 与 GitHub 软件准入复核。代码/配置/共享接口变动或者定向测试失败时应增加适当回归。全部独立科学证据和 required scientific-admission 门禁保持不变；详细执行约定见 AGENTS.md。文献统计差异和条件性数学闭合均不能当作 UFOTRI 1993 原版数值等价，PR #159 保持 Draft。

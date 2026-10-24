@@ -458,6 +458,54 @@ rows:
       original_executable_parity: "NOT_RUN"
       independent_scientific_review: "NOT_RUN"
       production_coupling_allowed: false
+    p2_r15_table3_table7_uncertainty_discrimination:
+      audit_packet: "docs/v4/1993_upgrade/P2_R15_MITCHELL_TABLE3_TABLE7_UNCERTAINTY_DISCRIMINATION.md"
+      evidence_level: "ORIGINAL_PAPER_PRINTED_COEFFICIENTS_AND_CONDITIONAL_ARITHMETIC"
+      source_pdf_sha256: "d9f6f74b5268c6166407e02e98208dc452f9614002ccdb87a4d045cd4e0229e4"
+      original_printed_table3_page: 12
+      original_printed_table7_page: 15
+      shoot_alpha_table3_eq2: 0.35
+      shoot_alpha_table3_eq2_plusminus: 0.04
+      shoot_beta0_table3: 0.029
+      shoot_beta0_table3_plusminus: 0.047
+      shoot_beta1_table3: 0.010
+      shoot_beta1_table3_plusminus: 0.003
+      table7_shoot_b_per_day_at_10c: 0.004
+      reported_plusminus_statistical_meaning: "NOT_ESTABLISHED"
+      covariance_and_unrounded_fit: "NOT_AVAILABLE"
+      derived_central_b_per_day_at_10c: 0.007599272727272727
+      derived_marginal_rectangle_b_min_per_day: 0.003063272727272727
+      derived_marginal_rectangle_b_max_per_day: 0.012135272727272725
+      table7_b_within_marginal_rectangle: true
+      rectangle_is_confidence_region: false
+      same_equation_statistical_reconciliation: "NOT_ESTABLISHED"
+      erratum_or_modified_table7_coefficient: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r16_eq28_eq30_area_time_closure:
+      audit_packet: "docs/v4/1993_upgrade/P2_R16_EQ28_30_AREA_TIME_CLOSURE_AUDIT.md"
+      evidence_level: "CONDITIONAL_DIMENSIONAL_CLOSURE_AND_NUMERICAL_DISCRIMINANTS"
+      kfk5194_source_pdf_sha256: "9a75292bc7289969db7175e17003c3dd777de72a30b52993264662dbc5c62ff5"
+      same_hour_ground_gross_to_net_candidate: "(G-bW)/(1+a)"
+      same_hour_ground_respiration_candidate: "(aG+bW)/(1+a)"
+      conditional_uniform_leaf_to_ground_integration: "LAI*R_LEAF=R_GROUND_IF_P_AND_W_DIVIDED_BY_LAI"
+      mixed_ground_inputs_as_leaf_rates: "PROHIBITED_AREA_DIMENSION_MISMATCH"
+      lai_zero_leaf_normalization: "UNDEFINED_NEEDS_SEPARATE_SOURCE_BRANCH"
+      zero_par_with_biomass: "SIGNED_NEGATIVE_PC_NOT_OBT_FORMATION"
+      temporal_lag_source_assumption: "NOT_ESTABLISHED"
+      eq31_dry_matter_multiplier: 1.5
+      mitchell_co2_equiv_to_dry_matter_multiplier: 0.6818181818181818
+      mitchell_dry_matter_to_co2_equiv_multiplier: 1.4666666666666666
+      eq31_vs_mitchell_converter_interchangeability: "OPPOSITE_CONVERSION_DIRECTION_FOR_44_DIV_30_NOT_SUBSTITUTABLE"
+      eq33_pm_mean_dry_matter_vs_eq29_pm_leaf_maximum: "DISTINCT_QUANTITIES_DO_NOT_CONFLATE"
+      eq29_pm_conversion_to_eq26: "NOT_ESTABLISHED"
+      historical_eq28_choice: "NOT_ESTABLISHED"
+      original_eq30_iteration_and_time: "NOT_ESTABLISHED"
+      coupled_1993_obt_production_eligible: false
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
