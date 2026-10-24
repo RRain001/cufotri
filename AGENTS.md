@@ -34,3 +34,10 @@
 11. Prefer small reviewable PRs. Update `STATUS.md` only when top-level claims or acceptance boundaries actually change; add stage-specific evidence/ADRs for physics changes rather than endlessly appending status snapshots to the root README.
 12. For interrupted work, report exact commit, PR, successful and failed commands, remaining blockers and next reproducible step. Do not claim completion before the appropriate exact-head CI and merge/no-drift checks.
 13. See `docs/ci/DOCKER_WORKFLOW.md`: Ubuntu Docker is the primary exact-SHA software-test executor; applicable GitHub PR checks and dispatched reproducibility jobs use the same locked Python 3.11 `verification` contract. The separate non-root `runtime` stage contains no Git history, raw data or pytest/uv tooling. Never publish verification images or weaken strict external-data tests.
+
+## 2026-10-24 P2 R15/R16 连续功能批次：三级验证（经用户授权）
+
+- **L1 DEV_ONLY 定向迭代：** R15 的 Mitchell Table 3/7 ± 端点、R16 的 Eq.(28)–(30) 同一面积/单位/时间判别在现有独立任务 worktree 中继续。使用**已有** R14 成功的 Python 3.11 Ubuntu Docker verification image，禁网络、只读挂载当前 worktree，定向运行相关测试和紧邻回归；可包含未提交修改，但报告明确 DEV_ONLY。不得把 DEV_ONLY、旧 R14 Full 或未运行的外部测试当作当前 SHA 的 GitHub required check。
+- **L2 DEV_ONLY 模块集成：** R15/R16 科学审计及其负面对照完成后，执行 Eq.(26)–(33) 现存 API、叶/地表单位、TFWT/OBT 形成与 R6/R7 独立守恒的必要回归。若修改生产求解器、共享 API、状态变量或出现关键失败，及时扩展相关测试范围，不机械限制测试数量，绝不降低阈值。
+- **L3 同批次一次正式冻结：** R15/R16 形成一个经审查的 clean 候选 SHA 后，在共用调度器无冲突时**只运行一次**该 SHA 的 Docker Build、Smoke、Full；存在相同 SHA 的有效 completed evidence 则只读复核，避免重复。使用 local-ci-report --expect-sha 和真实容器退出码、哈希/镜像/未运行清单，只有精确 PR HEAD 的软件通过才能发布 ubuntu-docker-full 状态。SHA 改变需重新验收新 SHA；保留 GitHub 自动 PR checks 和独立 scientific-admission required check。
+- **P2 科学边界不变：** R15 的统计不确定度矩形不是置信区域，R16 的条件性面积/同小时闭合不是原版可执行程序行为。Eq.(28) 原版选择、Eq.(29) 单位、Eq.(30) 时间和组织映射、SB1/SB4/ERA5、私有 D3、原版同输入与独立人类审查仍须真实核验。scientific NOT_RUN 时 PR #159 继续 Draft，绝不添加 science-validated/merge-verified 或启用自动合并。

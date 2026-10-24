@@ -44,6 +44,40 @@
 | `UF93-23` Per-food fresh-weight restriction option | 1990 manual dose path lacks an equally evidenced 1993 per-food restriction interface. (§4.3) | Optional food restriction submodel; user-selectable per-food threshold, historical default 1250 Bq/kg fresh mass. | §5.7 p.25 (PDF0 p.34) | CONFIRMED_1993_DOCUMENTED_OPTION / [issue #132](https://github.com/RRain001/cufotri/issues/132) |
 | `UF93-24` 1993 FORTRAN input and default loader | Existing recovery audit documents 1991/1993 loader lineage; original FORTRAN members unavailable. (§1991 user guide KfK4853) | KfK5194 §7.4.2, pp.54-55: IMODEL, ICOVER, IPHOTO, IMONT, IFLAGS, IFLAGR, IDEPHT and IBODEX have printed default=1; §7.4.4 p.61 gives soil parameters/REMRE/REMNI/REDREM defaults. This is documented input contract, NOT evidence of original loader binary behavior. | §7.1–7.3;appendices p.34–91 (PDF0 p.43–100) | CONFIRMED_1993_INTERFACE_DOCUMENTED / [issue #127](https://github.com/RRain001/cufotri/issues/127) |
 
+### UF93-13：P2 R9 源文裁决门禁（未解除）
+
+已将 KfK5194 §5.5.1 **印刷 p.20 / PDF0 p.29** 的 Eq.(28)–(30) 未决问题与禁止接入条件同步至 `physics_delta_matrix.yaml` 的 `UF93-13.p2_r9_source_gate`。印刷 Eq.(28) 与直接积分 Eq.(26)–(27) 存在 **分母额外 k、呼吸项缺少 LAI** 两处差异；Eq.(29) 的 `CO` 印刷单位为 mg CO₂ m⁻² h⁻¹，而 Eq.(26) 的 `P_m` 为 g CO₂ m⁻² h⁻¹；Eq.(30) 的 `W` 是 CO₂ 当量而非可直接复用的干物质量。原版求解顺序、面积基准和单位桥接均未获得独立证据。
+
+[**P2 R9 科学裁决材料与逐项证据要求**](P2_R9_SOURCE_ADJUDICATION_GATE.md) 明确哪些是已核对的印刷事实、哪些只是 R8 条件性数学试验。**1990 默认路径不变；1993 正式耦合、原版等价和独立科学签核仍为 NOT_ESTABLISHED/NOT_RUN。**
+
+### UF93-13：P2 R10 引用文献元数据与摘要审计（仍未解除）
+
+[**Weir (1984) 与 Mitchell (1991) 出版社证据审计**](P2_R10_WEIR_MITCHELL_BIBLIOGRAPHY_AUDIT.md) 已核对 /39/ 和 /21/ 的 DOI、作者、期刊卷页与出版社公开摘要，并在 `UF93-13.p2_r10_bibliography_evidence` 固定证据级别为 `PUBLISHER_METADATA_AND_ABSTRACT_ONLY`。Weir 的作物模拟及 Mitchell 的干质量归一化呼吸研究并不能单独确定 Eq.(29) 经验常数的 mg→g 桥接，也不能确定 Eq.(30) 的面积/CO₂ 当量基准。两篇全文的原始公式审阅仍 `NOT_RUN`，所有 R9 科学门禁维持原状。
+
+### UF93-13：P2 R11 Weir (1984) 原文公式与量纲审计（仍未解除）
+
+[**Weir (1984) 原文 Eq.(19)–(26) 审计**](P2_R11_WEIR_1984_PRIMARY_EQUATION_AUDIT.md) 现已核查 Rothamsted Research 全文印刷 pp.374–375、对应 PDF 页 5–6，并固定 PDF SHA256。Weir Eq.(20) `P_max` 的原始单位为 mg CO₂ m⁻² s⁻¹，CO₂ 浓度为 mg m⁻³，总阻力为 s m⁻¹；Eq.(25) 的每日呼吸采用 g m⁻² day⁻¹。来源事实记录在 `UF93-13.p2_r11_weir_primary_equation_evidence`，而 **KfK5194 Eq.(29) 的 0.158 × 10⁹ 经验因子、每小时单位桥接及冠层面积基准仍 NOT_ESTABLISHED**。Mitchell (1991) 原始方程审阅和独立科学审查仍 NOT_RUN；未修改正式物理求解器及 1990 默认路径。
+
+### UF93-13：P2 R12 Mitchell 原文定位与阻塞
+
+[**R12 存档及 Eq.(30) 量纲举证审计**](P2_R12_MITCHELL_ARCHIVE_AND_EQ30_PROOF_OBLIGATIONS.md) 核验了机构存档与 OpenAlex 文献记录。原始 PDF 返回 HTTP 401，未取得正文，不存在 PDF SHA256 或公式验证。R12 记录了 CO2 当量与干物质、叶面积与地表面积的必要换算证据，所有实际换算因子和原版等价性仍为 NOT_ESTABLISHED。1990 默认路径不变，正式科学审查 NOT_RUN。
+
+### UF93-13：P2 R13 Eq.(28) 正负偏差、渐近界与呼吸面积判别
+
+[**R13 Eq.(28) 独立数学判别**](P2_R13_EQ28_BIAS_SIGN_AND_LIMIT_AUDIT.md) 已按 KfK5194 原始印刷 pp.19–20 再次视觉核验，在 `0<k<1`、PAR>0 的共同量纲假设下独立证明印刷 Eq.(28) 的**光合部分**比 Eq.(26)–(27) 直接积分严格偏高，偏差 `D=(Pm/k)ln[(Pm+eps*Iabs)/(Pm+eps*k*Iabs)]`，上界 `(Pm/k)ln(1/k)`。但**净同化差**为 `D+(LAI-1)Rd`：当 LAI<1 时可因呼吸基准与大小翻转，不得概括为净同化一律偏高。上述判别是条件性数学结论，**不是原版 FORTRAN 算法等价、Eq.(28) 自动修正或科学审查通过**。机器审计见 `UF93-13.p2_r13_eq28_bias_sign_limit_audit`；1990 默认路径保持冻结。
+
+### UF93-13：P2 R14 Mitchell（1991）原始全文与 Eq.(30) 系数溯源
+
+[**R14 Mitchell 原文 Eq.(1)–(5)、Table 3/7 审计**](P2_R14_MITCHELL_1991_FULLTEXT_AND_EQ30_COEFFICIENT_AUDIT.md) 已核查用户提供的 10 页原始 PDF（以 SHA256 固定），更新 R12 的**全文访问限制**：该原文现在可读，机构存档此前 HTTP 401 的历史记录不变。原文第 15 页 Table 7 小麦茎叶生长呼吸 0.36、维持呼吸 `0.004 d^-1`（10 °C），对照 KfK5194 Eq.(30) 的 0.36 与 `1.67e-4 h^-1` 在显示精度下相符；原文第 14 页明确采用 `30/44` g 干物质每 g CO₂，当量换算可建立。**重要保留差异**：第 12 页 Table 3 的 Eq.(2) 回归中心系数按 Eq.(3) 换算得 `0.00759927 d^-1`，而 Table 7 标为 `0.004 d^-1`；Eq.(2) 生长系数 0.35 与 Table 7 的 0.36 亦不一致，未经独立裁决不得擅自校正。两日光合作用均值是原文回归使用的输入，不等于 UFOTRI 小时滞后已经确认。`UF93-13.p2_r14_mitchell_fulltext_eq30_primary_evidence` 将新证据与尚未验证的原版程序、面积基准、温度处理严格分开；1990 默认路径和科学合并门禁不变。
+
+### UF93-13：P2 R15 Table 3/7 边界不确定度与非统计裁决
+
+[**R15 Mitchell 回归系数差异与边界范围**](P2_R15_MITCHELL_TABLE3_TABLE7_UNCERTAINTY_DISCRIMINATION.md) 以 R14 审核的原文 Eq.(2)/(3)、Table 3 与 Table 7 为依据，**中心值 b(10 °C)=0.00759927 d^-1 与 Table 7 0.004 d^-1 仍不相同**。但用单独报告的 β0/β1 ± 值组合为非统计矩形端点，得到约 `[0.00306327,0.01213527] d^-1`，包含 0.004。矩形不是置信区间，不含回归协方差；未确认原文勘误，不能擅改 Eq.(30) 或声称两表已统计一致。机器记录见 `UF93-13.p2_r15_table3_table7_uncertainty_discrimination`，科学审查 `NOT_RUN`。
+
+### UF93-13：P2 R16 Eq.(28)–(30) 面积、时序与 OBT 接口判别
+
+[**R16 条件性面积一致闭合及时间顺序判别**](P2_R16_EQ28_30_AREA_TIME_CLOSURE_AUDIT.md) 明确对齐 `Pc_g/Rd_g/W_g` 的共用地表面积与 CO₂ 当量基准时，同小时代数闭合 `Pc=(G-bW)/(1+a)`；正 LAI 且均匀叶面积分摊时恢复同一地表通量。把地表归一化变量直接当叶面积变量再乘 LAI 会引入**量纲不匹配**（R8 的 LAI 倍数分支仅保留为负对照），零 LAI 和黑夜下游必须失败关闭。**KfK5194 Eq.(31) 的 1.5 与 Mitchell 的 30/44 才同属 g 干物质/g CO₂ 换算方向，二者仍不可互换；44/30 为反向 CO₂ 当量/干物质量，直接与 1.5 比较不满足量纲一致**，且 Eq.(29) 与 Eq.(33) 两种 `P_m` 是不同定义；原版同小时/滞后求解、Eq.(28) 印刷分支、Eq.(29) 换算与正式 HTO→OBT 驱动仍 `NOT_ESTABLISHED`。机器记录见 `UF93-13.p2_r16_eq28_eq30_area_time_closure`，只证明条件性公式与接口边界，**未接入生产模型**。
+
 ## 1.1 原始 PDF 视觉复核 R2 — 逐式核对与风险校正
 
 已新增 [**KfK 5194 1993 原始公式/参数审计 R2**](PRIMARY_SOURCE_AUDIT_R2.md) 和 [机器可读主证据表](primary_source_formula_audit_r2.yaml)。R2 对 **22 项选定公式**进行了原始印刷页复核；21 项历史软件默认值现均已核对官方 PDF 印刷页（包括 `IDEPHT`、`IBODEX`），并记录 4 类关键不确定性，其中：

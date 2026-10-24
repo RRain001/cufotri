@@ -321,7 +321,191 @@ rows:
       - "src/cteas_ufotri/crop/phenology.py"
     repository_assessment: "PHOTOSYNTHESIS_PAR_SOLVER_NOT_1993_QUALIFIED"
     implementation_phase: "P2"
-    next_source_audit: "Source-derive canopy integration and time-weighting, especially PAR, CO2 units and stomatal stress vs OBT mass basis."
+    next_source_audit: "Adjudicate Eq.(28) against Eq.(26)-(27), Eq.(29) CO mg-to-Pm g bridge, Eq.(30) respiration/biomass area basis, and original solve order before any P2 production coupling."
+    p2_r9_source_gate:
+      source_pdf_sha256: "9a75292bc7289969db7175e17003c3dd777de72a30b52993264662dbc5c62ff5"
+      printed_page: 20
+      pdf_page_index_zero_based: 29
+      eq28_printed_vs_eq26_27_integral: "INCONSISTENT_TWO_TERMS"
+      eq29_co_unit_printed: "MG_CO2_M2_H"
+      eq26_pm_unit_printed: "G_CO2_M2_H"
+      eq29_co_to_pm_bridge: "NOT_ESTABLISHED"
+      eq30_w_unit_printed: "G_CO2_EQUIVALENT_PER_M2"
+      eq30_dry_matter_to_w_bridge: "NOT_ESTABLISHED"
+      eq30_respiration_area_basis: "NOT_ESTABLISHED"
+      eq28_eq30_original_solve_order: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+      audit_packet: "docs/v4/1993_upgrade/P2_R9_SOURCE_ADJUDICATION_GATE.md"
+    p2_r10_bibliography_evidence:
+      audit_packet: "docs/v4/1993_upgrade/P2_R10_WEIR_MITCHELL_BIBLIOGRAPHY_AUDIT.md"
+      evidence_level: "PUBLISHER_METADATA_AND_ABSTRACT_ONLY"
+      weir_1984:
+        kfk5194_reference: "39"
+        doi: "10.1017/S0021859600042702"
+        journal_volume_pages: "Journal of Agricultural Science 102(2):371-382"
+        full_text_equation_review: "NOT_RUN"
+        eq29_co_to_pm_bridge: "NOT_ESTABLISHED"
+      mitchell_1991:
+        kfk5194_reference: "21"
+        doi: "10.1093/oxfordjournals.aob.a088102"
+        journal_volume_pages: "Annals of Botany 67(1):7-16"
+        abstract_respiration_normalization: "PER_UNIT_DRY_MASS"
+        full_text_equation_review: "NOT_RUN"
+        eq30_dry_matter_to_w_bridge: "NOT_ESTABLISHED"
+        eq30_respiration_area_basis: "NOT_ESTABLISHED"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r11_weir_primary_equation_evidence:
+      audit_packet: "docs/v4/1993_upgrade/P2_R11_WEIR_1984_PRIMARY_EQUATION_AUDIT.md"
+      evidence_level: "WEIR_1984_PRIMARY_PDF_EQUATIONS_VISUALLY_CHECKED"
+      source_doi: "10.1017/S0021859600042702"
+      source_pdf_sha256: "0558e6c38f9efb2d7fe9f3af1b862c096cfcd6c1e35619b233a09d39609d17e4"
+      weir_original_printed_pages: [374, 375]
+      weir_pdf_pages_zero_based: [4, 5]
+      weir_eq20_pmax_unit: "MG_CO2_PER_M2_PER_SECOND"
+      weir_eq20_ca_unit: "MG_CO2_PER_M3"
+      weir_eq20_rp_unit: "SECOND_PER_M"
+      weir_eq25_respiration_unit: "G_PER_M2_PER_DAY"
+      weir_eq25_biomass_unit: "G_PER_M2"
+      weir_eq25_ch2o_co2_factor: 0.65
+      unit_identity_mg_per_second_to_g_per_hour: 3.6
+      eq29_empirical_coefficient_calibration: "NOT_ESTABLISHED"
+      eq29_co_to_pm_bridge: "NOT_ESTABLISHED"
+      weir_to_1993_area_aggregation: "NOT_ESTABLISHED"
+      mitchell_1991_primary_equation_review: "NOT_RUN"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r12_mitchell_archive_access_gate:
+      audit_packet: "docs/v4/1993_upgrade/P2_R12_MITCHELL_ARCHIVE_AND_EQ30_PROOF_OBLIGATIONS.md"
+      evidence_level: "PRIMARY_ASSET_LOCATED_BUT_UNAUTHORIZED"
+      doi: "10.1093/oxfordjournals.aob.a088102"
+      openalex_work_id: "W2401308966"
+      openalex_oa_status: "closed"
+      archive_item_url: "https://repository.rothamsted.ac.uk/item/86731/dark-respiration-of-winter-wheat-crops-in-relation-to-temperature-and-simulated-photosynthesis"
+      archive_pdf_url: "https://repository.rothamsted.ac.uk/id/eprint/5335/1/42758396.pdf"
+      archive_item_http_status_observed: 200
+      archive_pdf_http_status_observed: 401
+      asset_pdf_sha256: "NOT_AVAILABLE"
+      mitchell_full_text_equation_review: "NOT_RUN"
+      abstract_rate_normalization: "PER_UNIT_DRY_MASS_ABSTRACT_ONLY"
+      abstract_shoot_ear_partition: "STAGE_DEPENDENT_ABSTRACT_ONLY"
+      abstract_photosynthesis_lag: "PRECEDING_TWO_DAYS_CORRELATION_ONLY"
+      kfk_eq30_growth_coefficient_source: "NOT_ESTABLISHED"
+      kfk_eq30_maintenance_coefficient_source: "NOT_ESTABLISHED"
+      eq30_co2_equivalent_per_dry_mass_conversion: "NOT_ESTABLISHED"
+      eq30_dry_matter_to_w_bridge: "NOT_ESTABLISHED"
+      eq30_respiration_area_basis: "NOT_ESTABLISHED"
+      eq28_eq30_original_solve_order: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r13_eq28_bias_sign_limit_audit:
+      audit_packet: "docs/v4/1993_upgrade/P2_R13_EQ28_BIAS_SIGN_AND_LIMIT_AUDIT.md"
+      evidence_level: "PRINTED_FORMULA_AND_INDEPENDENT_MATH_ONLY"
+      source_pdf_sha256: "9a75292bc7289969db7175e17003c3dd777de72a30b52993264662dbc5c62ff5"
+      source_printed_pages: [19, 20]
+      source_pdf_page_indices_zero_based: [28, 29]
+      sign_light_difference_if_0_lt_k_lt_1: "STRICTLY_POSITIVE_FOR_POSITIVE_PAR"
+      difference_exact_formula: "(Pm/k)*log((Pm+eps*Iabs)/(Pm+eps*k*Iabs))"
+      bound_light_difference_if_0_lt_k_lt_1: "ZERO_LT_D_LT_(Pm/k)*LOG(1/k)"
+      low_light_integral_slope: "eps*(1-exp(-k*LAI))"
+      low_light_print_slope: "eps*(1-k*exp(-k*LAI))"
+      high_light_positive_offset: "(Pm/k)*LOG(1/k)"
+      net_difference_conditional: "D+(LAI-1)*Rd"
+      conditional_net_sign_for_lai_ge_1_rd_nonnegative: "POSITIVE"
+      conditional_net_sign_for_lai_lt_1: "UNDETERMINED_CAN_REVERSE"
+      eq28_printed_vs_eq26_27_integral: "INCONSISTENT_TWO_TERMS"
+      respiration_area_basis: "NOT_ESTABLISHED"
+      eq29_mass_unit_bridge: "NOT_ESTABLISHED"
+      eq30_biomass_area_bridge: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r14_mitchell_fulltext_eq30_primary_evidence:
+      audit_packet: "docs/v4/1993_upgrade/P2_R14_MITCHELL_1991_FULLTEXT_AND_EQ30_COEFFICIENT_AUDIT.md"
+      evidence_level: "USER_SUPPLIED_FULL_PDF_VISUALLY_CHECKED"
+      source_doi: "10.1093/oxfordjournals.aob.a088102"
+      source_pdf_sha256: "d9f6f74b5268c6166407e02e98208dc452f9614002ccdb87a4d045cd4e0229e4"
+      source_pdf_pages: 10
+      reviewed_printed_pages: [7, 9, 12, 13, 14, 15]
+      reviewed_pdf_page_indices_zero_based: [0, 2, 5, 6, 7, 8]
+      paper_eq1_biomass: "DRY_MASS_AS_CO2_EQUIVALENT"
+      paper_eq2_maintenance_temperature_form: "BETA0_PLUS_BETA1_TIMES_CELSIUS"
+      paper_eq3_conversion_k_dry_mass_per_co2_equivalent: 0.6818181818181818
+      paper_shoot_table7_alpha: 0.36
+      paper_shoot_table7_b_per_day: 0.004
+      paper_shoot_table7_reference_temperature_c: 10
+      paper_ear_table7_alpha: 0.42
+      paper_ear_table7_b_per_day: 0.006
+      paper_ear_table7_reference_temperature_c: 13
+      manual_eq30_growth_coefficient: 0.36
+      manual_eq30_maintenance_coefficient_per_hour: 0.000167
+      table7_to_manual_eq30_coefficient_match: "SHOOT_MATCH_WITH_REPORTED_PRECISION"
+      table3_eq2_shoot_alpha: 0.35
+      table3_eq2_shoot_beta0_ug_co2_per_g_dry_s: 0.029
+      table3_eq2_shoot_beta1_ug_co2_per_g_dry_deg_c_s: 0.010
+      table3_recomputed_b_per_day_at_10c: 0.007599272727272727
+      table3_to_table7_b_reconciliation: "NOT_ESTABLISHED_PRINTED_CENTRAL_VALUES_DIFFER"
+      table3_to_table7_growth_reconciliation: "NOT_ESTABLISHED_PRINTED_ALPHA_0_35_VS_0_36"
+      photosynthesis_two_day_average: "MITCHELL_FITTING_INPUT_ONLY"
+      eq30_w_dry_matter_to_co2_equivalent: "SOURCE_EQUIVALENCE_44_DIV_30_CONDITIONAL"
+      kfk_eq30_temperature_handling: "NOT_ESTABLISHED"
+      kfk_eq30_ground_leaf_area_mapping: "NOT_ESTABLISHED"
+      kfk_eq28_eq30_original_solve_order: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r15_table3_table7_uncertainty_discrimination:
+      audit_packet: "docs/v4/1993_upgrade/P2_R15_MITCHELL_TABLE3_TABLE7_UNCERTAINTY_DISCRIMINATION.md"
+      evidence_level: "ORIGINAL_PAPER_PRINTED_COEFFICIENTS_AND_CONDITIONAL_ARITHMETIC"
+      source_pdf_sha256: "d9f6f74b5268c6166407e02e98208dc452f9614002ccdb87a4d045cd4e0229e4"
+      original_printed_table3_page: 12
+      original_printed_table7_page: 15
+      shoot_alpha_table3_eq2: 0.35
+      shoot_alpha_table3_eq2_plusminus: 0.04
+      shoot_beta0_table3: 0.029
+      shoot_beta0_table3_plusminus: 0.047
+      shoot_beta1_table3: 0.010
+      shoot_beta1_table3_plusminus: 0.003
+      table7_shoot_b_per_day_at_10c: 0.004
+      reported_plusminus_statistical_meaning: "NOT_ESTABLISHED"
+      covariance_and_unrounded_fit: "NOT_AVAILABLE"
+      derived_central_b_per_day_at_10c: 0.007599272727272727
+      derived_marginal_rectangle_b_min_per_day: 0.003063272727272727
+      derived_marginal_rectangle_b_max_per_day: 0.012135272727272725
+      table7_b_within_marginal_rectangle: true
+      rectangle_is_confidence_region: false
+      same_equation_statistical_reconciliation: "NOT_ESTABLISHED"
+      erratum_or_modified_table7_coefficient: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
+    p2_r16_eq28_eq30_area_time_closure:
+      audit_packet: "docs/v4/1993_upgrade/P2_R16_EQ28_30_AREA_TIME_CLOSURE_AUDIT.md"
+      evidence_level: "CONDITIONAL_DIMENSIONAL_CLOSURE_AND_NUMERICAL_DISCRIMINANTS"
+      kfk5194_source_pdf_sha256: "9a75292bc7289969db7175e17003c3dd777de72a30b52993264662dbc5c62ff5"
+      same_hour_ground_gross_to_net_candidate: "(G-bW)/(1+a)"
+      same_hour_ground_respiration_candidate: "(aG+bW)/(1+a)"
+      conditional_uniform_leaf_to_ground_integration: "LAI*R_LEAF=R_GROUND_IF_P_AND_W_DIVIDED_BY_LAI"
+      mixed_ground_inputs_as_leaf_rates: "PROHIBITED_AREA_DIMENSION_MISMATCH"
+      lai_zero_leaf_normalization: "UNDEFINED_NEEDS_SEPARATE_SOURCE_BRANCH"
+      zero_par_with_biomass: "SIGNED_NEGATIVE_PC_NOT_OBT_FORMATION"
+      temporal_lag_source_assumption: "NOT_ESTABLISHED"
+      eq31_dry_matter_multiplier: 1.5
+      mitchell_co2_equiv_to_dry_matter_multiplier: 0.6818181818181818
+      mitchell_dry_matter_to_co2_equiv_multiplier: 1.4666666666666666
+      eq31_vs_mitchell_converter_interchangeability: "OPPOSITE_CONVERSION_DIRECTION_FOR_44_DIV_30_NOT_SUBSTITUTABLE"
+      eq33_pm_mean_dry_matter_vs_eq29_pm_leaf_maximum: "DISTINCT_QUANTITIES_DO_NOT_CONFLATE"
+      eq29_pm_conversion_to_eq26: "NOT_ESTABLISHED"
+      historical_eq28_choice: "NOT_ESTABLISHED"
+      original_eq30_iteration_and_time: "NOT_ESTABLISHED"
+      coupled_1993_obt_production_eligible: false
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
