@@ -24,3 +24,7 @@ Avoid changing GitHub required checks to make a failed or unrun test appear pass
 - `scripts/`: case runner and purposeful maintainable tools; legacy stage scripts are not a default development workflow.
 
 GitHub's main Ruleset continues to require `repository-admission` and `scientific-admission`; checks now depend on claim scope, not every source file indiscriminately. Document-only or lightweight changes do not themselves manufacture scientific verification.
+
+## Existing shared validators
+
+Avoid reimplementing the same numeric boundary checks for each source-compatible adapter. The opt-in UFOTRI-native primary atmosphere in `atmosphere/ufotri_native_v4.py` owns `_finite`, `_nonnegative`, `_positive` and `_utc`; the trajectory and process modules reuse them with the original exception and unit semantics. Likewise, `plant/leaf_ufotri_v4/model.py` owns the existing TypeError/ValueError numeric checks already imported by the re-emission area-source adapter. These two validator families intentionally retain their different exception contracts and should **not** be combined without a separate compatibility reason. None of these helpers represents a new 1993 physical formula or original executable parity claim.

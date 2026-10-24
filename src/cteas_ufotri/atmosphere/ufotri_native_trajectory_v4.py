@@ -23,47 +23,24 @@ for invariance testing without changing the physical trajectory.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from enum import Enum
 import math
 from typing import Sequence
 
-from .ufotri_native_v4 import UFOTRINativeAtmosphereError
+from .ufotri_native_v4 import (
+    UFOTRINativeAtmosphereError,
+    _finite,
+    _nonnegative,
+    _positive,
+    _utc,
+)
 
 
 HOUR_S = 3600.0
 _ALLOWED_STABILITY = frozenset("ABCDEF")
 
 
-def _finite(value: float, *, field: str) -> float:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise UFOTRINativeAtmosphereError(f"{field} must be numeric")
-    result = float(value)
-    if not math.isfinite(result):
-        raise UFOTRINativeAtmosphereError(f"{field} must be finite")
-    return result
-
-
-def _nonnegative(value: float, *, field: str) -> float:
-    result = _finite(value, field=field)
-    if result < 0.0:
-        raise UFOTRINativeAtmosphereError(f"{field} must be non-negative")
-    return result
-
-
-def _positive(value: float, *, field: str) -> float:
-    result = _finite(value, field=field)
-    if result <= 0.0:
-        raise UFOTRINativeAtmosphereError(f"{field} must be positive")
-    return result
-
-
-def _utc(value: datetime, *, field: str) -> datetime:
-    if not isinstance(value, datetime) or value.tzinfo is None:
-        raise UFOTRINativeAtmosphereError(f"{field} must be timezone-aware UTC")
-    if value.utcoffset() != timedelta(0):
-        raise UFOTRINativeAtmosphereError(f"{field} must be UTC")
-    return value.astimezone(timezone.utc)
 
 
 def _normalise_rotation_deg(value: float) -> float:
