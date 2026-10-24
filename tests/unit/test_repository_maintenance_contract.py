@@ -35,8 +35,8 @@ def test_base_image_digest_and_safe_cache_stage_contract() -> None:
     assert "target: verification-deps" in owner
     assert "cache-to: type=gha,scope=cufotri-py311-deps-v1,mode=max" in owner
     assert "runtime-packages.txt" in owner
-    for name in ("v3-integration-gate.yml", "v3-remediation-ci.yml",
-                 "python-compatibility.yml", "external-evidence.yml"):
+    for name in ("v3-integration-gate.yml", "python-compatibility.yml",
+                 "external-evidence.yml"):
         source = (workflows / name).read_text(encoding="utf-8")
         assert "cache-from: type=gha,scope=cufotri-py311-deps-v1" in source
         assert "cache-to: type=gha" not in source

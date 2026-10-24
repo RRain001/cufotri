@@ -8,7 +8,6 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = (
     "v3-integration-gate.yml",
-    "v3-remediation-ci.yml",
     "python-compatibility.yml",
     "external-evidence.yml",
 )

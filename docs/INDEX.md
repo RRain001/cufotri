@@ -72,13 +72,13 @@ SB1/SB4 literature-derived and ERA5-based benchmarks remain separate from indepe
 
 - [Docker + uv workflow](ci/DOCKER_WORKFLOW.md): Python 3.11 locked two-stage build, verification and minimal non-root runtime.
 - [Dependency lock policy](ci/DEPENDENCY_LOCK.md): `pyproject.toml`, `.python-version`, `uv.lock` and controlled dependency updates.
-- [GitHub Actions](../.github/workflows/): Protected Integration Gate, Remediation CI, Python smoke, Docker stage verification and manual evidence audit.
+- [GitHub Actions](../.github/workflows/): automatic small Python smoke and required admission checks; optional comprehensive release regression, Docker stage verification and scientific evidence audit. The historical V3 Remediation CI was retired after its stage evidence was archived.
 - [Agent development rules](../AGENTS.md): branch/PR workflow, provenance, physical equations and forbidden overclaims.
 - [Root README](../README.md): starting point and reproducible commands.
 
 The official Python 3.11 Docker base is identified by the digest in [Dockerfile](../Dockerfile). Build cache is only an acceleration mechanism, not a scientific data store or substitute for the committed dependency lock.
 
-## Historical archives — preserve, do not restructure
+## Historical archives — searchable Git history
 
 | Archive | Purpose |
 |---|---|
@@ -90,4 +90,4 @@ The official Python 3.11 Docker base is identified by the digest in [Dockerfile]
 | [Historical V1/V2 README](reference/legacy-readme-v2-20261022.md) | Original documentation retained for provenance |
 | [Git cleanup history](history/) | SHA evidence and historical branch traceability |
 
-Do not delete, move or combine frozen ADRs simply to simplify this index. Any future change to physical readiness should update `STATUS.md`, cite source evidence, and pass the applicable independent scientific gate.
+Completed V2/V3 stage reports and old V4 governance ADRs that are not required by current model code or machine-readable evidence have been moved out of the active tree, not erased from Git. The frozen snapshots, checksums and restoration commands are in [HISTORY.md](HISTORY.md). **Current** physical-method ADRs, source equations and external-data contracts remain in the tree. Any future claim of original-executable equivalence or empirical validity must still be supported by independent evidence, not by ordinary software tests.
