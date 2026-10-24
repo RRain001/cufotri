@@ -67,3 +67,15 @@ The full starting `main` is commit `70af1d8a7b301da3a396a67f9947d8a7e1a8117d`, p
 Two small historical runner wrappers, `scripts/run_v2_uncertainty_convergence.py` and `scripts/run_wet_parameter_sensitivity.py`, were superseded by `scripts/studies.py` subcommands `v2-uncertainty` and `wet-sensitivity`. The numerical functions/parameters are unchanged. The 12-row wet study JSON was checked byte-for-byte before/after with SHA256 `5a5480fa3b37a93ab14165fb2576cfee2a777603d2b1c2a7bbdff7ec9dcf8c04`; the expensive full LHS study was checked at its dispatch/CLI contract but not rerun for this administrative migration. Historic scripts and stages can be read with `git show 70af1d8a7b301da3a396a67f9947d8a7e1a8117d:<path>`.
 
 Path lists, machine-reference decisions and SHA-256 checksums for all archived documents and wrappers are held privately on Ubuntu under `/home/lhy/dev/cufotri/reports/repo-slim-p5-20261024/`. Existing science status and historical UFOTRI executable equivalence/field evidence remain `NOT_ESTABLISHED`/`NOT_RUN`.
+
+## P6: consolidate historical governance tests — 2026-10-24
+
+Pre-P6 main `0ed6fde157d0b3fedc4354da32533133f1fa4f0b` is preserved at published annotated tag `archive/cufotri-p6-base-20261024`. P6 archived five historical-only test programs (702 lines): the frozen `tests/v4/test_v4_production_case_input_source_resolution_r1.py` through `r4.py` and `tests/architecture/test_p7_6d_physics_adoption_boundary.py`. Their exact paths and SHA-256 fingerprints are in local Ubuntu audit `/home/lhy/dev/cufotri/reports/repo-slim-p6-20261024/archived_sha256.tsv`. No current executable, workflow, or remaining test referenced the removed programs.
+
+The *active* invariants previously embedded in those programs are now covered by a compact evergreen source-policy test plus the existing current R5 governance and V3 runtime-isolation tests. Underlying versioned R1–R5 YAML evidence (including Eq.39 FAO56 pressure/elevation and H-3 source provenance), validated physical parameters, model physics, external test data and required GitHub checks have **not** been removed. Old tests may be inspected without checkout changes using, for example:
+
+```bash
+git show 0ed6fde157d0b3fedc4354da32533133f1fa4f0b:tests/v4/test_v4_production_case_input_source_resolution_r2.py
+```
+
+All old stage approval assertions remain recoverable through Git history, but they must not be mistaken for current scientific validation or original executable equivalence.
