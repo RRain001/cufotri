@@ -38,7 +38,7 @@ python scripts/studies.py wet-sensitivity --output /tmp/wet-grid.json
 python scripts/studies.py v2-uncertainty --output /tmp/lhs-convergence.json
 ```
 
-`wet-sensitivity` still invokes the original 4×3 wet-scavenging study and writes exactly the same sorted JSON bytes as the previous `scripts/run_wet_parameter_sensitivity.py`. `v2-uncertainty` still invokes the existing full-model LHS convergence function with unchanged fixed configuration and seeds, and preserves its JSON/status contract. The original two file-path entrypoints were archived, not their scientific computations. Other V2 benchmark and V3 synthetic runners remain unchanged because their original evidence registries or regeneration protocols reference those paths. No external validation is implied by either study.
+`wet-sensitivity` still invokes the original 4×3 wet-scavenging study and writes exactly the same sorted JSON bytes as the previous `scripts/run_wet_parameter_sensitivity.py`. `v2-uncertainty` still invokes the existing full-model LHS convergence function with unchanged fixed configuration and seeds, and preserves its JSON/status contract. The original two file-path entrypoints were archived, not their scientific computations. The V2 validation-registry runner remains at its historical path. The V3 P7.7B synthetic registry can now be regenerated with `python scripts/studies.py synthetic-benchmarks`; its output bytes and location are unchanged from the retired standalone wrapper. These are software studies, not empirical or original-executable validation.
 
 ## P6 test consolidation: current physical provenance instead of stage-by-stage approvals
 

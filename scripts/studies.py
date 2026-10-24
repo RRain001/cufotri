@@ -52,6 +52,21 @@ def run_wet_sensitivity(output: Path) -> int:
     return 0
 
 
+def run_synthetic_benchmarks() -> int:
+    from cteas_ufotri.validation_v3 import (
+        run_baseline_synthetic_benchmarks,
+        write_benchmark_registry,
+    )
+
+    registry = run_baseline_synthetic_benchmarks()
+    output = write_benchmark_registry(
+        registry, ROOT / "validation/results/v3/p7_7b_synthetic_benchmark_results.yaml"
+    )
+    print(f"status={registry.status}")
+    print(f"results={output}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subcommands = parser.add_subparsers(dest="study", required=True)
@@ -63,11 +78,16 @@ def main(argv: list[str] | None = None) -> int:
         "wet-sensitivity", help="Reproduce the wet scavenging parameter grid"
     )
     wet.add_argument("--output", type=Path, required=True)
+    subcommands.add_parser(
+        "synthetic-benchmarks", help="Regenerate the P7.7B synthetic benchmark registry"
+    )
     args = parser.parse_args(argv)
     if args.study == "v2-uncertainty":
         return run_v2_uncertainty(args.output)
     if args.study == "wet-sensitivity":
         return run_wet_sensitivity(args.output)
+    if args.study == "synthetic-benchmarks":
+        return run_synthetic_benchmarks()
     parser.error("Unknown study")
     return 2
 
