@@ -40,3 +40,22 @@ git show bccad376df44a6107de3aa02c7d4eb2ebb07ed51:docs/v4/adr/ADR-035-v4-system-
 Retaining the immutable historical record does not mean obsolete stage approvals are current scientific validation.
 
 The historical `V3 Remediation CI` manual workflow and four **document-only** stage-governance test modules were also retired from the active tree, while current numerical/conservation suites, `tests/architecture/test_v3_current_remediation_invariants.py` and `tests/integration/test_v3_pipeline_composite_conservation.py` remain. Their original files and stage expectations are recoverable from the same frozen phase-two tag; removing the old workflow does **not** change the protected `repository-admission` / `scientific-admission` checks, which remain active. Independent historical or empirical validation remains separate.
+
+## Fourth batch: retire superseded G4/H6 stage-final gates — 2026-10-24
+
+The pre-fourth-batch main commit is `ea87f2524917238dd279a24b95f61d24fe73ed2c`, preserved by the published annotated Git tag `archive/cufotri-phase4-base-20261024`. This batch archives exactly two historical final-qualification lifecycle scripts and their dedicated document-only test modules:
+
+- `scripts/v4/check_ufotri_manual_based_functional_reconstruction_final_gate_r1.py` (G4 first lifecycle)
+- `scripts/v4/check_ufotri_manual_based_functional_reconstruction_final_gate_r2.py` (H6 corrected lifecycle)
+- `tests/v4/test_ufotri_manual_based_functional_reconstruction_final_gate_r1.py`
+- `tests/v4/test_ufotri_manual_based_functional_reconstruction_final_gate_r2.py`
+
+These 880 lines concern *past PR candidate-to-merge stage claims* and the historical roadmap. Static references from current source, remaining tests, other scripts, configuration, CI and validation data were checked before archival; **only the two frozen historical governance YAML records still mention the retired script paths**. Those YAML documents remain verbatim as historical records; their script paths are archival provenance, not active executable entrypoints. Exact SHA-256 per file is retained privately on Ubuntu at `/home/lhy/dev/cufotri/reports/repo-slim-phase4-20261024/archived_gate_sha256.tsv`.
+
+For recovery (the current branch is not changed):
+
+```bash
+git show ea87f2524917238dd279a24b95f61d24fe73ed2c:scripts/v4/check_ufotri_manual_based_functional_reconstruction_final_gate_r2.py
+```
+
+**Not retired:** `scripts/v4/check_ufotri_cross_module_fidelity_qualification_r1.py` (G3), which performs real root-delay simulations, gap checks and module-level numerical probes; all associated conservation/integration tests; `STATUS.md` scientific claims; KfK 4605/5194 source definitions; or independent external scientific validation requirements. Archiving obsolete CI-era lifecycle checks **does not certify historical executable equivalence, physical accuracy or empirical field validation**.
