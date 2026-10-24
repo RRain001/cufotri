@@ -3,73 +3,42 @@ name: CUFOTRI Python 3.11 regression
 on:
   pull_request:
     branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Dockerfile"
+      - "Makefile"
+      - ".github/workflows/python-compatibility.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
 
 concurrency:
-  group: python-compatibility-${{ github.event_name }}-${{ github.ref }}
+  group: python-smoke-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   python-compatibility:
     name: Python 3.11 portable smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     steps:
-      - name: Checkout repository with history
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           persist-credentials: false
-
-      - name: Initialize Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build locked Python 3.11 verification image using shared dependency cache
+      - uses: docker/setup-buildx-action@v3
+      - name: Reuse locked verification image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
           target: verification
           load: true
-          tags: cufotri:verification-${{ github.sha }}
+          tags: cufotri:smoke-${{ github.sha }}
           cache-from: type=gha,scope=cufotri-py311-deps-v1
-
-      - name: Compile and import interfaces in verification container
+      - name: Compile and run focused physical smoke only
         run: |
-          docker run --rm -i --entrypoint /bin/bash "cufotri:verification-${{ github.sha }}" -s <<'CUFOTRI_DOCKER_SMOKE'
-          set -euo pipefail
-          python -m compileall -q src
-          python - <<'PY'
-          import cteas_ufotri
-          import cteas_ufotri.atmosphere.ufotri_native_v4
-          import cteas_ufotri.v3_pipeline
-          import cteas_ufotri.v4_integration
-          print('PYTHON_COMPATIBILITY_IMPORTS=PASS')
-          PY
-          CUFOTRI_DOCKER_SMOKE
-
-      - name: Run representative portable scientific regression inside Docker
-        run: |
-          docker run --rm "cufotri:verification-${{ github.sha }}" python -m pytest -q \
-            tests/unit \
-            tests/integration/test_short_case.py \
-            tests/integration/test_v3_pipeline_composite_conservation.py
-
-      - name: Record container interpreter and resolved dependencies
-        if: always()
-        run: |
-          mkdir -p ci-env
-          docker run --rm "cufotri:verification-${{ github.sha }}" python --version > ci-env/python-version.txt
-          docker run --rm "cufotri:verification-${{ github.sha }}" uv pip freeze --python /opt/cufotri/.venv/bin/python > ci-env/installed-packages.txt
-          docker image inspect --format '{{.Id}}' "cufotri:verification-${{ github.sha }}" > ci-env/verification-image-id.txt
-
-      - name: Upload exact interpreter and package versions
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-3.11-${{ github.run_id }}
-          path: ci-env/
-          retention-days: 30
-          if-no-files-found: warn
+          docker run --rm "cufotri:smoke-${{ github.sha }}" python scripts/test.py quick

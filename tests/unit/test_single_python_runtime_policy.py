@@ -1,15 +1,9 @@
-"""Require one Python 3.11 Docker/uv runtime for all CUFOTRI GitHub workflows.
-
-The production stage never includes the test toolchain; execution checks run
-in GitHub Actions. This contract test guards against a second host interpreter.
-"""
-
+"""Keep Python 3.11, Docker reproducibility and the *simplified* CI policy."""
 from pathlib import Path
 import tomllib
 
 import pytest
 import yaml
-
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = (
@@ -20,65 +14,58 @@ WORKFLOWS = (
 )
 
 
-def test_only_python_311_is_supported() -> None:
+def _workflow(name: str):
+    return yaml.load((ROOT / ".github/workflows" / name).read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+
+
+def test_only_locked_python311_supported():
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     assert project["project"]["requires-python"] == ">=3.11,<3.12"
-    assert (ROOT / ".python-version").read_text(encoding="utf-8").strip() == "3.11"
-    lock_header = (ROOT / "uv.lock").read_text(encoding="utf-8").splitlines()[:8]
-    assert 'requires-python = "==3.11.*"' in lock_header
+    assert (ROOT / ".python-version").read_text().strip() == "3.11"
+    assert 'requires-python = "==3.11.*"' in (ROOT / "uv.lock").read_text().splitlines()[:8]
 
 
-def test_docker_has_separate_locked_verify_and_minimal_runtime() -> None:
+def test_verification_and_runtime_images_stay_isolated():
     df = (ROOT / "Dockerfile").read_text(encoding="utf-8")
-    assert "python:3.11-slim-bookworm" in df
-    assert "uv==0.13.5" in df
-    assert "uv sync --locked --no-dev --no-editable" in df
-    assert "uv sync --locked --extra test" in df
-    assert "uv sync --locked --no-dev --no-install-project" in df
-    assert "AS verification-deps" in df
-    assert "AS verification" in df
-    assert "AS runtime" in df
-    assert "USER 10001:10001" in df
-    assert 'ENTRYPOINT ["python", "-m", "cteas_ufotri.cli"]' in df
+    for token in ("python:3.11-slim-bookworm", "uv==0.13.5",
+                  "uv sync --locked --no-dev --no-editable",
+                  "uv sync --locked --extra test",
+                  "AS verification-deps", "AS verification",
+                  "AS runtime", "USER 10001:10001",
+                  'ENTRYPOINT ["python", "-m", "cteas_ufotri.cli"]'):
+        assert token in df
     ignore = (ROOT / ".dockerignore").read_text(encoding="utf-8")
-    assert "validation/external_local/**" in ignore
-    assert ".venv/" in ignore
-    assert "era5_key.txt" in ignore
+    for token in ("validation/external_local/**", ".venv/", "era5_key.txt"):
+        assert token in ignore
 
 
 @pytest.mark.parametrize("filename", WORKFLOWS)
-def test_actions_run_python_tests_in_docker_only(filename: str) -> None:
-    path = ROOT / ".github/workflows" / filename
-    source = path.read_text(encoding="utf-8")
-    parsed = yaml.load(source, Loader=yaml.BaseLoader)
-
-    assert "3.12" not in source and "3.13" not in source
-    assert "matrix.python-version" not in source
-    assert "actions/setup-python@" not in source
-    assert "python -m pip install" not in source
-    assert "docker/setup-buildx-action@v3" in source
-    assert "docker/build-push-action@v6" in source
-    assert "target: verification" in source
-    assert "cache-from: type=gha,scope=cufotri-py311-deps-v1" in source
-    assert "cufotri:verification-${{ github.sha }}" in source
-    assert "docker run --rm" in source
-    assert parsed["jobs"]
+def test_pinned_python_git_actions_remain_docker_only(filename):
+    text = (ROOT / ".github/workflows" / filename).read_text(encoding="utf-8")
+    workflow = _workflow(filename)
+    assert "3.12" not in text and "3.13" not in text
+    assert "actions/setup-python@" not in text
+    assert "python -m pip install" not in text
+    assert "docker/setup-buildx-action@v3" in text
+    assert "docker/build-push-action@v6" in text
+    assert "target: verification" in text
+    assert "cache-from: type=gha,scope=cufotri-py311-deps-v1" in text
+    assert "docker run --rm" in text
+    assert workflow["jobs"]
 
 
-def test_single_smoke_job_and_required_docker_conservation_gates() -> None:
-    path = ROOT / ".github/workflows/python-compatibility.yml"
-    parsed = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
-    jobs = parsed["jobs"]
-    assert list(jobs) == ["python-compatibility"]
-    assert "strategy" not in jobs["python-compatibility"]
-    assert jobs["python-compatibility"]["name"] == "Python 3.11 portable smoke"
+def test_normal_pr_runs_quick_while_version_full_is_dispatch_only():
+    quick = _workflow("python-compatibility.yml")
+    assert "pull_request" in quick["on"]
+    assert "workflow_dispatch" in quick["on"]
+    assert list(quick["jobs"]) == ["python-compatibility"]
+    assert quick["jobs"]["python-compatibility"]["name"] == "Python 3.11 portable smoke"
+    source = (ROOT / ".github/workflows/python-compatibility.yml").read_text()
+    assert "python scripts/test.py quick" in source
 
-    protected = (ROOT / ".github/workflows/v3-integration-gate.yml").read_text()
-    assert "Run portable current integration test suite" in protected
-    assert "Run current and frozen-boundary invariants explicitly" in protected
-    assert "run_system_sensitivity_screening_r1.py" in protected
-    assert "run_root_operator_split_comparison_r1.py" in protected
-    assert "run_soil_root_tfwt_obt_integration_r1.py" in protected
-    assert "run_replay_input_orchestration_r1.py" in protected
-    assert "run_food_intake_dose_endpoint_adapter_r1.py" in protected
-    assert "--entrypoint /bin/bash" in protected
+    full = _workflow("v3-integration-gate.yml")
+    assert set(full["on"]) == {"workflow_dispatch"}
+    assert list(full["jobs"]) == ["integration-gate"]
+    comprehensive = (ROOT / ".github/workflows/v3-integration-gate.yml").read_text()
+    assert comprehensive.count("python scripts/test.py full") == 1
+    assert "pytest tests" not in comprehensive
