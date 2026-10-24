@@ -424,6 +424,40 @@ rows:
       original_executable_parity: "NOT_RUN"
       independent_scientific_review: "NOT_RUN"
       production_coupling_allowed: false
+    p2_r14_mitchell_fulltext_eq30_primary_evidence:
+      audit_packet: "docs/v4/1993_upgrade/P2_R14_MITCHELL_1991_FULLTEXT_AND_EQ30_COEFFICIENT_AUDIT.md"
+      evidence_level: "USER_SUPPLIED_FULL_PDF_VISUALLY_CHECKED"
+      source_doi: "10.1093/oxfordjournals.aob.a088102"
+      source_pdf_sha256: "d9f6f74b5268c6166407e02e98208dc452f9614002ccdb87a4d045cd4e0229e4"
+      source_pdf_pages: 10
+      reviewed_printed_pages: [7, 9, 12, 13, 14, 15]
+      reviewed_pdf_page_indices_zero_based: [0, 2, 5, 6, 7, 8]
+      paper_eq1_biomass: "DRY_MASS_AS_CO2_EQUIVALENT"
+      paper_eq2_maintenance_temperature_form: "BETA0_PLUS_BETA1_TIMES_CELSIUS"
+      paper_eq3_conversion_k_dry_mass_per_co2_equivalent: 0.6818181818181818
+      paper_shoot_table7_alpha: 0.36
+      paper_shoot_table7_b_per_day: 0.004
+      paper_shoot_table7_reference_temperature_c: 10
+      paper_ear_table7_alpha: 0.42
+      paper_ear_table7_b_per_day: 0.006
+      paper_ear_table7_reference_temperature_c: 13
+      manual_eq30_growth_coefficient: 0.36
+      manual_eq30_maintenance_coefficient_per_hour: 0.000167
+      table7_to_manual_eq30_coefficient_match: "SHOOT_MATCH_WITH_REPORTED_PRECISION"
+      table3_eq2_shoot_alpha: 0.35
+      table3_eq2_shoot_beta0_ug_co2_per_g_dry_s: 0.029
+      table3_eq2_shoot_beta1_ug_co2_per_g_dry_deg_c_s: 0.010
+      table3_recomputed_b_per_day_at_10c: 0.007599272727272727
+      table3_to_table7_b_reconciliation: "NOT_ESTABLISHED_PRINTED_CENTRAL_VALUES_DIFFER"
+      table3_to_table7_growth_reconciliation: "NOT_ESTABLISHED_PRINTED_ALPHA_0_35_VS_0_36"
+      photosynthesis_two_day_average: "MITCHELL_FITTING_INPUT_ONLY"
+      eq30_w_dry_matter_to_co2_equivalent: "SOURCE_EQUIVALENCE_44_DIV_30_CONDITIONAL"
+      kfk_eq30_temperature_handling: "NOT_ESTABLISHED"
+      kfk_eq30_ground_leaf_area_mapping: "NOT_ESTABLISHED"
+      kfk_eq28_eq30_original_solve_order: "NOT_ESTABLISHED"
+      original_executable_parity: "NOT_RUN"
+      independent_scientific_review: "NOT_RUN"
+      production_coupling_allowed: false
     primary_1993_source_review: "SELECTED_PRINTED_PAGES_VISUALLY_CHECKED"
     dual_edition_exact_formula_review: "NOT_COMPLETED"
     independent_scientific_review: "NOT_COMPLETED"
